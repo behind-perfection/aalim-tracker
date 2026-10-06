@@ -1,67 +1,74 @@
-// Offline cache for the tracker. Bump CACHE when you upload a new version of index.html.
-const CACHE = "aalim-tracker-v24";
-const SHELL = "./";
-const ASSETS = ["manifest.webmanifest", "icon-192.png", "icon-512.png"];
+/* Service worker for Aalim's Class 10 Command Centre.
+   Keep CACHE in step with APP_VERSION in index.html: bump both together
+   whenever you publish a new version, so phones pick up the update. */
+const CACHE = "aalim-tracker-v33";
+const LIBS = "aalim-libs"; // PDF reader engine, kept across app updates
+const ASSETS = [
+  "./",
+  "index.html",
+  "manifest.webmanifest",
+  "icon-192.png",
+  "icon-512.png"
+];
 
-// Browsers refuse to show a navigation response that came from a redirect
-// (Netlify redirects /index.html -> /). Re-wrap it as a clean, non-redirected response.
-async function clean(res) {
-  if (!res.redirected) return res;
-  const body = await res.blob();
-  return new Response(body, { status: 200, statusText: "OK", headers: res.headers });
-}
-
-self.addEventListener("install", e => {
-  e.waitUntil((async () => {
-    const c = await caches.open(CACHE);
-    const shell = await fetch(SHELL, { cache: "reload" });
-    if (shell.ok) await c.put(SHELL, await clean(shell));
-    // Icons/manifest are optional for the app to run, so one failure must not block install.
-    await Promise.all(ASSETS.map(a =>
-      fetch(a, { cache: "reload" }).then(r => r.ok && c.put(a, r)).catch(() => {})
-    ));
-    await self.skipWaiting();
-  })());
+self.addEventListener("install", (event) => {
+  event.waitUntil(
+    caches.open(CACHE)
+      .then((cache) => cache.addAll(ASSETS))
+      .then(() => self.skipWaiting())
+  );
 });
 
-self.addEventListener("activate", e => {
-  e.waitUntil(
+self.addEventListener("activate", (event) => {
+  event.waitUntil(
     caches.keys()
-      .then(keys => Promise.all(keys.filter(k => k !== CACHE).map(k => caches.delete(k))))
+      .then((keys) => Promise.all(keys.filter((k) => k !== CACHE && k !== LIBS).map((k) => caches.delete(k))))
       .then(() => self.clients.claim())
   );
 });
 
-// Pages: network first (so updates show up right away), cached copy if offline or slow.
-async function handleNavigation() {
-  const c = await caches.open(CACHE);
-  const fromCache = () => c.match(SHELL);
-  try {
-    const net = fetch(SHELL, { cache: "no-cache" }).then(async res => {
-      if (!res.ok) throw new Error("bad status");
-      const fixed = await clean(res);
-      c.put(SHELL, fixed.clone());
-      return fixed;
-    });
-    const timeout = new Promise((_, rej) => setTimeout(rej, 4000));
-    return await Promise.race([net, timeout]);
-  } catch (err) {
-    return (await fromCache()) || Response.error();
+self.addEventListener("fetch", (event) => {
+  const req = event.request;
+  if (req.method !== "GET") return;
+  const url = new URL(req.url);
+  if (url.hostname === "cdnjs.cloudflare.com" && (url.pathname.includes("/pdf.js/") || url.pathname.includes("/jszip/"))) {
+    event.respondWith(caches.open(LIBS).then((c) => c.match(req).then((hit) => hit || fetch(req).then((res) => { if (res.ok) c.put(req, res.clone()); return res; }))));
+    return;
   }
-}
+  if (url.origin !== self.location.origin) return; // leave other sites alone
 
-// Everything else: serve from cache instantly, refresh in the background.
-self.addEventListener("fetch", e => {
-  const r = e.request;
-  if (r.method !== "GET" || new URL(r.url).origin !== location.origin) return;
-  if (r.mode === "navigate") { e.respondWith(handleNavigation()); return; }
-  e.respondWith(
-    caches.match(r, { ignoreSearch: true }).then(hit => {
-      const net = fetch(r).then(res => {
-        if (res && res.ok && !res.redirected) { const copy = res.clone(); caches.open(CACHE).then(c => c.put(r, copy)); }
-        return res;
-      });
-      return hit || net.catch(() => Response.error());
+  // Pages: try the network first so updates show up, fall back to the cached app when offline.
+  if (req.mode === "navigate") {
+    event.respondWith(
+      fetch(req)
+        .then((res) => {
+          const copy = res.clone();
+          caches.open(CACHE).then((c) => c.put("index.html", copy)).catch(() => {});
+          return res;
+        })
+        .catch(() => caches.match("index.html").then((r) => r || caches.match("./")))
+    );
+    return;
+  }
+
+  // Everything else (manifest, icons): cache first, refresh in the background.
+  event.respondWith(
+    caches.match(req, { ignoreSearch: true }).then((cached) => {
+      const fresh = fetch(req)
+        .then((res) => {
+          if (res && res.ok) {
+            const copy = res.clone();
+            caches.open(CACHE).then((c) => c.put(req, copy)).catch(() => {});
+          }
+          return res;
+        })
+        .catch(() => cached);
+      return cached || fresh;
     })
   );
+});
+
+self.addEventListener("notificationclick", (e) => {
+  e.notification.close();
+  e.waitUntil(self.clients.matchAll({ type: "window", includeUncontrolled: true }).then((cs) => (cs.length ? cs[0].focus() : self.clients.openWindow("./"))));
 });
