@@ -1,0 +1,679 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Virtual Chemistry Lab</title>
+<style>
+:root{--bg:#eef2fb;--pan:#ffffff;--tx:#18203a;--mut:#667191;--bd:#d6ddf0;--acc:#3b5bdb;--acc2:#7c3aed;--ok:#16a34a;--bad:#dc2626;--chip:#eef1fb;--ws1:#f7faff;--ws2:#dfe9fb;--bench1:#b98a5a;--bench2:#8a5a33;--glass:rgba(255,255,255,.35);--glassb:#7e8fb5}
+[data-theme=dark]{--bg:#0e1320;--pan:#161c2d;--tx:#e6eaf3;--mut:#9aa6bd;--bd:#2a3349;--acc:#6b8bff;--acc2:#a78bfa;--chip:#222b42;--ws1:#1a2340;--ws2:#0f1630;--bench1:#7a5530;--bench2:#4d3219;--glass:rgba(255,255,255,.1);--glassb:#8ea0c9}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{-webkit-user-select:none;user-select:none;-webkit-touch-callout:none;margin:0;height:100%;background:var(--bg);color:var(--tx);font:14px/1.4 system-ui,-apple-system,Segoe UI,Roboto,sans-serif}
+button{font:inherit;color:inherit;cursor:pointer}
+.lab{display:grid;height:100vh;height:100dvh;grid-template-columns:240px 1fr 320px;grid-template-rows:auto 1fr;grid-template-areas:"top top top" "tool ws pan"}
+.top{grid-area:top;display:flex;gap:8px;align-items:center;flex-wrap:wrap;padding:8px 10px;background:var(--pan);border-bottom:1px solid var(--bd)}
+.top h1{font-size:15px;margin:0 auto 0 0}
+.btn{border:1px solid var(--bd);background:var(--chip);border-radius:10px;padding:6px 10px;font-weight:600;box-shadow:0 3px 0 rgba(0,0,0,.14),0 5px 8px rgba(0,0,0,.08);transition:transform .08s,box-shadow .08s}
+.btn:active{transform:translateY(2px);box-shadow:0 1px 0 rgba(0,0,0,.14)}
+.btn.on{background:var(--acc);color:#fff;border-color:var(--acc)}
+.btn.danger{color:var(--bad)}
+.btn[disabled],.uc{opacity:.55}
+.warp{display:flex;gap:3px;align-items:center}.warp span{font-size:12px;color:var(--mut);margin-right:2px}
+.warp .btn{padding:4px 8px}
+.tool{grid-area:tool;background:var(--pan);border-right:1px solid var(--bd);display:flex;flex-direction:column;min-height:0}
+.tabs{display:flex;gap:4px;padding:6px;border-bottom:1px solid var(--bd);overflow-x:auto;flex:none}
+.tabs button{border:0;background:var(--chip);border-radius:8px;padding:6px 10px;font-weight:600;white-space:nowrap}
+.tabs button.on{background:var(--acc);color:#fff}
+.tbody{overflow:auto;padding:8px;flex:1;min-height:0}
+.search{width:100%;padding:7px 9px;border:1px solid var(--bd);border-radius:8px;background:var(--bg);color:var(--tx);margin-bottom:6px}
+.amt{display:flex;gap:4px;flex-wrap:wrap;align-items:center;margin:4px 0 8px;font-size:12px;color:var(--mut)}
+.amt button{border:1px solid var(--bd);background:var(--chip);border-radius:999px;padding:3px 8px;font-size:12px}
+.amt button.on{background:var(--acc2);color:#fff;border-color:var(--acc2)}
+.grp{font-size:11px;text-transform:uppercase;letter-spacing:.05em;color:var(--mut);margin:10px 0 4px}
+.cards{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.card{box-shadow:0 3px 0 rgba(0,0,0,.14),0 6px 10px rgba(0,0,0,.08);transition:transform .08s,box-shadow .08s;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;text-align:center;border:1px solid var(--bd);background:var(--chip);border-radius:10px;padding:8px 4px;font-size:12px;user-select:none;-webkit-user-select:none;touch-action:pan-y;position:relative;min-height:62px}
+.card:active{transform:translateY(2px);box-shadow:0 1px 0 rgba(0,0,0,.14)}
+.card .ic{font-size:22px;line-height:1;filter:drop-shadow(0 3px 2px rgba(0,0,0,.3))}
+.card small{color:var(--mut);font-size:11px}
+.card.on{border-color:var(--acc2);box-shadow:0 0 0 2px var(--acc2) inset}
+.card.uc{border-style:dashed}
+.card .sw{width:16px;height:16px;border-radius:50%;border:1px solid var(--glassb)}
+.ghost{position:fixed;z-index:50;pointer-events:none;padding:6px 10px;background:var(--acc);color:#fff;border-radius:10px;font-weight:700;transform:translate(-50%,-120%);box-shadow:0 6px 18px #0005;font-size:12px}
+.ws{grid-area:ws;position:relative;overflow:hidden;background:radial-gradient(ellipse at 50% 100%,#ffffff22,transparent 60%),linear-gradient(var(--ws1),var(--ws2));min-height:0;touch-action:none;perspective:900px}
+.bench{position:absolute;left:0;right:0;bottom:0;height:58px;overflow:hidden;background:linear-gradient(var(--bench1),var(--bench2));box-shadow:inset 0 10px 16px #00000050,0 -6px 14px #0000001f}
+.bench::before{content:"";position:absolute;left:-60%;right:-60%;top:0;bottom:0;background:repeating-linear-gradient(90deg,#00000022 0 2px,#ffffff10 2px 4px,transparent 4px 56px);transform:perspective(120px) rotateX(38deg);transform-origin:50% 100%}
+.bench::after{content:"";position:absolute;left:0;right:0;bottom:0;height:13px;background:linear-gradient(#e6bd8a,#c99560 35%,#5a3519 36%,#3f240f);box-shadow:0 -2px 0 #ffffff55 inset}
+.trash{position:absolute;right:10px;top:10px;width:58px;height:58px;border:2px dashed var(--mut);border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:24px;color:var(--mut);opacity:.7}
+.trash.hot{background:#dc262633;border-color:var(--bad);opacity:1}
+.hint{position:absolute;left:50%;top:38%;transform:translate(-50%,-50%);text-align:center;color:var(--mut);max-width:70%;pointer-events:none}
+.hint b{display:block;font-size:16px;margin-bottom:4px}
+.toast{position:absolute;left:50%;top:10px;transform:translateX(-50%);background:#111827ee;color:#fff;padding:8px 14px;border-radius:10px;z-index:30;max-width:80%;text-align:center;opacity:0;transition:opacity .2s;pointer-events:none}
+.toast.show{opacity:1}
+.status{position:absolute;left:10px;top:10px;font-size:12px;color:var(--mut);background:var(--pan);border:1px solid var(--bd);padding:4px 8px;border-radius:8px;max-width:60%}
+.it{position:absolute;bottom:58px;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;touch-action:none;cursor:grab;user-select:none;-webkit-user-select:none}
+.it.sel svg{filter:drop-shadow(0 0 3px var(--acc2)) drop-shadow(0 0 6px var(--acc2))}
+.it.drag{z-index:20;cursor:grabbing}
+.it.drag .vessel{transform:translateY(-8px) scale(1.04)}
+.it.drag .shadow{transform:scale(1.25);opacity:.5}
+.it.pourable svg{filter:drop-shadow(0 0 4px var(--ok)) drop-shadow(0 0 8px var(--ok))}
+.vessel{position:relative;transition:transform .15s}
+.vessel svg{display:block;overflow:visible;position:absolute;left:0;top:0}
+.svgh{position:absolute;inset:0}
+.shadow{position:absolute;left:8%;right:8%;bottom:-7px;height:16px;border-radius:50%;background:radial-gradient(ellipse at center,rgba(0,0,0,.55),rgba(0,0,0,.18) 55%,transparent 72%);transition:transform .15s,opacity .15s;pointer-events:none}
+.bubs{position:absolute;overflow:hidden;pointer-events:none}
+.bub{position:absolute;border-radius:50%;background:radial-gradient(circle at 30% 30%,#fff,#ffffffaa 45%,#ffffff44);border:1px solid #ffffffcc;animation:rise 1.4s linear forwards;bottom:0}
+@keyframes rise{to{transform:translateY(var(--rise,-100px));opacity:.1}}
+.lbl{font-size:11px;font-weight:700;background:var(--pan);border:1px solid var(--bd);border-radius:6px;padding:1px 6px;margin-top:3px;white-space:nowrap}
+.read{display:flex;gap:3px;flex-wrap:wrap;justify-content:center;max-width:150px;margin-bottom:3px;min-height:4px}
+.read span{font-size:11px;font-weight:700;padding:1px 6px;border-radius:6px;background:#111827;color:#a7f3d0;font-family:ui-monospace,Menlo,monospace;cursor:pointer}
+.read span.paper{color:#111;border:1px solid #0004;min-width:34px;text-align:center}
+.flame{position:absolute;bottom:-26px;font-size:22px;display:none;animation:fl .3s infinite alternate}
+.it.heat .flame{display:block}
+@keyframes fl{to{transform:scale(1.15) translateY(-2px)}}
+.pan{grid-area:pan;background:var(--pan);border-left:1px solid var(--bd);display:flex;flex-direction:column;min-height:0}
+.pbody{overflow:auto;padding:10px;flex:1;min-height:0}
+.row{display:flex;justify-content:space-between;gap:8px;padding:3px 0;border-bottom:1px dashed var(--bd)}
+.row b{font-variant-numeric:tabular-nums}
+.sw2{display:inline-block;width:14px;height:14px;border-radius:50%;border:1px solid var(--glassb);vertical-align:-2px;margin-right:4px}
+.acts{display:flex;gap:6px;flex-wrap:wrap;margin:10px 0}
+.acts .btn{padding:6px 9px;font-size:13px}
+.ob{padding:6px 8px;border-radius:8px;background:var(--chip);margin-bottom:5px;font-size:13px}
+.ob small{color:var(--mut);display:block}
+.rx{padding:8px;border-radius:10px;background:var(--chip);margin-bottom:6px}
+.rx b{display:block;font-size:14px}.rx small{color:var(--mut)}
+.muted{color:var(--mut)}
+.ucb{display:inline-block;font-size:11px;font-weight:700;background:#f59e0b33;color:#b45309;border-radius:6px;padding:1px 6px;margin-left:4px}
+[data-theme=dark] .ucb{color:#fbbf24}
+textarea,input.t,.search{-webkit-user-select:text;user-select:text}
+textarea,input.t{width:100%;padding:7px 9px;border:1px solid var(--bd);border-radius:8px;background:var(--bg);color:var(--tx);font:inherit}
+@media(max-width:820px){
+ .lab{grid-template-columns:1fr;grid-template-rows:auto auto minmax(250px,1fr) 38%;grid-template-areas:"top" "tool" "ws" "pan"}
+ .tool{border-right:0;border-bottom:1px solid var(--bd);max-height:205px}
+ .tbody{padding:4px 6px}
+ .cards{display:flex;gap:6px;overflow-x:auto;flex-wrap:nowrap;padding-bottom:4px}.card{min-width:92px;flex:none;touch-action:pan-x;min-height:56px}
+ .grp{margin:4px 0 2px}.amt{margin:2px 0 4px}
+ .top .long,.warp span{display:none}.top{gap:5px;padding:6px;flex-wrap:nowrap;overflow-x:auto}.top .btn,.warp{flex:none}.top h1{margin-right:0}.btn{padding:5px 8px;font-size:12px}
+ .pan{border-left:0;border-top:1px solid var(--bd)}
+ .top h1{font-size:14px}
+ .status{display:none}
+}
+@media(prefers-reduced-motion:reduce){.bub,.flame{animation:none}}
+</style>
+</head>
+<body>
+<div class="lab" id="lab">
+ <div class="top">
+  <h1>🧪 <span class="long">Virtual Chemistry Lab</span></h1>
+  <button class="btn" id="gogBtn">🥽 Goggles: OFF</button>
+  <div class="warp"><span>Time</span><button class="btn on" data-w="1">×1</button><button class="btn" data-w="2">×2</button><button class="btn" data-w="5">×5</button><button class="btn" data-w="10">×10</button></div>
+  <button class="btn danger" id="resetBtn">🧹 Clear bench</button>
+ </div>
+ <div class="tool">
+  <div class="tabs"><button class="on" data-tt="app">Apparatus</button><button data-tt="chem">Chemicals</button></div>
+  <div class="tbody" id="tbody"></div>
+ </div>
+ <div class="ws" id="ws">
+  <div class="status" id="status">Tap or drag apparatus onto the bench.</div>
+  <div class="hint" id="hint"><b>Your bench is empty</b>Tap a beaker or test tube to place it. Put on your goggles, then drag a chemical onto it (or tap a chemical to arm it, then tap the container).</div>
+  <div class="trash" id="trash">🗑️</div>
+  <div class="bench"></div>
+  <div class="toast" id="toast"></div>
+ </div>
+ <div class="pan">
+  <div class="tabs" id="ptabs"><button class="on" data-pt="insp">Inspect</button><button data-pt="obs">Observations</button><button data-pt="rx">Reactions</button><button data-pt="exp">Experiments</button><button data-pt="nb">Notebook</button></div>
+  <div class="pbody" id="pbody"></div>
+ </div>
+</div>
+
+<script>
+"use strict";
+/* ================= CHEMISTRY ENGINE (pure functions on container objects) ================= */
+const KW=1e-14,KA_HAC=1.8e-5,KA1=4.5e-7,KA2=4.7e-11;
+const SUB={"0":"₀","1":"₁","2":"₂","3":"₃","4":"₄","5":"₅","6":"₆","7":"₇","8":"₈","9":"₉"};
+const sub=n=>String(n).split("").map(d=>SUB[d]||d).join("");
+const gcd=(a,b)=>b?gcd(b,a%b):a, lcm=(a,b)=>a*b/gcd(a,b);
+const co=n=>n===1?"":String(n);
+const CATZ={Na:1,K:1,Ag:1,Cu:2,Ba:2,Pb:2,Zn:2,Fe2:2,Fe3:3,Ca:2,Mg:2};
+const CATS={Na:"Na",K:"K",Ag:"Ag",Cu:"Cu",Ba:"Ba",Pb:"Pb",Zn:"Zn",Fe2:"Fe",Fe3:"Fe",Ca:"Ca",Mg:"Mg"};
+const ANS={Cl:{f:"Cl",z:1,acid:"HCl",h:1},NO3:{f:"NO₃",z:1,acid:"HNO₃",h:1},SO4:{f:"SO₄",z:2,acid:"H₂SO₄",h:2},Ac:{f:"CH₃COO",z:1,acid:"CH₃COOH",h:1}};
+function part(f,n){return n===1?f:(f.length>2&&/[₀-₉]|[A-Z].*[A-Z]/.test(f)?"("+f+")":f)+sub(n)}
+function salt(cat,an){const z1=CATZ[cat],z2=ANS[an].z,g=gcd(z1,z2);return {f:part(CATS[cat],z2/g)+part(ANS[an].f,z1/g),ncat:z2/g}}
+function domAnion(c){const s=c.sp,v={Cl:s.Cl||0,NO3:s.NO3||0,SO4:s.SO4||0,Ac:(s.Ac||0)+(s.HAc||0)};let b="Cl",m=-1;for(const k in v)if(v[k]>m){m=v[k];b=k}return b}
+const MM={zn:65.4,mg:24.3,fe:55.8,cu:63.5,caco3:100.1,cuo:79.5};
+const SOLCOL={zn:"#9aa7b3",mg:"#d6dade",fe:"#5d6168",cu:"#b8733a",caco3:"#efe9dc",cuo:"#1c1c1c"};
+const SOLNAME={zn:"Zinc",mg:"Magnesium",fe:"Iron",cu:"Copper",caco3:"Marble chips",cuo:"Copper(II) oxide"};
+const DEPCOL={Cu:"#b8733a",Ag:"#cfd2da",Pb:"#7a7a85",Fe:"#5a5a60",Zn:"#9aa7b3"};
+const DEPWORD={Cu:"reddish-brown",Ag:"silvery",Pb:"grey",Fe:"dark grey",Zn:"grey"};
+const DEPMM={Cu:63.5,Ag:107.9,Pb:207.2,Fe:55.8,Zn:65.4};
+const RANK={mg:0,zn:1,fe:2,cu:4};
+const CATSOL={mg:"Mg",zn:"Zn",fe:"Fe2",cu:"Cu"};
+const DEPOF={Ag:["Ag",5,1],Cu:["Cu",4,2],Pb:["Pb",3,2],Fe2:["Fe",2,2],Zn:["Zn",1,2]}; // cation key -> [deposit symbol, rank, charge]
+const KDISP={mg:.02,zn:.006,fe:.001,cu:.004};
+const KACID={mg:.02,zn:.003,fe:.0004};
+const QACID={mg:467e3,zn:153e3,fe:87e3};
+const PPT=[
+ {id:"AgCl",n:"AgCl",a:"Ag",na:1,b:"Cl",nb:1,ksp:1.8e-10,col:"#f6f6f6",cw:"white curdy",mm:143.3,eq:"AgNO₃ + NaCl → AgCl↓ + NaNO₃",ion:"Ag⁺ + Cl⁻ → AgCl↓"},
+ {id:"AgI",n:"AgI",a:"Ag",na:1,b:"I",nb:1,ksp:8e-17,col:"#f2e04a",cw:"yellow",mm:234.8,eq:"AgNO₃ + KI → AgI↓ + KNO₃",ion:"Ag⁺ + I⁻ → AgI↓"},
+ {id:"BaSO4",n:"BaSO₄",a:"Ba",na:1,b:"SO4",nb:1,ksp:1.1e-10,col:"#fafafa",cw:"white",mm:233.4,eq:"BaCl₂ + Na₂SO₄ → BaSO₄↓ + 2NaCl",ion:"Ba²⁺ + SO₄²⁻ → BaSO₄↓"},
+ {id:"PbSO4",n:"PbSO₄",a:"Pb",na:1,b:"SO4",nb:1,ksp:2e-8,col:"#f4f4f4",cw:"white",mm:303.3,eq:"Pb(NO₃)₂ + Na₂SO₄ → PbSO₄↓ + 2NaNO₃",ion:"Pb²⁺ + SO₄²⁻ → PbSO₄↓"},
+ {id:"PbI2",n:"PbI₂",a:"Pb",na:1,b:"I",nb:2,ksp:7e-9,col:"#f0c814",cw:"golden-yellow",mm:461,eq:"Pb(NO₃)₂ + 2KI → PbI₂↓ + 2KNO₃",ion:"Pb²⁺ + 2I⁻ → PbI₂↓"},
+ {id:"PbCl2",n:"PbCl₂",a:"Pb",na:1,b:"Cl",nb:2,ksp:1.7e-5,col:"#f2f2f2",cw:"white",mm:278.1,eq:"Pb(NO₃)₂ + 2NaCl → PbCl₂↓ + 2NaNO₃",ion:"Pb²⁺ + 2Cl⁻ → PbCl₂↓"},
+ {id:"CuOH2",n:"Cu(OH)₂",a:"Cu",na:1,b:"OH",nb:2,ksp:2.2e-20,col:"#6fa8f0",cw:"pale blue",mm:97.6,hyd:1,eq:"CuSO₄ + 2NaOH → Cu(OH)₂↓ + Na₂SO₄",ion:"Cu²⁺ + 2OH⁻ → Cu(OH)₂↓"},
+ {id:"FeOH3",n:"Fe(OH)₃",a:"Fe3",na:1,b:"OH",nb:3,ksp:4e-38,col:"#a8501c",cw:"reddish-brown",mm:106.9,hyd:1,eq:"FeCl₃ + 3NaOH → Fe(OH)₃↓ + 3NaCl",ion:"Fe³⁺ + 3OH⁻ → Fe(OH)₃↓"},
+ {id:"FeOH2",n:"Fe(OH)₂",a:"Fe2",na:1,b:"OH",nb:2,ksp:8e-16,col:"#7ba483",cw:"dirty-green",mm:89.9,hyd:1,eq:"FeSO₄ + 2NaOH → Fe(OH)₂↓ + Na₂SO₄",ion:"Fe²⁺ + 2OH⁻ → Fe(OH)₂↓"},
+ {id:"ZnOH2",n:"Zn(OH)₂",a:"Zn",na:1,b:"OH",nb:2,ksp:3e-17,col:"#f2f2f2",cw:"white gelatinous",mm:99.4,hyd:1,eq:"ZnSO₄ + 2NaOH → Zn(OH)₂↓ + Na₂SO₄",ion:"Zn²⁺ + 2OH⁻ → Zn(OH)₂↓"},
+ {id:"MgOH2",n:"Mg(OH)₂",a:"Mg",na:1,b:"OH",nb:2,ksp:5.6e-12,col:"#f6f6f6",cw:"white",mm:58.3,hyd:1,eq:"MgSO₄ + 2NaOH → Mg(OH)₂↓ + Na₂SO₄",ion:"Mg²⁺ + 2OH⁻ → Mg(OH)₂↓"},
+ {id:"CaOH2",n:"Ca(OH)₂",a:"Ca",na:1,b:"OH",nb:2,ksp:5.5e-6,col:"#f6f6f6",cw:"white",mm:74.1,hyd:1,eq:"CaCl₂ + 2NaOH → Ca(OH)₂↓ + 2NaCl",ion:"Ca²⁺ + 2OH⁻ → Ca(OH)₂↓"},
+ {id:"CaCO3",n:"CaCO₃",a:"Ca",na:1,b:"CO3",nb:1,ksp:3.3e-9,col:"#fbfbfb",cw:"white (milky)",mm:100.1,carb:1,eq:"Ca(OH)₂ + Na₂CO₃ → CaCO₃↓ + 2NaOH",ion:"Ca²⁺ + CO₃²⁻ → CaCO₃↓"}
+];
+const HYD=[["Cu",5e-8],["Zn",1e-9],["Fe2",1e-8],["Fe3",1e-3],["Pb",1e-8],["Mg",1e-11]];
+const Z=(c,k)=>c.sp[k]||0;
+
+function newContainer(type,label){
+ const cap={beaker:250,tube:20,flask:250,cyl:100}[type];
+ return {id:0,type,label,cap,vol:0,T:25,sp:{},ind:{},sol:{},ppt:{},dep:{},susp:0,gasRate:0,gasType:"",heat:false,stir:0,probes:[],neut:0,
+  last:{ppt:{},sol:{},dep:{},gas:false,T:25,neut:false,col:[200,225,245],cname:"colourless"}};
+}
+/* pH from charge balance (bisection in log h) */
+function phOf(c){
+ const V=c.vol/1000;if(V<2e-4)return null;
+ const pos0=Z(c,"Na")+Z(c,"K")+Z(c,"Ag")+2*(Z(c,"Cu")+Z(c,"Ba")+Z(c,"Pb")+Z(c,"Zn")+Z(c,"Fe2")+Z(c,"Ca")+Z(c,"Mg"))+3*Z(c,"Fe3");
+ const neg0=Z(c,"Cl")+Z(c,"NO3")+Z(c,"I")+2*Z(c,"SO4");
+ const T=(Z(c,"HAc")+Z(c,"Ac"))/V,CT=Z(c,"CO3")/V;
+ const F=h=>{let p=pos0/V;for(const[k,kh]of HYD)p-=(Z(c,k)/V)*kh/(kh+h);
+  const D=h*h+h*KA1+KA1*KA2,car=CT*(h*KA1+2*KA1*KA2)/D;
+  return p+h-neg0/V-KW/h-T*KA_HAC/(KA_HAC+h)-car};
+ let lo=-1,hi=15;
+ for(let i=0;i<60;i++){const m=(lo+hi)/2;if(F(Math.pow(10,-m))>0)lo=m;else hi=m}
+ return Math.max(0,Math.min(14,(lo+hi)/2));
+}
+function acidAvail(c){return Z(c,"H")+Z(c,"HAc")}
+function consumeAcid(c,mol){const a=Math.min(mol,Z(c,"H"));c.sp.H=Z(c,"H")-a;const r=mol-a;if(r>0){const w=Math.min(r,Z(c,"HAc"));c.sp.HAc=Z(c,"HAc")-w;c.sp.Ac=Z(c,"Ac")+w}}
+function heatIn(c,joules){c.T+=joules/((c.vol+5)*4.18)}
+function acidEqCoef(c){const an=domAnion(c);return {an,a:ANS[an]}}
+/* instantaneous (ionic) reactions */
+function react(c){
+ let m=Math.min(Z(c,"H"),Z(c,"OH"));
+ if(m>0){c.sp.H-=m;c.sp.OH-=m;c.neut+=m;heatIn(c,m*57300)}
+ m=Math.min(Z(c,"HAc"),Z(c,"OH"));
+ if(m>0){c.sp.HAc-=m;c.sp.OH-=m;c.sp.Ac=Z(c,"Ac")+m;c.neut+=m;heatIn(c,m*55000)}
+ m=Math.min(Z(c,"CO3"),Z(c,"H")/2);
+ if(m>1e-12){c.sp.CO3-=m;c.sp.H-=2*m;gas(c,m,"CO2");regRx("Carbonate + acid","CO₃²⁻ + 2H⁺ → H₂O + CO₂↑")}
+ m=Math.min(Z(c,"CO3"),Z(c,"HAc")/2);
+ if(m>1e-12){c.sp.CO3-=m;consumeAcid(c,2*m);gas(c,m,"CO2");regRx("Carbonate + ethanoic acid","CO₃²⁻ + 2CH₃COOH → 2CH₃COO⁻ + H₂O + CO₂↑")}
+ for(const r of PPT){ // acids dissolve hydroxide / carbonate precipitates
+  if(!(r.hyd||r.carb))continue;const p=c.ppt[r.id]||0;if(p<=0)continue;
+  const val=r.hyd?r.nb:2,d=Math.min(p,acidAvail(c)/val);
+  if(d>1e-12){c.ppt[r.id]=p-d;consumeAcid(c,val*d);c.sp[r.a]=Z(c,r.a)+d;if(r.carb)gas(c,d,"CO2");
+   const an=domAnion(c),A=ANS[an],s=salt(r.a,an);
+   if(r.carb)regRx(r.n+" + acid","CaCO₃ + "+co(2/A.h)+A.acid+" → "+s.f+" + H₂O + CO₂↑");
+   else if(Number.isInteger(val/A.h))regRx(r.n+" + acid",r.n+" + "+co(val/A.h)+A.acid+" → "+s.f+" + "+val+"H₂O");
+   else regRx(r.n+" + acid",r.n+" + "+val+"H⁺ → "+CATS[r.a]+({1:"⁺",2:"²⁺",3:"³⁺"}[CATZ[r.a]])+" + "+val+"H₂O")}
+ }
+ for(let pass=0;pass<2;pass++)for(const r of PPT){
+  const p0=c.ppt[r.id]||0,V=c.vol/1000,At=Z(c,r.a)+r.na*p0,Bt=Z(c,r.b)+r.nb*p0;
+  if(V<2e-4){continue}
+  const pmax=Math.min(At/r.na,Bt/r.nb);
+  const g=p=>Math.pow(Math.max(0,At-r.na*p)/V,r.na)*Math.pow(Math.max(0,Bt-r.nb*p)/V,r.nb)-r.ksp;
+  let p;
+  if(pmax<=0||g(0)<=0)p=0;else if(g(pmax)>0)p=pmax;else{let lo=0,hi=pmax;for(let i=0;i<60;i++){const mid=(lo+hi)/2;if(g(mid)>0)lo=mid;else hi=mid}p=(lo+hi)/2}
+  if(r.hyd&&Z(c,"H")>1e-12&&p>p0)p=p0; // no hydroxide ppt while acid is present
+  if(Math.abs(p-p0)>1e-15){c.sp[r.a]=At-r.na*p;c.sp[r.b]=Bt-r.nb*p;c.ppt[r.id]=p;if(p>p0)c.susp=Math.min(1,Math.max(c.susp,(p-p0)/Math.max(p,1e-12)));if(p>p0+1e-6)regRx(r.n+" precipitation",r.eq,r.ion)}
+ }
+}
+function gas(c,mol,t){c._g=(c._g||0)+mol;c.gasType=t}
+/* kinetic step */
+function step(c,dt){
+ if(c.vol<0.2)return;
+ const ph=phOf(c),h=Math.pow(10,-(ph==null?7:ph)),V=c.vol/1000;
+ const tf=Math.exp((c.T-25)/25)*(c.stir>0?1.4:1);
+ c._g=0;
+ const {a:A}=acidEqCoef(c);
+ for(const m of["mg","zn","fe"]){const g=c.sol[m]||0;if(g>1e-4&&h>1e-4){
+  const mol=g/MM[m];let dn=KACID[m]*Math.pow(h,.8)*Math.pow(mol,.67)*tf*dt;dn=Math.min(dn,mol,acidAvail(c)/2);
+  if(dn>1e-14){const an=domAnion(c),AN=ANS[an],s=salt(CATSOL[m],an);
+   c.sol[m]-=dn*MM[m];consumeAcid(c,2*dn);c.sp[CATSOL[m]]=Z(c,CATSOL[m])+dn;gas(c,dn,"H2");heatIn(c,dn*QACID[m]);
+   regRx(SOLNAME[m]+" + acid",CATS[CATSOL[m]]+" + "+co(2/AN.h)+AN.acid+" → "+s.f+" + H₂↑")}}}
+ {const g=c.sol.caco3||0;if(g>1e-4&&h>1e-4){const mol=g/MM.caco3;let dn=.012*Math.pow(h,.7)*Math.pow(mol,.67)*tf*dt;dn=Math.min(dn,mol,acidAvail(c)/2);
+  if(dn>1e-14){const an=domAnion(c),AN=ANS[an],s=salt("Ca",an);c.sol.caco3-=dn*MM.caco3;consumeAcid(c,2*dn);c.sp.Ca=Z(c,"Ca")+dn;gas(c,dn,"CO2");
+   regRx("Marble + acid","CaCO₃ + "+co(2/AN.h)+AN.acid+" → "+s.f+" + H₂O + CO₂↑")}}}
+ {const g=c.sol.cuo||0;if(g>1e-4&&h>1e-4){const mol=g/MM.cuo;let dn=.005*Math.pow(h,.8)*Math.pow(mol,.67)*Math.exp((c.T-25)/12)*dt;dn=Math.min(dn,mol,acidAvail(c)/2);
+  if(dn>1e-14){const an=domAnion(c),AN=ANS[an],s=salt("Cu",an);c.sol.cuo-=dn*MM.cuo;consumeAcid(c,2*dn);c.sp.Cu=Z(c,"Cu")+dn;
+   regRx("CuO + acid","CuO + "+co(2/AN.h)+AN.acid+" → "+s.f+" + H₂O")}}}
+ for(const m of["mg","zn","fe","cu"]){const g=c.sol[m]||0;if(g<=1e-4)continue;
+  for(const ck in DEPOF){const [sym,rk,z]=DEPOF[ck];if(RANK[m]>=rk)continue;if(ck==="Zn"&&m!=="mg")continue;
+   const conc=Z(c,ck)/V;if(conc<1e-4)continue;
+   const mol=(c.sol[m]||0)/MM[m];if(mol<=1e-9)continue;
+   let dC=KDISP[m]*Math.pow(conc,.7)*Math.pow(mol,.67)*tf*dt;dC=Math.min(dC,Z(c,ck),mol*2/z);
+   if(dC>1e-14){const mc=CATSOL[m];c.sp[ck]-=dC;c.sol[m]-=dC*z/2*MM[m];c.sp[mc]=Z(c,mc)+dC*z/2;c.dep[sym]=(c.dep[sym]||0)+dC*DEPMM[sym];heatIn(c,dC*z/2*60e3);
+    const an=domAnion(c);const eqs=dispEq(m,sym,ck,an);regRx(SOLNAME[m]+" displaces "+sym,eqs.eq,eqs.ion)}}}
+ c.gasRate=(c._g||0)/dt;
+ react(c);
+ c.susp*=Math.exp(-dt*.07);
+ if(c.stir>0){c.stir-=dt;c.susp=Math.min(1,c.susp+dt*.4)}
+ /* temperature: heating / cooling / boiling */
+ if(c.heat){c.T+=60*dt/((c.vol+10)*4.18);if(c.T>=100){c.T=100;c.vol=Math.max(.5,c.vol-.12*dt)}}
+ else c.T+=(25-c.T)*Math.min(1,.02*dt);
+}
+function dispEq(m,dsym,ck,an){
+ const msym=CATS[CATSOL[m]],mk=CATSOL[m],zc=DEPOF[ck][2],e=lcm(2,zc),nm=e/2,nc=e/zc;
+ const ion=co(nm)+msym+" + "+co(nc)+CATS[ck]+({1:"⁺",2:"²⁺",3:"³⁺"}[zc])+" → "+co(nm)+msym+"²⁺ + "+co(nc)+dsym+"↓";
+ if(!ANS[an]||an==="Ac")return{eq:ion.replace(/⁺/g,"⁺"),ion};
+ const sc=salt(ck,an),sm=salt(mk,an);
+ return{eq:co(nm)+msym+" + "+co(nc/sc.ncat)+sc.f+" → "+co(nm/sm.ncat)+sm.f+" + "+co(nc)+dsym+"↓",ion};
+}
+function sup(n){return {2:"²",3:"³"}[n]||""}
+/* ---- add things ---- */
+function addLiquid(c,ch,ml){
+ if(c.vol+ml>c.cap+1e-9)return false;
+ const Vn=c.vol+ml;c.T=(c.T*c.vol+25*ml)/Vn;
+ for(const k in ch.c)c.sp[k]=Z(c,k)+ch.c[k]*ml/1000;
+ if(ch.ind)c.ind[ch.ind]=(c.ind[ch.ind]||0)+ml;
+ c.vol=Vn;
+ const before=c.T;react(c);return true;
+}
+function addSolid(c,id,g){c.sol[id]=(c.sol[id]||0)+g;return true}
+function pourTo(a,b,f){
+ const space=b.cap-b.vol;let amt=a.vol*f;if(amt>space)amt=space;if(amt<=0)return 0;const fr=amt/a.vol;
+ const Vn=b.vol+amt;b.T=(b.T*b.vol+a.T*amt)/Vn;
+ for(const k in a.sp){b.sp[k]=Z(b,k)+a.sp[k]*fr;a.sp[k]*=1-fr}
+ for(const k in a.ind){b.ind[k]=(b.ind[k]||0)+a.ind[k]*fr;a.ind[k]*=1-fr}
+ for(const k in a.ppt){b.ppt[k]=(b.ppt[k]||0)+a.ppt[k]*fr*(a.susp);a.ppt[k]-=a.ppt[k]*fr*(a.susp)}
+ for(const k in a.dep){} // deposits stay on the metal / vessel
+ b.susp=Math.max(b.susp,a.susp);b.vol=Vn;a.vol-=amt;
+ if(a.vol<.05){a.vol=0;a.sp={};a.ind={}}
+ react(b);return amt;
+}
+/* ---- colour ---- */
+const WATER=[200,225,245];
+function mix(a,b,w){return[a[0]+(b[0]-a[0])*w,a[1]+(b[1]-a[1])*w,a[2]+(b[2]-a[2])*w]}
+const hex=c=>"#"+c.map(v=>Math.round(Math.max(0,Math.min(255,v))).toString(16).padStart(2,"0")).join("");
+const hx=h=>[1,3,5].map(i=>parseInt(h.substr(i,2),16));
+function uiColor(ph){const st=[[0,"#e11d1d"],[2,"#ef4423"],[3.5,"#f58a1f"],[5,"#f6c020"],[6,"#b6d62e"],[7,"#3fae49"],[8,"#1ba58b"],[9,"#2a7fc4"],[10.5,"#4a4fb8"],[12,"#6d3aa8"],[14,"#5a2d8c"]];
+ for(let i=1;i<st.length;i++)if(ph<=st[i][0]){const t=(ph-st[i-1][0])/(st[i][0]-st[i-1][0]);return mix(hx(st[i-1][1]),hx(st[i][1]),t)}return hx(st[st.length-1][1])}
+function solnColour(c){
+ let col=WATER.slice(),V=c.vol/1000;if(V<2e-4)return{rgb:col,alpha:.35};
+ const ions=[["Cu",[40,120,235],2.2],["Fe2",[170,215,170],3],["Fe3",[215,150,50],5]];
+ for(const[k,rgb,kk]of ions){const conc=Z(c,k)/V;if(conc>1e-5)col=mix(col,rgb,1-Math.exp(-conc*kk))}
+ let alpha=.38+Math.min(.3,(1-Math.exp(-(Z(c,"Cu")/V)*2))*.3);
+ const ph=phOf(c);
+ for(const k in c.ind){const ml=c.ind[k];if(ml<=1e-6||ph==null)continue;
+  const w0=Math.min(.9,.35+ml/c.vol*60);let ic,w=w0;
+  if(k==="ph"){const f=Math.max(0,Math.min(1,(ph-8.2)/1.8));ic=[225,40,140];w=w0*f}
+  else if(k==="mo"){ic=ph<3.1?[224,52,47]:ph<4.4?mix([224,52,47],[242,194,48],(ph-3.1)/1.3):[242,194,48]}
+  else if(k==="btb"){ic=ph<6?[242,214,50]:ph<7.6?mix([242,214,50],[40,120,215],(ph-6)/1.6):[40,120,215]}
+  else ic=uiColor(ph);
+  col=mix(col,ic,w);alpha=Math.max(alpha,.35+.3*w)}
+ return{rgb:col,alpha};
+}
+function cname(rgb){
+ const dist=Math.hypot(rgb[0]-WATER[0],rgb[1]-WATER[1],rgb[2]-WATER[2]);if(dist<38)return"colourless";
+ const r=rgb[0]/255,g=rgb[1]/255,b=rgb[2]/255,mx=Math.max(r,g,b),mn=Math.min(r,g,b),l=(mx+mn)/2,d=mx-mn;let h=0;
+ if(d){if(mx===r)h=((g-b)/d)%6;else if(mx===g)h=(b-r)/d+2;else h=(r-g)/d+4;h*=60;if(h<0)h+=360}
+ if(l<.18)return"dark";if(l>.88&&d<.15)return"colourless";
+ if(h<14||h>=345)return l>.7?"pink":"red";if(h<40)return l<.5?"brown":"orange";if(h<68)return"yellow";if(h<165)return l>.62?"light green":"green";
+ if(h<200)return"cyan / blue-green";if(h<255)return l>.7?"light blue":"blue";if(h<290)return"violet";return l>.62?"pink":"magenta";
+}
+/* ---- registry of reactions & observations ---- */
+const RX=new Map(),OBS=[];let simTime=0;
+function regRx(name,eq,ion){if(!RX.has(eq))RX.set(eq,{name,eq,ion:ion||""});window._rxDirty=true}
+function log(c,text){OBS.push({t:simTime,c:c.label,text});if(OBS.length>300)OBS.shift();window._obsDirty=true}
+function observe(c){
+ const L=c.last;
+ for(const r of PPT){const p=c.ppt[r.id]||0,w=L.ppt[r.id]||0;
+  if(p>5e-6&&w<=5e-6)log(c,r.cw+" precipitate of "+r.n+" forms");
+  else if(p<=5e-6&&w>5e-6)log(c,"the precipitate of "+r.n+" dissolves");
+  L.ppt[r.id]=p}
+ const gr=c.gasRate>2e-7;
+ if(gr&&!L.gas){log(c,c.gasType==="H2"?"colourless, odourless gas bubbles evolve (hydrogen)":"effervescence: colourless gas evolves (carbon dioxide)");L.gas=true}
+ else if(!gr&&L.gas&&c.gasRate<5e-8){log(c,"bubbling stops");L.gas=false}
+ for(const k in c.sol){const w=L.sol[k]||0,n=c.sol[k]||0;if(w>1e-4&&n<=1e-4&&(c.gasRate>0||k==="cuo"||true))log(c,SOLNAME[k].toLowerCase()+" has completely reacted / disappeared");L.sol[k]=n}
+ for(const s in c.dep){const w=L.dep[s]||0,n=c.dep[s];if(n>5e-4&&w<=5e-4)log(c,DEPWORD[s]+" deposit of "+s+" forms on the metal");L.dep[s]=n}
+ if(c.neut>5e-5&&!L.neut){log(c,"acid and base neutralise (H⁺ + OH⁻ → H₂O)");L.neut=true}
+ if(c.T-L.T>=4){log(c,"mixture warms up to "+c.T.toFixed(0)+" °C (exothermic)");L.T=c.T}else if(c.T<L.T-4)L.T=c.T;
+ const sc=solnColour(c),nm=cname(sc.rgb),d=Math.hypot(sc.rgb[0]-L.col[0],sc.rgb[1]-L.col[1],sc.rgb[2]-L.col[2]);
+ if(d>32&&c.vol>.3){if(nm!==L.cname)log(c,nm==="colourless"?"solution turns colourless":"solution turns "+nm);L.cname=nm;L.col=sc.rgb}
+}
+function tickContainer(c,dt){
+ const n=Math.max(1,Math.ceil(dt/.25)),h=dt/n;
+ for(let i=0;i<n;i++){step(c,h);if(c.gasRate>0)c._lastGas=c.gasRate}
+ observe(c);
+}
+window.Engine={phOf,react,step,addLiquid,addSolid,pourTo,newContainer,solnColour,cname,tickContainer,RX,OBS};
+
+/* ================= DATA FOR THE TOOLBOX ================= */
+const CHEM=[
+ {id:"water",n:"Distilled water",f:"H₂O",g:"Other",c:{},col:"#dff0ff"},
+ {id:"hcl",n:"Hydrochloric acid 1 M",f:"HCl",g:"Acids",c:{H:1,Cl:1},col:"#dff0ff"},
+ {id:"h2so4",n:"Sulphuric acid 0.5 M",f:"H₂SO₄",g:"Acids",c:{H:1,SO4:.5},col:"#e8f1ff"},
+ {id:"hno3",n:"Nitric acid 1 M",f:"HNO₃",g:"Acids",c:{H:1,NO3:1},col:"#eef7ff"},
+ {id:"hac",n:"Ethanoic (acetic) acid 1 M",f:"CH₃COOH",g:"Acids",c:{HAc:1},col:"#f4fbff"},
+ {id:"naoh",n:"Sodium hydroxide 1 M",f:"NaOH",g:"Bases",c:{Na:1,OH:1},col:"#eef7ff"},
+ {id:"koh",n:"Potassium hydroxide 1 M",f:"KOH",g:"Bases",c:{K:1,OH:1},col:"#eef7ff"},
+ {id:"lime",n:"Lime water",f:"Ca(OH)₂",g:"Bases",c:{Ca:.011,OH:.022},col:"#f3f9ff"},
+ {id:"na2co3",n:"Sodium carbonate 0.5 M",f:"Na₂CO₃",g:"Salts",c:{Na:1,CO3:.5},col:"#f3f9ff"},
+ {id:"nacl",n:"Sodium chloride 1 M",f:"NaCl",g:"Salts",c:{Na:1,Cl:1},col:"#f3f9ff"},
+ {id:"na2so4",n:"Sodium sulphate 0.5 M",f:"Na₂SO₄",g:"Salts",c:{Na:1,SO4:.5},col:"#f3f9ff"},
+ {id:"bacl2",n:"Barium chloride 0.5 M",f:"BaCl₂",g:"Salts",c:{Ba:.5,Cl:1},col:"#f3f9ff"},
+ {id:"agno3",n:"Silver nitrate 0.1 M",f:"AgNO₃",g:"Salts",c:{Ag:.1,NO3:.1},col:"#f3f9ff"},
+ {id:"pbno3",n:"Lead nitrate 0.1 M",f:"Pb(NO₃)₂",g:"Salts",c:{Pb:.1,NO3:.2},col:"#f3f9ff"},
+ {id:"ki",n:"Potassium iodide 0.2 M",f:"KI",g:"Salts",c:{K:.2,I:.2},col:"#f3f9ff"},
+ {id:"cuso4",n:"Copper sulphate 0.5 M",f:"CuSO₄",g:"Salts",c:{Cu:.5,SO4:.5},col:"#4a8df0"},
+ {id:"feso4",n:"Iron(II) sulphate 0.2 M",f:"FeSO₄",g:"Salts",c:{Fe2:.2,SO4:.2},col:"#bfe3bf"},
+ {id:"fecl3",n:"Iron(III) chloride 0.2 M",f:"FeCl₃",g:"Salts",c:{Fe3:.2,Cl:.6},col:"#d9a24a"},
+ {id:"znso4",n:"Zinc sulphate 0.5 M",f:"ZnSO₄",g:"Salts",c:{Zn:.5,SO4:.5},col:"#f3f9ff"},
+ {id:"mgso4",n:"Magnesium sulphate 0.5 M",f:"MgSO₄",g:"Salts",c:{Mg:.5,SO4:.5},col:"#f3f9ff"},
+ {id:"ph",n:"Phenolphthalein",f:"indicator",g:"Indicators",ind:"ph",c:{},col:"#fff"},
+ {id:"mo",n:"Methyl orange",f:"indicator",g:"Indicators",ind:"mo",c:{},col:"#f6a53a"},
+ {id:"ui",n:"Universal indicator",f:"indicator",g:"Indicators",ind:"ui",c:{},col:"#3fae49"},
+ {id:"btb",n:"Bromothymol blue",f:"indicator",g:"Indicators",ind:"btb",c:{},col:"#3a7fd0"},
+ {id:"zn",n:"Zinc granules",f:"Zn",g:"Solids",sol:1,col:SOLCOL.zn},
+ {id:"mg",n:"Magnesium ribbon",f:"Mg",g:"Solids",sol:1,col:SOLCOL.mg},
+ {id:"fe",n:"Iron nails/filings",f:"Fe",g:"Solids",sol:1,col:SOLCOL.fe},
+ {id:"cu",n:"Copper turnings",f:"Cu",g:"Solids",sol:1,col:SOLCOL.cu},
+ {id:"caco3",n:"Marble chips",f:"CaCO₃",g:"Solids",sol:1,col:SOLCOL.caco3},
+ {id:"cuo",n:"Copper(II) oxide",f:"CuO",g:"Solids",sol:1,col:SOLCOL.cuo}
+];
+const APP=[
+ {id:"beaker",n:"Beaker",ic:"🥛",s:"250 mL",k:"cont"},{id:"tube",n:"Test tube",ic:"🧪",s:"20 mL",k:"cont"},
+ {id:"flask",n:"Conical flask",ic:"⚗️",s:"250 mL",k:"cont"},{id:"cyl",n:"Measuring cylinder",ic:"📏",s:"100 mL",k:"cont"},
+ {id:"phm",n:"pH meter",ic:"📟",s:"probe",k:"probe"},{id:"th",n:"Thermometer",ic:"🌡️",s:"probe",k:"probe"},
+ {id:"rl",n:"Red litmus",ic:"🟥",s:"paper",k:"probe"},{id:"bl",n:"Blue litmus",ic:"🟦",s:"paper",k:"probe"},
+ {id:"up",n:"Universal pH paper",ic:"🌈",s:"paper",k:"probe"},{id:"rod",n:"Glass rod",ic:"🥢",s:"stir",k:"probe"},
+ {id:"x1",n:"Burette + stand",ic:"🧴",s:"under construction",k:"uc"},{id:"x2",n:"Bunsen + tripod",ic:"🔥",s:"under construction",k:"uc"},
+ {id:"x3",n:"Evaporating dish",ic:"🥣",s:"under construction",k:"uc"},{id:"x4",n:"Delivery tube",ic:"〰️",s:"under construction",k:"uc"},
+ {id:"x5",n:"Burning splint",ic:"🪵",s:"under construction",k:"uc"},{id:"x6",n:"Glowing splint",ic:"✨",s:"under construction",k:"uc"}
+];
+const LIQ_AMT=[.2,1,5,10,25,50],SOL_AMT=[.1,.5,1,2,5];
+const EXPS=["Acid + metal: hydrogen gas and the pop test","Acid + carbonate: carbon dioxide and lime water","Neutralisation with indicators","Titration: find the molarity of unknown acid X","Metal displacement (Zn/Fe/Cu in salt solutions)","Precipitation reactions of salts","Action of heat on lead nitrate / copper sulphate crystals","Burning magnesium ribbon in air","Slaking of quicklime (very exothermic)","Esterification (ethanol + ethanoic acid)"];
+
+/* ================= UI ================= */
+const $=id=>document.getElementById(id),E=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const ws=$("ws"),state={items:[],sel:null,gog:false,warp:1,armed:null,amtL:5,amtS:.5,pour:null,tool:"app",pan:"insp",q:"",nid:1,counts:{}};
+let toastT;
+function toast(m){const t=$("toast");t.textContent=m;t.classList.add("show");clearTimeout(toastT);toastT=setTimeout(()=>t.classList.remove("show"),2400)}
+function status(m){$("status").textContent=m}
+const byId=id=>state.items.find(i=>i.id==id);
+
+/* theme from parent app */
+function theme(){let t="light";try{const s=JSON.parse(localStorage.getItem("aalimTrackerV2")||"{}");if(s&&s.settings&&s.settings.theme==="dark")t="dark"}catch(e){}document.documentElement.dataset.theme=t}
+theme();setInterval(theme,2000);addEventListener("storage",theme);
+
+/* toolbox */
+function renderTool(){
+ const tb=$("tbody");
+ if(state.tool==="app"){
+  const rows=k=>APP.filter(a=>a.k===k).map(a=>`<div class="card ${a.k==="uc"?"uc":""}" data-app="${a.id}"><span class="ic">${a.ic}</span>${E(a.n)}<small>${E(a.s)}</small></div>`).join("");
+  tb.innerHTML=`<div class="grp">Containers</div><div class="cards">${rows("cont")}</div><div class="grp">Probes &amp; papers (drop on a container)</div><div class="cards">${rows("probe")}</div><div class="grp">Coming soon 🚧</div><div class="cards">${rows("uc")}</div>`;
+ }else{
+  const q=state.q.toLowerCase(),list=CHEM.filter(c=>!q||(c.n+" "+c.f+" "+c.g).toLowerCase().includes(q));
+  let h=`<input class="search" id="q" placeholder="Search chemicals…" value="${E(state.q)}"><div class="amt">Liquid: ${LIQ_AMT.map(a=>`<button data-al="${a}" class="${a===state.amtL?"on":""}">${a} mL</button>`).join("")}</div><div class="amt">Solid: ${SOL_AMT.map(a=>`<button data-as="${a}" class="${a===state.amtS?"on":""}">${a} g</button>`).join("")}</div>`;
+  let g="";for(const c of list){if(c.g!==g){g=c.g;h+=`</div><div class="grp">${g}</div><div class="cards">`}
+   h+=`<div class="card ${state.armed===c.id?"on":""}" data-chem="${c.id}"><span class="sw" style="background:${c.col}"></span>${E(c.n)}<small>${c.f}</small></div>`}
+  tb.innerHTML=h+"</div>";
+  const q2=$("q");if(q2)q2.oninput=e=>{state.q=e.target.value;const p=e.target.selectionStart;renderTool();const n=$("q");n.focus();n.setSelectionRange(p,p)};
+ }
+}
+document.querySelectorAll("[data-tt]").forEach(b=>b.onclick=()=>{state.tool=b.dataset.tt;document.querySelectorAll("[data-tt]").forEach(x=>x.classList.toggle("on",x===b));renderTool()});
+$("tbody").addEventListener("click",e=>{
+ const a=e.target.closest("[data-al]");if(a){state.amtL=+a.dataset.al;renderTool();return}
+ const s=e.target.closest("[data-as]");if(s){state.amtS=+s.dataset.as;renderTool();return}
+});
+
+/* spawn & items */
+function freeX(){const W=ws.clientWidth,xs=state.items.map(i=>i.x);for(let x=Math.min(130,W/4);x<W-60;x+=70){if(xs.every(v=>Math.abs(v-x)>78))return x}return Math.random()*(W-160)+80}
+function spawn(type,x){
+ if(state.items.length>=7){toast("Bench is full. Remove something first.");return}
+ const nm={beaker:"Beaker",tube:"Test tube",flask:"Flask",cyl:"Cylinder"}[type];state.counts[type]=(state.counts[type]||0)+1;
+ const c=newContainer(type,nm+" "+state.counts[type]);c.id=state.nid++;c.x=Math.max(60,Math.min(ws.clientWidth-60,x==null?freeX():x));
+ const d=document.createElement("div");d.className="it "+type;d.dataset.id=c.id;
+ d.innerHTML=`<div class="read"></div><div class="vessel" style="width:${GEO[type].W}px;height:${GEO[type].H}px"><div class="shadow"></div><div class="svgh"></div><div class="bubs"></div></div><div class="lbl">${c.label}</div><div class="flame">🔥</div>`;
+ ws.appendChild(d);c.el=d;state.items.push(c);d.style.left=c.x+"px";hookItem(c);select(c.id);view(c);$("hint").style.display="none";
+}
+function select(id){state.sel=id;state.items.forEach(i=>i.el.classList.toggle("sel",i.id===id));status(id?byId(id).label+" selected":"Tap or drag apparatus onto the bench.");renderPanel(true)}
+function removeItem(c){c.el.remove();state.items=state.items.filter(i=>i!==c);if(state.sel===c.id)state.sel=null;if(!state.items.length)$("hint").style.display="";renderPanel(true)}
+
+/* adding chemicals */
+function addChem(c,ch,silent){
+ if(!state.gog){toast("🥽 Put on your safety goggles first!");return false}
+ if(ch.sol){addSolid(c,ch.id,state.amtS);log(c,state.amtS+" g "+SOLNAME[ch.id].toLowerCase()+" added");}
+ else{const amt=ch.ind?.2:state.amtL;if(!addLiquid(c,ch,amt)){toast(c.label+" is full.");return false}
+  log(c,(ch.ind?"a few drops of ":amt+" mL of ")+ch.n+" added");}
+ if(ch.col&&!ch.sol&&Object.keys(ch.c).length===0&&!ch.ind){}
+ observe(c);view(c);renderPanel(false);return true;
+}
+function attach(c,pid){
+ if(pid==="rod"){c.stir=4;toast("🥢 Stirring "+c.label);log(c,"stirred with a glass rod");return}
+ if(c.probes.includes(pid)){toast("Already in "+c.label);return}
+ c.probes.push(pid);view(c);toast(APP.find(a=>a.id===pid).n+" placed in "+c.label);
+}
+
+/* pointer interactions: cards (drag/tap) */
+let drag=null;
+function ghost(txt){const g=document.createElement("div");g.className="ghost";g.textContent=txt;document.body.appendChild(g);return g}
+function targetAt(x,y){const els=document.elementsFromPoint(x,y);for(const e of els){const it=e.closest&&e.closest(".it");if(it)return byId(it.dataset.id)}return null}
+function inWs(x,y){const r=ws.getBoundingClientRect();return x>=r.left&&x<=r.right&&y>=r.top&&y<=r.bottom}
+$("tbody").addEventListener("pointerdown",e=>{
+ const card=e.target.closest(".card");if(!card)return;
+ drag={card,x0:e.clientX,y0:e.clientY,moved:false,g:null,pid:e.pointerId};
+});
+addEventListener("pointermove",e=>{
+ if(drag&&!drag.item){if(!drag.moved&&Math.hypot(e.clientX-drag.x0,e.clientY-drag.y0)>8){drag.moved=true;
+   const c=drag.card.dataset;const nm=c.app?APP.find(a=>a.id===c.app).n:CHEM.find(x=>x.id===c.chem).n;
+   if(c.app&&APP.find(a=>a.id===c.app).k==="uc"){drag.moved=false;drag.cancel=true}else drag.g=ghost(nm)}
+  if(drag.g){drag.g.style.left=e.clientX+"px";drag.g.style.top=e.clientY+"px";
+   state.items.forEach(i=>i.el.classList.remove("pourable"));let t=targetAt(e.clientX,e.clientY);if(t&&drag.card.dataset.app!==undefined&&APP.find(a=>a.id===drag.card.dataset.app).k==="cont")t=null;if(t)t.el.classList.add("pourable")}}
+ if(drag&&drag.item){const it=drag.item;if(!drag.moved&&Math.hypot(e.clientX-drag.x0,e.clientY-drag.y0)>6){drag.moved=true;it.el.classList.add("drag")}
+  if(drag.moved){const r=ws.getBoundingClientRect();it.x=Math.max(50,Math.min(r.width-50,e.clientX-r.left));it.el.style.left=it.x+"px";
+   const tr=$("trash").getBoundingClientRect();$("trash").classList.toggle("hot",e.clientX>tr.left&&e.clientX<tr.right&&e.clientY>tr.top&&e.clientY<tr.bottom)}}
+});
+addEventListener("pointerup",e=>{
+ if(!drag)return;const d=drag;drag=null;state.items.forEach(i=>i.el.classList.remove("pourable"));
+ if(d.item){d.item.el.classList.remove("drag");const tr=$("trash").getBoundingClientRect();$("trash").classList.remove("hot");
+  if(d.moved){if(e.clientX>tr.left&&e.clientX<tr.right&&e.clientY>tr.top&&e.clientY<tr.bottom){removeItem(d.item);toast("Removed")}return}
+  /* tap on an item */
+  if(state.pour&&state.pour!==d.item){const f=state.pour;state.pour=null;doPour(f,d.item);return}
+  if(state.armed){const ch=CHEM.find(x=>x.id===state.armed);addChem(d.item,ch);select(d.item.id);return}
+  select(d.item.id);return}
+ if(d.g)d.g.remove();
+ const c=d.card.dataset;
+ if(c.app){const a=APP.find(x=>x.id===c.app);
+  if(a.k==="uc"){toast("🚧 "+a.n+" is under construction");return}
+  if(d.moved){const t=targetAt(e.clientX,e.clientY);
+   if(a.k==="cont"){if(inWs(e.clientX,e.clientY)){const r=ws.getBoundingClientRect();spawn(a.id,e.clientX-r.left)}}
+   else if(t){attach(t,a.id);select(t.id)}else toast("Drop it on a container")}
+  else{ if(a.k==="cont")spawn(a.id);
+   else{const t=byId(state.sel)||(state.items.length===1?state.items[0]:null);if(t){attach(t,a.id)}else toast("Select a container first, or drag this onto one")}}
+  return}
+ if(c.chem){const ch=CHEM.find(x=>x.id===c.chem);
+  if(d.moved){const t=targetAt(e.clientX,e.clientY);if(t){addChem(t,ch);select(t.id)}else toast("Drop it onto a container");return}
+  state.armed=state.armed===ch.id?null:ch.id;renderTool();
+  if(state.armed){const amt=ch.sol?state.amtS+" g":ch.ind?"a few drops":state.amtL+" mL";status("Armed: "+ch.n+" ("+amt+"): tap a container to add. Tap the card again to disarm.")}
+  else status("Disarmed.")}
+});
+addEventListener("pointercancel",()=>{if(drag){if(drag.g)drag.g.remove();drag=null}});
+function hookItem(c){c.el.addEventListener("pointerdown",e=>{if(e.target.closest(".read span"))return;drag={item:c,x0:e.clientX,y0:e.clientY,moved:false}})}
+
+/* rendering a container: pseudo-3D glassware drawn as shaded SVG */
+const PAD=46;
+const GEO={
+ beaker:{W:104,H:PAD+132,cx:52,ytop:PAD+10,yb:PAD+112,hw:()=>45,flat:7,ticks:[50,100,150,200]},
+ tube:{W:46,H:PAD+136,cx:23,ytop:PAD+8,yb:PAD+126,hw:y=>{const r=17,s=PAD+126-r;return y<=s?r:Math.sqrt(Math.max(0,r*r-(y-s)*(y-s)))},flat:0,ticks:[]},
+ flask:{W:118,H:PAD+132,cx:59,ytop:PAD+8,yb:PAD+114,hw:y=>{const a=PAD+34;return y<=a?13:13+(y-a)/(PAD+114-a)*(48-13)},flat:8,ticks:[50,100,150,200]},
+ cyl:{W:62,H:PAD+174,cx:31,ytop:PAD+8,yb:PAD+152,hw:()=>16,flat:4,foot:1,ticks:[10,20,30,40,50,60,70,80,90]}
+};
+const f1=n=>n.toFixed(1);
+function polyPts(g,y0){const cx=g.cx,P=[];
+ for(let y=y0;y<g.yb;y+=2)P.push([cx-g.hw(y),y]);
+ P.push([cx-g.hw(g.yb),g.yb]);
+ if(g.flat){const w=g.hw(g.yb);for(let i=0;i<=14;i++){const t=Math.PI*i/14;P.push([cx-w*Math.cos(t),g.yb+g.flat*Math.sin(t)])}}
+ P.push([cx+g.hw(g.yb),g.yb]);
+ for(let y=g.yb-2;y>=y0;y-=2)P.push([cx+g.hw(y),y]);
+ return P.map(p=>f1(p[0])+","+f1(p[1])).join(" ")}
+function levelY(g,vol,cap){if(vol<=0)return g.yb;const fr=Math.min(.97,(8+92*Math.pow(vol/cap,.55))/100);return g.yb-fr*(g.yb-g.ytop)*.96}
+function rgba(rgb,a){return`rgba(${rgb.map(Math.round).join(",")},${a})`}
+function drawVessel(c){
+ const g=GEO[c.type],cx=g.cx,id="g"+c.id,V=c.vol,ys=levelY(g,V,c.cap),has=V>.05;
+ const sc=solnColour(c),lc=rgba(sc.rgb,Math.min(.92,sc.alpha+.12)),surf=rgba(mix(sc.rgb,[255,255,255],.35),Math.min(.95,sc.alpha+.25));
+ let o=`<svg width="${g.W}" height="${g.H}" viewBox="0 0 ${g.W} ${g.H}"><defs>
+<linearGradient id="${id}gh" x1="0" x2="1"><stop offset="0" stop-color="#fff" stop-opacity=".5"/><stop offset=".18" stop-color="#fff" stop-opacity=".08"/><stop offset=".5" stop-color="#fff" stop-opacity=".16"/><stop offset=".82" stop-color="#fff" stop-opacity=".02"/><stop offset="1" stop-color="#fff" stop-opacity=".42"/></linearGradient>
+<linearGradient id="${id}ls" x1="0" x2="1"><stop offset="0" stop-color="#000" stop-opacity=".32"/><stop offset=".28" stop-color="#000" stop-opacity=".02"/><stop offset=".62" stop-color="#fff" stop-opacity=".1"/><stop offset="1" stop-color="#000" stop-opacity=".3"/></linearGradient>
+<linearGradient id="${id}sd" x1="0" x2="1"><stop offset="0" stop-color="#000" stop-opacity=".25"/><stop offset=".4" stop-color="#fff" stop-opacity=".2"/><stop offset="1" stop-color="#000" stop-opacity=".35"/></linearGradient></defs>`;
+ const rxT=g.hw(g.ytop),ryT=rxT*.17;
+ if(g.foot)o+=`<ellipse cx="${cx}" cy="${g.yb+g.flat+3}" rx="26" ry="6" style="fill:rgba(160,175,205,.45);stroke:var(--glassb)" stroke-width="1.5"/>`;
+ o+=`<ellipse cx="${cx}" cy="${g.ytop}" rx="${f1(rxT)}" ry="${f1(ryT)}" fill="none" style="stroke:var(--glassb)" stroke-opacity=".5" stroke-width="1.5"/>`;
+ o+=`<polygon points="${polyPts(g,g.ytop)}" fill="rgba(190,205,235,.12)"/>`;
+ if(has){
+  o+=`<polygon points="${polyPts(g,ys)}" fill="${lc}"/>`;
+  let tr=0,tcol=[255,255,255];const Vl=Math.max(V/1000,1e-4);
+  for(const r of PPT){const p=c.ppt[r.id]||0;if(p>0){const t=1-Math.exp(-c.susp*(p/Vl)*60);tr+=t;tcol=mix(tcol,hx(r.col),Math.min(1,t/(tr||1)))}}
+  if(tr>.01)o+=`<polygon points="${polyPts(g,ys)}" fill="${hex(tcol)}" fill-opacity="${f1(Math.min(.85,tr))}"/>`;
+  let gm=0,pc="#fff";for(const r of PPT){const p=c.ppt[r.id]||0;if(p>0){gm+=p*r.mm;pc=r.col}}
+  const settled=gm*(1-c.susp*.9);
+  if(settled>1e-4){const h=Math.min(36,2+Math.sqrt(settled)*14),yp=g.yb-h;
+   o+=`<polygon points="${polyPts(g,yp)}" fill="${pc}"/><polygon points="${polyPts(g,yp)}" fill="url(#${id}sd)"/>`;
+   const rp=g.hw(yp);o+=`<ellipse cx="${cx}" cy="${f1(yp)}" rx="${f1(rp)}" ry="${f1(Math.max(1.5,rp*.16))}" fill="${pc}" style="filter:brightness(1.08)"/>`}
+  o+=`<polygon points="${polyPts(g,ys)}" fill="url(#${id}ls)"/>`;
+ }
+ /* solids & deposits (3D chunks with highlight) */
+ let n=0;
+ const chunk=(col,i,sz)=>{const w=g.hw(g.yb-4)*1.15,x=cx+(((i*53)%100)/100-.5)*w,y=g.yb-4-(i%3)*4,r=(i*37)%60-30;
+  return `<g transform="translate(${f1(x)} ${f1(y)}) rotate(${r})"><rect x="${-sz}" y="${-sz*.55}" width="${sz*2}" height="${f1(sz*1.1)}" rx="2" fill="${col}" stroke="rgba(0,0,0,.45)" stroke-width=".8"/><rect x="${-sz+1}" y="${f1(-sz*.55+1)}" width="${sz*2-2}" height="1.6" rx=".8" fill="#fff" fill-opacity=".45"/></g>`};
+ for(const k in c.sol){const gg=c.sol[k];if(gg>1e-3){const m=Math.min(8,Math.ceil(gg*2));for(let i=0;i<m;i++)o+=chunk(SOLCOL[k],n++,k==="mg"?6:5)}}
+ for(const k in c.dep){if(c.dep[k]>1e-3){const m=Math.min(6,Math.ceil(c.dep[k]*8));for(let i=0;i<m;i++)o+=chunk(DEPCOL[k],n++,2.6)}}
+ /* probes & papers */
+ let pi=0;
+ for(const p of c.probes){
+  const hw=g.hw(g.ytop+8);
+  if(p==="th"){const x=cx+hw*.45,yt=PAD-34,yb2=g.yb-16,len=yb2-yt,m=Math.max(0,Math.min(1,(c.T-0)/110))*len;
+   o+=`<g transform="rotate(7 ${f1(x)} ${g.ytop})"><rect x="${f1(x-3.5)}" y="${yt}" width="7" height="${f1(len+4)}" rx="3.5" fill="rgba(235,245,255,.7)" stroke="rgba(60,80,120,.7)" stroke-width="1"/><rect x="${f1(x-1.4)}" y="${f1(yb2-m)}" width="2.8" height="${f1(m+2)}" fill="#e11d1d"/><circle cx="${f1(x)}" cy="${yb2+6}" r="5.2" fill="#e11d1d" stroke="rgba(60,80,120,.7)"/>`;
+   for(let t=1;t<7;t++)o+=`<line x1="${f1(x+3.5)}" x2="${f1(x+(t%2?6:8))}" y1="${f1(yt+t*len/7)}" y2="${f1(yt+t*len/7)}" stroke="#334" stroke-width=".8"/>`;
+   o+=`<rect x="${f1(x-2.7)}" y="${yt+2}" width="1.4" height="${f1(len*.9)}" fill="#fff" fill-opacity=".7"/></g>`}
+  else if(p==="phm"){const x=cx-hw*.4,yt=PAD-40,yb2=g.yb-18;
+   o+=`<g transform="rotate(-8 ${f1(x)} ${g.ytop})"><path d="M${f1(x)} ${yt} C ${f1(x-30)} ${yt-14}, ${f1(x-44)} ${yt+30}, ${f1(x-52)} ${yt+10}" fill="none" stroke="#2b2f3a" stroke-width="2.4"/><rect x="${f1(x-6)}" y="${yt}" width="12" height="${f1(g.ytop-yt+12)}" rx="5" fill="#3a4152" stroke="#171a22"/><rect x="${f1(x-3.5)}" y="${f1(g.ytop+12)}" width="7" height="${f1(yb2-g.ytop-12)}" rx="3.5" fill="rgba(200,225,250,.75)" stroke="rgba(60,80,120,.8)"/><ellipse cx="${f1(x)}" cy="${yb2+5}" rx="5.6" ry="6.5" fill="#6aa7e8" stroke="rgba(30,60,110,.9)"/><rect x="${f1(x-4)}" y="${yt+4}" width="2" height="${f1(g.ytop-yt)}" fill="#fff" fill-opacity=".25"/></g>`}
+  else if(p==="rl"||p==="bl"||p==="up"){
+   const x=cx-hw*.55+pi*13+8;pi++;const top=PAD-18,bot=has?Math.min(g.yb-6,ys+16):g.ytop+22,wet=has?Math.max(10,bot-ys+6):0,col=has?paperColour(c,p):"#e9e2cf";
+   o+=`<g transform="rotate(${4+pi*2} ${f1(x)} ${g.ytop})"><rect x="${f1(x-4)}" y="${top}" width="8" height="${f1(bot-top)}" fill="#efe9d7" stroke="rgba(0,0,0,.35)" stroke-width=".7"/><rect x="${f1(x-4)}" y="${f1(bot-wet)}" width="8" height="${f1(wet)}" fill="${col}" stroke="rgba(0,0,0,.25)" stroke-width=".7"/><rect x="${f1(x-3)}" y="${top+1}" width="1.4" height="${f1(bot-top-2)}" fill="#fff" fill-opacity=".55"/></g>`}
+ }
+ /* surface ellipse (liquid top) */
+ if(has){const rs=g.hw(ys);o+=`<ellipse cx="${cx}" cy="${f1(ys)}" rx="${f1(rs)}" ry="${f1(Math.max(1.6,rs*.17))}" fill="${surf}" style="stroke:rgba(255,255,255,.55)" stroke-width="1"/>`}
+ /* glass body, highlights, graduations */
+ o+=`<polygon points="${polyPts(g,g.ytop)}" fill="url(#${id}gh)" style="stroke:var(--glassb)" stroke-width="2" stroke-linejoin="round"/>`;
+ let hl="";for(let y=g.ytop+10;y<g.yb-6;y+=4)hl+=f1(cx-g.hw(y)*.74)+","+f1(y)+" ";
+ o+=`<polyline points="${hl}" fill="none" stroke="#fff" stroke-opacity=".6" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/>`;
+ let hr="";for(let y=g.ytop+14;y<g.yb-10;y+=4)hr+=f1(cx+g.hw(y)*.8)+","+f1(y)+" ";
+ o+=`<polyline points="${hr}" fill="none" stroke="#fff" stroke-opacity=".28" stroke-width="1.4" stroke-linecap="round"/>`;
+ for(const t of g.ticks){const y=levelY(g,t,c.cap),w=g.hw(y),big=g.type==="cyl"?(t%20===0):true;
+  o+=`<line x1="${f1(cx+w-(big?13:8))}" x2="${f1(cx+w-2)}" y1="${f1(y)}" y2="${f1(y)}" style="stroke:var(--glassb)" stroke-width="1.1"/>`;
+  if(big&&c.type!=="flask")o+=`<text x="${f1(cx+w-15)}" y="${f1(y+2.5)}" text-anchor="end" font-size="7" style="fill:var(--glassb)">${t}</text>`}
+ o+=`<ellipse cx="${cx}" cy="${g.ytop}" rx="${f1(rxT)}" ry="${f1(ryT)}" fill="none" style="stroke:var(--glassb)" stroke-width="2.2"/>`;
+ o+=`<ellipse cx="${cx}" cy="${f1(g.ytop+.8)}" rx="${f1(rxT-2)}" ry="${f1(ryT-1)}" fill="none" stroke="#fff" stroke-opacity=".5" stroke-width="1"/>`;
+ return o+"</svg>";
+}
+for(const k in GEO)GEO[k].type=k;
+function view(c){
+ const el=c.el,g=GEO[c.type],host=el.querySelector(".svgh"),svg=drawVessel(c);
+ if(host._s!==svg){host.innerHTML=svg;host._s=svg}
+ const ys=levelY(g,c.vol,c.cap),b=el.querySelector(".bubs"),w=g.hw(Math.min(g.yb-1,Math.max(g.ytop,ys)))*1.5;
+ b.style.cssText=`left:${f1(g.cx-w/2)}px;width:${f1(w)}px;top:${f1(ys)}px;height:${f1(Math.max(0,g.yb-ys))}px;--rise:-${f1(Math.max(0,g.yb-ys))}px`;
+ el.classList.toggle("heat",c.heat);
+}
+function paperColour(c,p){const ph=phOf(c);if(ph==null)return"#ddd";
+ if(p==="rl")return ph>8.3?"#4a63c9":"#d9453d";if(p==="bl")return ph<5?"#d9453d":"#4a63c9";return hex(uiColor(ph))}
+function readouts(c){
+ const ph=phOf(c);let h="";
+ for(const p of c.probes){
+  if(p==="phm")h+=`<span data-rm="${p}" title="tap to remove">pH ${ph==null?"—":ph.toFixed(2)}</span>`;
+  else if(p==="th")h+=`<span data-rm="${p}" title="tap to remove">${c.T.toFixed(1)}°C</span>`;
+  else h+=`<span class="paper" data-rm="${p}" title="tap to remove" style="background:${c.vol>.2?paperColour(c,p):"#ddd"}">${{rl:"R-lit",bl:"B-lit",up:"pH"}[p]}</span>`}
+ const box=c.el.querySelector(".read"),old=box.dataset.h;if(old!==h){box.innerHTML=h;box.dataset.h=h}
+}
+document.addEventListener("click",e=>{const s=e.target.closest(".read span");if(!s)return;const it=e.target.closest(".it"),c=byId(it.dataset.id);c.probes=c.probes.filter(p=>p!==s.dataset.rm);c.el.querySelector(".read").dataset.h="x";readouts(c)});
+
+/* panel */
+const PT=document.querySelectorAll("[data-pt]");
+PT.forEach(b=>b.onclick=()=>{state.pan=b.dataset.pt;PT.forEach(x=>x.classList.toggle("on",x===b));renderPanel(true)});
+function listContents(c){
+ const V=Math.max(c.vol/1000,1e-4),names={H:"H⁺",OH:"OH⁻",HAc:"CH₃COOH",Ac:"CH₃COO⁻",Na:"Na⁺",K:"K⁺",Cu:"Cu²⁺",Ag:"Ag⁺",Ba:"Ba²⁺",Pb:"Pb²⁺",Zn:"Zn²⁺",Fe2:"Fe²⁺",Fe3:"Fe³⁺",Ca:"Ca²⁺",Mg:"Mg²⁺",Cl:"Cl⁻",SO4:"SO₄²⁻",NO3:"NO₃⁻",I:"I⁻",CO3:"CO₃²⁻"};
+ let h="";for(const k in c.sp){const v=c.sp[k];if(v>1e-7)h+=`<div class="row"><span>${names[k]||k}</span><b>${(v/V).toFixed(3)} M</b></div>`}
+ for(const k in c.ppt){const v=c.ppt[k];if(v>1e-6){const r=PPT.find(x=>x.id===k);h+=`<div class="row"><span>${r.n}↓ (solid)</span><b>${(v*r.mm*1000).toFixed(0)} mg</b></div>`}}
+ for(const k in c.sol)if(c.sol[k]>1e-4)h+=`<div class="row"><span>${SOLNAME[k]} (solid)</span><b>${c.sol[k].toFixed(2)} g</b></div>`;
+ for(const k in c.dep)if(c.dep[k]>1e-4)h+=`<div class="row"><span>${k} deposit</span><b>${(c.dep[k]*1000).toFixed(0)} mg</b></div>`;
+ return h||'<div class="muted">Nothing in here yet.</div>';
+}
+function renderPanel(full){
+ const pb=$("pbody");
+ if(state.pan==="insp"){
+  const c=byId(state.sel);
+  if(!c){pb.innerHTML='<div class="muted">Tap a container on the bench to inspect it: volume, temperature, pH, colour and contents.</div>';return}
+  if(full||!$("iv")){
+   pb.innerHTML=`<h3 style="margin:0 0 6px">${E(c.label)}</h3><div class="row"><span>Volume</span><b id="iv"></b></div><div class="row"><span>Temperature</span><b id="it"></b></div><div class="row"><span>pH</span><b id="ip"></b></div><div class="row"><span>Mass of contents</span><b id="im"></b></div><div class="row"><span>Colour</span><b id="ic"></b></div>
+   <div class="acts"><button class="btn" data-a="pour">🫗 Pour into…</button><select id="pf" class="btn"><option value=".25">25%</option><option value=".5">50%</option><option value="1" selected>All</option></select><button class="btn" data-a="empty">Empty</button><button class="btn" data-a="stir">🌀 Stir</button><button class="btn" data-a="waft">👃 Waft</button><button class="btn ${c.heat?"on":""}" data-a="heat">🔥 Heat</button><button class="btn uc" data-a="uc">🔗 Delivery tube <span class="ucb">soon</span></button><button class="btn danger" data-a="rm">Remove</button></div>
+   <div class="grp" style="margin-top:6px">Contents</div><div id="ico"></div>`;
+  }
+  const sc=solnColour(c),ph=phOf(c);
+  let mass=c.vol;for(const k in c.sol)mass+=c.sol[k];
+  $("iv").textContent=c.vol.toFixed(1)+" mL";$("it").textContent=c.T.toFixed(1)+" °C";$("ip").textContent=ph==null?"—":ph.toFixed(2);$("im").textContent=mass.toFixed(1)+" g";
+  $("ic").innerHTML=`<span class="sw2" style="background:${hex(sc.rgb)}"></span>${c.vol>.2?cname(sc.rgb):"empty"}`;
+  $("ico").innerHTML=listContents(c);
+ }else if(state.pan==="obs"){
+  if(!full&&!window._obsDirty)return;window._obsDirty=false;
+  pb.innerHTML=`<div class="acts" style="margin-top:0"><button class="btn danger" data-a="clearobs">Clear log</button></div>`+(OBS.length?OBS.slice().reverse().map(o=>`<div class="ob">${E(o.text)}<small>${E(o.c)} · ${Math.round(o.t)} s</small></div>`).join(""):'<div class="muted">Observations appear here automatically as things happen: precipitates, colour changes, gas, heat.</div>');
+ }else if(state.pan==="rx"){
+  if(!full&&!window._rxDirty)return;window._rxDirty=false;
+  pb.innerHTML=RX.size?[...RX.values()].map(r=>`<div class="rx"><small>${E(r.name)}</small><b>${E(r.eq)}</b>${r.ion?`<small>Ionic: ${E(r.ion)}</small>`:""}</div>`).join(""):'<div class="muted">Balanced and ionic equations appear here for every reaction you carry out.</div>';
+ }else if(state.pan==="exp"){
+  if(!full)return;
+  pb.innerHTML=`<div class="rx"><b>🚧 Guided experiments: under construction</b><small>These NCERT-style experiments with one-tap "Set up bench" are coming soon:</small></div>`+EXPS.map((e,i)=>`<div class="ob uc">${i+1}. ${E(e)} <span class="ucb">soon</span></div>`).join("");
+ }else if(state.pan==="nb"){
+  if(!full)return;renderNotebook();
+ }
+}
+const NBK="aalimChemLab",nbGet=()=>{try{return JSON.parse(localStorage.getItem(NBK))||[]}catch(e){return[]}};
+function renderNotebook(){
+ const a=nbGet();
+ $("pbody").innerHTML=`<input class="t" id="nt" placeholder="Title, e.g. Zn + HCl"><textarea id="nn" rows="2" placeholder="My notes / conclusion (optional)" style="margin-top:6px"></textarea><div class="acts"><button class="btn on" data-a="savenb">📓 Save current observations</button></div>`+
+ (a.length?a.map((x,i)=>`<div class="rx"><b>${E(x.t)}</b><small>${E(x.d)}</small>${x.n?`<div>${E(x.n)}</div>`:""}<ul style="margin:6px 0 0;padding-left:18px">${x.o.map(o=>`<li>${E(o)}</li>`).join("")}</ul>${x.r.length?`<small>Equations:</small><ul style="margin:2px 0 0;padding-left:18px">${x.r.map(o=>`<li>${E(o)}</li>`).join("")}</ul>`:""}<div class="acts"><button class="btn danger" data-a="delnb" data-i="${i}">Delete</button></div></div>`).join(""):'<div class="muted">Saved experiments will show here. They are kept on this device.</div>');
+}
+$("pbody").addEventListener("click",e=>{
+ const b=e.target.closest("[data-a]");if(!b)return;const a=b.dataset.a,c=byId(state.sel);
+ if(a==="clearobs"){OBS.length=0;renderPanel(true);return}
+ if(a==="savenb"){const t=($("nt").value||"Experiment").trim(),n=$("nn").value.trim();
+  if(!OBS.length&&!RX.size){toast("Do a reaction first, then save it.");return}
+  const arr=nbGet();arr.unshift({t,n,d:new Date().toLocaleString("en-IN"),o:OBS.slice(-25).map(o=>o.c+": "+o.text),r:[...RX.values()].slice(-8).map(r=>r.eq)});
+  try{localStorage.setItem(NBK,JSON.stringify(arr.slice(0,60)))}catch(er){toast("Could not save (storage full?)")}renderNotebook();toast("Saved to notebook");return}
+ if(a==="delnb"){const arr=nbGet();arr.splice(+b.dataset.i,1);try{localStorage.setItem(NBK,JSON.stringify(arr))}catch(er){}renderNotebook();return}
+ if(!c)return;
+ if(a==="uc"){toast("🚧 Delivery tube is under construction");return}
+ if(a==="pour"){if(state.items.length<2){toast("Place a second container to pour into");return}state.pour=c;c.el.classList.add("sel");toast("Tap the container to pour into");status("Pouring from "+c.label+": tap the target container");return}
+ if(a==="empty"){c.vol=0;c.sp={};c.ind={};c.sol={};c.ppt={};c.dep={};c.susp=0;c.T=25;c.gasRate=0;c.last={ppt:{},sol:{},dep:{},gas:false,T:25,neut:false,col:[200,225,245],cname:"colourless"};view(c);renderPanel(true);toast(c.label+" emptied");return}
+ if(a==="stir"){c.stir=4;log(c,"stirred");toast("🌀 Stirring");return}
+ if(a==="waft"){const V=c.vol/1000;let m="No noticeable smell.";if(c.vol<.2)m="Nothing to smell: it is empty.";else if(Z(c,"HAc")/V>.1)m="A sharp vinegar-like smell (ethanoic acid).";else if(c.gasType==="H2"&&c.gasRate>0)m="Hydrogen has no smell.";log(c,"wafted: "+m);toast("👃 "+m);return}
+ if(a==="heat"){c.heat=!c.heat;b.classList.toggle("on",c.heat);view(c);toast(c.heat?"🔥 Heating "+c.label:"Heater off");return}
+ if(a==="rm"){removeItem(c);return}
+});
+function doPour(a,b){if(a.vol<.05){toast("Nothing to pour");return}const f=+(($("pf")||{value:1}).value);const amt=pourTo(a,b,f);a.el.classList.remove("sel");
+ if(amt<=0)toast(b.label+" is full");else{log(b,"poured "+amt.toFixed(1)+" mL from "+a.label);toast("Poured "+amt.toFixed(1)+" mL into "+b.label)}view(a);view(b);observe(b);observe(a);select(b.id)}
+
+/* top bar */
+$("gogBtn").onclick=()=>{state.gog=!state.gog;$("gogBtn").textContent="🥽 Goggles: "+(state.gog?"ON":"OFF");$("gogBtn").classList.toggle("on",state.gog);toast(state.gog?"Goggles on. Safe to handle chemicals.":"Goggles off.")};
+document.querySelectorAll("[data-w]").forEach(b=>b.onclick=()=>{state.warp=+b.dataset.w;document.querySelectorAll("[data-w]").forEach(x=>x.classList.toggle("on",x===b))});
+$("resetBtn").onclick=()=>{if(state.items.length&&!confirm("Clear everything from the bench?"))return;state.items.slice().forEach(removeItem);OBS.length=0;RX.clear();state.counts={};state.pour=null;renderPanel(true);window._obsDirty=window._rxDirty=true};
+
+/* main loop: 10 Hz */
+let lastT=performance.now();
+setInterval(()=>{
+ const now=performance.now(),real=Math.min(.5,(now-lastT)/1000);lastT=now;const dt=real*state.warp;simTime+=dt;
+ for(const c of state.items){
+  if(c.vol>0||Object.keys(c.sol).length)tickContainer(c,dt);
+  view(c);readouts(c);
+  const rate=c.gasRate||0;if(rate>0){let n=Math.min(4,rate/1.2e-4*(.6+Math.random()));n=Math.floor(n)+(Math.random()<n%1?1:0);
+   const liq=c.el.querySelector(".bubs");if(liq.children.length<45)for(let i=0;i<n;i++){const b=document.createElement("span"),z=3+Math.random()*5;b.className="bub";b.style.cssText=`left:${6+Math.random()*84}%;width:${z}px;height:${z}px;animation-duration:${(.9+Math.random()*.8)/Math.sqrt(state.warp)}s`;b.onanimationend=()=>b.remove();liq.appendChild(b)}}
+ }
+ renderPanel(false);
+},100);
+renderTool();renderPanel(true);
+window.LAB={state,spawn,addChem,CHEM,tickContainer,view,select};
+</script>
+</body>
+</html>

@@ -3797,7 +3797,7 @@ function navInit() {
 }
 setTimeout(navInit, 0);
 /* ===== Version label ===== */
-const APP_VERSION = "v38"; // keep in step with CACHE in sw.js
+const APP_VERSION = "v41"; // keep in step with CACHE in sw.js
 function paintVer() { ["appVer", "appVer2"].forEach(id => { const el = $(id); if (el)
     el.textContent = APP_VERSION + (navigator.onLine ? "" : " · offline"); }); }
 window.addEventListener("online", paintVer);
@@ -4155,43 +4155,6 @@ safeRun(function seedReading() {
 window.__appBooted = true;
 </script>
 <style>
-.vl{display:grid;grid-template-columns:minmax(260px,380px) 1fr;gap:15px}
-@media(max-width:760px){.vl{grid-template-columns:1fr}}
-.vstage{position:relative;height:380px;border-radius:16px;background:radial-gradient(ellipse at 50% 30%,#2a3558,#10162a 70%);overflow:hidden;display:flex;justify-content:center;align-items:flex-end;padding-bottom:120px}
-.vstage:after{content:"";position:absolute;left:0;right:0;bottom:0;height:46px;background:linear-gradient(#8a5a33,#5e3b1f);border-top:3px solid #a8744a;z-index:3}
-.vtri{position:absolute;bottom:46px;left:50%;width:190px;height:74px;margin-left:-95px;border:4px solid #8d96a8;border-bottom:0;border-radius:6px 6px 0 0;z-index:1}
-.vbk{position:relative;width:150px;height:200px;border:3px solid #cfe4ff99;border-top:0;border-radius:0 0 22px 22px;background:linear-gradient(90deg,#ffffff22,#ffffff08 40%,#ffffff1a);overflow:hidden;z-index:2;box-shadow:inset 0 0 18px #ffffff22}
-.vbk:before{content:"";position:absolute;right:12px;top:10px;bottom:34px;width:14px;background:repeating-linear-gradient(#ffffff66 0 2px,transparent 2px 24px);z-index:3}
-.vliq{position:absolute;left:0;right:0;bottom:0;height:var(--h,0%);transition:height .9s ease,background 1.1s;background:rgba(170,210,255,.28)}
-.vliq:before{content:"";position:absolute;top:-4px;left:0;right:0;height:8px;background:inherit;border-radius:50%;filter:brightness(1.25)}
-.vcl{position:absolute;inset:0;opacity:0;transition:opacity 1.5s}
-.vpt{position:absolute;left:0;right:0;bottom:0;height:0;transition:height 3s ease;border-radius:50% 50% 0 0/30% 30% 0 0;box-shadow:0 -2px 10px #fff4}
-.vb{position:absolute;bottom:0;border-radius:50%;border:1.5px solid #fffc;background:#ffffff40;animation:vrise linear forwards}
-@keyframes vrise{to{bottom:96%;opacity:.2}}
-.vsol{position:absolute;left:0;right:0;bottom:0;height:80px;z-index:2}
-.vs{position:absolute;bottom:2px;width:16px;height:10px;border-radius:3px;transition:background 2s;animation:vdrop .4s}
-.vs.fe{width:7px;height:78px;bottom:0;border-radius:3px 3px 0 0}.vs.mg{width:54px;height:4px;transform:rotate(-14deg)}
-@keyframes vdrop{from{transform:translateY(-30px);opacity:0}}
-.vstream{position:absolute;top:20px;left:50%;width:6px;margin-left:-3px;height:0;border-radius:3px;opacity:0;z-index:4;transition:height .25s,opacity .2s}.vstream.on{opacity:1}
-.vfall{position:absolute;top:20px;width:12px;height:12px;border-radius:3px;z-index:4;animation:vfall .6s ease-in forwards}
-@keyframes vfall{to{top:230px;opacity:.1}}
-.vfl{position:absolute;bottom:50px;left:50%;width:34px;height:0;margin-left:-17px;background:radial-gradient(ellipse at 50% 80%,#fff 0,#7cc7ff 35%,#ff9a1f 70%,transparent 72%);border-radius:50% 50% 40% 40%;opacity:0;transition:.3s;z-index:1}
-.vfl.on{height:58px;opacity:1;animation:vfk .15s infinite alternate}@keyframes vfk{to{transform:scale(.9,1.08)}}
-.vsm{position:absolute;left:50%;top:6px;width:80px;margin-left:-40px;height:50px;opacity:0;transition:opacity .6s;z-index:3}.vsm.on{opacity:1}
-.vsm i{position:absolute;bottom:0;width:18px;height:18px;border-radius:50%;background:#fff5;filter:blur(5px);animation:vsmk 2s infinite}.vsm i:nth-child(2){left:30px;animation-delay:.6s}.vsm i:nth-child(3){left:58px;animation-delay:1.2s}
-@keyframes vsmk{to{transform:translateY(-44px) scale(1.8);opacity:0}}
-.vflash:after{content:"";position:absolute;inset:0;background:#fff;animation:vfl 1.3s ease-out forwards;z-index:4}@keyframes vfl{from{opacity:.95}to{opacity:0}}
-.vshake{animation:vsh .4s}@keyframes vsh{25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
-.vswirl .vliq{animation:vsw 1s}@keyframes vsw{25%{transform:skewX(4deg)}75%{transform:skewX(-4deg)}}
-.vpopfx{position:absolute;right:16%;top:16%;font-size:46px;z-index:5;animation:vpp .8s ease-out forwards}@keyframes vpp{from{transform:scale(.3)}60%{transform:scale(1.3)}to{transform:scale(1.5);opacity:0}}
-.vro{display:flex;gap:12px;align-items:center;margin-top:10px;flex-wrap:wrap}.vro b{font-size:22px;font-variant-numeric:tabular-nums}
-.vph{position:relative;flex:1;min-width:140px;height:12px;border-radius:99px;background:linear-gradient(90deg,#ff1f1f,#ff9a1f,#ffd21f,#3fbf5a,#2a9fd8,#6a3fc8)}.vph i{position:absolute;top:-4px;left:50%;width:4px;height:20px;background:var(--text);border-radius:2px;transition:left .8s}
-.vg{display:grid;grid-template-columns:repeat(auto-fill,minmax(135px,1fr));gap:7px;margin-bottom:12px}
-.vg button{display:flex;gap:7px;align-items:center;text-align:left;padding:8px;border-radius:10px;border:1px solid var(--border);background:var(--bg);color:var(--text);font-size:12px;font-weight:700;transition:transform .12s}.vg button:hover{transform:translateY(-2px)}.vg small{color:var(--muted);font-weight:600}
-.vg button.on{border-color:var(--accent2);box-shadow:0 0 0 2px #7c3aed33}
-.sw{width:14px;height:14px;border-radius:50%;border:1px solid #0003;flex:none}
-.vin{animation:vi .4s}@keyframes vi{from{opacity:0;transform:translateY(6px)}}
-#vRes .insight{animation:vi .5s}
 .aiThink{display:flex;align-items:center;gap:8px;padding:12px 14px;margin:8px 0;border-radius:12px;background:linear-gradient(90deg,var(--ringbg) 25%,transparent 50%,var(--ringbg) 75%) 0 0/200% 100%;animation:aiSh 1.1s linear infinite;font-weight:700;color:var(--muted)}
 .aiThink i{width:8px;height:8px;border-radius:50%;background:var(--accent2);animation:aiDot .9s infinite}.aiThink i:nth-child(2){animation-delay:.15s}.aiThink i:nth-child(3){animation-delay:.3s}
 @keyframes aiSh{to{background-position:-200% 0}}@keyframes aiDot{50%{transform:translateY(-6px);opacity:.4}}
@@ -4203,98 +4166,11 @@ window.__appBooted = true;
 <script>
 (function(){
 const $=id=>document.getElementById(id),E=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
-const CL="#eef7ff";
-const LQ=[["hcl","Hydrochloric acid","HCl","#dff0ff","Corrosive acid"],["h2so4","Sulphuric acid","H₂SO₄","#e8f1ff","Strong, corrosive acid"],["naoh","Sodium hydroxide","NaOH",CL,"Caustic base"],["cuso4","Copper sulphate","CuSO₄","#3d8bff",""],["agno3","Silver nitrate","AgNO₃",CL,"Stains skin black"],["nacl","Sodium chloride","NaCl",CL,""],["bacl2","Barium chloride","BaCl₂",CL,"Toxic"],["na2so4","Sodium sulphate","Na₂SO₄",CL,""],["ki","Potassium iodide","KI",CL,""],["pbno3","Lead nitrate","Pb(NO₃)₂",CL,"Toxic"],["lime","Lime water","Ca(OH)₂",CL,""],["water","Distilled water","H₂O","#cfe6ff",""]];
-const SO=[["zn","Zinc granules","Zn","#aeb8c4"],["mg","Magnesium ribbon","Mg","#d9dde2"],["fe","Iron nail","Fe","#6b6f78"],["caco3","Marble chips","CaCO₃","#f1ece0"]];
-const IN=[["ph","Phenolphthalein"],["mo","Methyl orange"],["ui","Universal indicator"],["lt","Blue litmus"]];
-const RULES=[
-{n:["zn","hcl"],e:"Zn + 2HCl → ZnCl₂ + H₂↑",t:"Displacement",o:"Brisk fizzing of a colourless, odourless gas. Try the 💥 pop test.",b:3,g:"H₂"},
-{n:["zn","h2so4"],e:"Zn + H₂SO₄ → ZnSO₄ + H₂↑",t:"Displacement",o:"Steady bubbles of hydrogen gas. Try the 💥 pop test.",b:2.5,g:"H₂"},
-{n:["mg","hcl"],e:"Mg + 2HCl → MgCl₂ + H₂↑",t:"Displacement",o:"Very fast fizzing and the beaker warms up (exothermic).",b:4,g:"H₂",hot:14},
-{n:["mg","heat"],e:"2Mg + O₂ → 2MgO",t:"Combination (oxidation)",o:"Dazzling white flame; white ash of magnesium oxide is left.",flash:1,ppt:"#f2f2f2"},
-{n:["caco3","hcl"],e:"CaCO₃ + 2HCl → CaCl₂ + H₂O + CO₂↑",t:"Double displacement",o:"Effervescence; the gas puts out a burning splinter. Add lime water to test it.",b:2,g:"CO₂"},
-{n:["caco3","hcl","lime"],e:"Ca(OH)₂ + CO₂ → CaCO₃↓ + H₂O",t:"Test for CO₂",o:"The lime water turns milky.",ppt:"#f5f5f0"},
-{n:["hcl","naoh"],e:"HCl + NaOH → NaCl + H₂O",t:"Neutralisation",o:"Solution warms up (exothermic). Add an indicator, tick on dropper mode and find the end point.",hot:9},
-{n:["h2so4","naoh"],e:"H₂SO₄ + 2NaOH → Na₂SO₄ + 2H₂O",t:"Neutralisation",o:"Solution warms up (exothermic). Acid is dibasic: it needs 2 units of base per unit of acid.",hot:10},
-{n:["cuso4","fe"],e:"Fe + CuSO₄ → FeSO₄ + Cu",t:"Displacement",o:"Blue colour fades to pale green; reddish-brown copper coats the iron nail.",sol:"#b9e0b5",coat:"#b4602f"},
-{n:["cuso4","zn"],e:"Zn + CuSO₄ → ZnSO₄ + Cu",t:"Displacement",o:"Blue colour fades; brown copper deposits on the zinc.",sol:"#e6f3ff",coat:"#9c5a30"},
-{n:["agno3","nacl"],e:"AgNO₃ + NaCl → AgCl↓ + NaNO₃",t:"Double displacement (precipitation)",o:"White curdy precipitate of silver chloride.",ppt:"#fafafa"},
-{n:["bacl2","na2so4"],e:"BaCl₂ + Na₂SO₄ → BaSO₄↓ + 2NaCl",t:"Double displacement (precipitation)",o:"Thick white precipitate of barium sulphate.",ppt:"#ffffff"},
-{n:["pbno3","ki"],e:"Pb(NO₃)₂ + 2KI → PbI₂↓ + 2KNO₃",t:"Double displacement (precipitation)",o:"Bright yellow precipitate of lead iodide.",ppt:"#ffd60a"},
-{n:["cuso4","naoh"],e:"CuSO₄ + 2NaOH → Cu(OH)₂↓ + Na₂SO₄",t:"Double displacement (precipitation)",o:"Pale blue gelatinous precipitate of copper hydroxide.",ppt:"#7ec0ff",sol:"#dcefff"}];
-const TRY=["Neutralisation: add HCl, then phenolphthalein, then NaOH with dropper mode on. Stop at the first pink.","Metal + acid: add HCl, then Zinc, then do the 💥 pop test.","Displacement: add copper sulphate, then an iron nail. Watch the colour.","Precipitates: lead nitrate + potassium iodide gives 'golden' yellow.","Burn magnesium: add the ribbon, switch the 🔥 burner on."];
-let S,gog=false,dr=false;
-function fresh(){S={it:new Set,u:{},ind:null,lv:0,ppt:null,pc:0,gas:null,b:0,heat:false,temp:25,hot:0,sol:null,coat:null,fired:new Set,last:null,end:0}}
-fresh();
-function say(t){const m=$("vMsg");m.textContent=t;m.classList.remove("vin");void m.offsetWidth;m.classList.add("vin")}
-function phNow(){const a=(S.u.hcl||0)+2*(S.u.h2so4||0),b=(S.u.naoh||0)+.5*(S.u.lime||0),n=Math.round((a-b)*100)/100;if(!n)return 7;const m=Math.abs(n);const p=m>=1?(n>0?Math.max(.5,1.5-.4*(m-1)):Math.min(13.5,12.5+.4*(m-1))):(n>0?7-5.5*Math.pow(m,.35):7+5.5*Math.pow(m,.35));return Math.round(p*10)/10}
-function indCol(p){const i=S.ind;if(!i)return null;if(i==="ph")return p>=8.2?"#ff2d95":null;if(i==="mo")return p<3.1?"#ff3b30":p<4.4?"#ff9500":"#ffd60a";if(i==="lt")return p<5?"#e53935":"#3a5bd9";const U=["#ff1f1f","#ff1f1f","#ff3d1f","#ff7a1f","#ffb41f","#d8e61f","#9ad63a","#3fbf5a","#1fb5a0","#2a9fd8","#2a6fd8","#4a4fd0","#6a3fc8","#7a2fc0","#8a1fb0"];return U[Math.max(0,Math.min(14,Math.round(p)))]}
-function paint(){
-  const p=phNow(),liq=$("vLiq"),c=indCol(p)||S.sol||(S.it.has("cuso4")?"#3d8bff":null);
-  liq.style.setProperty("--h",S.lv+"%");liq.style.background=c?c+"cc":"rgba(170,210,255,.28)";
-  $("vPpt").style.height=S.pc?"34px":"0";$("vPpt").style.background=S.ppt||"transparent";$("vCl").style.background=S.ppt||"transparent";
-  document.querySelectorAll("#vSol .vs.fe,#vSol .vs.zn").forEach(e=>e.style.background=S.coat||e.dataset.c);
-  $("vPh").textContent=S.lv?p.toFixed(1):"—";$("vMk").style.left=(S.lv?p/14*100:50)+"%";
-  document.querySelectorAll("#vlab [data-i]").forEach(b=>b.classList.toggle("on",b.dataset.i===S.ind));
-  const neu=S.lv&&S.it.has("naoh")&&(S.it.has("hcl")||S.it.has("h2so4"))&&p===7;
-  if(neu&&!S.end){S.end=1;say("⚖️ End point! Perfectly neutral, pH 7.")}if(!neu)S.end=0;
-}
-function fire(i,r){
-  S.fired.add(i);S.last=r;if(r.b)S.b=Math.max(S.b,r.b);if(r.g)S.gas=r.g;if(r.hot)S.hot=Math.max(S.hot,r.hot);
-  if(r.sol)S.sol=r.sol;if(r.coat)S.coat=r.coat;
-  if(r.ppt){S.ppt=r.ppt;S.pc=1;const cl=$("vCl");cl.style.opacity=.75;setTimeout(()=>cl.style.opacity=.12,2500)}
-  if(r.flash){const k=$("vBk");k.classList.remove("vflash");void k.offsetWidth;k.classList.add("vflash")}
-  $("vRes").innerHTML=`<div class="insight"><b style="font-size:17px">${E(r.e)}</b> <span class="pill">${E(r.t)}</span><div style="margin:6px 0">👀 ${E(r.o)}</div><button type="button" class="action" onclick="vl.save()">📓 Save to notebook</button></div>`;
-  say("Reaction! "+r.t);paint();
-}
-function check(){RULES.forEach((r,i)=>{if(S.fired.has(i))return;if(r.n.every(x=>x==="heat"?S.heat:S.it.has(x)))fire(i,r)})}
-function shake(){const s=$("vStage");s.classList.remove("vshake");void s.offsetWidth;s.classList.add("vshake")}
-function stream(col){const st=$("vStream");st.style.background=col;st.style.height=Math.max(30,240-2*S.lv)+"px";st.classList.add("on");setTimeout(()=>{st.classList.remove("on");st.style.height="0"},dr?250:520)}
-function add(id){
-  if(!gog){shake();say("🥽 Put on your safety goggles first!");return}
-  const l=LQ.find(x=>x[0]===id),s=SO.find(x=>x[0]===id);
-  if(l){const d=dr?3:14,u=dr?.25:1;if(S.lv+d>92){say("The beaker is full. Empty it with 🧹");return}
-    stream(l[3]===CL?"#cfe6ff":l[3]);S.it.add(id);S.u[id]=(S.u[id]||0)+u;
-    setTimeout(()=>{S.lv+=d;paint();check();say(l[4]?"⚠ "+l[1]+": "+l[4]+". Handle with care.":l[1]+" added.")},dr?200:450)}
-  else if(s){const f=document.createElement("div");f.className="vfall";f.style.background=s[3];f.style.left="calc(50% + "+(Math.random()*40-20)+"px)";$("vStage").appendChild(f);setTimeout(()=>f.remove(),650);
-    S.it.add(id);S.u[id]=(S.u[id]||0)+1;
-    setTimeout(()=>{const c=document.createElement("i");c.className="vs "+id;c.dataset.c=s[3];c.style.background=s[3];c.style.left=(14+Math.random()*80)+"px";$("vSol").appendChild(c);paint();check();say(s[1]+" added.")},500)}
-}
-function ind(k){if(!gog){shake();say("🥽 Put on your safety goggles first!");return}S.ind=k;stream("#ffffff");paint();say(IN.find(x=>x[0]===k)[1]+" added: a few drops.")}
-function heat(){S.heat=!S.heat;$("vFl").classList.toggle("on",S.heat);$("vHeat").classList.toggle("active",S.heat);check();say(S.heat?"🔥 Burner on.":"Burner off.")}
-function stir(){const s=$("vStage");s.classList.remove("vswirl");void s.offsetWidth;s.classList.add("vswirl");say("🌀 Stirring…")}
-function pop(){const g=S.gas;if(!g){say("No gas collected yet.");return}const f=document.createElement("div");f.className="vpopfx";f.textContent=g==="H₂"?"💥":"🕯️";$("vStage").appendChild(f);setTimeout(()=>f.remove(),850);say(g==="H₂"?"Squeaky pop! The gas is hydrogen.":"The flame goes out. The gas is carbon dioxide.")}
-function reset(){fresh();$("vSol").innerHTML="";$("vLiq").querySelectorAll(".vb").forEach(x=>x.remove());$("vFl").classList.remove("on");$("vHeat").classList.remove("active");$("vRes").innerHTML="";$("vCl").style.opacity=0;paint();say("Bench cleaned. Fresh beaker ready.")}
-function goggles(){gog=!gog;$("vGog").classList.toggle("active",gog);$("vGog").textContent="🥽 Goggles: "+(gog?"ON":"OFF");say(gog?"Goggles on. Safe to start.":"Goggles off.")}
-function dropper(){dr=!dr;$("vDr").classList.toggle("active",dr);$("vDr").textContent="💧 Dropper mode: "+(dr?"ON":"OFF")}
-const NB="aalimVlab",nb=()=>{try{return JSON.parse(localStorage.getItem(NB))||[]}catch(e){return[]}};
-function save(){if(!S.last)return;const a=nb();a.unshift({d:new Date().toLocaleDateString("en-IN"),e:S.last.e,t:S.last.t,o:S.last.o});try{localStorage.setItem(NB,JSON.stringify(a.slice(0,100)))}catch(e){}notebook();say("📓 Saved to your notebook.")}
-function del(i){const a=nb();a.splice(i,1);try{localStorage.setItem(NB,JSON.stringify(a))}catch(e){}notebook()}
-function notebook(){const a=nb();$("vNb").innerHTML=a.length?a.map((x,i)=>`<div class="insight"><div class="row" style="padding:0"><b>${E(x.e)}</b><span><span class="pill">${E(x.t)}</span> <button type="button" class="danger" onclick="vl.del(${i})">✕</button></span></div><div class="muted" style="font-size:13px">${E(x.d)} · ${E(x.o)}</div></div>`).join(""):'<div class="muted">No saved reactions yet. Do an experiment and press Save.</div>'}
-function tick(){
-  const pg=$("vlab");if(!pg||!pg.classList.contains("active"))return;
-  const tg=S.heat?90:25+S.hot;S.temp+=S.temp<tg?Math.min(1.5,tg-S.temp):-Math.min(.4,S.temp-tg);S.hot*=.99;
-  $("vT").textContent=Math.round(S.temp)+"°C";$("vSm").classList.toggle("on",S.temp>60&&S.lv>0);
-  let n=S.lv?S.b+(S.heat&&S.temp>70?1.5:0):0;n=Math.min(5,Math.floor(n)+(Math.random()<n%1?1:0));
-  for(let k=0;k<n;k++){const b=document.createElement("span"),z=3+Math.random()*7;b.className="vb";b.style.cssText=`left:${5+Math.random()*88}%;width:${z}px;height:${z}px;animation-duration:${1.2+Math.random()}s`;b.onanimationend=()=>b.remove();$("vLiq").appendChild(b)}
-  S.b=Math.max(0,S.b-.012);
-}
 function init(){
   const sec=document.createElement("section");sec.id="vlab";sec.className="page";
-  const bt=x=>`<button type="button" onclick="vl.add('${x[0]}')" title="${E(x[1])}"><span class="sw" style="background:${x[3]}"></span><span>${E(x[1])}<br><small>${x[2]}</small></span></button>`;
-  sec.innerHTML=`<div class="card"><h2>🧪 Virtual Chemistry Lab</h2><p class="muted">A free, offline lab for Class 10 Science: Chemical Reactions, Acids-Bases-Salts and Metals. Put on your goggles, pick a chemical and watch what happens. Nothing here needs internet.</p>
-<div class="vl"><div><div class="vstage" id="vStage"><div class="vstream" id="vStream"></div><div class="vsm" id="vSm"><i></i><i></i><i></i></div><div class="vbk" id="vBk"><div class="vliq" id="vLiq"><div class="vcl" id="vCl"></div><div class="vpt" id="vPpt"></div></div><div class="vsol" id="vSol"></div></div><div class="vtri"></div><div class="vfl" id="vFl"></div></div>
-<div class="vro"><span>pH <b id="vPh">—</b></span><div class="vph"><i id="vMk"></i></div><span>🌡 <b id="vT">25°C</b></span></div><div id="vMsg" class="muted" style="margin-top:8px;min-height:22px;font-weight:600">Put on your goggles to begin.</div></div>
-<div><div class="tabs" style="margin-top:0"><button type="button" id="vGog" onclick="vl.goggles()">🥽 Goggles: OFF</button><button type="button" id="vDr" onclick="vl.dropper()">💧 Dropper mode: OFF</button><button type="button" id="vHeat" onclick="vl.heat()">🔥 Burner</button><button type="button" onclick="vl.stir()">🌀 Stir</button><button type="button" onclick="vl.pop()">💥 Pop test</button><button type="button" onclick="vl.reset()">🧹 Clean</button></div>
-<div class="small" style="margin:6px 0">Liquids</div><div class="vg">${LQ.map(bt).join("")}</div><div class="small" style="margin:6px 0">Solids</div><div class="vg">${SO.map(bt).join("")}</div>
-<div class="small" style="margin:6px 0">Indicators</div><div class="vg">${IN.map(x=>`<button type="button" data-i="${x[0]}" onclick="vl.ind('${x[0]}')"><span>${x[1]}</span></button>`).join("")}</div>
-<details><summary class="muted" style="cursor:pointer">Try these experiments</summary><ol class="muted" style="line-height:1.6;padding-left:20px">${TRY.map(t=>`<li>${E(t)}</li>`).join("")}</ol></details></div></div>
-<div id="vRes" style="margin-top:12px"></div></div>
-<div class="card"><h2>📓 My Lab Notebook</h2><div id="vNb"></div></div>`;
+  sec.innerHTML='<div class="card" style="padding:0;overflow:hidden"><iframe id="vlabFrame" title="Virtual Chemistry Lab" style="width:100%;height:calc(100vh - 150px);min-height:640px;border:0;display:block"></iframe></div>';
   document.querySelector("main").appendChild(sec);
-  notebook();setInterval(tick,200);
 }
-window.vl={add,ind,heat,stir,pop,reset,goggles,dropper,save,del};
 if(window.safeRun)safeRun(init);else init();
 /* "AI" suggestions: thinking shimmer, then a staggered reveal */
 function aiReveal(){
@@ -4304,7 +4180,7 @@ function aiReveal(){
   Ls.classList.remove("aiGo");Ls.style.display="none";Ls.before(t);
   setTimeout(()=>{t.remove();Ls.style.display="";[...Ls.children].forEach((c,i)=>c.style.setProperty("--i",i));Ls.classList.add("aiGo");setTimeout(()=>Ls.classList.remove("aiGo"),2600)},750);
 }
-const sp=window.showPage;window.showPage=function(id){sp.apply(this,arguments);if(id==="today")aiReveal()};
+const sp=window.showPage;window.showPage=function(id){sp.apply(this,arguments);if(id==="today")aiReveal();if(id==="vlab"){const f=$("vlabFrame");if(f&&!f.getAttribute("src")){fetch("chemlab.html",{cache:"no-cache"}).then(r=>{if(!r.ok)throw new Error(r.status);f.src="chemlab.html"}).catch(()=>{const box=f.parentNode;if(box)box.innerHTML='<div style="padding:22px;line-height:1.5"><b>🧪 The Virtual Lab file was not found.</b><br>Upload <code>chemlab.html</code> to the same folder as <code>index.html</code> (the name must be all lowercase), then reload the app.</div>'})}}};
 })();
 </script>
 
