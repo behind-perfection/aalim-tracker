@@ -5,8 +5,8 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>Virtual Chemistry Lab</title>
 <style>
-:root{--bg:#eef2fb;--pan:#ffffff;--tx:#18203a;--mut:#667191;--bd:#d6ddf0;--acc:#3b5bdb;--acc2:#7c3aed;--ok:#16a34a;--bad:#dc2626;--chip:#eef1fb;--ws1:#f7faff;--ws2:#dfe9fb;--bench1:#b98a5a;--bench2:#8a5a33;--glass:rgba(255,255,255,.35);--glassb:#7e8fb5}
-[data-theme=dark]{--bg:#0e1320;--pan:#161c2d;--tx:#e6eaf3;--mut:#9aa6bd;--bd:#2a3349;--acc:#6b8bff;--acc2:#a78bfa;--chip:#222b42;--ws1:#1a2340;--ws2:#0f1630;--bench1:#7a5530;--bench2:#4d3219;--glass:rgba(255,255,255,.1);--glassb:#8ea0c9}
+:root{--bg:#eef2fb;--pan:#ffffff;--tx:#18203a;--mut:#667191;--bd:#d6ddf0;--acc:#3b5bdb;--acc2:#7c3aed;--ok:#16a34a;--bad:#dc2626;--chip:#eef1fb;--ws1:#f7faff;--ws2:#dfe9fb;--wall1:#e6edf8;--wall2:#c9d6ec;--bench1:#b98a5a;--bench2:#8a5a33;--glass:rgba(255,255,255,.35);--glassb:#7e8fb5}
+[data-theme=dark]{--bg:#0e1320;--pan:#161c2d;--tx:#e6eaf3;--mut:#9aa6bd;--bd:#2a3349;--acc:#6b8bff;--acc2:#a78bfa;--chip:#222b42;--ws1:#1a2340;--ws2:#0f1630;--wall1:#232c48;--wall2:#161d36;--bench1:#7a5530;--bench2:#4d3219;--glass:rgba(255,255,255,.1);--glassb:#8ea0c9}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html,body{-webkit-user-select:none;user-select:none;-webkit-touch-callout:none;margin:0;height:100%;background:var(--bg);color:var(--tx);font:14px/1.4 system-ui,-apple-system,Segoe UI,Roboto,sans-serif}
 button{font:inherit;color:inherit;cursor:pointer}
@@ -35,37 +35,100 @@ button{font:inherit;color:inherit;cursor:pointer}
 .card:active{transform:translateY(2px);box-shadow:0 1px 0 rgba(0,0,0,.14)}
 .card .ic{font-size:22px;line-height:1;filter:drop-shadow(0 3px 2px rgba(0,0,0,.3))}
 .card small{color:var(--mut);font-size:11px}
+.card.bot{min-height:128px;gap:3px;justify-content:flex-start;padding-top:6px}.card.bot .bsvg{height:100px;display:flex;align-items:flex-end;justify-content:center}.card.bot .bsvg svg{width:54px;height:84px;filter:drop-shadow(0 4px 3px rgba(0,0,0,.28))}
+.ghost.bt{background:none;box-shadow:none;padding:0;transform:translate(-50%,-70%) rotate(-12deg)}.ghost.bt svg{width:48px;height:75px;filter:drop-shadow(0 8px 6px rgba(0,0,0,.4))}
 .card.on{border-color:var(--acc2);box-shadow:0 0 0 2px var(--acc2) inset}
 .card.uc{border-style:dashed}
 .card .sw{width:16px;height:16px;border-radius:50%;border:1px solid var(--glassb)}
 .ghost{position:fixed;z-index:50;pointer-events:none;padding:6px 10px;background:var(--acc);color:#fff;border-radius:10px;font-weight:700;transform:translate(-50%,-120%);box-shadow:0 6px 18px #0005;font-size:12px}
-.ws{grid-area:ws;position:relative;overflow:hidden;background:radial-gradient(ellipse at 50% 100%,#ffffff22,transparent 60%),linear-gradient(var(--ws1),var(--ws2));min-height:0;touch-action:none;perspective:900px}
-.bench{position:absolute;left:0;right:0;bottom:0;height:58px;overflow:hidden;background:linear-gradient(var(--bench1),var(--bench2));box-shadow:inset 0 10px 16px #00000050,0 -6px 14px #0000001f}
-.bench::before{content:"";position:absolute;left:-60%;right:-60%;top:0;bottom:0;background:repeating-linear-gradient(90deg,#00000022 0 2px,#ffffff10 2px 4px,transparent 4px 56px);transform:perspective(120px) rotateX(38deg);transform-origin:50% 100%}
-.bench::after{content:"";position:absolute;left:0;right:0;bottom:0;height:13px;background:linear-gradient(#e6bd8a,#c99560 35%,#5a3519 36%,#3f240f);box-shadow:0 -2px 0 #ffffff55 inset}
-.trash{position:absolute;right:10px;top:10px;width:58px;height:58px;border:2px dashed var(--mut);border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:24px;color:var(--mut);opacity:.7}
+.ws{grid-area:ws;position:relative;overflow:hidden;background:radial-gradient(ellipse at 50% 100%,#ffffff22,transparent 60%),linear-gradient(var(--ws1),var(--ws2));min-height:0;touch-action:none;}
+.wall{position:absolute;left:0;right:0;top:0;height:var(--wallh,24%);background:linear-gradient(#0000,#0003),repeating-linear-gradient(0deg,#0000 0 38px,#0000001a 38px 40px),repeating-linear-gradient(90deg,#0000 0 58px,#0000001a 58px 60px),linear-gradient(var(--wall1),var(--wall2));pointer-events:none;box-shadow:inset 0 -12px 20px #0003}
+.bench{position:absolute;left:0;right:0;bottom:0;top:calc(var(--wallh,24%) - 6px);overflow:hidden;background:linear-gradient(var(--bench2),var(--bench1) 30%,var(--bench1) 70%,var(--bench2));box-shadow:inset 0 14px 22px #00000066;pointer-events:none}
+.bench::before{content:"";position:absolute;left:-70%;right:-70%;top:0;bottom:0;background:repeating-linear-gradient(90deg,#00000026 0 2px,#ffffff12 2px 4px,transparent 4px 64px),repeating-linear-gradient(0deg,#0000 0 60px,#0000000f 60px 62px);transform:perspective(520px) rotateX(46deg);transform-origin:50% 100%}
+.bench::after{content:"";position:absolute;left:0;right:0;bottom:0;height:12px;background:linear-gradient(#e6bd8a,#c99560 35%,#5a3519 36%,#3f240f);box-shadow:0 -2px 0 #ffffff55 inset}
+.trash{z-index:5;position:absolute;right:10px;top:10px;width:58px;height:58px;border:2px dashed var(--mut);border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:24px;color:var(--mut);opacity:.7}
 .trash.hot{background:#dc262633;border-color:var(--bad);opacity:1}
-.hint{position:absolute;left:50%;top:38%;transform:translate(-50%,-50%);text-align:center;color:var(--mut);max-width:70%;pointer-events:none}
+.hint{z-index:1;position:absolute;left:50%;top:38%;transform:translate(-50%,-50%);text-align:center;color:var(--mut);max-width:70%;pointer-events:none}
 .hint b{display:block;font-size:16px;margin-bottom:4px}
 .toast{position:absolute;left:50%;top:10px;transform:translateX(-50%);background:#111827ee;color:#fff;padding:8px 14px;border-radius:10px;z-index:30;max-width:80%;text-align:center;opacity:0;transition:opacity .2s;pointer-events:none}
 .toast.show{opacity:1}
-.status{position:absolute;left:10px;top:10px;font-size:12px;color:var(--mut);background:var(--pan);border:1px solid var(--bd);padding:4px 8px;border-radius:8px;max-width:60%}
-.it{position:absolute;bottom:58px;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;touch-action:none;cursor:grab;user-select:none;-webkit-user-select:none}
+.status{z-index:5;position:absolute;left:10px;top:10px;font-size:12px;color:var(--mut);background:var(--pan);border:1px solid var(--bd);padding:4px 8px;border-radius:8px;max-width:60%}
+.it{position:absolute;left:0;top:0;transform-origin:50% 100%;display:flex;flex-direction:column;align-items:center;touch-action:none;cursor:grab;user-select:none;-webkit-user-select:none}
 .it.sel svg{filter:drop-shadow(0 0 3px var(--acc2)) drop-shadow(0 0 6px var(--acc2))}
-.it.drag{z-index:20;cursor:grabbing}
+.it.drag{cursor:grabbing}
 .it.drag .vessel{transform:translateY(-8px) scale(1.04)}
 .it.drag .shadow{transform:scale(1.25);opacity:.5}
 .it.pourable svg{filter:drop-shadow(0 0 4px var(--ok)) drop-shadow(0 0 8px var(--ok))}
-.vessel{position:relative;transition:transform .15s}
+.it.mounted .lbl,.it.mounted .shadow{display:none}
+.it.tilt .vessel{transform:rotate(-24deg);transform-origin:50% 92%}
+.it.burning .vessel{filter:brightness(1.7) drop-shadow(0 0 16px #fff)}
+.it.lit .vessel{filter:drop-shadow(0 0 16px #5aa7ff88)}
+.vessel{position:relative;transition:transform .15s,filter .15s}
 .vessel svg{display:block;overflow:visible;position:absolute;left:0;top:0}
-.svgh{position:absolute;inset:0}
-.shadow{position:absolute;left:8%;right:8%;bottom:-7px;height:16px;border-radius:50%;background:radial-gradient(ellipse at center,rgba(0,0,0,.55),rgba(0,0,0,.18) 55%,transparent 72%);transition:transform .15s,opacity .15s;pointer-events:none}
+.svgh,.rodl{position:absolute;inset:0}
+.rodl{pointer-events:none}.rodl .rodhit{pointer-events:stroke}
+.shadow{position:absolute;left:6%;right:6%;bottom:6px;height:16px;border-radius:50%;background:radial-gradient(ellipse at center,rgba(0,0,0,.6),rgba(0,0,0,.2) 55%,transparent 72%);transition:transform .15s,opacity .15s;pointer-events:none}
 .bubs{position:absolute;overflow:hidden;pointer-events:none}
 .bub{position:absolute;border-radius:50%;background:radial-gradient(circle at 30% 30%,#fff,#ffffffaa 45%,#ffffff44);border:1px solid #ffffffcc;animation:rise 1.4s linear forwards;bottom:0}
 @keyframes rise{to{transform:translateY(var(--rise,-100px));opacity:.1}}
+.flb,.fly{display:none;transform-box:fill-box;transform-origin:50% 100%}
+.it.lit .flb{display:block;opacity:var(--ob,1);animation:flick .16s infinite alternate}
+.it.lit .fly{display:block;opacity:var(--oy,0);animation:flick .28s infinite alternate}
+@keyframes flick{from{transform:scale(1,calc(var(--fh,1)*.93)) skewX(-2deg)}to{transform:scale(.96,calc(var(--fh,1)*1.06)) skewX(2deg)}}
+.it.stirring .rodl{animation:stirrod .55s linear infinite}
+@keyframes stirrod{0%{transform:translate(0,0)}25%{transform:translate(9px,2px)}50%{transform:translate(0,4px)}75%{transform:translate(-9px,2px)}100%{transform:translate(0,0)}}
+.rodl .sw{display:none}.it.stirring .rodl .sw{display:block;animation:swd .6s linear infinite}
+@keyframes swd{to{stroke-dashoffset:-32}}
+.plume{position:absolute;height:12px;border-radius:50%;background:radial-gradient(ellipse at 50% 25%,var(--c),transparent 70%);filter:blur(3px);opacity:var(--a);animation:plume 2.4s ease-out forwards;pointer-events:none}
+@keyframes plume{0%{opacity:var(--a);transform:scale(.5,.5)}100%{opacity:0;transform:translateY(52px) scale(1.3,4.5)}}
+.steam{position:absolute;width:14px;height:14px;border-radius:50%;background:radial-gradient(circle,#ffffffcc,#ffffff00 70%);filter:blur(2px);animation:steam 1.8s ease-out forwards;pointer-events:none}
+@keyframes steam{from{opacity:.8;transform:translate(0,0) scale(.6)}to{opacity:0;transform:translate(8px,-58px) scale(2.2)}}
+.pbot{position:absolute;left:0;top:0;width:64px;height:100px;transform-origin:32px 10px;z-index:900;pointer-events:none;opacity:0;transition:transform .45s cubic-bezier(.3,.7,.3,1),opacity .3s;filter:drop-shadow(0 8px 6px rgba(0,0,0,.35))}
+.stream{position:absolute;width:5px;z-index:899;pointer-events:none;border-radius:3px;background:linear-gradient(90deg,#ffffff88,var(--c),#ffffff55);opacity:.9;box-shadow:0 0 3px #ffffff88}
+.drop{position:absolute;z-index:899;width:6px;height:9px;border-radius:50% 50% 50% 50%/60% 60% 40% 40%;background:var(--c);border:1px solid #ffffffaa;pointer-events:none;animation:fall .55s cubic-bezier(.5,0,1,.6) forwards}
+.grain{position:absolute;z-index:899;width:4px;height:4px;border-radius:1px;pointer-events:none;border:1px solid #0004;animation:fall .5s cubic-bezier(.5,0,1,.6) forwards}
+@keyframes fall{to{transform:translateY(var(--d))}}
+.fr{position:absolute;touch-action:none;cursor:grab;filter:drop-shadow(2px 6px 3px rgba(0,0,0,.4))}
+.fr.held{cursor:grabbing}
+.fr.rod{width:14px;height:150px;transform-origin:7px 148px;transform:translate(-7px,-148px) rotate(24deg)}
+.fr.ribbon{width:84px;height:30px;transform:translate(-80px,-16px)}
+.fr.nail{width:64px;height:16px;transform:translate(-32px,-8px) rotate(-8deg)}
+.fr .gl{position:absolute;left:-40px;top:-28px;width:96px;height:96px;border-radius:50%;background:radial-gradient(circle,#fff 0,#fff 22%,#dfeaffaa 46%,transparent 70%);opacity:0;pointer-events:none}
+.fr.burning .gl{opacity:1;animation:glare .1s infinite alternate}
+@keyframes glare{from{transform:scale(.9)}to{transform:scale(1.18)}}
+.fr.burning{filter:drop-shadow(0 0 22px #fff) drop-shadow(0 0 44px #cfe4ff)}
+.ash{position:absolute;width:3px;height:3px;border-radius:50%;background:#f6f6f2;z-index:871;pointer-events:none;animation:fall .75s cubic-bezier(.5,0,1,.6) forwards}
+.vessel svg.tongs{display:none;position:absolute;left:8px;top:76px;pointer-events:none;overflow:visible}
+.it.inflame .vessel svg.tongs{display:block}
+.swl{position:absolute;border:2px dashed rgba(255,255,255,.85);border-radius:50%;display:none;pointer-events:none}
+.it.stirring .swl{display:block;animation:swr .5s linear infinite}
+@keyframes swr{to{transform:rotate(360deg)}}
+.fume{position:absolute;width:16px;height:16px;border-radius:50%;background:radial-gradient(circle,rgba(150,70,20,.75),rgba(150,70,20,0) 70%);filter:blur(2px);animation:steam 1.8s ease-out forwards;pointer-events:none}
+.ws.hand,.ws.hand .it{cursor:none}
+#hc{display:none;position:absolute;font-size:34px;pointer-events:none;z-index:999;transform:translate(-14px,-22px);filter:drop-shadow(0 4px 3px rgba(0,0,0,.4))}
+.sunwin{position:absolute;left:5%;top:9%;width:96px;height:calc(var(--wallh,24%)*.64);border:5px solid #8a6a3a;background:linear-gradient(#bfe4ff,#eaf7ff);box-shadow:inset 0 0 12px #fff,0 3px 8px #0004;pointer-events:none;display:grid;grid-template:1fr 1fr/1fr 1fr;gap:4px}
+.sunwin i{background:#dff1ff99}
+.beam{position:absolute;left:5%;top:calc(var(--wallh,24%)*.7);width:44%;bottom:0;pointer-events:none;background:linear-gradient(180deg,rgba(255,236,150,.55),rgba(255,236,150,.16));clip-path:polygon(0 0,22% 0,100% 100%,40% 100%)}
+.dtl{position:absolute;inset:0;width:100%;height:100%;z-index:860;pointer-events:none;overflow:visible}
+.dtl .ea,.dtl .eb{pointer-events:auto;cursor:grab}
+.elx{position:absolute;left:0;top:0;width:220px;height:192px;pointer-events:none}.elx .swt{pointer-events:all;cursor:pointer}
+.lev{transform-origin:100px 176px;transform:rotate(-42deg);transition:transform .15s}.it.on .lev{transform:rotate(0)}
+.it.inv .vessel{transform:scaleY(-1)}.it.inv.drag .vessel{transform:scaleY(-1) translateY(8px) scale(1.04)}
+.it.pouring .vessel{transform:rotate(var(--tilt,0deg));transform-origin:50% 28%}
+.it{pointer-events:none}.it .vessel,.it .lbl,.it .read>span{pointer-events:auto}
+.mt{position:absolute;width:16px;height:124px;transform-origin:8px 8px;transform:translate(-8px,-8px) rotate(-30deg);z-index:880;cursor:grab;touch-action:none;filter:drop-shadow(2px 6px 3px rgba(0,0,0,.4))}
+.mt.held{cursor:grabbing}.mt.lit{filter:drop-shadow(0 0 10px #ffb340) drop-shadow(2px 6px 3px rgba(0,0,0,.4))}
+.mfl{display:none;transform-box:fill-box;transform-origin:50% 100%}
+.mt.lit .mfl{display:block;animation:mflick .12s infinite alternate}
+@keyframes mflick{from{transform:scale(calc(var(--fs,1)*.92),calc(var(--fs,1)*.88))}to{transform:scale(calc(var(--fs,1)*1.05),calc(var(--fs,1)*1.08))}}
+.mt.lit .memb{opacity:1}
+.mtray{cursor:grab}.tap{cursor:pointer}
+.gw{display:none}.it.gas:not(.lit) .gw{display:block;animation:gw 1s ease-out infinite}
+@keyframes gw{from{opacity:.9;transform:translateY(0)}to{opacity:0;transform:translateY(-16px)}}
+.tapH{transition:transform .2s;transform-box:fill-box;transform-origin:center}.it.gas .tapH{transform:rotate(90deg)}
 .lbl{font-size:11px;font-weight:700;background:var(--pan);border:1px solid var(--bd);border-radius:6px;padding:1px 6px;margin-top:3px;white-space:nowrap}
 .read{display:flex;gap:3px;flex-wrap:wrap;justify-content:center;max-width:150px;margin-bottom:3px;min-height:4px}
-.read span{font-size:11px;font-weight:700;padding:1px 6px;border-radius:6px;background:#111827;color:#a7f3d0;font-family:ui-monospace,Menlo,monospace;cursor:pointer}
+.read span.rodchip{background:#374151;color:#e5e7eb}.read span{font-size:11px;font-weight:700;padding:1px 6px;border-radius:6px;background:#111827;color:#a7f3d0;font-family:ui-monospace,Menlo,monospace;cursor:pointer}
 .read span.paper{color:#111;border:1px solid #0004;min-width:34px;text-align:center}
 .flame{position:absolute;bottom:-26px;font-size:22px;display:none;animation:fl .3s infinite alternate}
 .it.heat .flame{display:block}
@@ -106,51 +169,53 @@ textarea,input.t{width:100%;padding:7px 9px;border:1px solid var(--bd);border-ra
   <h1>🧪 <span class="long">Virtual Chemistry Lab</span></h1>
   <button class="btn" id="gogBtn">🥽 Goggles: OFF</button>
   <div class="warp"><span>Time</span><button class="btn on" data-w="1">×1</button><button class="btn" data-w="2">×2</button><button class="btn" data-w="5">×5</button><button class="btn" data-w="10">×10</button></div>
-  <button class="btn danger" id="resetBtn">🧹 Clear bench</button>
+  <button class="btn danger" id="resetBtn">🧹 Clear table</button>
  </div>
  <div class="tool">
   <div class="tabs"><button class="on" data-tt="app">Apparatus</button><button data-tt="chem">Chemicals</button></div>
   <div class="tbody" id="tbody"></div>
  </div>
- <div class="ws" id="ws">
+ <div class="ws" id="ws"><div class="wall"></div><div class="bench"></div><div class="sunwin"><i></i><i></i><i></i><i></i></div><div class="beam"></div><div id="hc">✋</div>
   <div class="status" id="status">Tap or drag apparatus onto the bench.</div>
-  <div class="hint" id="hint"><b>Your bench is empty</b>Tap a beaker or test tube to place it. Put on your goggles, then drag a chemical onto it (or tap a chemical to arm it, then tap the container).</div>
+  <div class="hint" id="hint"><b>Your lab table is empty</b>Tap or drag glassware onto the table, and move things anywhere you like. Put on your goggles, then drag a reagent bottle onto a container to pour it (or tap a bottle, then tap the container).</div>
   <div class="trash" id="trash">🗑️</div>
-  <div class="bench"></div>
+  
   <div class="toast" id="toast"></div>
  </div>
  <div class="pan">
-  <div class="tabs" id="ptabs"><button class="on" data-pt="insp">Inspect</button><button data-pt="obs">Observations</button><button data-pt="rx">Reactions</button><button data-pt="exp">Experiments</button><button data-pt="nb">Notebook</button></div>
+  <div class="tabs" id="ptabs"><button class="on" data-pt="insp">Inspect</button><button data-pt="obs">Observations</button><button data-pt="rx">Reactions</button><button data-pt="exp">Activities</button><button data-pt="nb">Notebook</button></div>
   <div class="pbody" id="pbody"></div>
  </div>
 </div>
 
 <script>
-"use strict";
 /* ================= CHEMISTRY ENGINE (pure functions on container objects) ================= */
 const KW=1e-14,KA_HAC=1.8e-5,KA1=4.5e-7,KA2=4.7e-11;
 const SUB={"0":"₀","1":"₁","2":"₂","3":"₃","4":"₄","5":"₅","6":"₆","7":"₇","8":"₈","9":"₉"};
 const sub=n=>String(n).split("").map(d=>SUB[d]||d).join("");
 const gcd=(a,b)=>b?gcd(b,a%b):a, lcm=(a,b)=>a*b/gcd(a,b);
 const co=n=>n===1?"":String(n);
-const CATZ={Na:1,K:1,Ag:1,Cu:2,Ba:2,Pb:2,Zn:2,Fe2:2,Fe3:3,Ca:2,Mg:2};
-const CATS={Na:"Na",K:"K",Ag:"Ag",Cu:"Cu",Ba:"Ba",Pb:"Pb",Zn:"Zn",Fe2:"Fe",Fe3:"Fe",Ca:"Ca",Mg:"Mg"};
+const CATZ={NH4:1,Na:1,K:1,Ag:1,Cu:2,Ba:2,Pb:2,Zn:2,Fe2:2,Fe3:3,Ca:2,Mg:2};
+const CATS={NH4:"NH₄",Na:"Na",K:"K",Ag:"Ag",Cu:"Cu",Ba:"Ba",Pb:"Pb",Zn:"Zn",Fe2:"Fe",Fe3:"Fe",Ca:"Ca",Mg:"Mg"};
 const ANS={Cl:{f:"Cl",z:1,acid:"HCl",h:1},NO3:{f:"NO₃",z:1,acid:"HNO₃",h:1},SO4:{f:"SO₄",z:2,acid:"H₂SO₄",h:2},Ac:{f:"CH₃COO",z:1,acid:"CH₃COOH",h:1}};
 function part(f,n){return n===1?f:(f.length>2&&/[₀-₉]|[A-Z].*[A-Z]/.test(f)?"("+f+")":f)+sub(n)}
 function salt(cat,an){const z1=CATZ[cat],z2=ANS[an].z,g=gcd(z1,z2);return {f:part(CATS[cat],z2/g)+part(ANS[an].f,z1/g),ncat:z2/g}}
 function domAnion(c){const s=c.sp,v={Cl:s.Cl||0,NO3:s.NO3||0,SO4:s.SO4||0,Ac:(s.Ac||0)+(s.HAc||0)};let b="Cl",m=-1;for(const k in v)if(v[k]>m){m=v[k];b=k}return b}
-const MM={zn:65.4,mg:24.3,fe:55.8,cu:63.5,caco3:100.1,cuo:79.5};
-const SOLCOL={zn:"#9aa7b3",mg:"#d6dade",fe:"#5d6168",cu:"#b8733a",caco3:"#efe9dc",cuo:"#1c1c1c"};
-const SOLNAME={zn:"Zinc",mg:"Magnesium",fe:"Iron",cu:"Copper",caco3:"Marble chips",cuo:"Copper(II) oxide"};
+const MM={zn:65.4,mg:24.3,fe:55.8,cu:63.5,caco3:100.1,cuo:79.5,mgo:40.3,nail:55.8,na:23,cao:56.1,feso4s:278,feso4a:151.9,fe2o3:159.7,pbn:331.2,pbo:223.2,agcl:143.3,agbr:187.8,ag:107.9,baoh2:315.5,nh4cl:53.5,k2so4:174.3,nh4no3:80,cuso4a:159.6};
+const SOLCOL={zn:"#9aa7b3",mg:"#d6dade",fe:"#5d6168",cu:"#b8733a",caco3:"#efe9dc",cuo:"#1c1c1c",mgo:"#f4f4ee",nail:"#5d6168",na:"#b9bdc4",cao:"#f4f1e8",feso4s:"#8fc08f",feso4a:"#e6e6dc",fe2o3:"#8a3b1c",pbn:"#f3f3f0",pbo:"#e8b020",agcl:"#f6f6f4",agbr:"#f2ecc8",ag:"#6e7076",baoh2:"#f2f2f2",nh4cl:"#f6f6f6",k2so4:"#f6f6f6",nh4no3:"#f6f6f6",cuso4a:"#f4f4f2"};
+const SOLNAME={zn:"Zinc",mg:"Magnesium",fe:"Iron",cu:"Copper",caco3:"Marble chips",cuo:"Copper(II) oxide",mgo:"Magnesium oxide (white ash)",nail:"Iron nail",na:"Sodium",cao:"Calcium oxide (quicklime)",feso4s:"Ferrous sulphate crystals",feso4a:"Anhydrous ferrous sulphate",fe2o3:"Iron(III) oxide",pbn:"Lead nitrate",pbo:"Lead(II) oxide",agcl:"Silver chloride",agbr:"Silver bromide",ag:"Silver",baoh2:"Barium hydroxide",nh4cl:"Ammonium chloride",k2so4:"Potassium sulphate",nh4no3:"Ammonium nitrate",cuso4a:"Anhydrous copper sulphate"};
 const DEPCOL={Cu:"#b8733a",Ag:"#cfd2da",Pb:"#7a7a85",Fe:"#5a5a60",Zn:"#9aa7b3"};
 const DEPWORD={Cu:"reddish-brown",Ag:"silvery",Pb:"grey",Fe:"dark grey",Zn:"grey"};
 const DEPMM={Cu:63.5,Ag:107.9,Pb:207.2,Fe:55.8,Zn:65.4};
-const RANK={mg:0,zn:1,fe:2,cu:4};
-const CATSOL={mg:"Mg",zn:"Zn",fe:"Fe2",cu:"Cu"};
+const RANK={mg:0,zn:1,fe:2,nail:2,cu:4};
+const CATSOL={mg:"Mg",zn:"Zn",fe:"Fe2",nail:"Fe2",cu:"Cu"};
 const DEPOF={Ag:["Ag",5,1],Cu:["Cu",4,2],Pb:["Pb",3,2],Fe2:["Fe",2,2],Zn:["Zn",1,2]}; // cation key -> [deposit symbol, rank, charge]
-const KDISP={mg:.02,zn:.006,fe:.001,cu:.004};
-const KACID={mg:.02,zn:.003,fe:.0004};
-const QACID={mg:467e3,zn:153e3,fe:87e3};
+const KDISP={mg:.02,zn:.006,fe:.001,nail:.0009,cu:.004};
+const KACID={mg:.02,zn:.003,fe:.0004,nail:.0003};
+const QACID={mg:467e3,zn:153e3,fe:87e3,nail:87e3};
+const DISS={k2so4:{ion:{K:2,SO4:1},dH:26e3,eq:"K₂SO₄(s) → 2K⁺(aq) + SO₄²⁻(aq)  (dissolving, almost no temperature change)"},
+ nh4no3:{ion:{NH4:1,NO3:1},dH:25.7e3,eq:"NH₄NO₃(s) → NH₄⁺(aq) + NO₃⁻(aq)  (endothermic: the solution gets colder)"},
+ cuso4a:{ion:{Cu:1,SO4:1},dH:-66.5e3,eq:"CuSO₄(s) + aq → Cu²⁺(aq) + SO₄²⁻(aq)  (exothermic: white powder turns blue)"}};
 const PPT=[
  {id:"AgCl",n:"AgCl",a:"Ag",na:1,b:"Cl",nb:1,ksp:1.8e-10,col:"#f6f6f6",cw:"white curdy",mm:143.3,eq:"AgNO₃ + NaCl → AgCl↓ + NaNO₃",ion:"Ag⁺ + Cl⁻ → AgCl↓"},
  {id:"AgI",n:"AgI",a:"Ag",na:1,b:"I",nb:1,ksp:8e-17,col:"#f2e04a",cw:"yellow",mm:234.8,eq:"AgNO₃ + KI → AgI↓ + KNO₃",ion:"Ag⁺ + I⁻ → AgI↓"},
@@ -166,18 +231,18 @@ const PPT=[
  {id:"CaOH2",n:"Ca(OH)₂",a:"Ca",na:1,b:"OH",nb:2,ksp:5.5e-6,col:"#f6f6f6",cw:"white",mm:74.1,hyd:1,eq:"CaCl₂ + 2NaOH → Ca(OH)₂↓ + 2NaCl",ion:"Ca²⁺ + 2OH⁻ → Ca(OH)₂↓"},
  {id:"CaCO3",n:"CaCO₃",a:"Ca",na:1,b:"CO3",nb:1,ksp:3.3e-9,col:"#fbfbfb",cw:"white (milky)",mm:100.1,carb:1,eq:"Ca(OH)₂ + Na₂CO₃ → CaCO₃↓ + 2NaOH",ion:"Ca²⁺ + CO₃²⁻ → CaCO₃↓"}
 ];
-const HYD=[["Cu",5e-8],["Zn",1e-9],["Fe2",1e-8],["Fe3",1e-3],["Pb",1e-8],["Mg",1e-11]];
+const HYD=[["Cu",5e-8],["Zn",1e-9],["Fe2",1e-8],["Fe3",1e-3],["Pb",1e-8],["Mg",1e-11],["NH4",5.6e-10]];
 const Z=(c,k)=>c.sp[k]||0;
 
 function newContainer(type,label){
- const cap={beaker:250,tube:20,flask:250,cyl:100}[type];
- return {id:0,type,label,cap,vol:0,T:25,sp:{},ind:{},sol:{},ppt:{},dep:{},susp:0,gasRate:0,gasType:"",heat:false,stir:0,probes:[],neut:0,
-  last:{ppt:{},sol:{},dep:{},gas:false,T:25,neut:false,col:[200,225,245],cname:"colourless"}};
+ const cap={beaker:250,tube:20,flask:250,cyl:100,btube:30,dish:150,watch:40,mug:500}[type];
+ return {id:0,type,label,cap,vol:0,T:25,sp:{},ind:{},sol:{},ppt:{},dep:{},susp:0,gasRate:0,gasType:"",heat:false,heatW:0,boil:false,flash:0,disp:null,mount:null,gh:{},q:{},sunE:0,inv:false,cork:false,stirE:0,drops:0,stir:0,probes:[],neut:0,
+  last:{ppt:{},sol:{},dep:{},gs:{},gas:false,T:25,neut:false,col:[200,225,245],cname:"colourless"}};
 }
 /* pH from charge balance (bisection in log h) */
 function phOf(c){
  const V=c.vol/1000;if(V<2e-4)return null;
- const pos0=Z(c,"Na")+Z(c,"K")+Z(c,"Ag")+2*(Z(c,"Cu")+Z(c,"Ba")+Z(c,"Pb")+Z(c,"Zn")+Z(c,"Fe2")+Z(c,"Ca")+Z(c,"Mg"))+3*Z(c,"Fe3");
+ const pos0=Z(c,"NH4")+Z(c,"Na")+Z(c,"K")+Z(c,"Ag")+2*(Z(c,"Cu")+Z(c,"Ba")+Z(c,"Pb")+Z(c,"Zn")+Z(c,"Fe2")+Z(c,"Ca")+Z(c,"Mg"))+3*Z(c,"Fe3");
  const neg0=Z(c,"Cl")+Z(c,"NO3")+Z(c,"I")+2*Z(c,"SO4");
  const T=(Z(c,"HAc")+Z(c,"Ac"))/V,CT=Z(c,"CO3")/V;
  const F=h=>{let p=pos0/V;for(const[k,kh]of HYD)p-=(Z(c,k)/V)*kh/(kh+h);
@@ -221,16 +286,17 @@ function react(c){
   if(Math.abs(p-p0)>1e-15){c.sp[r.a]=At-r.na*p;c.sp[r.b]=Bt-r.nb*p;c.ppt[r.id]=p;if(p>p0)c.susp=Math.min(1,Math.max(c.susp,(p-p0)/Math.max(p,1e-12)));if(p>p0+1e-6)regRx(r.n+" precipitation",r.eq,r.ion)}
  }
 }
-function gas(c,mol,t){c._g=(c._g||0)+mol;c.gasType=t}
+function gas(c,mol,t){c._g=(c._g||0)+mol;c.gasType=t;c.gh[t]=(c.gh[t]||0)+mol}
 /* kinetic step */
 function step(c,dt){
- if(c.vol<0.2)return;
+ thermal(c,dt);
+ if(c.vol<0.2){dryChem(c,dt);return}
  const ph=phOf(c),h=Math.pow(10,-(ph==null?7:ph)),V=c.vol/1000;
  const tf=Math.exp((c.T-25)/25)*(c.stir>0?1.4:1);
  c._g=0;
  const {a:A}=acidEqCoef(c);
- for(const m of["mg","zn","fe"]){const g=c.sol[m]||0;if(g>1e-4&&h>1e-4){
-  const mol=g/MM[m];let dn=KACID[m]*Math.pow(h,.8)*Math.pow(mol,.67)*tf*dt;dn=Math.min(dn,mol,acidAvail(c)/2);
+ for(const m of["mg","zn","fe","nail"]){const g=c.sol[m]||0;if(g>1e-4&&h>1e-4){
+  const mol=g/MM[m];let dn=KACID[m]*Math.pow(h,.8)*Math.pow(mol,.67)*tf*dt*(c.q[m]||1);dn=Math.min(dn,mol,acidAvail(c)/2);
   if(dn>1e-14){const an=domAnion(c),AN=ANS[an],s=salt(CATSOL[m],an);
    c.sol[m]-=dn*MM[m];consumeAcid(c,2*dn);c.sp[CATSOL[m]]=Z(c,CATSOL[m])+dn;gas(c,dn,"H2");heatIn(c,dn*QACID[m]);
    regRx(SOLNAME[m]+" + acid",CATS[CATSOL[m]]+" + "+co(2/AN.h)+AN.acid+" → "+s.f+" + H₂↑")}}}
@@ -240,20 +306,83 @@ function step(c,dt){
  {const g=c.sol.cuo||0;if(g>1e-4&&h>1e-4){const mol=g/MM.cuo;let dn=.005*Math.pow(h,.8)*Math.pow(mol,.67)*Math.exp((c.T-25)/12)*dt;dn=Math.min(dn,mol,acidAvail(c)/2);
   if(dn>1e-14){const an=domAnion(c),AN=ANS[an],s=salt("Cu",an);c.sol.cuo-=dn*MM.cuo;consumeAcid(c,2*dn);c.sp.Cu=Z(c,"Cu")+dn;
    regRx("CuO + acid","CuO + "+co(2/AN.h)+AN.acid+" → "+s.f+" + H₂O")}}}
- for(const m of["mg","zn","fe","cu"]){const g=c.sol[m]||0;if(g<=1e-4)continue;
+ for(const m of["mg","zn","fe","nail","cu"]){const g=c.sol[m]||0;if(g<=1e-4)continue;
   for(const ck in DEPOF){const [sym,rk,z]=DEPOF[ck];if(RANK[m]>=rk)continue;if(ck==="Zn"&&m!=="mg")continue;
    const conc=Z(c,ck)/V;if(conc<1e-4)continue;
    const mol=(c.sol[m]||0)/MM[m];if(mol<=1e-9)continue;
-   let dC=KDISP[m]*Math.pow(conc,.7)*Math.pow(mol,.67)*tf*dt;dC=Math.min(dC,Z(c,ck),mol*2/z);
+   let dC=KDISP[m]*Math.pow(conc,.7)*Math.pow(mol,.67)*tf*dt*(c.q[m]||1);dC=Math.min(dC,Z(c,ck),mol*2/z);
    if(dC>1e-14){const mc=CATSOL[m];c.sp[ck]-=dC;c.sol[m]-=dC*z/2*MM[m];c.sp[mc]=Z(c,mc)+dC*z/2;c.dep[sym]=(c.dep[sym]||0)+dC*DEPMM[sym];heatIn(c,dC*z/2*60e3);
     const an=domAnion(c);const eqs=dispEq(m,sym,ck,an);regRx(SOLNAME[m]+" displaces "+sym,eqs.eq,eqs.ion)}}}
+ if((c.sol.na||0)>1e-4){const mol=c.sol.na/MM.na;let dn=Math.min(mol,.09*Math.pow(mol,.67)*Math.max(1,c.T/25)*dt);
+  if(dn>1e-14){c.sol.na-=dn*MM.na;c.sp.Na=Z(c,"Na")+dn;c.sp.OH=Z(c,"OH")+dn;c.vol=Math.max(.2,c.vol-dn*18);gas(c,dn/2,"H2");heatIn(c,dn*184e3);c.flash=Math.max(c.flash||0,.4);regRx("Sodium + water","2Na(s) + 2H₂O(l) → 2NaOH(aq) + H₂(g)")}}
+ if((c.sol.cao||0)>1e-4){const mol=c.sol.cao/MM.cao;let dn=Math.min(mol,.35*Math.pow(mol,.67)*(c.stir>0?1.6:1)*dt);
+  if(dn>1e-14){c.sol.cao-=dn*MM.cao;c.sp.Ca=Z(c,"Ca")+dn;c.sp.OH=Z(c,"OH")+2*dn;c.vol=Math.max(.2,c.vol-dn*18);heatIn(c,dn*65.2e3);regRx("Slaking of quicklime (a combination reaction, exothermic)","CaO(s) + H₂O(l) → Ca(OH)₂(aq) + heat")}}
+ for(const k in DISS){if((c.sol[k]||0)>1e-4){const D=DISS[k],mol=c.sol[k]/MM[k];let dn=Math.min(mol,.05*Math.pow(mol,.67)*(c.stir>0?5:1)*dt);
+  if(dn>1e-14){c.sol[k]-=dn*MM[k];for(const i in D.ion)c.sp[i]=Z(c,i)+D.ion[i]*dn;heatIn(c,-dn*D.dH);regRx("Dissolving "+SOLNAME[k].toLowerCase(),D.eq)}}}
+ if((c.gh.CO2||0)>1e-9&&Z(c,"Ca")>1e-9&&Z(c,"OH")>1e-9){const dn=Math.min(c.gh.CO2*(1-Math.exp(-2*dt)),Z(c,"OH")/2,Z(c,"Ca"));
+  if(dn>1e-13){c.gh.CO2-=dn;c.sp.OH-=2*dn;c.sp.CO3=Z(c,"CO3")+dn;regRx("Carbon dioxide + lime water","Ca(OH)₂(aq) + CO₂(g) → CaCO₃(s) + H₂O(l)")}}
  c.gasRate=(c._g||0)/dt;
  react(c);
  c.susp*=Math.exp(-dt*.07);
  if(c.stir>0){c.stir-=dt;c.susp=Math.min(1,c.susp+dt*.4)}
- /* temperature: heating / cooling / boiling */
- if(c.heat){c.T+=60*dt/((c.vol+10)*4.18);if(c.T>=100){c.T=100;c.vol=Math.max(.5,c.vol-.12*dt)}}
- else c.T+=(25-c.T)*Math.min(1,.02*dt);
+}
+function thermal(c,dt){
+ const W=c.heatW||0,liq=c.vol>=.2;let sm=0;for(const k in c.sol)sm+=c.sol[k];
+ const capJ=liq?(c.vol+10)*4.18+sm*.8:14+sm*.8;
+ if(W>0){
+  if(liq){if(c.T<100){c.T=Math.min(100,c.T+W*.7*dt/capJ);c.boil=false}else{c.T=100;c.boil=true;c.vol=Math.max(0,c.vol-W*.7*dt/2260);if(c.vol<.2&&c.vol>0)c.vol=0}}
+  else{c.T=Math.min(900,c.T+W*dt/capJ);c.boil=false}
+ }else{c.T+=(25-c.T)*Math.min(1,(liq?.02:.012)*dt);if(c.T<99)c.boil=false}
+ c.stirE=(c.stirE||0)*Math.exp(-.6*dt);
+ endo(c,dt);sunlight(c,dt);
+ const ESC={H2:.8,O2:.04,CO2:.05,NO2:.1,SO2:.12,SO3:.1,NH3:.3,Cl2:.08,Br2:.06};
+ if(!c.cork&&!c.inv)for(const k in c.gh){c.gh[k]*=Math.exp(-(ESC[k]||.1)*dt);if(c.gh[k]<1e-12)delete c.gh[k]}
+ if(c.drops>0)c.drops=Math.max(0,c.drops-.01*dt);
+}
+function endo(c,dt){
+ if((c.sol.baoh2||0)>1e-4&&(c.sol.nh4cl||0)>1e-4){
+  const mol=Math.min(c.sol.baoh2/MM.baoh2,c.sol.nh4cl/MM.nh4cl/2),mix=Math.min(1,(c.stirE||0)/250+.015);
+  const d=Math.min(mol,mol*dt*.4*mix);
+  if(d>1e-13){c.sol.baoh2-=d*MM.baoh2;c.sol.nh4cl-=2*d*MM.nh4cl;c.sp.Ba=Z(c,"Ba")+d;c.sp.Cl=Z(c,"Cl")+2*d;c.vol+=d*180;gas(c,2*d,"NH3");heatIn(c,-d*165e3);
+   regRx("Barium hydroxide + ammonium chloride (endothermic)","Ba(OH)₂·8H₂O(s) + 2NH₄Cl(s) → BaCl₂(aq) + 2NH₃(g) + 10H₂O(l)")}}
+}
+function sunlight(c,dt){
+ if(!c.sun)return;
+ for(const [k,gs,eq] of [["agcl","Cl2","2AgCl(s) → 2Ag(s) + Cl₂(g)   (sunlight)"],["agbr","Br2","2AgBr(s) → 2Ag(s) + Br₂(g)   (sunlight)"]]){
+  if((c.sol[k]||0)>1e-4){const mol=c.sol[k]/MM[k],d=mol*(1-Math.exp(-.012*dt));c.sol[k]-=d*MM[k];c.sol.ag=(c.sol.ag||0)+d*MM.ag;gas(c,d/2,gs);regRx("Decomposition of silver halide by light",eq)}}
+}
+function dryChem(c,dt){
+ c._g=0;const T=c.T;
+ if((c.sol.mg||0)>1e-4&&T>=((c.q.mg||1)<1?650:450)){
+  const mol=c.sol.mg/MM.mg,d=Math.min(mol,Math.max(mol*dt*.9,3e-4*dt));
+  c.sol.mg-=d*MM.mg;c.sol.mgo=(c.sol.mgo||0)+d*MM.mgo;c.T=Math.min(1400,c.T+d*601e3/(14+(c.sol.mgo||0)*.9+3));c.flash=1;
+  regRx("Burning magnesium in air (combination)","2Mg(s) + O₂(g) → 2MgO(s)");
+ }
+ if((c.sol.cu||0)>1e-4&&T>=250&&!(c.gh.H2>1e-9)){
+  const mol=c.sol.cu/MM.cu,d=Math.min(mol,mol*dt*.06*(T-200)/150);
+  if(d>0){c.sol.cu-=d*MM.cu;c.sol.cuo=(c.sol.cuo||0)+d*MM.cuo;regRx("Heating copper in air (oxidation)","2Cu(s) + O₂(g) → 2CuO(s)")}
+ }
+ if((c.gh.H2||0)>1e-9&&(c.sol.cuo||0)>1e-4&&T>=170){
+  const dn=Math.min(c.gh.H2*(1-Math.exp(-3*dt)),c.sol.cuo/MM.cuo);
+  if(dn>1e-13){c.gh.H2-=dn;c.sol.cuo-=dn*MM.cuo;c.sol.cu=(c.sol.cu||0)+dn*MM.cu;c.drops=1;regRx("Hydrogen reduces hot copper(II) oxide (redox)","CuO(s) + H₂(g) → Cu(s) + H₂O(l)")}
+ }
+ if((c.sol.feso4s||0)>1e-4&&T>=70){
+  const mol=c.sol.feso4s/MM.feso4s,d=Math.min(mol,mol*dt*.06*(T-55)/100+2e-6*dt);
+  c.sol.feso4s-=d*MM.feso4s;c.sol.feso4a=(c.sol.feso4a||0)+d*MM.feso4a;c.drops=1;
+  regRx("Heating ferrous sulphate crystals (loses water)","FeSO₄·7H₂O(s) → FeSO₄(s) + 7H₂O(g)")}
+ if((c.sol.feso4a||0)>1e-4&&T>=300){
+  const mol=c.sol.feso4a/MM.feso4a,d=Math.min(mol,mol*dt*.12*(T-250)/100);
+  c.sol.feso4a-=d*MM.feso4a;c.sol.fe2o3=(c.sol.fe2o3||0)+d/2*MM.fe2o3;gas(c,d/2,"SO2");gas(c,d/2,"SO3");
+  regRx("Thermal decomposition of ferrous sulphate","2FeSO₄(s) → Fe₂O₃(s) + SO₂(g) + SO₃(g)")}
+ if((c.sol.pbn||0)>1e-4&&T>=230&&!c.crk){c.crk=1;log(c,"the crystals crackle and jump about (decrepitation)")}
+ if((c.sol.pbn||0)>1e-4&&T>=380){
+  const mol=c.sol.pbn/MM.pbn,d=Math.min(mol,mol*dt*.18*(T-350)/100);
+  c.sol.pbn-=d*MM.pbn;c.sol.pbo=(c.sol.pbo||0)+d*MM.pbo;gas(c,2*d,"NO2");gas(c,d/2,"O2");
+  regRx("Thermal decomposition of lead nitrate","2Pb(NO₃)₂(s) → 2PbO(s) + 4NO₂(g) + O₂(g)")}
+ if((c.sol.caco3||0)>1e-4&&T>=800){
+  const mol=c.sol.caco3/MM.caco3,d=Math.min(mol,mol*dt*.02);
+  c.sol.caco3-=d*MM.caco3;c.sol.cao=(c.sol.cao||0)+d*MM.cao;gas(c,d,"CO2");regRx("Thermal decomposition of limestone","CaCO₃(s) → CaO(s) + CO₂(g)")}
+ c.gasRate=(c._g||0)/dt;
 }
 function dispEq(m,dsym,ck,an){
  const msym=CATS[CATSOL[m]],mk=CATSOL[m],zc=DEPOF[ck][2],e=lcm(2,zc),nm=e/2,nc=e/zc;
@@ -321,16 +450,24 @@ function log(c,text){OBS.push({t:simTime,c:c.label,text});if(OBS.length>300)OBS.
 function observe(c){
  const L=c.last;
  for(const r of PPT){const p=c.ppt[r.id]||0,w=L.ppt[r.id]||0;
-  if(p>5e-6&&w<=5e-6)log(c,r.cw+" precipitate of "+r.n+" forms");
+  if(p>5e-6&&w<=5e-6){log(c,r.cw+" precipitate of "+r.n+" forms");if(c.el&&window.spawnPlume)spawnPlume(c,r.col,.85)}
   else if(p<=5e-6&&w>5e-6)log(c,"the precipitate of "+r.n+" dissolves");
   L.ppt[r.id]=p}
+ if(c.boil&&!L.boil){log(c,"the liquid boils: vapour bubbles form and steam rises");L.boil=true}else if(!c.boil&&c.T<95)L.boil=false;
+ if(c.flash>.8&&!L.flash){log(c,"magnesium burns with a dazzling white flame and leaves a white ash (MgO)");L.flash=true}else if(c.flash<.05)L.flash=false;
+ if((c.sol.cuo||0)>(L.sol.cuo||0)+1e-3&&(c.sol.cu||0)<(L.sol.cu||0)&&!L.blk){log(c,"the red-brown copper turns black (copper(II) oxide forms)");L.blk=true}
+ const SF={mgo:"white powder of magnesium oxide forms",fe2o3:"the solid turns reddish-brown (iron(III) oxide)",pbo:"a yellow residue of lead(II) oxide is left behind",ag:"the white silver halide turns grey (silver is formed)",feso4a:"the green crystals lose water and turn pale grey-white"};
+ for(const k in SF)if((c.sol[k]||0)>2e-3&&!((L.sol[k]||0)>2e-3))log(c,SF[k]);
+ const GM={NO2:"brown fumes of nitrogen dioxide are given off (poisonous: do not inhale)",SO2:"a colourless gas with the smell of burning sulphur is given off (SO₂)",SO3:"dense white fumes appear (SO₃)",NH3:"a gas with a sharp ammonia smell is given off",Cl2:"a pale greenish-yellow gas (chlorine) is given off",Br2:"reddish-brown bromine vapour is given off",O2:"colourless gas collects (oxygen)"};
+ L.gs=L.gs||{};for(const t in c.gh){if(GM[t]&&c.gh[t]>1e-7&&!L.gs[t]){L.gs[t]=1;log(c,GM[t])}else if(!(c.gh[t]>1e-8))L.gs[t]=0}
+ if(c.drops>.5&&!L.drp){L.drp=1;log(c,"tiny drops of water condense on the cooler upper part of the tube")}
  const gr=c.gasRate>2e-7;
- if(gr&&!L.gas){log(c,c.gasType==="H2"?"colourless, odourless gas bubbles evolve (hydrogen)":"effervescence: colourless gas evolves (carbon dioxide)");L.gas=true}
+ if(gr&&!L.gas){if(c.gasType==="H2")log(c,"colourless, odourless gas bubbles evolve (hydrogen)");else if(c.gasType==="CO2")log(c,"effervescence: colourless gas evolves (carbon dioxide)");L.gas=true}
  else if(!gr&&L.gas&&c.gasRate<5e-8){log(c,"bubbling stops");L.gas=false}
  for(const k in c.sol){const w=L.sol[k]||0,n=c.sol[k]||0;if(w>1e-4&&n<=1e-4&&(c.gasRate>0||k==="cuo"||true))log(c,SOLNAME[k].toLowerCase()+" has completely reacted / disappeared");L.sol[k]=n}
  for(const s in c.dep){const w=L.dep[s]||0,n=c.dep[s];if(n>5e-4&&w<=5e-4)log(c,DEPWORD[s]+" deposit of "+s+" forms on the metal");L.dep[s]=n}
  if(c.neut>5e-5&&!L.neut){log(c,"acid and base neutralise (H⁺ + OH⁻ → H₂O)");L.neut=true}
- if(c.T-L.T>=4){log(c,"mixture warms up to "+c.T.toFixed(0)+" °C (exothermic)");L.T=c.T}else if(c.T<L.T-4)L.T=c.T;
+ if(c.T-L.T>=(c.heatW>0?(c.vol>=.2?15:150):4)){log(c,c.heatW>0?(c.vol>=.2?"the liquid heats up to ":"the dry vessel heats up to ")+c.T.toFixed(0)+" °C":"mixture warms up to "+c.T.toFixed(0)+" °C (exothermic)");L.T=c.T}else if(c.T<L.T-4){if(c.T<22&&!(c.heatW>0))log(c,"the mixture gets colder: "+c.T.toFixed(0)+" °C (an endothermic change)");L.T=c.T}
  const sc=solnColour(c),nm=cname(sc.rgb),d=Math.hypot(sc.rgb[0]-L.col[0],sc.rgb[1]-L.col[1],sc.rgb[2]-L.col[2]);
  if(d>32&&c.vol>.3){if(nm!==L.cname)log(c,nm==="colourless"?"solution turns colourless":"solution turns "+nm);L.cname=nm;L.col=sc.rgb}
 }
@@ -368,131 +505,173 @@ const CHEM=[
  {id:"ui",n:"Universal indicator",f:"indicator",g:"Indicators",ind:"ui",c:{},col:"#3fae49"},
  {id:"btb",n:"Bromothymol blue",f:"indicator",g:"Indicators",ind:"btb",c:{},col:"#3a7fd0"},
  {id:"zn",n:"Zinc granules",f:"Zn",g:"Solids",sol:1,col:SOLCOL.zn},
- {id:"mg",n:"Magnesium ribbon",f:"Mg",g:"Solids",sol:1,col:SOLCOL.mg},
  {id:"fe",n:"Iron nails/filings",f:"Fe",g:"Solids",sol:1,col:SOLCOL.fe},
- {id:"cu",n:"Copper turnings",f:"Cu",g:"Solids",sol:1,col:SOLCOL.cu},
+ {id:"cu",n:"Copper powder",f:"Cu",g:"Solids",sol:1,col:SOLCOL.cu},
  {id:"caco3",n:"Marble chips",f:"CaCO₃",g:"Solids",sol:1,col:SOLCOL.caco3},
- {id:"cuo",n:"Copper(II) oxide",f:"CuO",g:"Solids",sol:1,col:SOLCOL.cuo}
+ {id:"cuo",n:"Copper(II) oxide",f:"CuO",g:"Solids",sol:1,col:SOLCOL.cuo},
+ {id:"cao",n:"Calcium oxide (quicklime)",f:"CaO",g:"Solids",sol:1,col:"#f4f1e8"},
+ {id:"feso4s",n:"Ferrous sulphate crystals",f:"FeSO₄·7H₂O",g:"Solids",sol:1,col:"#8fc08f"},
+ {id:"pbn",n:"Lead nitrate powder",f:"Pb(NO₃)₂",g:"Solids",sol:1,col:"#f3f3f0"},
+ {id:"agcl",n:"Silver chloride",f:"AgCl",g:"Solids",sol:1,col:"#f6f6f4"},
+ {id:"agbr",n:"Silver bromide",f:"AgBr",g:"Solids",sol:1,col:"#f2ecc8"},
+ {id:"baoh2",n:"Barium hydroxide",f:"Ba(OH)₂·8H₂O",g:"Solids",sol:1,col:"#f2f2f2"},
+ {id:"nh4cl",n:"Ammonium chloride",f:"NH₄Cl",g:"Solids",sol:1,col:"#f6f6f6"},
+ {id:"k2so4",n:"Potassium sulphate",f:"K₂SO₄",g:"Solids",sol:1,col:"#f6f6f6"},
+ {id:"nh4no3",n:"Ammonium nitrate",f:"NH₄NO₃",g:"Solids",sol:1,col:"#f6f6f6"},
+ {id:"cuso4a",n:"Anhydrous copper sulphate",f:"CuSO₄",g:"Solids",sol:1,col:"#f4f4f2"},
+ {id:"na",n:"Sodium metal",f:"Na",g:"Solids",sol:1,col:"#b9bdc4"}
 ];
 const APP=[
  {id:"beaker",n:"Beaker",ic:"🥛",s:"250 mL",k:"cont"},{id:"tube",n:"Test tube",ic:"🧪",s:"20 mL",k:"cont"},
- {id:"flask",n:"Conical flask",ic:"⚗️",s:"250 mL",k:"cont"},{id:"cyl",n:"Measuring cylinder",ic:"📏",s:"100 mL",k:"cont"},
+ {id:"btube",n:"Boiling tube",ic:"🧪",s:"30 mL",k:"cont"},{id:"flask",n:"Conical flask",ic:"⚗️",s:"250 mL",k:"cont"},
+ {id:"cyl",n:"Measuring cylinder",ic:"📏",s:"100 mL",k:"cont"},{id:"dish",n:"China dish",ic:"🥣",s:"150 mL",k:"cont"},
+ {id:"watch",n:"Watch glass",ic:"🥏",s:"collect ash",k:"cont"},{id:"mug",n:"Electrolysis cell",ic:"🔋",s:"mug + 6 V battery",k:"cont"},
+ {id:"bunsen",n:"Bunsen burner + tripod",ic:"🔥",s:"with gauze",k:"tool"},{id:"matchbox",n:"Matchbox",ic:"🧨",s:"safety matches",k:"tool"},
+ {id:"rod",n:"Glass stirring rod",ic:"🥢",s:"move it to stir",k:"hand"},{id:"hand",n:"Your hand",ic:"✋",s:"touch & smell",k:"hand"},
+ {id:"sand",n:"Sandpaper",ic:"🟫",s:"clean metals",k:"hand"},{id:"dtube",n:"Delivery tube + cork",ic:"〰️",s:"link two vessels",k:"hand"},
+ {id:"ribbon",n:"Magnesium ribbon",ic:"〰️",s:"3-4 cm strip",k:"piece"},{id:"nail",n:"Iron nail",ic:"📍",s:"for displacement",k:"piece"},
  {id:"phm",n:"pH meter",ic:"📟",s:"probe",k:"probe"},{id:"th",n:"Thermometer",ic:"🌡️",s:"probe",k:"probe"},
  {id:"rl",n:"Red litmus",ic:"🟥",s:"paper",k:"probe"},{id:"bl",n:"Blue litmus",ic:"🟦",s:"paper",k:"probe"},
- {id:"up",n:"Universal pH paper",ic:"🌈",s:"paper",k:"probe"},{id:"rod",n:"Glass rod",ic:"🥢",s:"stir",k:"probe"},
- {id:"x1",n:"Burette + stand",ic:"🧴",s:"under construction",k:"uc"},{id:"x2",n:"Bunsen + tripod",ic:"🔥",s:"under construction",k:"uc"},
- {id:"x3",n:"Evaporating dish",ic:"🥣",s:"under construction",k:"uc"},{id:"x4",n:"Delivery tube",ic:"〰️",s:"under construction",k:"uc"},
- {id:"x5",n:"Burning splint",ic:"🪵",s:"under construction",k:"uc"},{id:"x6",n:"Glowing splint",ic:"✨",s:"under construction",k:"uc"}
+ {id:"up",n:"Universal pH paper",ic:"🌈",s:"paper",k:"probe"},
+ {id:"x1",n:"Burette + stand",ic:"🧴",s:"under construction",k:"uc"}
 ];
 const LIQ_AMT=[.2,1,5,10,25,50],SOL_AMT=[.1,.5,1,2,5];
 const EXPS=["Acid + metal: hydrogen gas and the pop test","Acid + carbonate: carbon dioxide and lime water","Neutralisation with indicators","Titration: find the molarity of unknown acid X","Metal displacement (Zn/Fe/Cu in salt solutions)","Precipitation reactions of salts","Action of heat on lead nitrate / copper sulphate crystals","Burning magnesium ribbon in air","Slaking of quicklime (very exothermic)","Esterification (ethanol + ethanoic acid)"];
 
-/* ================= UI ================= */
-const $=id=>document.getElementById(id),E=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
-const ws=$("ws"),state={items:[],sel:null,gog:false,warp:1,armed:null,amtL:5,amtS:.5,pour:null,tool:"app",pan:"insp",q:"",nid:1,counts:{}};
-let toastT;
-function toast(m){const t=$("toast");t.textContent=m;t.classList.add("show");clearTimeout(toastT);toastT=setTimeout(()=>t.classList.remove("show"),2400)}
-function status(m){$("status").textContent=m}
-const byId=id=>state.items.find(i=>i.id==id);
-
-/* theme from parent app */
-function theme(){let t="light";try{const s=JSON.parse(localStorage.getItem("aalimTrackerV2")||"{}");if(s&&s.settings&&s.settings.theme==="dark")t="dark"}catch(e){}document.documentElement.dataset.theme=t}
-theme();setInterval(theme,2000);addEventListener("storage",theme);
-
-/* toolbox */
-function renderTool(){
- const tb=$("tbody");
- if(state.tool==="app"){
-  const rows=k=>APP.filter(a=>a.k===k).map(a=>`<div class="card ${a.k==="uc"?"uc":""}" data-app="${a.id}"><span class="ic">${a.ic}</span>${E(a.n)}<small>${E(a.s)}</small></div>`).join("");
-  tb.innerHTML=`<div class="grp">Containers</div><div class="cards">${rows("cont")}</div><div class="grp">Probes &amp; papers (drop on a container)</div><div class="cards">${rows("probe")}</div><div class="grp">Coming soon 🚧</div><div class="cards">${rows("uc")}</div>`;
- }else{
-  const q=state.q.toLowerCase(),list=CHEM.filter(c=>!q||(c.n+" "+c.f+" "+c.g).toLowerCase().includes(q));
-  let h=`<input class="search" id="q" placeholder="Search chemicals…" value="${E(state.q)}"><div class="amt">Liquid: ${LIQ_AMT.map(a=>`<button data-al="${a}" class="${a===state.amtL?"on":""}">${a} mL</button>`).join("")}</div><div class="amt">Solid: ${SOL_AMT.map(a=>`<button data-as="${a}" class="${a===state.amtS?"on":""}">${a} g</button>`).join("")}</div>`;
-  let g="";for(const c of list){if(c.g!==g){g=c.g;h+=`</div><div class="grp">${g}</div><div class="cards">`}
-   h+=`<div class="card ${state.armed===c.id?"on":""}" data-chem="${c.id}"><span class="sw" style="background:${c.col}"></span>${E(c.n)}<small>${c.f}</small></div>`}
-  tb.innerHTML=h+"</div>";
-  const q2=$("q");if(q2)q2.oninput=e=>{state.q=e.target.value;const p=e.target.selectionStart;renderTool();const n=$("q");n.focus();n.setSelectionRange(p,p)};
+const BOT={
+ water:{k:"wash",cap:"#2f6bd1",lab:["H₂O","distilled"]},
+ hcl:{k:"glass",cap:"#15181f",lab:["HCl","1 M"],hz:"c"},
+ h2so4:{k:"glass",cap:"#15181f",lab:["H₂SO₄","0.5 M"],hz:"c"},
+ hno3:{k:"amber",cap:"#15181f",lab:["HNO₃","1 M"],hz:"c"},
+ hac:{k:"glass",cap:"#2f8a3f",lab:["CH₃COOH","1 M"]},
+ naoh:{k:"plastic",cap:"#1f66d6",lab:["NaOH","1 M"],hz:"c"},
+ koh:{k:"plastic",cap:"#1f66d6",lab:["KOH","1 M"],hz:"c"},
+ lime:{k:"glass",cap:"stop",lab:["Ca(OH)₂","lime water"]},
+ na2co3:{k:"glass",cap:"stop",lab:["Na₂CO₃","0.5 M"]},
+ nacl:{k:"glass",cap:"stop",lab:["NaCl","1 M"]},
+ na2so4:{k:"glass",cap:"stop",lab:["Na₂SO₄","0.5 M"]},
+ bacl2:{k:"glass",cap:"stop",lab:["BaCl₂","0.5 M"],hz:"t"},
+ agno3:{k:"amber",cap:"#15181f",lab:["AgNO₃","0.1 M"],hz:"t"},
+ pbno3:{k:"glass",cap:"stop",lab:["Pb(NO₃)₂","0.1 M"],hz:"t"},
+ ki:{k:"amber",cap:"#15181f",lab:["KI","0.2 M"]},
+ cuso4:{k:"glass",cap:"stop",lab:["CuSO₄","0.5 M"]},
+ feso4:{k:"glass",cap:"stop",lab:["FeSO₄","0.2 M"]},
+ fecl3:{k:"glass",cap:"stop",lab:["FeCl₃","0.2 M"]},
+ znso4:{k:"glass",cap:"stop",lab:["ZnSO₄","0.5 M"]},
+ mgso4:{k:"glass",cap:"stop",lab:["MgSO₄","0.5 M"]},
+ ph:{k:"dropper",lab:["Phth.","ind."]},mo:{k:"dropper",lab:["M.O.","ind."]},
+ ui:{k:"dropper",lab:["UI","ind."]},btb:{k:"dropper",lab:["BTB","ind."]},
+ zn:{k:"jar",fill:"gran",lab:["Zn","granules"]},mg:{k:"jar",fill:"rib",lab:["Mg","ribbon"]},
+ fe:{k:"jar",fill:"fil",lab:["Fe","filings"]},cu:{k:"jar",fill:"turn",lab:["Cu","turnings"]},
+ caco3:{k:"jar",fill:"chip",lab:["CaCO₃","marble"]},cuo:{k:"jar",fill:"pow",lab:["CuO","powder"]}
+};
+Object.assign(BOT,{
+ cao:{k:"jar",fill:"pow",pc:"#f1eee6",lab:["CaO","quicklime"],hz:"c"},feso4s:{k:"jar",fill:"chip",pc:"#8fc08f",lab:["FeSO₄","crystals"]},
+ pbn:{k:"jar",fill:"pow",pc:"#f3f3f0",lab:["Pb(NO₃)₂","powder"],hz:"t"},agcl:{k:"jar",amber:1,lab:["AgCl","light-sensitive"],hz:"t"},
+ agbr:{k:"jar",amber:1,lab:["AgBr","light-sensitive"],hz:"t"},baoh2:{k:"jar",fill:"pow",pc:"#f2f2f2",lab:["Ba(OH)₂","·8H₂O"],hz:"t"},
+ nh4cl:{k:"jar",fill:"pow",pc:"#f6f6f6",lab:["NH₄Cl","solid"]},k2so4:{k:"jar",fill:"pow",pc:"#f6f6f6",lab:["K₂SO₄","solid"]},
+ nh4no3:{k:"jar",fill:"pow",pc:"#f6f6f6",lab:["NH₄NO₃","solid"]},cuso4a:{k:"jar",fill:"pow",pc:"#f2f2ee",lab:["CuSO₄","anhydrous"]},
+ na:{k:"jar",fill:"gran",lab:["Na","under oil"],hz:"c"},cu:{k:"jar",fill:"turn",lab:["Cu","powder"]}
+});
+let BN=0;
+const rnd=i=>((i*9301+49297)%233280)/233280;
+function bottleSVG(ch){
+ const s=BOT[ch.id]||{},k=s.k||(ch.sol?"jar":ch.ind?"dropper":"glass"),id="bt"+(BN++);
+ const lab=s.lab||[ch.f,""],lq=ch.col||"#dff0ff";
+ const fs=lab[0].length>7?6.2:lab[0].length>4?7.8:10;
+ let o=`<svg viewBox="0 0 64 100" width="64" height="100"><defs><linearGradient id="${id}" x1="0" x2="1"><stop offset="0" stop-color="#000" stop-opacity=".38"/><stop offset=".22" stop-color="#fff" stop-opacity=".34"/><stop offset=".5" stop-color="#fff" stop-opacity=".02"/><stop offset=".82" stop-color="#000" stop-opacity=".14"/><stop offset="1" stop-color="#000" stop-opacity=".42"/></linearGradient></defs>`;
+ o+=`<ellipse cx="32" cy="97" rx="22" ry="3" fill="#000" opacity=".25"/>`;
+ const label=(x,y,w,h)=>{let t=`<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="1.6" fill="#fbfaf2" stroke="#9a9a90" stroke-width=".5"/>`;
+  t+=`<rect x="${x}" y="${y}" width="${w}" height="3.2" fill="${s.hz==="c"?"#d63a2f":s.hz==="t"?"#222":"#3b7bd8"}"/>`;
+  t+=`<text x="${x+w/2}" y="${y+h/2+2}" text-anchor="middle" font-size="${fs}" font-weight="800" font-family="system-ui,sans-serif" fill="#111">${lab[0]}</text><text x="${x+w/2}" y="${y+h-3}" text-anchor="middle" font-size="5.4" font-family="system-ui,sans-serif" fill="#444">${lab[1]}</text>`;return t};
+ const ribs=(x,y,w,h)=>{let t="";for(let i=1;i<w/2.6;i++)t+=`<line x1="${x+i*2.6}" x2="${x+i*2.6}" y1="${y+1}" y2="${y+h-1}" stroke="#000" stroke-opacity=".35" stroke-width=".7"/>`;return t};
+ if(k==="glass"||k==="amber"){
+  const body="M14 46 Q14 40 20 36 L24 30 L24 22 L40 22 L40 30 L44 36 Q50 40 50 46 L50 90 Q50 96 44 96 L20 96 Q14 96 14 90 Z";
+  if(k==="amber")o+=`<path d="${body}" fill="#7a410f" stroke="#4d2706" stroke-width="1"/>`;
+  else o+=`<path d="${body}" fill="rgba(170,200,222,.38)" stroke="#6f86a8" stroke-width="1"/><path d="M15 52 L49 52 L49 90 Q49 95 44 95 L20 95 Q15 95 15 90 Z" fill="${lq}" fill-opacity=".92"/><ellipse cx="32" cy="52" rx="17" ry="2.6" fill="#fff" fill-opacity=".45" stroke="#fff" stroke-opacity=".5" stroke-width=".5"/>`;
+  o+=`<path d="${body}" fill="url(#${id})"/>`;
+  if(s.cap==="stop")o+=`<path d="M26 23 L26 17 Q26 11 32 11 Q38 11 38 17 L38 23 Z" fill="rgba(215,232,244,.95)" stroke="#6f86a8" stroke-width=".8"/><path d="M26 23 L26 17 Q26 11 32 11 Q38 11 38 17 L38 23 Z" fill="url(#${id})"/>`;
+  else o+=`<rect x="22" y="9" width="20" height="15" rx="2.4" fill="${s.cap||"#15181f"}"/>${ribs(22,9,20,15)}<rect x="22" y="9" width="20" height="15" rx="2.4" fill="url(#${id})"/>`;
+  o+=label(17,58,30,28)+`<path d="M18 50 L18 90" stroke="#fff" stroke-opacity=".55" stroke-width="2.2" stroke-linecap="round"/>`;
+ }else if(k==="plastic"){
+  o+=`<rect x="24" y="26" width="16" height="12" fill="#eef1f4" stroke="#aeb7c3"/><rect x="13" y="34" width="38" height="62" rx="7" fill="#f2f5f8" stroke="#aeb7c3"/><rect x="13" y="34" width="38" height="62" rx="7" fill="url(#${id})"/>`;
+  o+=`<rect x="21" y="12" width="22" height="16" rx="3" fill="${s.cap}"/>${ribs(21,12,22,16)}<rect x="21" y="12" width="22" height="16" rx="3" fill="url(#${id})"/>`+label(16,54,32,32);
+ }else if(k==="dropper"){
+  const body="M20 56 Q20 52 24 50 L26 46 L26 42 L38 42 L38 46 L40 50 Q44 52 44 56 L44 94 Q44 97 41 97 L23 97 Q20 97 20 94 Z";
+  o+=`<path d="${body}" fill="#7a410f" stroke="#4d2706" stroke-width="1"/><path d="${body}" fill="url(#${id})"/><rect x="24" y="36" width="16" height="8" rx="1.6" fill="#15181f"/>`;
+  o+=`<path d="M28 36 L28 20 Q28 6 32 6 Q36 6 36 20 L36 36 Z" fill="#23262d" stroke="#0e0f12" stroke-width=".8"/><path d="M29.4 34 L29.4 18" stroke="#fff" stroke-opacity=".3" stroke-width="1.6" stroke-linecap="round"/>`;
+  o+=label(21,62,22,26);
+ }else if(k==="jar"){
+  o+=`<path d="M8 46 L8 90 Q8 97 15 97 L49 97 Q56 97 56 90 L56 46 Z" fill="${s.amber?"#7a410f":"rgba(200,220,235,.32)"}" stroke="${s.amber?"#4d2706":"#6f86a8"}" stroke-width="1"/>`;
+  const f=s.amber?"":s.fill;
+  if(f==="gran")for(let i=0;i<22;i++)o+=`<ellipse cx="${12+rnd(i+1)*40}" cy="${92-rnd(i+7)*24-(i%3)*2}" rx="3.2" ry="2.4" fill="#9aa7b3" stroke="#5c6772" stroke-width=".5"/>`;
+  else if(f==="rib")for(let i=0;i<5;i++)o+=`<path d="M${12+i*2} ${90-i*4} q8 -9 16 0 t16 0 t10 -2" fill="none" stroke="#d6dade" stroke-width="2.2" stroke-linecap="round"/><path d="M${12+i*2} ${90-i*4} q8 -9 16 0 t16 0 t10 -2" fill="none" stroke="#7d848c" stroke-width=".6"/>`;
+  else if(f==="fil")for(let i=0;i<60;i++)o+=`<circle cx="${11+rnd(i+3)*42}" cy="${95-rnd(i+11)*22*rnd(i+5)-2}" r="${.7+rnd(i)*.9}" fill="#4a4e55"/>`;
+  else if(f==="turn")for(let i=0;i<14;i++){const x=12+rnd(i+2)*36,y=90-rnd(i+9)*22;o+=`<path d="M${x} ${y} q3 -5 6 0 q3 5 6 0" fill="none" stroke="#b8733a" stroke-width="1.8" stroke-linecap="round"/>`}
+  else if(f==="chip")for(let i=0;i<14;i++){const x=12+rnd(i+4)*34,y=88-rnd(i+8)*20;o+=`<polygon points="${x},${y} ${x+6},${y-2} ${x+9},${y+3} ${x+3},${y+6}" fill="${s.pc||"#efe9dc"}" stroke="#aaa294" stroke-width=".6"/>`}
+  else o+=`<path d="M9 92 Q20 70 32 68 Q44 70 55 92 L55 90 Q55 96 50 96 L14 96 Q9 96 9 90 Z" fill="${s.pc||"#1d1d20"}"/><path d="M20 82 Q30 72 40 78" stroke="#555" stroke-width="1.2" fill="none" opacity=".6"/>`;
+  o+=`<path d="M8 46 L8 90 Q8 97 15 97 L49 97 Q56 97 56 90 L56 46 Z" fill="url(#${id})"/>`;
+  o+=`<rect x="5" y="26" width="54" height="22" rx="3.4" fill="#15181f"/>${ribs(5,26,54,22)}<rect x="5" y="26" width="54" height="22" rx="3.4" fill="url(#${id})"/>`;
+  o+=label(13,56,38,26)+`<path d="M12 52 L12 92" stroke="#fff" stroke-opacity=".5" stroke-width="2" stroke-linecap="round"/>`;
+ }else{ // wash bottle
+  o+=`<path d="M32 36 L32 20 Q32 12 40 12 L54 16" fill="none" stroke="#8a96a6" stroke-width="6.6" stroke-linecap="round"/><path d="M32 36 L32 20 Q32 12 40 12 L54 16" fill="none" stroke="#f1f5fa" stroke-width="4.4" stroke-linecap="round"/>`;
+  o+=`<rect x="14" y="38" width="36" height="58" rx="11" fill="rgba(235,244,255,.78)" stroke="#9db0c8"/><path d="M15 62 L49 62 L49 86 Q49 95 40 95 L24 95 Q15 95 15 86 Z" fill="${lq}" fill-opacity=".9"/><rect x="14" y="38" width="36" height="58" rx="11" fill="url(#${id})"/>`;
+  o+=`<rect x="25" y="30" width="14" height="10" rx="2" fill="${s.cap}"/>`+label(18,66,28,24)+`<path d="M18 48 L18 86" stroke="#fff" stroke-opacity=".6" stroke-width="2" stroke-linecap="round"/>`;
  }
+ return o+"</svg>";
 }
-document.querySelectorAll("[data-tt]").forEach(b=>b.onclick=()=>{state.tool=b.dataset.tt;document.querySelectorAll("[data-tt]").forEach(x=>x.classList.toggle("on",x===b));renderTool()});
-$("tbody").addEventListener("click",e=>{
- const a=e.target.closest("[data-al]");if(a){state.amtL=+a.dataset.al;renderTool();return}
- const s=e.target.closest("[data-as]");if(s){state.amtS=+s.dataset.as;renderTool();return}
-});
-
-/* spawn & items */
-function freeX(){const W=ws.clientWidth,xs=state.items.map(i=>i.x);for(let x=Math.min(130,W/4);x<W-60;x+=70){if(xs.every(v=>Math.abs(v-x)>78))return x}return Math.random()*(W-160)+80}
-function spawn(type,x){
- if(state.items.length>=7){toast("Bench is full. Remove something first.");return}
- const nm={beaker:"Beaker",tube:"Test tube",flask:"Flask",cyl:"Cylinder"}[type];state.counts[type]=(state.counts[type]||0)+1;
- const c=newContainer(type,nm+" "+state.counts[type]);c.id=state.nid++;c.x=Math.max(60,Math.min(ws.clientWidth-60,x==null?freeX():x));
- const d=document.createElement("div");d.className="it "+type;d.dataset.id=c.id;
- d.innerHTML=`<div class="read"></div><div class="vessel" style="width:${GEO[type].W}px;height:${GEO[type].H}px"><div class="shadow"></div><div class="svgh"></div><div class="bubs"></div></div><div class="lbl">${c.label}</div><div class="flame">🔥</div>`;
- ws.appendChild(d);c.el=d;state.items.push(c);d.style.left=c.x+"px";hookItem(c);select(c.id);view(c);$("hint").style.display="none";
-}
-function select(id){state.sel=id;state.items.forEach(i=>i.el.classList.toggle("sel",i.id===id));status(id?byId(id).label+" selected":"Tap or drag apparatus onto the bench.");renderPanel(true)}
-function removeItem(c){c.el.remove();state.items=state.items.filter(i=>i!==c);if(state.sel===c.id)state.sel=null;if(!state.items.length)$("hint").style.display="";renderPanel(true)}
-
-/* adding chemicals */
-function addChem(c,ch,silent){
- if(!state.gog){toast("🥽 Put on your safety goggles first!");return false}
- if(ch.sol){addSolid(c,ch.id,state.amtS);log(c,state.amtS+" g "+SOLNAME[ch.id].toLowerCase()+" added");}
- else{const amt=ch.ind?.2:state.amtL;if(!addLiquid(c,ch,amt)){toast(c.label+" is full.");return false}
-  log(c,(ch.ind?"a few drops of ":amt+" mL of ")+ch.n+" added");}
- if(ch.col&&!ch.sol&&Object.keys(ch.c).length===0&&!ch.ind){}
- observe(c);view(c);renderPanel(false);return true;
-}
-function attach(c,pid){
- if(pid==="rod"){c.stir=4;toast("🥢 Stirring "+c.label);log(c,"stirred with a glass rod");return}
- if(c.probes.includes(pid)){toast("Already in "+c.label);return}
- c.probes.push(pid);view(c);toast(APP.find(a=>a.id===pid).n+" placed in "+c.label);
+function burnerSVG(){
+ return `<svg width="120" height="190" viewBox="0 0 120 190" style="overflow:visible"><defs>
+<linearGradient id="bm" x1="0" x2="1"><stop offset="0" stop-color="#5b616b"/><stop offset=".3" stop-color="#d9dde3"/><stop offset=".55" stop-color="#9aa1ab"/><stop offset="1" stop-color="#454a53"/></linearGradient>
+<linearGradient id="bd" x1="0" x2="1"><stop offset="0" stop-color="#2b2e35"/><stop offset=".4" stop-color="#6b717c"/><stop offset="1" stop-color="#1d1f24"/></linearGradient>
+<radialGradient id="fb" cx=".5" cy=".85" r=".8"><stop offset="0" stop-color="#e8f4ff"/><stop offset=".35" stop-color="#6fb8ff"/><stop offset="1" stop-color="#2a5bff" stop-opacity=".1"/></radialGradient>
+<radialGradient id="fy" cx=".5" cy=".85" r=".85"><stop offset="0" stop-color="#fff4b0"/><stop offset=".4" stop-color="#ffb52e"/><stop offset="1" stop-color="#ff5a1f" stop-opacity=".15"/></radialGradient>
+<pattern id="gz" width="4" height="4" patternUnits="userSpaceOnUse"><path d="M0 0H4M0 0V4" stroke="#7a8089" stroke-width=".7"/></pattern></defs>
+<path d="M60 74 L60 168" stroke="#2a2d34" stroke-width="3" opacity=".55"/>
+<g class="gw"><circle cx="58" cy="104" r="3" fill="#fff" opacity=".35"/><circle cx="63" cy="96" r="4" fill="#fff" opacity=".28"/><circle cx="59" cy="86" r="5" fill="#fff" opacity=".2"/></g>
+<ellipse cx="60" cy="72" rx="44" ry="9" fill="none" stroke="#23262c" stroke-width="3"/>
+<g class="flb"><path d="M60 112 C48 100 50 84 60 70 C70 84 72 100 60 112Z" fill="url(#fb)" opacity=".85"/><path d="M60 112 C55 104 57 96 60 90 C63 96 65 104 60 112Z" fill="#3b6dff" opacity=".9"/></g>
+<g class="fly"><path d="M60 112 C42 96 46 66 60 40 C74 66 78 96 60 112Z" fill="url(#fy)" opacity=".92"/><path d="M60 112 C54 100 56 90 60 80 C64 90 66 100 60 112Z" fill="#ffe27a" opacity=".9"/></g>
+<ellipse cx="60" cy="68" rx="42" ry="9" fill="url(#gz)" stroke="#555a63" stroke-width="1.4"/>
+<ellipse cx="60" cy="68" rx="17" ry="4.2" fill="#e8e4d8" stroke="#9c978a" stroke-width=".8"/>
+<path d="M18 76 L6 180" stroke="url(#bd)" stroke-width="4.4" stroke-linecap="round"/><path d="M102 76 L114 180" stroke="url(#bd)" stroke-width="4.4" stroke-linecap="round"/>
+<path d="M82 172 C98 166 112 174 118 188" fill="none" stroke="#9c3d12" stroke-width="6" stroke-linecap="round"/><path d="M82 172 C98 166 112 174 118 188" fill="none" stroke="#e07a33" stroke-width="3.6" stroke-linecap="round"/>
+<g class="knob"><rect x="74" y="154" width="32" height="32" fill="transparent"/><circle cx="92" cy="170" r="9.5" fill="#2b2e35" stroke="#000" stroke-width="1"/><circle cx="92" cy="170" r="9.5" fill="url(#bm)" opacity=".35"/><g style="transform-origin:92px 170px;transform:rotate(var(--kr,0deg))"><rect x="90.6" y="161.5" width="2.8" height="8" rx="1" fill="#f0f0f0"/></g><circle cx="92" cy="170" r="2.4" fill="#111"/></g>
+<ellipse cx="60" cy="178" rx="32" ry="9" fill="url(#bd)" stroke="#16181c"/>
+<path d="M34 178 L41 166 L79 166 L86 178 Z" fill="url(#bd)"/>
+<rect x="53" y="112" width="14" height="56" fill="url(#bm)" stroke="#555" stroke-width=".6"/>
+<rect x="49" y="144" width="22" height="16" rx="2" fill="url(#bm)" stroke="#444" stroke-width=".8"/>
+<ellipse class="hole" cx="60" cy="152" rx="3.6" ry="4.6" fill="#0b0c0f"/><rect class="collar" x="44" y="138" width="32" height="30" fill="transparent"/>
+<ellipse cx="60" cy="112" rx="7" ry="2" fill="#2a2d34"/><rect x="56" y="114" width="2.4" height="28" fill="#fff" opacity=".5"/>
+</svg>`;
 }
 
-/* pointer interactions: cards (drag/tap) */
-let drag=null;
-function ghost(txt){const g=document.createElement("div");g.className="ghost";g.textContent=txt;document.body.appendChild(g);return g}
-function targetAt(x,y){const els=document.elementsFromPoint(x,y);for(const e of els){const it=e.closest&&e.closest(".it");if(it)return byId(it.dataset.id)}return null}
-function inWs(x,y){const r=ws.getBoundingClientRect();return x>=r.left&&x<=r.right&&y>=r.top&&y<=r.bottom}
-$("tbody").addEventListener("pointerdown",e=>{
- const card=e.target.closest(".card");if(!card)return;
- drag={card,x0:e.clientX,y0:e.clientY,moved:false,g:null,pid:e.pointerId};
-});
-addEventListener("pointermove",e=>{
- if(drag&&!drag.item){if(!drag.moved&&Math.hypot(e.clientX-drag.x0,e.clientY-drag.y0)>8){drag.moved=true;
-   const c=drag.card.dataset;const nm=c.app?APP.find(a=>a.id===c.app).n:CHEM.find(x=>x.id===c.chem).n;
-   if(c.app&&APP.find(a=>a.id===c.app).k==="uc"){drag.moved=false;drag.cancel=true}else drag.g=ghost(nm)}
-  if(drag.g){drag.g.style.left=e.clientX+"px";drag.g.style.top=e.clientY+"px";
-   state.items.forEach(i=>i.el.classList.remove("pourable"));let t=targetAt(e.clientX,e.clientY);if(t&&drag.card.dataset.app!==undefined&&APP.find(a=>a.id===drag.card.dataset.app).k==="cont")t=null;if(t)t.el.classList.add("pourable")}}
- if(drag&&drag.item){const it=drag.item;if(!drag.moved&&Math.hypot(e.clientX-drag.x0,e.clientY-drag.y0)>6){drag.moved=true;it.el.classList.add("drag")}
-  if(drag.moved){const r=ws.getBoundingClientRect();it.x=Math.max(50,Math.min(r.width-50,e.clientX-r.left));it.el.style.left=it.x+"px";
-   const tr=$("trash").getBoundingClientRect();$("trash").classList.toggle("hot",e.clientX>tr.left&&e.clientX<tr.right&&e.clientY>tr.top&&e.clientY<tr.bottom)}}
-});
-addEventListener("pointerup",e=>{
- if(!drag)return;const d=drag;drag=null;state.items.forEach(i=>i.el.classList.remove("pourable"));
- if(d.item){d.item.el.classList.remove("drag");const tr=$("trash").getBoundingClientRect();$("trash").classList.remove("hot");
-  if(d.moved){if(e.clientX>tr.left&&e.clientX<tr.right&&e.clientY>tr.top&&e.clientY<tr.bottom){removeItem(d.item);toast("Removed")}return}
-  /* tap on an item */
-  if(state.pour&&state.pour!==d.item){const f=state.pour;state.pour=null;doPour(f,d.item);return}
-  if(state.armed){const ch=CHEM.find(x=>x.id===state.armed);addChem(d.item,ch);select(d.item.id);return}
-  select(d.item.id);return}
- if(d.g)d.g.remove();
- const c=d.card.dataset;
- if(c.app){const a=APP.find(x=>x.id===c.app);
-  if(a.k==="uc"){toast("🚧 "+a.n+" is under construction");return}
-  if(d.moved){const t=targetAt(e.clientX,e.clientY);
-   if(a.k==="cont"){if(inWs(e.clientX,e.clientY)){const r=ws.getBoundingClientRect();spawn(a.id,e.clientX-r.left)}}
-   else if(t){attach(t,a.id);select(t.id)}else toast("Drop it on a container")}
-  else{ if(a.k==="cont")spawn(a.id);
-   else{const t=byId(state.sel)||(state.items.length===1?state.items[0]:null);if(t){attach(t,a.id)}else toast("Select a container first, or drag this onto one")}}
-  return}
- if(c.chem){const ch=CHEM.find(x=>x.id===c.chem);
-  if(d.moved){const t=targetAt(e.clientX,e.clientY);if(t){addChem(t,ch);select(t.id)}else toast("Drop it onto a container");return}
-  state.armed=state.armed===ch.id?null:ch.id;renderTool();
-  if(state.armed){const amt=ch.sol?state.amtS+" g":ch.ind?"a few drops":state.amtL+" mL";status("Armed: "+ch.n+" ("+amt+"): tap a container to add. Tap the card again to disarm.")}
-  else status("Disarmed.")}
-});
-addEventListener("pointercancel",()=>{if(drag){if(drag.g)drag.g.remove();drag=null}});
-function hookItem(c){c.el.addEventListener("pointerdown",e=>{if(e.target.closest(".read span"))return;drag={item:c,x0:e.clientX,y0:e.clientY,moved:false}})}
+let MN=0;
+function matchboxSVG(){const id="mb"+(MN++);
+ return `<svg width="120" height="76" viewBox="0 0 120 76" style="overflow:visible"><defs>
+<linearGradient id="${id}f" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="#d33a2c"/><stop offset="1" stop-color="#8f1d14"/></linearGradient>
+<linearGradient id="${id}t" x1="0" x2="1"><stop offset="0" stop-color="#e04a3a"/><stop offset="1" stop-color="#b52a1e"/></linearGradient>
+<pattern id="${id}h" width="3" height="3" patternUnits="userSpaceOnUse"><path d="M0 3L3 0" stroke="#2a2118" stroke-width=".7" opacity=".7"/></pattern></defs>
+<ellipse cx="62" cy="70" rx="58" ry="6" fill="#000" opacity=".3"/>
+<g class="mtray"><path d="M98 40 L118 33 L118 60 L98 66 Z" fill="#dcb67a" stroke="#8a6a3a" stroke-width=".8"/><path d="M98 40 L118 33 L118 38 L98 45 Z" fill="#f0d29c"/>
+<circle cx="103" cy="41" r="2.6" fill="#b3261e"/><circle cx="108" cy="39" r="2.6" fill="#b3261e"/><circle cx="113" cy="37" r="2.6" fill="#b3261e"/><circle cx="103" cy="47" r="2.6" fill="#b3261e"/><circle cx="108" cy="45" r="2.6" fill="#b3261e"/><circle cx="113" cy="43" r="2.6" fill="#b3261e"/>
+<rect x="96" y="30" width="26" height="40" fill="transparent"/></g>
+<path d="M12 38 L98 38 L98 66 L12 66 Z" fill="url(#${id}f)" stroke="#5e120b" stroke-width=".8"/>
+<rect x="22" y="44" width="66" height="16" rx="2" fill="#f4e6b8" stroke="#8a6a3a" stroke-width=".6"/>
+<text x="55" y="55" text-anchor="middle" font-size="8.4" font-weight="800" font-family="system-ui,sans-serif" fill="#7a1a10">SAFETY MATCHES</text>
+<path d="M12 38 L98 38 L110 26 L24 26 Z" fill="url(#${id}t)" stroke="#5e120b" stroke-width=".8"/>
+<rect class="strip" x="30" y="27" width="72" height="9" fill="#6a5846" stroke="#2a2118" stroke-width=".6"/><rect x="30" y="27" width="72" height="9" fill="url(#${id}h)"/>
+<text x="66" y="34.6" text-anchor="middle" font-size="5" font-family="system-ui,sans-serif" fill="#e8dcc4" opacity=".85">STRIKE HERE</text></svg>`}
+function matchSVG(){const id="mt"+(MN++);
+ return `<svg width="16" height="124" viewBox="0 0 16 124" style="overflow:visible"><defs>
+<linearGradient id="${id}w" x1="0" x2="1"><stop offset="0" stop-color="#b98a4e"/><stop offset=".45" stop-color="#ebc88e"/><stop offset="1" stop-color="#9c6f38"/></linearGradient>
+<linearGradient id="${id}k" x1="0" x2="1"><stop offset="0" stop-color="#0f0c09"/><stop offset=".5" stop-color="#3a2f26"/><stop offset="1" stop-color="#0f0c09"/></linearGradient>
+<radialGradient id="${id}f" cx=".5" cy=".85" r=".8"><stop offset="0" stop-color="#fff6b8"/><stop offset=".4" stop-color="#ffb52e"/><stop offset="1" stop-color="#ff5a1f" stop-opacity=".1"/></radialGradient></defs>
+<rect x="5.6" y="14" width="4.8" height="104" rx="1.4" fill="url(#${id}w)" stroke="#7a5424" stroke-width=".5"/>
+<rect class="mchar" x="5.6" y="14" width="4.8" height="0" fill="url(#${id}k)"/>
+<rect class="memb" x="5.6" y="14" width="4.8" height="2.4" fill="#ff7a1a" opacity="0"/>
+<ellipse class="mhead" cx="8" cy="8" rx="5" ry="7" fill="#b3261e" stroke="#6f130e" stroke-width=".6"/><ellipse cx="6.6" cy="5.4" rx="1.4" ry="2.4" fill="#fff" opacity=".35"/>
+<g class="mfl"><path d="M8 4 C0 -4 3 -18 8 -34 C13 -18 16 -4 8 4Z" fill="url(#${id}f)"/><path d="M8 3 C5 -3 6 -9 8 -14 C10 -9 11 -3 8 3Z" fill="#fff3a8"/></g></svg>`}
 
 /* rendering a container: pseudo-3D glassware drawn as shaded SVG */
 const PAD=46;
@@ -500,7 +679,11 @@ const GEO={
  beaker:{W:104,H:PAD+132,cx:52,ytop:PAD+10,yb:PAD+112,hw:()=>45,flat:7,ticks:[50,100,150,200]},
  tube:{W:46,H:PAD+136,cx:23,ytop:PAD+8,yb:PAD+126,hw:y=>{const r=17,s=PAD+126-r;return y<=s?r:Math.sqrt(Math.max(0,r*r-(y-s)*(y-s)))},flat:0,ticks:[]},
  flask:{W:118,H:PAD+132,cx:59,ytop:PAD+8,yb:PAD+114,hw:y=>{const a=PAD+34;return y<=a?13:13+(y-a)/(PAD+114-a)*(48-13)},flat:8,ticks:[50,100,150,200]},
- cyl:{W:62,H:PAD+174,cx:31,ytop:PAD+8,yb:PAD+152,hw:()=>16,flat:4,foot:1,ticks:[10,20,30,40,50,60,70,80,90]}
+ cyl:{W:62,H:PAD+174,cx:31,ytop:PAD+8,yb:PAD+152,hw:()=>16,flat:4,foot:1,ticks:[10,20,30,40,50,60,70,80,90]},
+ btube:{W:56,H:PAD+152,cx:28,ytop:PAD+8,yb:PAD+144,hw:y=>{const r=20,s=PAD+144-r;return y<=s?r:Math.sqrt(Math.max(0,r*r-(y-s)*(y-s)))},flat:0,ticks:[]},
+ dish:{W:134,H:PAD+64,cx:67,ytop:PAD+10,yb:PAD+46,hw:y=>62-26*Math.min(1,Math.max(0,(y-(PAD+10))/36)),flat:7,ticks:[],por:1},
+ watch:{W:124,H:PAD+40,cx:62,ytop:PAD+10,yb:PAD+24,hw:y=>56-8*Math.min(1,Math.max(0,(y-(PAD+10))/14)),flat:4,ticks:[],por:1},
+ mug:{W:124,H:PAD+126,cx:62,ytop:PAD+10,yb:PAD+108,hw:()=>47,flat:7,ticks:[]}
 };
 const f1=n=>n.toFixed(1);
 function polyPts(g,y0){const cx=g.cx,P=[];
@@ -513,8 +696,9 @@ function polyPts(g,y0){const cx=g.cx,P=[];
 function levelY(g,vol,cap){if(vol<=0)return g.yb;const fr=Math.min(.97,(8+92*Math.pow(vol/cap,.55))/100);return g.yb-fr*(g.yb-g.ytop)*.96}
 function rgba(rgb,a){return`rgba(${rgb.map(Math.round).join(",")},${a})`}
 function drawVessel(c){
+ if(c.inv)return drawInv(c);
  const g=GEO[c.type],cx=g.cx,id="g"+c.id,V=c.vol,ys=levelY(g,V,c.cap),has=V>.05;
- const sc=solnColour(c),lc=rgba(sc.rgb,Math.min(.92,sc.alpha+.12)),surf=rgba(mix(sc.rgb,[255,255,255],.35),Math.min(.95,sc.alpha+.25));
+ const sc0=solnColour(c),sc=(c.disp&&V>.3)?c.disp:sc0,lc=rgba(sc.rgb,Math.min(.92,sc.alpha+.12)),surf=rgba(mix(sc.rgb,[255,255,255],.35),Math.min(.95,sc.alpha+.25));
  let o=`<svg width="${g.W}" height="${g.H}" viewBox="0 0 ${g.W} ${g.H}"><defs>
 <linearGradient id="${id}gh" x1="0" x2="1"><stop offset="0" stop-color="#fff" stop-opacity=".5"/><stop offset=".18" stop-color="#fff" stop-opacity=".08"/><stop offset=".5" stop-color="#fff" stop-opacity=".16"/><stop offset=".82" stop-color="#fff" stop-opacity=".02"/><stop offset="1" stop-color="#fff" stop-opacity=".42"/></linearGradient>
 <linearGradient id="${id}ls" x1="0" x2="1"><stop offset="0" stop-color="#000" stop-opacity=".32"/><stop offset=".28" stop-color="#000" stop-opacity=".02"/><stop offset=".62" stop-color="#fff" stop-opacity=".1"/><stop offset="1" stop-color="#000" stop-opacity=".3"/></linearGradient>
@@ -522,7 +706,7 @@ function drawVessel(c){
  const rxT=g.hw(g.ytop),ryT=rxT*.17;
  if(g.foot)o+=`<ellipse cx="${cx}" cy="${g.yb+g.flat+3}" rx="26" ry="6" style="fill:rgba(160,175,205,.45);stroke:var(--glassb)" stroke-width="1.5"/>`;
  o+=`<ellipse cx="${cx}" cy="${g.ytop}" rx="${f1(rxT)}" ry="${f1(ryT)}" fill="none" style="stroke:var(--glassb)" stroke-opacity=".5" stroke-width="1.5"/>`;
- o+=`<polygon points="${polyPts(g,g.ytop)}" fill="rgba(190,205,235,.12)"/>`;
+ o+=`<polygon points="${polyPts(g,g.ytop)}" fill="${g.por?"rgba(248,244,236,.8)":"rgba(190,205,235,.12)"}"/>`;
  if(has){
   o+=`<polygon points="${polyPts(g,ys)}" fill="${lc}"/>`;
   let tr=0,tcol=[255,255,255];const Vl=Math.max(V/1000,1e-4);
@@ -535,11 +719,23 @@ function drawVessel(c){
    const rp=g.hw(yp);o+=`<ellipse cx="${cx}" cy="${f1(yp)}" rx="${f1(rp)}" ry="${f1(Math.max(1.5,rp*.16))}" fill="${pc}" style="filter:brightness(1.08)"/>`}
   o+=`<polygon points="${polyPts(g,ys)}" fill="url(#${id}ls)"/>`;
  }
+ {const gt=gasTint(c);if(gt)o+=`<polygon points="${polyPtsTop(g,has?ys:g.yb)}" fill="${gt}"/>`;
+  if((c.drops||0)>.05)for(let i=0;i<9;i++){const yy=g.ytop+8+(i%5)*5+(i%3)*2,xx=cx-g.hw(yy)+3+((i*7)%4);o+=`<circle cx="${f1(xx)}" cy="${f1(yy)}" r="1.5" fill="#fff" fill-opacity=".85" stroke="#9db" stroke-width=".4"/>`}}
+ if(c.type==="mug")for(const s of[-1,1]){const x=cx+s*22,top=g.yb-64;o+=`<rect x="${x-3.2}" y="${top}" width="6.4" height="${g.yb-top+4}" rx="2" fill="#1d1f24" stroke="#000" stroke-width=".6"/><rect x="${x-1.6}" y="${top+2}" width="1.6" height="${g.yb-top-4}" fill="#fff" opacity=".28"/><rect x="${x-7}" y="${g.yb-2}" width="14" height="7" rx="2" fill="#6b3a1a"/><text x="${x}" y="${top-4}" text-anchor="middle" font-size="10" font-weight="800" fill="${s<0?"#ff6b6b":"#6bb0ff"}">${s<0?"−":"+"}</text>`}
  /* solids & deposits (3D chunks with highlight) */
  let n=0;
  const chunk=(col,i,sz)=>{const w=g.hw(g.yb-4)*1.15,x=cx+(((i*53)%100)/100-.5)*w,y=g.yb-4-(i%3)*4,r=(i*37)%60-30;
   return `<g transform="translate(${f1(x)} ${f1(y)}) rotate(${r})"><rect x="${-sz}" y="${-sz*.55}" width="${sz*2}" height="${f1(sz*1.1)}" rx="2" fill="${col}" stroke="rgba(0,0,0,.45)" stroke-width=".8"/><rect x="${-sz+1}" y="${f1(-sz*.55+1)}" width="${sz*2-2}" height="1.6" rx=".8" fill="#fff" fill-opacity=".45"/></g>`};
- for(const k in c.sol){const gg=c.sol[k];if(gg>1e-3){const m=Math.min(8,Math.ceil(gg*2));for(let i=0;i<m;i++)o+=chunk(SOLCOL[k],n++,k==="mg"?6:5)}}
+ for(const k in c.sol){const gg=c.sol[k];if(!(gg>1e-3))continue;
+  if(POWD[k]){
+   if(k==="ag"&&((c.sol.agcl||0)+(c.sol.agbr||0))>1e-3)continue;
+   if(k==="cuo"&&(c.sol.cu||0)>1e-3)continue;
+   let col=SOLCOL[k],mass=gg;
+   if(k==="agcl"||k==="agbr"){const ag=c.sol.ag||0;col=hex(mix(hx(SOLCOL[k]),[104,106,112],ag/(ag+gg)))}
+   if(k==="cu"){const ox=c.sol.cuo||0;col=hex(mix(hx(SOLCOL.cu),[26,26,26],ox/(ox+gg)));mass=gg+ox}
+   const w=Math.min(g.hw(g.yb)*1.8,12+Math.sqrt(mass)*20),h=Math.min(40,3+Math.sqrt(mass)*10);
+   o+=`<path d="M${f1(cx-w/2)} ${g.yb} Q${f1(cx-w/4)} ${f1(g.yb-h)} ${cx} ${f1(g.yb-h)} Q${f1(cx+w/4)} ${f1(g.yb-h)} ${f1(cx+w/2)} ${g.yb} Z" fill="${col}" stroke="rgba(0,0,0,.4)" stroke-width=".7"/><path d="M${f1(cx-w/4)} ${f1(g.yb-h*.7)} Q${cx} ${f1(g.yb-h*1.02)} ${f1(cx+w/6)} ${f1(g.yb-h*.8)}" fill="none" stroke="#fff" stroke-opacity=".45" stroke-width="1.6"/>`}
+  else{const m=Math.min(8,Math.ceil(gg*2));for(let i=0;i<m;i++)o+=chunk(SOLCOL[k],n++,k==="mg"?6:k==="nail"?7:5)}}
  for(const k in c.dep){if(c.dep[k]>1e-3){const m=Math.min(6,Math.ceil(c.dep[k]*8));for(let i=0;i<m;i++)o+=chunk(DEPCOL[k],n++,2.6)}}
  /* probes & papers */
  let pi=0;
@@ -557,6 +753,7 @@ function drawVessel(c){
  }
  /* surface ellipse (liquid top) */
  if(has){const rs=g.hw(ys);o+=`<ellipse cx="${cx}" cy="${f1(ys)}" rx="${f1(rs)}" ry="${f1(Math.max(1.6,rs*.17))}" fill="${surf}" style="stroke:rgba(255,255,255,.55)" stroke-width="1"/>`}
+ if(has&&c.gasRate>3e-5){const rs=g.hw(ys),n=Math.min(16,3+Math.round(c.gasRate/9e-6));for(let i=0;i<n;i++){const a=i*2.399,r=((i*37)%100)/100*rs*.82;o+=`<circle cx="${f1(cx+Math.cos(a)*r)}" cy="${f1(ys+Math.sin(a)*r*.17-1)}" r="${2+(i%3)*.8}" fill="#fff" fill-opacity=".88" stroke="rgba(140,160,190,.7)" stroke-width=".6"/>`}}
  /* glass body, highlights, graduations */
  o+=`<polygon points="${polyPts(g,g.ytop)}" fill="url(#${id}gh)" style="stroke:var(--glassb)" stroke-width="2" stroke-linejoin="round"/>`;
  let hl="";for(let y=g.ytop+10;y<g.yb-6;y+=4)hl+=f1(cx-g.hw(y)*.74)+","+f1(y)+" ";
@@ -568,34 +765,342 @@ function drawVessel(c){
   if(big&&c.type!=="flask")o+=`<text x="${f1(cx+w-15)}" y="${f1(y+2.5)}" text-anchor="end" font-size="7" style="fill:var(--glassb)">${t}</text>`}
  o+=`<ellipse cx="${cx}" cy="${g.ytop}" rx="${f1(rxT)}" ry="${f1(ryT)}" fill="none" style="stroke:var(--glassb)" stroke-width="2.2"/>`;
  o+=`<ellipse cx="${cx}" cy="${f1(g.ytop+.8)}" rx="${f1(rxT-2)}" ry="${f1(ryT-1)}" fill="none" stroke="#fff" stroke-opacity=".5" stroke-width="1"/>`;
+ if(c.cork){o+=`<path d="M${f1(cx-rxT*.62)} ${g.ytop} L${f1(cx-rxT*.5)} ${g.ytop-13} L${f1(cx+rxT*.5)} ${g.ytop-13} L${f1(cx+rxT*.62)} ${g.ytop} Z" fill="#b07a3c" stroke="#6f4a1c" stroke-width="1"/><ellipse cx="${cx}" cy="${g.ytop-13}" rx="${f1(rxT*.5)}" ry="2.4" fill="#c99358" stroke="#6f4a1c" stroke-width=".8"/><circle cx="${f1(cx+rxT*.12)}" cy="${g.ytop-13}" r="2" fill="#2a1c0c"/>`}
  return o+"</svg>";
 }
+const POWD={cuo:1,cu:1,mgo:1,cao:1,pbn:1,pbo:1,agcl:1,agbr:1,ag:1,baoh2:1,nh4cl:1,k2so4:1,nh4no3:1,cuso4a:1,fe2o3:1,feso4a:1};
 for(const k in GEO)GEO[k].type=k;
-function view(c){
- const el=c.el,g=GEO[c.type],host=el.querySelector(".svgh"),svg=drawVessel(c);
- if(host._s!==svg){host.innerHTML=svg;host._s=svg}
- const ys=levelY(g,c.vol,c.cap),b=el.querySelector(".bubs"),w=g.hw(Math.min(g.yb-1,Math.max(g.ytop,ys)))*1.5;
- b.style.cssText=`left:${f1(g.cx-w/2)}px;width:${f1(w)}px;top:${f1(ys)}px;height:${f1(Math.max(0,g.yb-ys))}px;--rise:-${f1(Math.max(0,g.yb-ys))}px`;
- el.classList.toggle("heat",c.heat);
+function polyPtsTop(g,y1){const cx=g.cx,P=[];y1=Math.min(y1,g.yb);
+ for(let y=g.ytop;y<y1;y+=2)P.push([cx-g.hw(y),y]);P.push([cx-g.hw(y1),y1]);P.push([cx+g.hw(y1),y1]);
+ for(let y=y1-2;y>=g.ytop;y-=2)P.push([cx+g.hw(y),y]);
+ return P.map(p=>f1(p[0])+","+f1(p[1])).join(" ")}
+function gasTint(c){const hv=Math.max(5,c.cap*1.4-Math.max(0,c.vol)),gh=c.gh||{},f=k=>Math.min(1,((gh[k]||0)*24000)/hv);
+ const no2=f("NO2"),cl2=f("Cl2"),br2=f("Br2"),so3=f("SO3"),s=no2+cl2+br2+so3;
+ if(s<.01)return null;
+ const a=Math.min(.8,no2*1.7+br2*1.4+cl2*.6+so3*.5);
+ return `rgba(${((no2*150+br2*160+cl2*190+so3*235)/s)|0},${((no2*70+br2*70+cl2*200+so3*235)/s)|0},${((no2*20+br2*30+cl2*90+so3*240)/s)|0},${a.toFixed(2)})`}
+function drawInv(c){ /* test tube held mouth-down over water: water at the open end, gas at the closed end */
+ const g=GEO[c.type],cx=g.cx,id="g"+c.id,V=Math.max(0,c.vol),fr=Math.min(1,V/c.cap),y1=g.ytop+fr*(g.yb-g.ytop);
+ const sc=solnColour(c),lc=rgba(sc.rgb,Math.min(.92,sc.alpha+.12)),rxT=g.hw(g.ytop),ryT=rxT*.17;
+ let o=`<svg width="${g.W}" height="${g.H}" viewBox="0 0 ${g.W} ${g.H}"><defs><linearGradient id="${id}gh" x1="0" x2="1"><stop offset="0" stop-color="#fff" stop-opacity=".5"/><stop offset=".18" stop-color="#fff" stop-opacity=".08"/><stop offset=".5" stop-color="#fff" stop-opacity=".16"/><stop offset=".82" stop-color="#fff" stop-opacity=".02"/><stop offset="1" stop-color="#fff" stop-opacity=".42"/></linearGradient></defs>`;
+ o+=`<polygon points="${polyPts(g,g.ytop)}" fill="rgba(190,205,235,.12)"/>`;
+ if(V>.05)o+=`<polygon points="${polyPtsTop(g,y1)}" fill="${lc}"/><ellipse cx="${cx}" cy="${f1(y1)}" rx="${f1(g.hw(y1))}" ry="${f1(Math.max(1.4,g.hw(y1)*.14))}" fill="${rgba(mix(sc.rgb,[255,255,255],.4),.7)}" stroke="rgba(255,255,255,.6)" stroke-width=".8"/>`;
+ const gt=gasTint(c);if(gt&&fr<.98)o+=`<polygon points="${polyPts(g,y1)}" fill="${gt}"/>`;
+ o+=`<polygon points="${polyPts(g,g.ytop)}" fill="url(#${id}gh)" style="stroke:var(--glassb)" stroke-width="2" stroke-linejoin="round"/>`;
+ let hl="";for(let y=g.ytop+10;y<g.yb-6;y+=4)hl+=f1(cx-g.hw(y)*.74)+","+f1(y)+" ";
+ o+=`<polyline points="${hl}" fill="none" stroke="#fff" stroke-opacity=".6" stroke-width="3" stroke-linecap="round"/>`;
+ for(let k=1;k<4;k++){const y=g.ytop+k*(g.yb-g.ytop)/4;o+=`<line x1="${f1(cx+g.hw(y)-7)}" x2="${f1(cx+g.hw(y)-2)}" y1="${f1(y)}" y2="${f1(y)}" style="stroke:var(--glassb)" stroke-width="1"/>`}
+ o+=`<ellipse cx="${cx}" cy="${g.ytop}" rx="${f1(rxT)}" ry="${f1(ryT)}" fill="none" style="stroke:var(--glassb)" stroke-width="2.2"/>`;
+ return o+"</svg>";
 }
-function paperColour(c,p){const ph=phOf(c);if(ph==null)return"#ddd";
- if(p==="rl")return ph>8.3?"#4a63c9":"#d9453d";if(p==="bl")return ph<5?"#d9453d":"#4a63c9";return hex(uiColor(ph))}
-function readouts(c){
- const ph=phOf(c);let h="";
- for(const p of c.probes){
-  if(p==="phm")h+=`<span data-rm="${p}" title="tap to remove">pH ${ph==null?"—":ph.toFixed(2)}</span>`;
-  else if(p==="th")h+=`<span data-rm="${p}" title="tap to remove">${c.T.toFixed(1)}°C</span>`;
-  else h+=`<span class="paper" data-rm="${p}" title="tap to remove" style="background:${c.vol>.2?paperColour(c,p):"#ddd"}">${{rl:"R-lit",bl:"B-lit",up:"pH"}[p]}</span>`}
- const box=c.el.querySelector(".read"),old=box.dataset.h;if(old!==h){box.innerHTML=h;box.dataset.h=h}
-}
-document.addEventListener("click",e=>{const s=e.target.closest(".read span");if(!s)return;const it=e.target.closest(".it"),c=byId(it.dataset.id);c.probes=c.probes.filter(p=>p!==s.dataset.rm);c.el.querySelector(".read").dataset.h="x";readouts(c)});
+/* ================= UI ================= */
+const $=id=>document.getElementById(id),E=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const ws=$("ws"),state={items:[],tools:[],sel:null,gog:false,warp:1,armed:null,amtL:5,amtS:.5,pour:null,tool:"app",pan:"insp",q:"",nid:1,counts:{}};
+const pours=[],matches=[];let toastT;
+const all=()=>state.items.concat(state.tools),byId=id=>all().find(i=>i.id==id);
+const isC=i=>i&&i.cap!==undefined;
+function toast(m){const t=$("toast");t.textContent=m;t.classList.add("show");clearTimeout(toastT);toastT=setTimeout(()=>t.classList.remove("show"),2600)}
+function status(m){$("status").textContent=m}
+/* theme from parent app */
+function theme(){let t="light";try{const s=JSON.parse(localStorage.getItem("aalimTrackerV2")||"{}");if(s&&s.settings&&s.settings.theme==="dark")t="dark"}catch(e){}document.documentElement.dataset.theme=t}
+theme();setInterval(theme,2000);addEventListener("storage",theme);
 
-/* panel */
+/* ---------- the lab table ---------- */
+function tr(){const H=ws.clientHeight,W=ws.clientWidth,wall=Math.max(64,H*.24);return{x0:60,x1:Math.max(120,W-60),y0:wall+70,yc:Math.max(110,wall*.7),y1:H-10,wall}}
+const scaleAt=y=>{const r=tr();return .72+.38*Math.max(0,Math.min(1,(y-r.y0)/Math.max(1,r.y1-r.y0)))};
+function layout(){ws.style.setProperty("--wallh",Math.round(tr().wall)+"px")}
+function clampXY(it){const r=tr();it.x=Math.max(r.x0,Math.min(r.x1,it.x));it.y=Math.max(r.yc,Math.min(r.y1,it.y))}
+function place(it){
+ let y=it.y,sc;const b=it.mount?byId(it.mount):null;
+ if(it.slot){const m=byId(it.slot.host);
+  if(m){const mv=m.el.querySelector(".vessel").getBoundingClientRect(),wr=ws.getBoundingClientRect(),msc=mv.width/GEO.mug.W;
+   it.x=mv.left-wr.left+(GEO.mug.cx+(it.slot.i?22:-22))*msc;sc=msc;y=mv.top-wr.top+(GEO.mug.yb-56)*msc+(22+GEO[it.type].ytop)*sc;it.y=y}
+  else{it.slot=null;sc=scaleAt(it.y)}}
+ else if(b){sc=scaleAt(b.y);it.x=b.x;const G=GEO[it.type];y=b.y-144*sc+(G.H-G.yb-G.flat)*sc;it.y=y}else sc=scaleAt(it.y);
+ it.sc=sc;const e=it.el;e.style.left=it.x+"px";e.style.top=y+"px";
+ e.style.transform=`translate(-50%,-100%) scale(${sc.toFixed(3)})`;
+ e.style.zIndex=it.slot?Math.round(byId(it.slot.host).y)+2:b?Math.round(b.y)+1:Math.round(it.y);
+ e.classList.toggle("mounted",!!b);
+}
+new ResizeObserver(()=>{layout();all().forEach(i=>{clampXY(i);place(i)})}).observe(ws);layout();
+const TONGS=`<svg class="tongs" width="90" height="30" viewBox="0 0 90 30"><path d="M2 14 L88 4 M2 18 L88 26" stroke="#b08a2e" stroke-width="3.4" stroke-linecap="round" fill="none"/><circle cx="88" cy="5" r="4" fill="none" stroke="#b08a2e" stroke-width="2.4"/><circle cx="88" cy="25" r="4" fill="none" stroke="#b08a2e" stroke-width="2.4"/></svg>`;
+const ITW={bunsen:120,matchbox:120,sand:120,beaker:104,tube:46,btube:56,flask:118,cyl:62,dish:134,watch:124,mug:124};
+function freeSpot(w){w=w||100;const r=tr(),rows=[r.y1-24,(r.y0+r.y1)/2+16,r.y0+20];
+ for(const y of rows)for(let x=r.x0+30;x<=r.x1-30;x+=30)if(all().every(i=>Math.abs(i.x-x)>=((ITW[i.type]||100)+w)/2+10||Math.abs(i.y-y)*1.3>70))return[x,y];
+ return[r.x0+Math.random()*(r.x1-r.x0),r.y1-24]}
+
+/* ---------- toolbox ---------- */
+function renderTool(){
+ const tb=$("tbody");
+ if(state.tool==="app"){
+  const rows=k=>APP.filter(a=>a.k===k).map(a=>`<div class="card ${a.k==="uc"?"uc":""}" data-app="${a.id}"><span class="ic">${a.ic}</span>${E(a.n)}<small>${E(a.s)}</small></div>`).join("");
+  tb.innerHTML=`<div class="grp">Glassware</div><div class="cards">${rows("cont")}</div><div class="grp">Fire &amp; heating</div><div class="cards">${rows("tool")}</div><div class="grp">Hand tools</div><div class="cards">${rows("hand")}</div><div class="grp">Metal pieces</div><div class="cards">${rows("piece")}</div><div class="grp">Probes &amp; papers (drop in a container)</div><div class="cards">${rows("probe")}</div><div class="grp">Coming soon 🚧</div><div class="cards">${rows("uc")}</div>`;
+ }else{
+  const q=state.q.toLowerCase(),list=CHEM.filter(c=>!q||(c.n+" "+c.f+" "+c.g).toLowerCase().includes(q));
+  let h=`<input class="search" id="q" placeholder="Search reagents…" value="${E(state.q)}"><div class="amt">Pour: ${LIQ_AMT.map(a=>`<button data-al="${a}" class="${a===state.amtL?"on":""}">${a} mL</button>`).join("")}</div><div class="amt">Solid: ${SOL_AMT.map(a=>`<button data-as="${a}" class="${a===state.amtS?"on":""}">${a} g</button>`).join("")}</div>`;
+  let g="";for(const c of list){if(c.g!==g){g=c.g;h+=`</div><div class="grp">${g==="Solids"?"Solids (jars)":g==="Indicators"?"Indicators (dropper bottles)":g}</div><div class="cards">`}
+   h+=`<div class="card bot ${state.armed===c.id?"on":""}" data-chem="${c.id}"><div class="bsvg">${bottleSVG(c)}</div>${E(c.n)}<small>${c.f}</small></div>`}
+  tb.innerHTML=h+"</div>";
+  const q2=$("q");if(q2)q2.oninput=e=>{state.q=e.target.value;const p=e.target.selectionStart;renderTool();const n=$("q");n.focus();n.setSelectionRange(p,p)};
+ }
+}
+document.querySelectorAll("[data-tt]").forEach(b=>b.onclick=()=>{state.tool=b.dataset.tt;document.querySelectorAll("[data-tt]").forEach(x=>x.classList.toggle("on",x===b));renderTool()});
+$("tbody").addEventListener("click",e=>{
+ const a=e.target.closest("[data-al]");if(a){state.amtL=+a.dataset.al;renderTool();return}
+ const s=e.target.closest("[data-as]");if(s){state.amtS=+s.dataset.as;renderTool();return}
+});
+
+/* ---------- spawning ---------- */
+function spawn(type,x,y){
+ if(all().length>=14){toast("The table is full. Remove something first.");return}
+ const nm={beaker:"Beaker",tube:"Test tube",btube:"Boiling tube",flask:"Flask",cyl:"Cylinder",dish:"China dish",watch:"Watch glass",mug:"Electrolysis cell"}[type];state.counts[type]=(state.counts[type]||0)+1;
+ const c=newContainer(type,nm+" "+state.counts[type]);c.id=state.nid++;c.mount=null;
+ const sp=freeSpot(ITW[type]);c.x=x==null?sp[0]:x;c.y=y==null?sp[1]:y;clampXY(c);
+ const d=document.createElement("div");d.className="it "+type;d.dataset.id=c.id;const G=GEO[type];
+ d.innerHTML=`<div class="read"></div><div class="vessel" style="width:${G.W}px;height:${G.H}px"><div class="shadow"></div>${type==="mug"?`<div class="elx">${elxHTML()}</div>`:""}<div class="svgh"></div><div class="bubs"></div><div class="swl"></div><div class="rodl"></div>${type==="tube"||type==="btube"?TONGS:""}</div><div class="lbl">${c.label}</div>`;
+ ws.appendChild(d);c.el=d;state.items.push(c);hookItem(c);place(c);select(c.id);view(c);$("hint").style.display="none";return c;
+}
+function spawnBurner(x,y){
+ if(all().length>=14){toast("The table is full. Remove something first.");return}
+ state.counts.bunsen=(state.counts.bunsen||0)+1;
+ const b={id:state.nid++,type:"bunsen",label:"Bunsen "+state.counts.bunsen,lit:false,air:.25,gas:0,gasT:0};
+ const sp=freeSpot(120);b.x=x==null?sp[0]:x;b.y=y==null?sp[1]:y;clampXY(b);
+ const d=document.createElement("div");d.className="it bunsen";d.dataset.id=b.id;
+ d.innerHTML=`<div class="vessel" style="width:120px;height:190px"><div class="shadow"></div><div class="svgh">${burnerSVG()}</div></div><div class="lbl">${b.label}</div>`;
+ ws.appendChild(d);b.el=d;state.tools.push(b);hookItem(b);place(b);burnerView(b);select(b.id);$("hint").style.display="none";return b;
+}
+function spawnTool(id,x,y){return id==="matchbox"?spawnMatchbox(x,y):spawnBurner(x,y)}
+function spawnMatchbox(x,y){
+ if(state.tools.some(t=>t.type==="matchbox")){toast("You already have a matchbox on the table");return}
+ if(all().length>=14){toast("The table is full. Remove something first.");return}
+ const m={id:state.nid++,type:"matchbox",label:"Matchbox",n:20};
+ const sp=freeSpot(120);m.x=x==null?sp[0]:x;m.y=y==null?sp[1]:y;clampXY(m);
+ const d=document.createElement("div");d.className="it matchbox";d.dataset.id=m.id;
+ d.innerHTML=`<div class="vessel" style="width:120px;height:76px"><div class="shadow"></div><div class="svgh">${matchboxSVG()}</div></div><div class="lbl">Matchbox</div>`;
+ ws.appendChild(d);m.el=d;state.tools.push(m);hookItem(m);place(m);select(m.id);$("hint").style.display="none";return m;
+}
+/* ---------- matches: pull, strike on the strip, burn down, light the burner ---------- */
+const MATCH_LIFE=12;
+function spawnMatch(x,y){
+ const m={x,y,lit:false,dead:false,burn:0,strike:0,lastT:performance.now(),lx:0,ly:0,warnT:0,slowT:0};
+ const el=document.createElement("div");el.className="mt";el.innerHTML=matchSVG();ws.appendChild(el);m.el=el;
+ m.char=el.querySelector(".mchar");m.head=el.querySelector(".mhead");m.ember=el.querySelector(".memb");
+ matches.push(m);placeMatch(m);
+ el.addEventListener("pointerdown",e=>{const p=wsPt(e);drag={match:m,x0:e.clientX,y0:e.clientY,dx:m.x-p[0],dy:m.y-p[1],moved:false};m.lastT=performance.now();m.lx=e.clientX;m.ly=e.clientY});
+ const dead=matches.filter(k=>k.dead);if(dead.length>5)removeMatch(dead[0]);
+ return m;
+}
+function placeMatch(m){m.el.style.left=m.x+"px";m.el.style.top=m.y+"px"}
+function removeMatch(m){m.el.remove();const i=matches.indexOf(m);if(i>=0)matches.splice(i,1)}
+function pullMatch(box,e){
+ if(box.n<=0){toast("The matchbox is empty");return}
+ box.n--;const p=wsPt(e),m=spawnMatch(p[0],p[1]);m.el.classList.add("held");
+ drag={match:m,x0:e.clientX,y0:e.clientY,dx:0,dy:0,moved:true};m.lx=e.clientX;m.ly=e.clientY;m.lastT=performance.now();
+ renderPanel(true);toast("Strike it fast along the rough strip on the box");
+}
+function lightMatch(m){
+ if(!state.gog){toast("🥽 Put on your safety goggles before striking a match!");m.strike=0;return}
+ m.lit=true;m.burn=0;m.el.classList.add("lit");toast("🔥 The match is lit. It burns for about 12 seconds.");
+ log({label:"Match"},"the match is struck: it flares up and burns with a yellow flame");
+}
+function moveMatch(e){
+ const d=drag,m=d.match,now=performance.now();
+ {const t=$("trash").getBoundingClientRect();$("trash").classList.toggle("hot",e.clientX>t.left&&e.clientX<t.right&&e.clientY>t.top&&e.clientY<t.bottom)}
+ if(!d.moved&&Math.hypot(e.clientX-d.x0,e.clientY-d.y0)>4){d.moved=true;m.el.classList.add("held")}
+ if(!d.moved)return;
+ const p=wsPt(e);m.x=p[0]+d.dx;m.y=p[1]+d.dy;placeMatch(m);
+ const dt=Math.max(1,now-m.lastT),dist=Math.hypot(e.clientX-m.lx,e.clientY-m.ly),speed=dist/dt;
+ m.lastT=now;m.lx=e.clientX;m.ly=e.clientY;
+ if(!m.lit&&!m.dead){
+  const box=state.tools.find(t=>t.type==="matchbox");
+  if(box){const r=box.el.querySelector(".strip").getBoundingClientRect();
+   const inside=e.clientX>=r.left-8&&e.clientX<=r.right+8&&e.clientY>=r.top-10&&e.clientY<=r.bottom+10;
+   if(inside&&m.wasIn){
+    if(speed>.3)m.strike+=dist;else if(dist>1&&m.strike<6&&now-m.slowT>2500){m.slowT=now;toast("Too slow. Strike it faster along the rough strip")}
+    if(m.strike>36)lightMatch(m)}
+   else if(!inside)m.strike=0;
+   m.wasIn=inside}}
+}
+function toggleGas(b){
+ b.gas=!b.gas;b.gasT=0;b.warned=false;
+ if(!b.gas){if(b.lit){b.lit=false;log(b,"gas tap closed: the flame goes out")}else log(b,"gas tap closed")}
+ else log(b,"gas tap opened: gas is flowing but not lit. Strike a match and hold it to the top of the barrel");
+ burnerView(b);toast(b.gas?"Gas tap open (hissing). Light it with a match!":"Gas tap closed");renderPanel(true);
+}
+function select(id){state.sel=id;all().forEach(i=>i.el.classList.toggle("sel",i.id===id));const s=byId(id);status(s?s.label+" selected":"Tap or drag apparatus onto the table.");renderPanel(true)}
+function removeItem(c){
+ if(c.type==="bunsen")state.items.forEach(x=>{if(x.mount===c.id){x.mount=null}});
+ if(c.type==="mug")state.items.forEach(x=>{if(x.slot&&x.slot.host===c.id){x.slot=null}});
+ dtubes.forEach(d=>{for(const k of["a","b"])if(d[k].c===c)detachEnd(d,k)});
+ pours.filter(j=>j.c===c).forEach(j=>endPour(j,true));
+ c.el.remove();state.items=state.items.filter(i=>i!==c);state.tools=state.tools.filter(i=>i!==c);if(state.sel===c.id)state.sel=null;
+ if(!all().length)$("hint").style.display="";renderPanel(true);
+}
+
+/* ---------- pouring from bottles (animated, progressive) ---------- */
+function geom(c){const vr=c.el.querySelector(".vessel").getBoundingClientRect(),wr=ws.getBoundingClientRect(),g=GEO[c.type],sc=vr.width/g.W;
+ return{cx:vr.left-wr.left+g.cx*sc,rimY:vr.top-wr.top+g.ytop*sc,ys:vr.top-wr.top+levelY(g,c.vol,c.cap)*sc,sc}}
+function startPour(ch,c){
+ if(!state.gog){toast("🥽 Put on your safety goggles first!");return false}
+ const amt=ch.sol?state.amtS:ch.ind?.2:state.amtL;
+ if(!ch.sol&&c.vol+amt>c.cap+1e-9){toast(c.label+" would overflow. Pour less or use a bigger container.");return false}
+ const el=document.createElement("div");el.className="pbot";el.innerHTML=bottleSVG(ch);ws.appendChild(el);
+ const j={ch,c,left:amt,total:amt,done:0,t:0,el,kind:ch.sol?"sol":ch.ind?"drop":"liq",pl:0,sp:0,stream:null};
+ pours.push(j);select(c.id);return true;
+}
+function endPour(j,quiet){
+ if(j.el)j.el.remove();if(j.stream)j.stream.remove();pours.splice(pours.indexOf(j),1);
+ if(!quiet&&j.done>0){const c=j.c,ch=j.ch;log(c,(ch.sol?j.done.toFixed(1)+" g of "+SOLNAME[ch.id].toLowerCase():ch.ind?"a few drops of "+ch.n:j.done.toFixed(1)+" mL of "+ch.n)+" added");view(c)}
+}
+function runPours(real){
+ for(const j of pours.slice()){
+  j.t+=real;const c=j.c;
+  if(!c.el||!c.el.isConnected){endPour(j,true);continue}
+  const g=geom(c),mx=g.cx+(j.kind==="drop"?0:5*g.sc),my=g.rimY-26*g.sc,s=g.sc*1.02;
+  const R=j.kind==="drop"?180:-122;
+  j.el.style.transform=`translate(${(mx-32).toFixed(1)}px,${(my-10).toFixed(1)}px) rotate(${j.t>.12?R:-8}deg) scale(${s.toFixed(3)})`;
+  j.el.style.opacity=1;
+  if(j.t<.5)continue;
+  if(j.left>1e-9){
+   let d;
+   if(j.kind==="liq")d=Math.min(j.left,Math.max(1.4,j.total/2.2)*real);
+   else if(j.kind==="drop")d=Math.min(j.left,.2/1.4*real);
+   else d=Math.min(j.left,Math.max(.25,j.total/1.3)*real);
+   const ok=j.ch.sol?addSolid(c,j.ch.id,d):addLiquid(c,j.ch,d);
+   if(!ok){toast(c.label+" is full");j.left=0}else{j.left-=d;j.done+=d}
+   /* visuals */
+   const col=hex(hx(j.ch.col.length===7?j.ch.col:"#dff0ff"));
+   if(j.kind==="liq"){
+    if(!j.stream){j.stream=document.createElement("div");j.stream.className="stream";ws.appendChild(j.stream)}
+    const top=my+6*g.sc,h=Math.max(0,g.ys-top);
+    j.stream.style.cssText=`left:${(mx-2.5).toFixed(1)}px;top:${top.toFixed(1)}px;height:${h.toFixed(1)}px;--c:${col}`;
+    j.pl-=real;if(j.pl<=0){j.pl=.55;spawnPlume(c,col,j.ch.id==="water"?.25:.55)}
+   }else if(j.kind==="drop"){
+    j.sp-=real;if(j.sp<=0){j.sp=.42;const dr=document.createElement("i");dr.className="drop";dr.style.cssText=`left:${mx.toFixed(1)}px;top:${(my+8*g.sc).toFixed(1)}px;--d:${Math.max(10,g.ys-my-10).toFixed(1)}px;--c:${col}`;ws.appendChild(dr);dr.onanimationend=()=>{dr.remove();spawnPlume(c,col,.35)}}
+   }else{
+    j.sp-=real;if(j.sp<=0){j.sp=.04;for(let i=0;i<2;i++){const gr=document.createElement("i");gr.className="grain";gr.style.cssText=`left:${(mx+Math.random()*8-4).toFixed(1)}px;top:${(my+8*g.sc).toFixed(1)}px;--d:${Math.max(10,g.ys-my-6).toFixed(1)}px;background:${j.ch.col}`;ws.appendChild(gr);gr.onanimationend=()=>gr.remove()}}
+   }
+   observe(c);view(c);
+  }else{
+   if(j.stream){j.stream.remove();j.stream=null}
+   if(!j.end)j.end=j.t;
+   j.el.style.transform=`translate(${(mx-32).toFixed(1)}px,${(my-10-30).toFixed(1)}px) rotate(-8deg) scale(${s.toFixed(3)})`;j.el.style.opacity=0;
+   if(j.t-j.end>.5)endPour(j);
+  }
+ }
+}
+function spawnPlume(c,col,a){
+ if(!c.el)return;const g=GEO[c.type],v=c.el.querySelector(".vessel");if(!v||c.vol<.05)return;
+ const ys=levelY(g,c.vol,c.cap),w=g.hw(Math.min(g.yb-2,ys))*1.0,p=document.createElement("i");p.className="plume";
+ p.style.cssText=`left:${(g.cx-w/2).toFixed(1)}px;top:${ys.toFixed(1)}px;width:${w.toFixed(1)}px;--c:${col};--a:${a}`;v.appendChild(p);p.onanimationend=()=>p.remove();
+}
+window.spawnPlume=spawnPlume;
+function addNow(c,ch){ /* instant add (used by tests / scripts) */
+ return ch.sol?addSolid(c,ch.id,state.amtS):addLiquid(c,ch,ch.ind?.2:state.amtL);
+}
+function addChem(c,ch){return startPour(ch,c)}
+function attach(c,pid){
+ if(pid==="rod"){if(!c.probes.includes("rod"))c.probes.push("rod");c.stir=4;view(c);toast("🥢 Stirring "+c.label);log(c,"stirred with a glass rod");return}
+ if(c.probes.includes(pid)){toast("Already in "+c.label);return}
+ c.probes.push(pid);view(c);toast(APP.find(a=>a.id===pid).n+" placed in "+c.label);
+}
+
+/* ---------- pointer interactions ---------- */
+let drag=null;
+function ghost(html,cls){const g=document.createElement("div");g.className="ghost "+(cls||"");g.innerHTML=html;document.body.appendChild(g);return g}
+function targetAt(x,y,wantC){const els=document.elementsFromPoint(x,y);for(const e of els){const it=e.closest&&e.closest(".it");if(it){const o=byId(it.dataset.id);if(!wantC||isC(o))return o}}return null}
+function inWs(x,y){const r=ws.getBoundingClientRect();return x>=r.left&&x<=r.right&&y>=r.top&&y<=r.bottom}
+function wsPt(e){const r=ws.getBoundingClientRect();return[e.clientX-r.left,e.clientY-r.top]}
+$("tbody").addEventListener("pointerdown",e=>{const card=e.target.closest(".card");if(!card)return;drag={card,x0:e.clientX,y0:e.clientY,moved:false,g:null}});
+function tryMount(c){
+ if(!isC(c))return;
+ const near=state.tools.find(b=>b.type==="bunsen"&&Math.abs(c.x-b.x)<85&&Math.abs(c.y-b.y)<95);
+ if(!near){c.mount=null;return}
+ if(!["beaker","flask","dish"].includes(c.type)){
+  if(c.type==="cyl")toast("⚠️ Never heat a measuring cylinder. It is not heat-proof!");
+  else if(c.type==="tube"||c.type==="btube")toast("Hold the tube in the flame (drag it into the blue cone), tilted away from people.");
+  else toast(c.label+" cannot be heated on the gauze");
+  c.mount=null;return}
+ if(state.items.some(x=>x!==c&&x.mount===near.id)){toast("That burner already has something on it");c.mount=null;return}
+ c.mount=near.id;place(c);toast(c.label+" placed on the gauze");
+}
+function hookItem(c){c.el.addEventListener("pointerdown",e=>{
+ if(e.target.closest(".read span"))return;
+ if(c.type==="matchbox"&&e.target.closest(".mtray")){pullMatch(c,e);return}
+ if(isC(c)&&e.target.closest(".rodhit")){grabRod(c,e);return}
+ if(state.hand&&isC(c)){touchC(c);return}
+ const p=wsPt(e);
+ if(c.type==="bunsen"){const kn=e.target.closest(".knob"),co=e.target.closest(".collar");
+  if(kn||co){drag={ctl:{b:c,kind:kn?"gas":"air",v0:kn?c.gas:c.air,x0:e.clientX,y0:e.clientY},moved:true};return}}
+ drag={item:c,x0:e.clientX,y0:e.clientY,moved:false,dx:c.x-p[0],dy:c.y-p[1],swt:!!e.target.closest(".swt")}})}
+addEventListener("pointermove",e=>{
+ if(!drag){handMove(e);return}
+ if(drag.match){moveMatch(e);return}
+ if(drag.free){moveFree(e);return}
+ if(drag.ctl){moveCtl(e);return}
+ if(drag.dt){moveDt(e);return}
+ if(!drag.item){
+  if(!drag.moved&&!drag.cancel&&Math.hypot(e.clientX-drag.x0,e.clientY-drag.y0)>8){
+   const d=drag.card.dataset;
+   if(d.app&&APP.find(a=>a.id===d.app).k==="uc"){drag.cancel=true}else{drag.moved=true;
+    if(d.chem)drag.g=ghost(bottleSVG(CHEM.find(x=>x.id===d.chem)),"bt");else drag.g=ghost(E(APP.find(a=>a.id===d.app).n))}}
+  if(drag.g){drag.g.style.left=e.clientX+"px";drag.g.style.top=e.clientY+"px";
+   all().forEach(i=>i.el.classList.remove("pourable"));
+   const isChem=drag.card.dataset.chem!==undefined,isRod=drag.card.dataset.app==="rod";
+   const a=drag.card.dataset.app?APP.find(x=>x.id===drag.card.dataset.app):null;
+   if(isChem||(a&&a.k==="probe")){const t=targetAt(e.clientX,e.clientY,true);if(t)t.el.classList.add("pourable")}}
+  return}
+ const it=drag.item;
+ if(!drag.moved&&Math.hypot(e.clientX-drag.x0,e.clientY-drag.y0)>6){drag.moved=true;it.el.classList.add("drag");if(it.mount){it.mount=null}if(it.slot){it.slot=null}}
+ if(drag.moved){const p=wsPt(e);it.x=p[0]+drag.dx;it.y=p[1]+drag.dy;clampXY(it);place(it);
+  state.items.forEach(x=>{if(x.mount===it.id)place(x)});
+  const t=$("trash").getBoundingClientRect();$("trash").classList.toggle("hot",e.clientX>t.left&&e.clientX<t.right&&e.clientY>t.top&&e.clientY<t.bottom)}
+});
+addEventListener("pointerup",e=>{
+ if(!drag)return;const d=drag;drag=null;all().forEach(i=>i.el.classList.remove("pourable"));
+ if(d.match){const m=d.match;m.el.classList.remove("held");const t=$("trash").getBoundingClientRect();$("trash").classList.remove("hot");if(d.moved&&e.clientX>t.left&&e.clientX<t.right&&e.clientY>t.top&&e.clientY<t.bottom){removeMatch(m);toast("Match thrown away")}return}
+ if(d.free){dropFree(d,e);return}
+ if(d.ctl)return;
+ if(d.dt){dropDt(d);return}
+ if(d.item){const it=d.item;it.el.classList.remove("drag");const t=$("trash").getBoundingClientRect();$("trash").classList.remove("hot");
+  if(d.moved){if(e.clientX>t.left&&e.clientX<t.right&&e.clientY>t.top&&e.clientY<t.bottom){removeItem(it);toast("Removed");return}
+   if(isC(it)){tryMount(it);trySlot(it)}return}
+  if(d.swt&&it.type==="mug"){toggleSwitch(it);return}
+  if(state.pour&&state.pour!==it&&isC(it)){const f=state.pour;state.pour=null;doPour(f,it);return}
+  if(state.armed&&isC(it)){addChem(it,CHEM.find(x=>x.id===state.armed));return}
+  if(state.armed&&!isC(it)){toast("Pour into glassware, not the burner");return}
+  select(it.id);return}
+ if(d.g)d.g.remove();
+ const c=d.card.dataset;
+ if(c.app){const a=APP.find(x=>x.id===c.app);
+  if(a.k==="uc"){toast("🚧 "+a.n+" is under construction");return}
+  const [px,py]=wsPt(e);
+  if(a.k==="hand"||a.k==="piece"){
+   if(a.id==="hand"){toggleHand();return}
+   const inside=d.moved&&inWs(e.clientX,e.clientY),pos=inside?[px,py]:defaultFreePos();
+   if(a.id==="sand"){inside?spawnSand(px,py+40):spawnSand()}
+   else if(a.id==="dtube")spawnDtube(pos[0],pos[1]);
+   else spawnFree(a.id,pos[0],pos[1]);
+   return}
+  if(d.moved){
+   if(a.k==="cont"||a.k==="tool"){if(inWs(e.clientX,e.clientY)){if(a.k==="tool")spawnTool(a.id,px,py+50);else spawn(a.id,px,py+50)}}
+   else{const t=targetAt(e.clientX,e.clientY,true);if(t){attach(t,a.id);select(t.id)}else toast("Drop it in a container")}}
+  else{if(a.k==="cont")spawn(a.id);else if(a.k==="tool")spawnTool(a.id);
+   else{const t=byId(state.sel);const tt=isC(t)?t:(state.items.length===1?state.items[0]:null);if(tt)attach(tt,a.id);else toast("Select a container first, or drag this into one")}}
+  return}
+ if(c.chem){const ch=CHEM.find(x=>x.id===c.chem);
+  if(d.moved){const t=targetAt(e.clientX,e.clientY,true);if(t)addChem(t,ch);else toast("Drop the bottle onto a beaker, flask or tube");return}
+  state.armed=state.armed===ch.id?null:ch.id;renderTool();
+  if(state.armed){const amt=ch.sol?state.amtS+" g":ch.ind?"a few drops":state.amtL+" mL";status("Armed: "+ch.n+" ("+amt+"). Tap a container to pour. Tap the bottle again to put it down.")}else status("Bottle put down.")}
+});
+addEventListener("pointercancel",()=>{if(drag){if(drag.g)drag.g.remove();drag=null}});
+
+/* ---------- panel ---------- */
 const PT=document.querySelectorAll("[data-pt]");
 PT.forEach(b=>b.onclick=()=>{state.pan=b.dataset.pt;PT.forEach(x=>x.classList.toggle("on",x===b));renderPanel(true)});
 function listContents(c){
- const V=Math.max(c.vol/1000,1e-4),names={H:"H⁺",OH:"OH⁻",HAc:"CH₃COOH",Ac:"CH₃COO⁻",Na:"Na⁺",K:"K⁺",Cu:"Cu²⁺",Ag:"Ag⁺",Ba:"Ba²⁺",Pb:"Pb²⁺",Zn:"Zn²⁺",Fe2:"Fe²⁺",Fe3:"Fe³⁺",Ca:"Ca²⁺",Mg:"Mg²⁺",Cl:"Cl⁻",SO4:"SO₄²⁻",NO3:"NO₃⁻",I:"I⁻",CO3:"CO₃²⁻"};
- let h="";for(const k in c.sp){const v=c.sp[k];if(v>1e-7)h+=`<div class="row"><span>${names[k]||k}</span><b>${(v/V).toFixed(3)} M</b></div>`}
+ const V=Math.max(c.vol/1000,1e-4),names={NH4:"NH₄⁺",H:"H⁺",OH:"OH⁻",HAc:"CH₃COOH",Ac:"CH₃COO⁻",Na:"Na⁺",K:"K⁺",Cu:"Cu²⁺",Ag:"Ag⁺",Ba:"Ba²⁺",Pb:"Pb²⁺",Zn:"Zn²⁺",Fe2:"Fe²⁺",Fe3:"Fe³⁺",Ca:"Ca²⁺",Mg:"Mg²⁺",Cl:"Cl⁻",SO4:"SO₄²⁻",NO3:"NO₃⁻",I:"I⁻",CO3:"CO₃²⁻"};
+ let h="";if(c.vol>.05)for(const k in c.sp){const v=c.sp[k];if(v>1e-7)h+=`<div class="row"><span>${names[k]||k}</span><b>${(v/V).toFixed(3)} M</b></div>`}
  for(const k in c.ppt){const v=c.ppt[k];if(v>1e-6){const r=PPT.find(x=>x.id===k);h+=`<div class="row"><span>${r.n}↓ (solid)</span><b>${(v*r.mm*1000).toFixed(0)} mg</b></div>`}}
  for(const k in c.sol)if(c.sol[k]>1e-4)h+=`<div class="row"><span>${SOLNAME[k]} (solid)</span><b>${c.sol[k].toFixed(2)} g</b></div>`;
  for(const k in c.dep)if(c.dep[k]>1e-4)h+=`<div class="row"><span>${k} deposit</span><b>${(c.dep[k]*1000).toFixed(0)} mg</b></div>`;
@@ -605,29 +1110,36 @@ function renderPanel(full){
  const pb=$("pbody");
  if(state.pan==="insp"){
   const c=byId(state.sel);
-  if(!c){pb.innerHTML='<div class="muted">Tap a container on the bench to inspect it: volume, temperature, pH, colour and contents.</div>';return}
+  if(!c){pb.innerHTML='<div class="muted">Tap a container or the burner on the table to inspect it.</div>';return}
+  if(c.type==="matchbox"){
+   if(full||!$("mn"))pb.innerHTML=`<h3 style="margin:0 0 6px">${E(c.label)}</h3><div class="row"><span>Matches left</span><b id="mn"></b></div><div class="muted">Pull a match out by the red heads at the end of the tray. With your goggles on, drag it <b>fast</b> along the rough striker strip to light it. A match burns for about 12 seconds.</div>`;
+   $("mn").textContent=c.n;return}
+  if(c.type==="sand"){pb.innerHTML=`<h3 style="margin:0 0 6px">Sandpaper</h3><div class="muted">Rub a magnesium ribbon or an iron nail back and forth on the rough surface until it turns shiny.</div>`;return}
+  if(c.type==="bunsen"){
+   if(full||!$("bs"))pb.innerHTML=`<h3 style="margin:0 0 6px">${E(c.label)}</h3><div class="row"><span>Gas flow</span><b id="bg"></b></div><div class="row"><span>Air hole</span><b id="ba"></b></div><div class="row"><span>Flame</span><b id="bs"></b></div><div class="row"><span>Heating</span><b id="bh"></b></div><div class="muted"><b>Working it:</b> 1) close the air hole (drag the brass collar down), 2) turn the black gas knob on the base (drag it to the right), 3) strike a match and hold it to the top of the barrel, 4) open the collar (drag up) for the hot blue flame. Turn the knob back to put it out. Hold test tubes in the flame with the tongs, and rest beakers and dishes on the gauze.</div>`;
+   const h=state.items.find(x=>x.mount===c.id);
+   $("bg").textContent=Math.round(c.gas*100)+"%";$("ba").textContent=Math.round(c.air*100)+"% open";
+   $("bs").textContent=c.lit?(c.air>.55?"Blue (hot, non-luminous)":c.air<.3?"Yellow (luminous, cooler)":"Blue and yellow"):(c.gas>.05?"Not lit: gas is escaping!":"Off");
+   $("bh").textContent=h?h.label+" ("+h.T.toFixed(0)+" °C)":"nothing on the gauze";return}
   if(full||!$("iv")){
    pb.innerHTML=`<h3 style="margin:0 0 6px">${E(c.label)}</h3><div class="row"><span>Volume</span><b id="iv"></b></div><div class="row"><span>Temperature</span><b id="it"></b></div><div class="row"><span>pH</span><b id="ip"></b></div><div class="row"><span>Mass of contents</span><b id="im"></b></div><div class="row"><span>Colour</span><b id="ic"></b></div>
-   <div class="acts"><button class="btn" data-a="pour">🫗 Pour into…</button><select id="pf" class="btn"><option value=".25">25%</option><option value=".5">50%</option><option value="1" selected>All</option></select><button class="btn" data-a="empty">Empty</button><button class="btn" data-a="stir">🌀 Stir</button><button class="btn" data-a="waft">👃 Waft</button><button class="btn ${c.heat?"on":""}" data-a="heat">🔥 Heat</button><button class="btn uc" data-a="uc">🔗 Delivery tube <span class="ucb">soon</span></button><button class="btn danger" data-a="rm">Remove</button></div>
+   <div class="muted" style="margin:8px 0">Drag it to move it. Hold it tilted over another vessel to pour. Drag it to the bin to throw it away. Use your hand (✋) to feel its temperature or smell it.</div>
    <div class="grp" style="margin-top:6px">Contents</div><div id="ico"></div>`;
   }
-  const sc=solnColour(c),ph=phOf(c);
-  let mass=c.vol;for(const k in c.sol)mass+=c.sol[k];
-  $("iv").textContent=c.vol.toFixed(1)+" mL";$("it").textContent=c.T.toFixed(1)+" °C";$("ip").textContent=ph==null?"—":ph.toFixed(2);$("im").textContent=mass.toFixed(1)+" g";
+  const sc=solnColour(c),ph=phOf(c);let mass=c.vol;for(const k in c.sol)mass+=c.sol[k];
+  $("iv").textContent=c.vol.toFixed(1)+" mL";$("it").textContent=c.T.toFixed(c.T>200?0:1)+" °C";$("ip").textContent=ph==null?"—":ph.toFixed(2);$("im").textContent=mass.toFixed(1)+" g";
   $("ic").innerHTML=`<span class="sw2" style="background:${hex(sc.rgb)}"></span>${c.vol>.2?cname(sc.rgb):"empty"}`;
   $("ico").innerHTML=listContents(c);
  }else if(state.pan==="obs"){
   if(!full&&!window._obsDirty)return;window._obsDirty=false;
-  pb.innerHTML=`<div class="acts" style="margin-top:0"><button class="btn danger" data-a="clearobs">Clear log</button></div>`+(OBS.length?OBS.slice().reverse().map(o=>`<div class="ob">${E(o.text)}<small>${E(o.c)} · ${Math.round(o.t)} s</small></div>`).join(""):'<div class="muted">Observations appear here automatically as things happen: precipitates, colour changes, gas, heat.</div>');
+  pb.innerHTML=`<div class="acts" style="margin-top:0"><button class="btn danger" data-a="clearobs">Clear log</button></div>`+(OBS.length?OBS.slice().reverse().map(o=>`<div class="ob">${E(o.text)}<small>${E(o.c)} · ${Math.round(o.t)} s</small></div>`).join(""):'<div class="muted">Observations appear here automatically as things happen: precipitates, colour changes, gas, heat, flames.</div>');
  }else if(state.pan==="rx"){
   if(!full&&!window._rxDirty)return;window._rxDirty=false;
   pb.innerHTML=RX.size?[...RX.values()].map(r=>`<div class="rx"><small>${E(r.name)}</small><b>${E(r.eq)}</b>${r.ion?`<small>Ionic: ${E(r.ion)}</small>`:""}</div>`).join(""):'<div class="muted">Balanced and ionic equations appear here for every reaction you carry out.</div>';
  }else if(state.pan==="exp"){
   if(!full)return;
-  pb.innerHTML=`<div class="rx"><b>🚧 Guided experiments: under construction</b><small>These NCERT-style experiments with one-tap "Set up bench" are coming soon:</small></div>`+EXPS.map((e,i)=>`<div class="ob uc">${i+1}. ${E(e)} <span class="ucb">soon</span></div>`).join("");
- }else if(state.pan==="nb"){
-  if(!full)return;renderNotebook();
- }
+  pb.innerHTML=`<div class="rx"><b>📘 NCERT Class 10, Chapter 1</b><small>Do each activity with your own hands on the table. The reactions you carry out appear in the Reactions tab.</small></div>`+ACTS.map(a=>`<div class="ob"><b>${E(a[0])}</b><small style="color:var(--tx)">${E(a[1])}</small></div>`).join("");
+ }else if(state.pan==="nb"){if(!full)return;renderNotebook()}
 }
 const NBK="aalimChemLab",nbGet=()=>{try{return JSON.parse(localStorage.getItem(NBK))||[]}catch(e){return[]}};
 function renderNotebook(){
@@ -644,36 +1156,364 @@ $("pbody").addEventListener("click",e=>{
   try{localStorage.setItem(NBK,JSON.stringify(arr.slice(0,60)))}catch(er){toast("Could not save (storage full?)")}renderNotebook();toast("Saved to notebook");return}
  if(a==="delnb"){const arr=nbGet();arr.splice(+b.dataset.i,1);try{localStorage.setItem(NBK,JSON.stringify(arr))}catch(er){}renderNotebook();return}
  if(!c)return;
+ if(a==="rm"){removeItem(c);return}
+ if(c.type==="matchbox"){
+  if(a==="take"){if(c.n<=0){toast("The matchbox is empty");return}c.n--;spawnMatch(c.x+70*c.sc,c.y-34*c.sc);renderPanel(true);toast("Drag the match fast along the rough strip to strike it")}
+  return}
+ if(c.type==="bunsen"){
+  if(a==="gas"){toggleGas(c);return}
+  if(a==="air"){c.air=!c.air;burnerView(c);if(c.lit)log(c,c.air?"air hole opened: the flame turns blue and hotter":"air hole closed: the flame turns yellow and luminous");renderPanel(true);return}
+  return}
  if(a==="uc"){toast("🚧 Delivery tube is under construction");return}
- if(a==="pour"){if(state.items.length<2){toast("Place a second container to pour into");return}state.pour=c;c.el.classList.add("sel");toast("Tap the container to pour into");status("Pouring from "+c.label+": tap the target container");return}
- if(a==="empty"){c.vol=0;c.sp={};c.ind={};c.sol={};c.ppt={};c.dep={};c.susp=0;c.T=25;c.gasRate=0;c.last={ppt:{},sol:{},dep:{},gas:false,T:25,neut:false,col:[200,225,245],cname:"colourless"};view(c);renderPanel(true);toast(c.label+" emptied");return}
+ if(a==="off"){c.mount=null;c.x+=70;clampXY(c);place(c);renderPanel(true);return}
+ if(a==="pour"){if(state.items.length<2){toast("Place a second container to pour into");return}state.pour=c;toast("Tap the container to pour into");status("Pouring from "+c.label+": tap the target container");return}
+ if(a==="empty"){c.vol=0;c.sp={};c.ind={};c.sol={};c.ppt={};c.dep={};c.susp=0;c.T=25;c.gasRate=0;c.disp=null;c.boil=false;c.last={ppt:{},sol:{},dep:{},gas:false,T:25,neut:false,col:[200,225,245],cname:"colourless"};view(c);renderPanel(true);toast(c.label+" emptied");return}
  if(a==="stir"){c.stir=4;log(c,"stirred");toast("🌀 Stirring");return}
  if(a==="waft"){const V=c.vol/1000;let m="No noticeable smell.";if(c.vol<.2)m="Nothing to smell: it is empty.";else if(Z(c,"HAc")/V>.1)m="A sharp vinegar-like smell (ethanoic acid).";else if(c.gasType==="H2"&&c.gasRate>0)m="Hydrogen has no smell.";log(c,"wafted: "+m);toast("👃 "+m);return}
- if(a==="heat"){c.heat=!c.heat;b.classList.toggle("on",c.heat);view(c);toast(c.heat?"🔥 Heating "+c.label:"Heater off");return}
- if(a==="rm"){removeItem(c);return}
 });
-function doPour(a,b){if(a.vol<.05){toast("Nothing to pour");return}const f=+(($("pf")||{value:1}).value);const amt=pourTo(a,b,f);a.el.classList.remove("sel");
- if(amt<=0)toast(b.label+" is full");else{log(b,"poured "+amt.toFixed(1)+" mL from "+a.label);toast("Poured "+amt.toFixed(1)+" mL into "+b.label)}view(a);view(b);observe(b);observe(a);select(b.id)}
+function doPour(a,b){if(a.vol<.05){toast("Nothing to pour");return}const f=+(($("pf")||{value:1}).value);const amt=pourTo(a,b,f);
+ if(amt<=0)toast(b.label+" is full");else{log(b,"poured "+amt.toFixed(1)+" mL from "+a.label);toast("Poured "+amt.toFixed(1)+" mL into "+b.label);spawnPlume(b,"#cfe3f7",.4)}view(a);view(b);observe(b);observe(a);select(b.id)}
 
-/* top bar */
+/* ---------- container view (3D glass + rod overlay) ---------- */
+function rodHTML(c){
+ if(!c.probes.includes("rod"))return"";
+ const g=GEO[c.type],hw=g.hw(g.ytop+8),x=g.cx+hw*.3,yt=PAD-38,yb=g.yb-5,ys=levelY(g,c.vol,c.cap),has=c.vol>.05;
+ let o=`<svg width="${g.W}" height="${g.H}" viewBox="0 0 ${g.W} ${g.H}" style="position:absolute;left:0;top:0;overflow:visible"><g transform="rotate(9 ${f1(x)} ${g.ytop})">`;
+ if(has)o+=`<ellipse class="sw" cx="${f1(x)}" cy="${f1(ys)}" rx="${f1(hw*.62)}" ry="${f1(hw*.12)}" fill="none" stroke="#fff" stroke-opacity=".75" stroke-width="1.6" stroke-dasharray="7 9"/>`;
+ const my=has?ys:yb;
+ o+=`<line x1="${f1(x)}" x2="${f1(x)}" y1="${yt}" y2="${f1(my)}" stroke="rgba(110,140,170,.85)" stroke-width="6.4" stroke-linecap="round"/><line x1="${f1(x)}" x2="${f1(x)}" y1="${yt}" y2="${f1(my)}" stroke="#eef7fd" stroke-width="4.4" stroke-linecap="round"/><line x1="${f1(x-1.2)}" x2="${f1(x-1.2)}" y1="${yt+2}" y2="${f1(my)}" stroke="#fff" stroke-width="1.2"/>`;
+ if(has)o+=`<line x1="${f1(x-1.8)}" x2="${f1(x-1.8)}" y1="${f1(ys)}" y2="${yb}" stroke="rgba(120,150,180,.75)" stroke-width="6.6" stroke-linecap="round"/><line x1="${f1(x-1.8)}" x2="${f1(x-1.8)}" y1="${f1(ys)}" y2="${yb}" stroke="rgba(235,246,253,.7)" stroke-width="4.6" stroke-linecap="round"/>`;
+ o+=`<line class="rodhit" x1="${f1(x)}" x2="${f1(x)}" y1="${yt}" y2="${yb}" stroke="transparent" stroke-width="18"/>`;
+ return o+"</g></svg>";
+}
+function view(c){
+ const el=c.el,g=GEO[c.type],host=el.querySelector(".svgh"),svg=drawVessel(c);if(host._s!==svg){host.innerHTML=svg;host._s=svg}
+ const rl=el.querySelector(".rodl"),rh=rodHTML(c);if(rl._s!==rh){rl.innerHTML=rh;rl._s=rh}
+ const ys=levelY(g,c.vol,c.cap),b=el.querySelector(".bubs"),w=g.hw(Math.min(g.yb-1,Math.max(g.ytop,ys)))*1.5;
+ b.style.cssText=`left:${f1(g.cx-w/2)}px;width:${f1(w)}px;top:${f1(ys)}px;height:${f1(Math.max(0,g.yb-ys))}px;--rise:-${f1(Math.max(0,g.yb-ys))}px`;
+ el.classList.toggle("stirring",c.stir>0);el.classList.toggle("burning",c.flash>.3);el.classList.toggle("inv",!!c.inv);
+ {const sw=el.querySelector(".swl");if(sw){const w2=g.hw(Math.min(g.yb-1,Math.max(g.ytop,ys)))*1.3;sw.style.cssText=`left:${f1(g.cx-w2/2)}px;top:${f1(ys-w2*.09)}px;width:${f1(w2)}px;height:${f1(w2*.18)}px`}}
+}
+function paperColour(c,p){const ph=phOf(c);if(ph==null)return"#ddd";
+ if(p==="rl")return ph>8.3?"#4a63c9":"#d9453d";if(p==="bl")return ph<5?"#d9453d":"#4a63c9";return hex(uiColor(ph))}
+function readouts(c){
+ const ph=phOf(c);let h="";
+ for(const p of c.probes){
+  if(p==="phm")h+=`<span data-rm="${p}" title="tap to remove">pH ${ph==null?"—":ph.toFixed(2)}</span>`;
+  else if(p==="th")h+=`<span data-rm="${p}" title="tap to remove">${c.T.toFixed(c.T>200?0:1)}°C</span>`;
+  else if(p==="rod")h+=`<span class="rodchip" data-rm="${p}" title="tap to take the rod out">🥢 ✕</span>`;
+  else h+=`<span class="paper" data-rm="${p}" title="tap to remove" style="background:${c.vol>.2?paperColour(c,p):"#ddd"}">${{rl:"R-lit",bl:"B-lit",up:"pH"}[p]}</span>`}
+ const box=c.el.querySelector(".read");if(box.dataset.h!==h){box.innerHTML=h;box.dataset.h=h}
+}
+document.addEventListener("click",e=>{const s=e.target.closest(".read span");if(!s)return;const it=e.target.closest(".it"),c=byId(it.dataset.id);c.probes=c.probes.filter(p=>p!==s.dataset.rm);c.el.querySelector(".read").dataset.h="x";readouts(c);view(c)});
+
+/* ---------- top bar ---------- */
 $("gogBtn").onclick=()=>{state.gog=!state.gog;$("gogBtn").textContent="🥽 Goggles: "+(state.gog?"ON":"OFF");$("gogBtn").classList.toggle("on",state.gog);toast(state.gog?"Goggles on. Safe to handle chemicals.":"Goggles off.")};
 document.querySelectorAll("[data-w]").forEach(b=>b.onclick=()=>{state.warp=+b.dataset.w;document.querySelectorAll("[data-w]").forEach(x=>x.classList.toggle("on",x===b))});
-$("resetBtn").onclick=()=>{if(state.items.length&&!confirm("Clear everything from the bench?"))return;state.items.slice().forEach(removeItem);OBS.length=0;RX.clear();state.counts={};state.pour=null;renderPanel(true);window._obsDirty=window._rxDirty=true};
+$("resetBtn").onclick=()=>{if(all().length&&!confirm("Clear everything from the table?"))return;pours.slice().forEach(j=>endPour(j,true));all().forEach(removeItem);matches.slice().forEach(removeMatch);frees.slice().forEach(removeFree);dtubes.splice(0).forEach(d=>d.g.remove());OBS.length=0;RX.clear();state.counts={};state.pour=null;renderPanel(true);window._obsDirty=window._rxDirty=true};
 
-/* main loop: 10 Hz */
+/* ================= CHAPTER 1 LAB EXTENSIONS ================= */
+const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
+const wsRect=()=>ws.getBoundingClientRect();
+function vrect(c){const vr=c.el.querySelector(".vessel").getBoundingClientRect(),wr=wsRect(),G=GEO[c.type],sc=vr.width/G.W;return{l:vr.left-wr.left,t:vr.top-wr.top,r:vr.right-wr.left,b:vr.bottom-wr.top,sc,G}}
+function mouthWs(c){const v=vrect(c),G=v.G;return[v.l+G.cx*v.sc,c.inv?v.t+(G.H-G.ytop)*v.sc:v.t+G.ytop*v.sc]}
+function containerAtWs(x,y,skipInv){for(const c of state.items){if(c.inv&&skipInv)continue;const v=vrect(c);
+  if(x>v.l+4*v.sc&&x<v.r-4*v.sc&&y>v.t+v.G.ytop*v.sc-4&&y<v.b)return c}return null}
+
+/* ---------- Bunsen burner: gas knob, air collar, flame size / colour / power ---------- */
+function burnerView(b){
+ const e=b.el;e.classList.toggle("lit",!!b.lit);e.classList.toggle("gas",b.gas>.05&&!b.lit);
+ e.style.setProperty("--fh",(.35+.95*b.gas).toFixed(2));
+ e.style.setProperty("--ob",clamp((b.air-.2)/.5,0,1).toFixed(2));
+ e.style.setProperty("--oy",clamp((.75-b.air)/.5,0,1).toFixed(2));
+ e.style.setProperty("--kr",(b.gas*270).toFixed(0)+"deg");
+ const h=e.querySelector(".hole");if(h)h.setAttribute("ry",(.8+4.4*b.air).toFixed(1));
+}
+const burnPower=b=>b.lit?60+360*b.gas*(.4+.6*b.air):0;
+const flameH=b=>(b.air>.5?24:40)+60*b.gas;
+function burnerTop(b){const vr=b.el.querySelector(".vessel").getBoundingClientRect(),wr=wsRect(),sc=vr.width/120;return{x:vr.left-wr.left+60*sc,y:vr.top-wr.top+110*sc,sc}}
+function moveCtl(e){
+ const d=drag,k=d.ctl,b=k.b;
+ if(k.kind==="gas"){b.gas=clamp(k.v0+((e.clientX-k.x0)+(k.y0-e.clientY))/170,0,1)}
+ else{b.air=clamp(k.v0+(k.y0-e.clientY)/60+(e.clientX-k.x0)/220,0,1)}
+ if(b.lit&&b.gas<.04){b.lit=false;log(b,"the flame goes out (not enough gas)")}
+ burnerView(b);status(k.kind==="gas"?"Gas flow "+Math.round(b.gas*100)+"%":"Air hole "+Math.round(b.air*100)+"% open");
+}
+function tickHeating(){
+ for(const c of state.items){c.heatW=0;c.inFlame=false}
+ for(const b of state.tools){
+  if(b.type!=="bunsen")continue;
+  if(b.lit&&b.gas<.04){b.lit=false;burnerView(b)}
+  const P=burnPower(b);if(P<=0)continue;const t=burnerTop(b),fh=flameH(b);
+  for(const c of state.items){
+   if(c.mount===b.id)c.heatW=Math.max(c.heatW,P*.75);
+   else if((c.type==="tube"||c.type==="btube")&&!c.inv&&!c.mount){
+    const bottom=c.y-32*c.sc;
+    if(Math.abs(c.x-t.x)<24*t.sc&&bottom<t.y+6*t.sc&&bottom>t.y-(fh+8)*t.sc){c.heatW=Math.max(c.heatW,P*1.1);c.inFlame=true}}
+  }
+ }
+ for(const c of state.items){c.el.classList.toggle("inflame",c.inFlame);c.el.classList.toggle("tilt",c.inFlame)}
+}
+function tickGasWarn(real){
+ for(const b of state.tools){if(b.type!=="bunsen")continue;
+  if(b.gas>.1&&!b.lit){b.gasT=(b.gasT||0)+real;if(b.gasT>10&&!b.warned){b.warned=true;toast("⚠️ Gas is escaping unlit! Light it with a match or turn the knob to close it.");log(b,"gas is escaping unlit (dangerous): light it or close the gas knob")}}
+  else{b.gasT=0;b.warned=false}}
+}
+/* a lit match lights the burner and does the splint test at the mouth of a vessel */
+function tickMatches(real){
+ for(const m of matches.slice()){
+  if(m.dead){if(!m.dt)m.dt=performance.now();else if(performance.now()-m.dt>5000)removeMatch(m);continue}
+  if(!m.lit)continue;
+  m.burn+=real;const f=Math.min(1,m.burn/MATCH_LIFE);
+  m.char.setAttribute("height",(f*104).toFixed(1));m.ember.setAttribute("y",(14+f*104).toFixed(1));m.head.setAttribute("fill","#1c1612");
+  m.flare=Math.max(0,(m.flare||0)-real);
+  m.el.style.setProperty("--fs",((1-f*.5)*(m.flare>0?1.7:1)).toFixed(2));
+  if(m.burn>=MATCH_LIFE){m.lit=false;m.dead=true;m.el.classList.remove("lit");m.el.classList.add("dead");toast("The match burned out");log({label:"Match"},"the match burns down and goes out, leaving a curled black stick");continue}
+  const fx=m.x-8,fy=m.y-14;
+  for(const b of state.tools){if(b.type!=="bunsen"||b.lit)continue;const t=burnerTop(b);
+   if(Math.hypot(fx-t.x,fy-t.y)<30*t.sc+8){
+    if(b.gas>.05){b.lit=true;b.gasT=0;burnerView(b);log(b,"lit with a match: "+(b.air>.5?"hot blue flame (air hole open)":b.air<.3?"yellow luminous flame (air hole closed)":"flame between yellow and blue"));toast("🔥 Burner lit!");regRx("Burning of natural gas (methane)","CH₄(g) + 2O₂(g) → CO₂(g) + 2H₂O(g)")}
+    else if(performance.now()-m.warnT>3000){m.warnT=performance.now();toast("No gas is coming out. Turn the gas knob first!")}}}
+  /* splint test at a vessel mouth */
+  if(performance.now()-(m.testT||0)>900)for(const c of state.items){
+   const mp=mouthWs(c);if(Math.hypot(fx-mp[0],fy-mp[1])>34*(c.sc||1))continue;
+   const hv=Math.max(4,c.inv?c.cap-Math.max(0,c.vol)+1:c.cap*1.4-Math.max(0,c.vol)),gh=c.gh||{},fr=k=>(gh[k]||0)*24000/hv;
+   m.testT=performance.now();
+   if(fr("H2")>.12){c.gh.H2=0;c.flash=.7;toast("💥 A squeaky pop! The gas burns with a pop: hydrogen");log(c,"the burning match makes a squeaky pop at the mouth: the gas is hydrogen");regRx("Hydrogen burns in air (combination)","2H₂(g) + O₂(g) → 2H₂O(l)")}
+   else if(fr("O2")>.3){m.flare=1.6;toast("✨ The match burns much brighter: oxygen");log(c,"the burning match burns brighter at the mouth: the gas is oxygen")}
+   else if(fr("CO2")>.15){m.lit=false;m.dead=true;m.el.classList.remove("lit");m.el.classList.add("dead");toast("The match goes out: carbon dioxide does not support burning");log(c,"the burning match goes out at the mouth: the gas is carbon dioxide")}
+   break}
+ }
+}
+/* ---------- pouring by tilting one vessel over another (hold it over the mouth) ---------- */
+function pourTarget(a){
+ const v=vrect(a),G=v.G,mx=v.l+G.cx*v.sc,my=v.t+G.ytop*v.sc;
+ for(const b of state.items){if(b===a||b.inv)continue;const w=vrect(b),rx=w.l+w.G.cx*w.sc,ry=w.t+w.G.ytop*w.sc;
+  if(Math.abs(mx-rx)<w.G.hw(w.G.ytop)*w.sc+22*w.sc&&my<ry+12&&my>ry-240*w.sc)return b}
+ return null}
+let tiltStream=null;
+function tickTiltPour(real){
+ const d=drag,a=d&&d.item&&d.moved&&isC(d.item)?d.item:null;
+ for(const c of state.items){if(c!==a&&(c.tilt||0)>0){c.tilt=Math.max(0,c.tilt-220*real);c.el.style.setProperty("--tilt",((c.tdir||1)*c.tilt)+"deg");if(c.tilt<=0)c.el.classList.remove("pouring")}}
+ if(!a||a.vol<.15||a.inv){if(tiltStream){tiltStream.remove();tiltStream=null}return}
+ const t=pourTarget(a);
+ if(!t){a.tilt=Math.max(0,(a.tilt||0)-220*real);a.el.style.setProperty("--tilt",((a.tdir||1)*a.tilt)+"deg");if(a.tilt<=0)a.el.classList.remove("pouring");if(tiltStream){tiltStream.remove();tiltStream=null}return}
+ a.tdir=(t.x>=a.x?1:-1);a.tilt=Math.min(112,(a.tilt||0)+85*real);a.el.classList.add("pouring");a.el.style.setProperty("--tilt",(a.tdir*a.tilt)+"deg");
+ if(a.tilt>38){
+  const rate=Math.min(20,(a.tilt-38)/70*20),amt=pourTo(a,t,clamp(rate*real/a.vol,0,1));
+  if(amt>0){
+   if(!a._pl||performance.now()-a._pl>4000){a._pl=performance.now();log(t,"liquid poured in from "+a.label)}
+   const v=vrect(a),w=vrect(t),col=hex(solnColour(a).rgb),mx=v.l+(v.G.cx+a.tdir*v.G.hw(v.G.ytop)*.9)*v.sc,my=v.t+v.G.ytop*v.sc+4;
+   const ty=w.t+levelY(w.G,t.vol,t.cap)*w.sc,tx=clamp(mx,w.l+(w.G.cx-w.G.hw(w.G.ytop)*.7)*w.sc,w.l+(w.G.cx+w.G.hw(w.G.ytop)*.7)*w.sc);
+   if(!tiltStream){tiltStream=document.createElement("div");tiltStream.className="stream";ws.appendChild(tiltStream)}
+   tiltStream.style.cssText=`left:${tx.toFixed(1)}px;top:${my.toFixed(1)}px;height:${Math.max(0,ty-my).toFixed(1)}px;--c:${col};z-index:899`;
+   if(!t._pm||performance.now()-t._pm>500){t._pm=performance.now();spawnPlume(t,col,.5)}
+   observe(t);observe(a);view(a);view(t)}
+ }
+}
+/* ---------- stirring rod, magnesium ribbon, iron nails: pieces you hold ---------- */
+const frees=[];let UID=0;
+function freeSVG(kind){const id="fr"+(UID++);
+ if(kind==="rod")return `<svg width="14" height="150" viewBox="0 0 14 150" style="overflow:visible"><rect x="4" y="0" width="6" height="148" rx="3" fill="rgba(215,235,250,.6)" stroke="rgba(110,140,170,.95)"/><rect x="5.6" y="2" width="1.6" height="140" fill="#fff" opacity=".85"/><circle cx="7" cy="146" r="3.2" fill="rgba(215,235,250,.75)" stroke="rgba(110,140,170,.95)"/></svg>`;
+ if(kind==="nail")return `<svg width="64" height="16" viewBox="0 0 64 16" style="overflow:visible"><path class="nl" d="M1 8 L8 6 L56 6 L56 10 L8 10 Z" fill="#6e5f55" stroke="#2f2a26" stroke-width=".6"/><rect class="nlh" x="9" y="6.4" width="46" height="1.4" fill="#fff" opacity="0"/><ellipse cx="58" cy="8" rx="4.4" ry="5.8" fill="#7d6f64" stroke="#2f2a26" stroke-width=".7"/></svg>`;
+ return `<svg width="84" height="30" viewBox="0 0 84 30" style="overflow:visible"><g class="rg" style="transform-box:fill-box;transform-origin:100% 50%"><path class="rib" d="M6 16 C20 10 34 22 50 15 S68 15 74 15" fill="none" stroke="#7d8188" stroke-width="5" stroke-linecap="round"/><path class="ribhi" d="M8 15 C20 9.5 34 21 50 14 S66 14 72 14" fill="none" stroke="#fff" stroke-width="1.5" stroke-linecap="round" opacity="0"/></g><path d="M64 16 L80 5 M64 16 L80 25" stroke="#b08a2e" stroke-width="3" fill="none" stroke-linecap="round"/><circle cx="81" cy="5" r="3.6" fill="none" stroke="#b08a2e" stroke-width="2.4"/><circle cx="81" cy="25" r="3.6" fill="none" stroke="#b08a2e" stroke-width="2.4"/><path d="M60 16 L68 16" stroke="#7a5f1a" stroke-width="5" stroke-linecap="round"/></svg><i class="gl"></i>`;
+}
+const freeTip=f=>f.kind==="rod"?[f.x,f.y]:f.kind==="ribbon"?[f.x-74,f.y]:[f.x-30,f.y+1];
+function spawnFree(kind,x,y){
+ const f={kind,x,y,clean:false,rub:0,heat:0,burn:0,burning:false,dead:false,wasIn:false,lx:0,ly:0};
+ const el=document.createElement("div");el.className="fr "+kind;el.innerHTML=freeSVG(kind);ws.appendChild(el);f.el=el;frees.push(f);placeFree(f);
+ el.addEventListener("pointerdown",e=>{const p=wsPt(e);drag={free:f,x0:e.clientX,y0:e.clientY,dx:f.x-p[0],dy:f.y-p[1],moved:false};f.lx=e.clientX;f.ly=e.clientY});
+ $("hint").style.display="none";return f}
+function placeFree(f){f.el.style.left=f.x+"px";f.el.style.top=f.y+"px";f.el.style.zIndex=870}
+function removeFree(f){f.el.remove();const i=frees.indexOf(f);if(i>=0)frees.splice(i,1)}
+function defaultFreePos(){const r=tr();return[clamp(ws.clientWidth*.5+Math.random()*80-40,100,ws.clientWidth-60),r.y1-70-Math.random()*60]}
+function rubVis(f){
+ if(f.kind==="ribbon"){const k=f.rub;f.el.querySelector(".rib").setAttribute("stroke",hex(mix([125,129,136],[232,236,242],k)));f.el.querySelector(".ribhi").setAttribute("opacity",(k*.9).toFixed(2))}
+ else{f.el.querySelector(".nl").setAttribute("fill",hex(mix([110,95,85],[184,188,196],f.rub)));f.el.querySelector(".nlh").setAttribute("opacity",(f.rub*.8).toFixed(2))}
+}
+function stirIn(c,dist){c.stir=Math.max(c.stir,.7);c.stirE=(c.stirE||0)+dist;if(!c._sl||performance.now()-c._sl>3000){c._sl=performance.now();log(c,"stirred with the glass rod")}}
+function moveFree(e){
+ const d=drag,f=d.free;
+ if(!d.moved&&Math.hypot(e.clientX-d.x0,e.clientY-d.y0)>4){d.moved=true;f.el.classList.add("held")}
+ if(!d.moved)return;
+ const p=wsPt(e);f.x=p[0]+d.dx;f.y=p[1]+d.dy;placeFree(f);
+ const dist=Math.hypot(e.clientX-f.lx,e.clientY-f.ly);f.lx=e.clientX;f.ly=e.clientY;
+ {const t=$("trash").getBoundingClientRect();$("trash").classList.toggle("hot",e.clientX>t.left&&e.clientX<t.right&&e.clientY>t.top&&e.clientY<t.bottom)}
+ const tip=freeTip(f);
+ if(f.kind==="rod"){const c=containerAtWs(tip[0],tip[1],true);if(c&&dist>0)stirIn(c,dist);return}
+ const sp=state.tools.find(t=>t.type==="sand");
+ if(sp&&!f.clean&&!f.burning){
+  const r=sp.el.querySelector(".grit").getBoundingClientRect(),wr=wsRect(),tx=tip[0]+wr.left,ty=tip[1]+wr.top;
+  const inside=tx>r.left&&tx<r.right&&ty>r.top-12&&ty<r.bottom+12;
+  if(inside&&f.wasIn&&dist>0){f.rub=Math.min(1,f.rub+dist/360);rubVis(f);
+   if(f.rub>=1){f.clean=true;toast("✨ Rubbed clean and shiny");log({label:f.kind==="ribbon"?"Magnesium ribbon":"Iron nail"},"rubbed with sandpaper: the dull oxide layer comes off and the metal turns shiny")}}
+  f.wasIn=inside}
+}
+function dropFree(d,e){
+ const f=d.free;f.el.classList.remove("held");const t=$("trash").getBoundingClientRect();$("trash").classList.remove("hot");
+ if(d.moved&&e.clientX>t.left&&e.clientX<t.right&&e.clientY>t.top&&e.clientY<t.bottom){removeFree(f);toast("Thrown away");return}
+ if(!d.moved)return;
+ const tip=freeTip(f),c=containerAtWs(tip[0],tip[1],true)||containerAtWs(f.x,f.y,true);
+ if(f.kind==="rod"){if(c){if(!c.probes.includes("rod"))c.probes.push("rod");removeFree(f);view(c);toast("Rod resting in "+c.label)}return}
+ if(c&&!f.burning&&!f.dead){
+  if(f.kind==="ribbon"){addSolid(c,"mg",.04);c.q.mg=f.clean?1:.3;log(c,"a "+(f.clean?"cleaned ":"dull, uncleaned ")+"magnesium ribbon is dropped in")}
+  else{addSolid(c,"nail",3);c.q.nail=f.clean?1:.35;log(c,"a "+(f.clean?"cleaned ":"rusty-looking, uncleaned ")+"iron nail is placed in")}
+  removeFree(f);observe(c);view(c);select(c.id)}
+}
+function grabRod(c,e){c.probes=c.probes.filter(p=>p!=="rod");view(c);const p=wsPt(e),f=spawnFree("rod",p[0],p[1]);drag={free:f,x0:e.clientX,y0:e.clientY,dx:0,dy:0,moved:true};f.lx=e.clientX;f.ly=e.clientY;f.el.classList.add("held")}
+function dropAsh(f,tip){
+ const el=document.createElement("i");el.className="ash";let land=tip[1]+150,cont=null;
+ for(const c of state.items){const v=vrect(c),ry=v.t+v.G.ytop*v.sc;if(Math.abs(tip[0]-(v.l+v.G.cx*v.sc))<v.G.hw(v.G.ytop)*v.sc&&tip[1]<ry+4){cont=c;land=ry+2;break}}
+ el.style.cssText=`left:${(tip[0]+Math.random()*8-4).toFixed(1)}px;top:${tip[1].toFixed(1)}px;--d:${Math.max(8,land-tip[1]).toFixed(1)}px`;ws.appendChild(el);
+ el.onanimationend=()=>{el.remove();if(cont&&cont.el.isConnected){addSolid(cont,"mgo",.0055);view(cont);observe(cont)}else if(!f._lostLogged){f._lostLogged=1;toast("The ash is falling on the bench. Hold a watch glass underneath!");log({label:"Magnesium ribbon"},"ash falls on the bench: it should be collected in a watch glass")}}}
+function tickFrees(real){
+ for(const f of frees.slice()){
+  if(f.kind!=="ribbon"||f.dead)continue;
+  const tip=freeTip(f);let inF=false;
+  for(const b of state.tools){if(b.type!=="bunsen"||!b.lit)continue;const t=burnerTop(b),fh=flameH(b);
+   if(Math.abs(tip[0]-t.x)<18*t.sc&&tip[1]<t.y+6*t.sc&&tip[1]>t.y-(fh+8)*t.sc)inF=true}
+  if(!f.burning){f.heat=inF?f.heat+real:Math.max(0,f.heat-real*.5);
+   if(f.heat>(f.clean?1.1:5)){f.burning=true;f.burn=0;f.el.classList.add("burning");toast("👀 Look away! Magnesium burns with a dazzling white flame");log({label:"Magnesium ribbon"},"the ribbon catches fire and burns with a dazzling white flame");regRx("Burning magnesium ribbon in air (combination, exothermic)","2Mg(s) + O₂(g) → 2MgO(s)")}
+   else if(inF&&f.heat>2&&!f.clean&&!f.warnedDull){f.warnedDull=1;toast("It is slow to catch: the dull oxide layer is getting in the way. Clean it with sandpaper first.")}}
+  else{f.burn+=real;const k=Math.max(0,1-f.burn/3.6);f.el.querySelector(".rg").style.transform=`scaleX(${k.toFixed(2)})`;
+   if(Math.random()<.4)dropAsh(f,tip);
+   if(f.burn>=3.6){f.dead=true;f.el.classList.remove("burning");f.el.classList.add("spent");log({label:"Magnesium ribbon"},"it turns into a white powder: magnesium oxide")}}
+ }
+}
+/* ---------- sandpaper ---------- */
+function spawnSand(x,y){
+ if(state.tools.some(t=>t.type==="sand")){toast("The sandpaper is already on the table");return}
+ if(all().length>=10){toast("The table is full.");return}
+ const m={id:state.nid++,type:"sand",label:"Sandpaper"};const sp=freeSpot(120);m.x=x==null?sp[0]:x;m.y=y==null?sp[1]:y;clampXY(m);
+ const d=document.createElement("div");d.className="it sand";d.dataset.id=m.id;
+ d.innerHTML=`<div class="vessel" style="width:120px;height:62px"><div class="shadow"></div><div class="svgh"><svg width="120" height="62" viewBox="0 0 120 62" style="overflow:visible"><defs><pattern id="gt" width="4" height="4" patternUnits="userSpaceOnUse"><circle cx="1" cy="1" r=".8" fill="#6a4a2a"/><circle cx="3" cy="3" r=".7" fill="#e8c08a"/></pattern></defs><path d="M8 22 L108 22 L116 54 L2 54 Z" fill="#b8905f" stroke="#6a4a2a" stroke-width="1"/><path class="grit" d="M8 22 L108 22 L116 54 L2 54 Z" fill="url(#gt)"/><path d="M2 54 L116 54 L116 58 L2 58 Z" fill="#8b6a3f"/><text x="59" y="42" text-anchor="middle" font-size="8" font-weight="700" fill="#4a3220" opacity=".7">SANDPAPER</text></svg></div></div><div class="lbl">Sandpaper</div>`;
+ ws.appendChild(d);m.el=d;state.tools.push(m);hookItem(m);place(m);select(m.id);$("hint").style.display="none";return m}
+/* ---------- your hand: touch the glass, waft the smell ---------- */
+let handLast={x:0,y:0,t:0,s:0};
+function toggleHand(){state.hand=!state.hand;ws.classList.toggle("hand",state.hand);$("hc").style.display=state.hand?"block":"none";
+ toast(state.hand?"✋ Your hand is out: tap a vessel to touch it, or wave over its mouth to smell. Tap the hand again to put it away.":"Hand put away.")}
+function feel(T){return T<8?"ice cold":T<18?"cool":T<32?"about room temperature":T<45?"warm":T<60?"hot":T<75?"very hot, you pull your hand back!":"far too hot to touch! Ouch!"}
+function touchC(c){const T=c.T,msg="You touch "+c.label+": it feels "+feel(T)+" ("+T.toFixed(0)+" °C)";toast("✋ "+msg);log(c,"touched the vessel: it feels "+feel(T))}
+function smellOf(c){
+ const gh=c.gh||{},V=Math.max(c.vol/1000,1e-4);
+ if((gh.NH3||0)>1e-8)return"a sharp, pungent smell of ammonia";
+ if((gh.SO2||0)>1e-8)return"a choking smell of burning sulphur (sulphur dioxide)";
+ if((gh.NO2||0)>1e-8)return"a sharp, irritating smell: nitrogen dioxide. It is poisonous, so do not breathe it in!";
+ if((gh.Cl2||0)>1e-8)return"a choking, bleach-like smell (chlorine)";
+ if((gh.Br2||0)>1e-8)return"a harsh, irritating smell (bromine)";
+ if(Z(c,"HAc")/V>.1&&c.vol>.5)return"a sharp vinegar-like smell";
+ return"no noticeable smell"}
+function handMove(e){
+ const hc=$("hc");if(!state.hand){return}
+ const p=wsPt(e);hc.style.left=p[0]+"px";hc.style.top=p[1]+"px";
+ const now=performance.now(),dt=Math.max(1,now-handLast.t),sp=Math.hypot(p[0]-handLast.x,p[1]-handLast.y)/dt;handLast={x:p[0],y:p[1],t:now,s:sp};
+ if(sp>.45)for(const c of state.items){const mp=mouthWs(c);
+  if(Math.hypot(p[0]-mp[0],p[1]-mp[1])<46*(c.sc||1)&&(!c._wf||now-c._wf>2500)){c._wf=now;const sm=smellOf(c);toast("👃 You waft the fumes gently towards your nose: "+sm);log(c,"wafted: "+sm);break}}
+}
+/* ---------- delivery tube + cork linking two vessels ---------- */
+const dtubes=[];
+function dtLayer(){let l=$("dtl");if(!l){l=document.createElementNS("http://www.w3.org/2000/svg","svg");l.id="dtl";l.setAttribute("class","dtl");ws.appendChild(l)}return l}
+function spawnDtube(x,y){
+ const L=dtLayer(),g=document.createElementNS("http://www.w3.org/2000/svg","g");
+ g.innerHTML=`<path class="o" fill="none" stroke="#7f98b8" stroke-width="8" stroke-linecap="round"/><path class="i" fill="none" stroke="#e9f4fb" stroke-width="5" stroke-linecap="round"/><circle class="ea" r="10" fill="#b07a3c" stroke="#6f4a1c" stroke-width="1.5"/><circle class="eb" r="7" fill="#dbeaf6" stroke="#7f98b8" stroke-width="1.5"/>`;
+ L.appendChild(g);
+ const d={a:{x:x-70,y,c:null},b:{x:x+70,y:y+8,c:null},g};dtubes.push(d);
+ for(const k of["a","b"])g.querySelector(".e"+k).addEventListener("pointerdown",e=>{e.stopPropagation();detachEnd(d,k);drag={dt:{d,k},moved:true,x0:e.clientX,y0:e.clientY}});
+ drawDt(d);$("hint").style.display="none";toast("Drag the brown cork end onto a vessel's mouth, then the other end onto the second vessel.");return d}
+function drawDt(d){
+ const A=d.a,B=d.b,p=`M${A.x.toFixed(1)} ${A.y.toFixed(1)} C${A.x.toFixed(1)} ${(A.y-70).toFixed(1)} ${B.x.toFixed(1)} ${(B.y-70).toFixed(1)} ${B.x.toFixed(1)} ${B.y.toFixed(1)}`;
+ d.g.querySelector(".o").setAttribute("d",p);d.g.querySelector(".i").setAttribute("d",p);
+ d.g.querySelector(".ea").setAttribute("cx",A.x);d.g.querySelector(".ea").setAttribute("cy",A.y);d.g.querySelector(".eb").setAttribute("cx",B.x);d.g.querySelector(".eb").setAttribute("cy",B.y)}
+function detachEnd(d,k){const c=d[k].c;d[k].c=null;if(c&&k==="a"&&!dtubes.some(o=>o!==d&&o.a.c===c)){c.cork=false;view(c)}}
+function moveDt(e){const d=drag.dt,p=wsPt(e);d.d[d.k].x=p[0];d.d[d.k].y=p[1];drawDt(d.d)}
+function dropDt(dr){
+ const {d,k}=dr.dt,end=d[k];let best=null,bd=70;
+ for(const c of state.items){if(c.mount&&false)continue;const mp=mouthWs(c),dd=Math.hypot(end.x-mp[0],end.y-mp[1]);if(dd<bd){bd=dd;best=c}}
+ if(best){end.c=best;if(k==="a"){best.cork=true;view(best)}toast(k==="a"?"Cork pushed into "+best.label:"Tube end placed in "+best.label);
+  if(d.a.c&&d.b.c)log(d.a.c,"delivery tube connects "+d.a.c.label+" to "+d.b.c.label)}
+ syncDt(d)}
+function syncDt(d){for(const k of["a","b"]){const c=d[k].c;if(c){const mp=mouthWs(c);d[k].x=mp[0]+(k==="a"?0:6*(c.sc||1));d[k].y=mp[1]+(k==="a"?-12*(c.sc||1):(c.vol>1?14:0)*(c.sc||1))}}drawDt(d)}
+function tickDtubes(dt){
+ for(const d of dtubes){syncDt(d);
+  if(d.a.c&&d.b.c&&d.a.c!==d.b.c){const s=d.a.c,t=d.b.c,f=1-Math.exp(-1.6*dt);let mv=0;
+   for(const k in s.gh){const a=s.gh[k]*f;if(a>0){s.gh[k]-=a;t.gh[k]=(t.gh[k]||0)+a;mv+=a}}
+   if(mv>1e-10&&t.vol>1)t._xg=mv/dt}}
+}
+/* ---------- electrolysis cell: switch, gas collected in two inverted tubes ---------- */
+function elxHTML(){return `<svg width="220" height="192" viewBox="0 0 220 192" style="overflow:visible"><path d="M40 160 Q40 184 100 181" fill="none" stroke="#2c3e50" stroke-width="3"/><path d="M122 181 L160 183 L198 150" fill="none" stroke="#2c3e50" stroke-width="3"/><path d="M84 160 Q84 192 150 189 L160 152" fill="none" stroke="#c0392b" stroke-width="3"/><rect x="150" y="148" width="58" height="42" rx="5" fill="#2d3340" stroke="#12151b"/><rect x="154" y="153" width="50" height="15" rx="2" fill="#f4d03f"/><text x="179" y="165" text-anchor="middle" font-size="10" font-weight="800" fill="#1a1a1a">6 V</text><circle cx="160" cy="146" r="3.6" fill="#c0392b"/><circle cx="198" cy="146" r="3.6" fill="#2c3e50"/><rect x="96" y="178" width="30" height="9" rx="2" fill="#5a5f68"/><line class="lev" x1="100" y1="176" x2="122" y2="176" stroke="#d6dae0" stroke-width="3.6" stroke-linecap="round"/><rect class="swt" x="92" y="158" width="40" height="32" fill="transparent"/></svg>`}
+function toggleSwitch(m){m.sw=!m.sw;m.el.classList.toggle("on",m.sw);toast(m.sw?"🔌 Switch ON: current flows through the water":"Switch OFF");log(m,m.sw?"the 6 V battery is switched on":"the battery is switched off");if(m.sw)m.eb=0}
+function trySlot(t){
+ if(t.type!=="tube"&&t.type!=="btube")return;
+ for(const m of state.items){if(m.type!=="mug")continue;const w=vrect(m);
+  for(const i of[0,1]){const sx=w.l+(w.G.cx+(i?22:-22))*w.sc;
+   if(Math.abs(t.x-sx)<44*w.sc&&t.y<m.y+10&&t.y>m.y-240*w.sc){
+    if(t.vol<t.cap*.7){toast("Fill the test tube with water first (pour water into it)");return}
+    if(state.items.some(o=>o!==t&&o.slot&&o.slot.host===m.id&&o.slot.i===i)){toast("That electrode already has a tube");continue}
+    t.slot={host:m.id,i};t.inv=true;t.gh={};t.cork=false;t.el.classList.add("inv");place(t);toast("Tube inverted over the "+(i?"anode (+)":"cathode (−)")+" electrode");log(m,"a water-filled test tube is inverted over the "+(i?"positive":"negative")+" electrode");return}}}
+}
+function tickElectro(dt){
+ for(const m of state.items){
+  if(m.type!=="mug"||!m.sw)continue;
+  const ok=m.vol>=60&&(Z(m,"H")>1e-6||Z(m,"SO4")>1e-6);
+  if(!ok){if(!m._we||performance.now()-m._we>5000){m._we=performance.now();toast(m.vol<60?"Pour water in so that the electrodes are covered":"Pure water hardly conducts: add a few drops of dilute sulphuric acid")}m.eb=0;continue}
+  const rate=1.2e-5*dt;m.eb=1;regRx("Electrolysis of water (decomposition by electricity)","2H₂O(l) → 2H₂(g) + O₂(g)");
+  if(!m._el1){m._el1=1;log(m,"bubbles of gas rise from both electrodes, more from the cathode (−)")}
+  const got={};
+  for(const t of state.items){if(!t.slot||t.slot.host!==m.id)continue;const H=t.slot.i===0,mol=H?rate:rate/2,gt=H?"H2":"O2",dv=mol*24000;
+   if(t.vol-dv>.5){t.vol-=dv;t.gh[gt]=(t.gh[gt]||0)+mol;got[gt]=1;view(t)}}
+  if(got.H2&&got.O2&&!m._el2){const th=state.items.find(t=>t.slot&&t.slot.host===m.id&&t.slot.i===0),to=state.items.find(t=>t.slot&&t.slot.host===m.id&&t.slot.i===1);
+   if(th&&to&&(th.cap-th.vol)>3&&(to.cap-to.vol)>1.5){m._el2=1;log(m,"the volume of gas in the cathode tube is about twice that in the anode tube (H₂ : O₂ = 2 : 1)")}}
+ }
+}
+/* ---------- sunlight through the window ---------- */
+function inBeam(x,y){const W=ws.clientWidth,H=ws.clientHeight,top=tr().wall*.7,t=(y-top)/Math.max(1,H-top);if(t<=0)return false;
+ const L=W*.05+W*.44*(.4*t),R=W*.05+W*.44*(.22+.78*t);return x>=L&&x<=R}
+function tickSun(){for(const c of state.items){const s=inBeam(c.x,c.y);if(s!==!!c.sun){c.sun=s;if(s&&((c.sol.agcl||0)>0||(c.sol.agbr||0)>0))toast("☀️ "+c.label+" is in the sunlight")}}}
+const ACTS=[
+ ["1.1 Burn a magnesium ribbon","Rub a 3-4 cm ribbon with sandpaper, hold it in the flame, keep it away from your eyes and catch the ash in a watch glass."],
+ ["1.2 Lead nitrate + potassium iodide","Mix the two solutions in a test tube and look for the yellow precipitate."],
+ ["1.3 Zinc + dilute acid","Add acid to zinc granules in a test tube or flask. Look for bubbles and touch the tube."],
+ ["1.4 Quicklime + water","Add water slowly to calcium oxide in a beaker and touch the beaker."],
+ ["1.5 Heat ferrous sulphate crystals","Heat the crystals in a boiling tube held in the flame and waft the smell. The colour changes."],
+ ["1.6 Heat lead nitrate","Heat the powder in a boiling tube. Brown fumes of nitrogen dioxide appear."],
+ ["1.7 Electrolysis of water","Fill the mug with water and a few drops of acid, invert two water-filled tubes over the electrodes, switch on, then test each gas with a burning match."],
+ ["1.8 Silver chloride in sunlight","Put a china dish of AgCl in the sunbeam from the window and speed up time."],
+ ["1.9 Iron nails in copper sulphate","Clean nails with sandpaper, place them in copper sulphate solution, and compare with a second tube."],
+ ["1.10 Sodium sulphate + barium chloride","Pour one solution into the other: white barium sulphate forms."],
+ ["1.11 Heat copper powder","Heat copper powder in a china dish on the gauze. A black coat of CuO forms."],
+ ["Also: CO₂ and lime water","React marble with acid in a corked flask, link it to lime water with a delivery tube."],
+ ["Also: hydrogen over hot CuO","Make hydrogen from zinc + acid and pass it over heated CuO: black turns brown."],
+ ["Carry out: Ba(OH)₂ + NH₄Cl","Mix the two solids in a test tube with the glass rod and touch the bottom. It gets very cold."],
+ ["Group activity","Dissolve K₂SO₄, NH₄NO₃ and anhydrous CuSO₄ in 25 mL water, and add iron filings to copper sulphate solution. Note each temperature change."]
+];
+
+/* ---------- main loop: 10 Hz ---------- */
 let lastT=performance.now();
+function puff(c,cls,n){const v=c.el.querySelector(".vessel"),g=GEO[c.type];for(let i=0;i<n;i++){const p=document.createElement("i");p.className=cls;p.style.cssText=`left:${f1(g.cx+(Math.random()-.5)*g.hw(g.ytop)*1.3)}px;top:${f1(g.ytop-4)}px`;v.appendChild(p);p.onanimationend=()=>p.remove()}}
 setInterval(()=>{
  const now=performance.now(),real=Math.min(.5,(now-lastT)/1000);lastT=now;const dt=real*state.warp;simTime+=dt;
+ runPours(real);tickHeating();tickTiltPour(real);tickFrees(real);tickDtubes(dt);tickElectro(dt);tickSun();tickGasWarn(real);
  for(const c of state.items){
-  if(c.vol>0||Object.keys(c.sol).length)tickContainer(c,dt);
+  if(c.vol>0||Object.keys(c.sol).length||Object.keys(c.gh).length||c.heatW||c.T>26||c.T<24)tickContainer(c,dt);
+  /* displayed colour drifts toward the true colour: slowly when unstirred, quickly when stirred */
+  const tg=solnColour(c);if(!c.disp||c.vol<.3)c.disp={rgb:tg.rgb.slice(),alpha:tg.alpha};else{const k=Math.min(1,(c.stir>0?2.8:.45)*real*Math.max(1,state.warp*.6));c.disp={rgb:mix(c.disp.rgb,tg.rgb,k),alpha:c.disp.alpha+(tg.alpha-c.disp.alpha)*k}}
+  c.flash=(c.flash||0)*Math.exp(-3*real);
   view(c);readouts(c);
-  const rate=c.gasRate||0;if(rate>0){let n=Math.min(4,rate/1.2e-4*(.6+Math.random()));n=Math.floor(n)+(Math.random()<n%1?1:0);
-   const liq=c.el.querySelector(".bubs");if(liq.children.length<45)for(let i=0;i<n;i++){const b=document.createElement("span"),z=3+Math.random()*5;b.className="bub";b.style.cssText=`left:${6+Math.random()*84}%;width:${z}px;height:${z}px;animation-duration:${(.9+Math.random()*.8)/Math.sqrt(state.warp)}s`;b.onanimationend=()=>b.remove();liq.appendChild(b)}}
+  const rate=Math.max(c.gasRate||0,c.boil?1.6e-4:0,c._xg||0);c._xg=0;
+  if(rate>0&&c.vol>.3){let n=Math.min(4,rate/1.2e-4*(.6+Math.random()));n=Math.floor(n)+(Math.random()<n%1?1:0);
+   const bl=c.el.querySelector(".bubs");if(bl.children.length<50)for(let i=0;i<n;i++){const bb=document.createElement("span"),z=2+Math.random()*(c.boil?6:5);bb.className="bub";bb.style.cssText=`left:${Math.random()*92}%;width:${z}px;height:${z}px;animation-duration:${(.8+Math.random()*.8)/Math.sqrt(state.warp)}s`;bb.onanimationend=()=>bb.remove();bl.appendChild(bb)}}
+  if(c.type==="mug"&&c.sw&&c.eb&&c.vol>20){const bl=c.el.querySelector(".bubs"),G=GEO.mug,w=G.hw(G.ytop)*1.5;if(bl.children.length<60)for(const s of[-1,1])if(Math.random()<(s<0?.9:.5)){const bb=document.createElement("span"),z=2+Math.random()*4;bb.className="bub";bb.style.cssText=`left:${(w/2+s*22-z/2).toFixed(1)}px;width:${z.toFixed(1)}px;height:${z.toFixed(1)}px;animation-duration:${(.8+Math.random()*.5).toFixed(2)}s`;bb.onanimationend=()=>bb.remove();bl.appendChild(bb)}}
+  if((c.gh.NO2||0)>1e-7&&!c.cork&&!c.inv&&Math.random()<.5)puff(c,"fume",1);
+  if((c.gh.SO3||0)>1e-7&&!c.cork&&!c.inv&&Math.random()<.4)puff(c,"steam",1);
+  if(c.T>65&&c.vol>.3&&Math.random()<Math.min(.9,(c.T-60)/40)*(c.boil?1.2:.5))puff(c,"steam",c.boil?2:1);
  }
+ for(const b of state.tools)if(b.type==="bunsen"&&b.lit&&!state.gog&&false)b.lit=false;
+ tickMatches(real);
  renderPanel(false);
 },100);
 renderTool();renderPanel(true);
-window.LAB={state,spawn,addChem,CHEM,tickContainer,view,select};
+window.LAB={state,frees,dtubes,spawnFree,spawnSand,spawnDtube,toggleHand,toggleSwitch,trySlot,tickHeating,burnerView,moveCtl,mouthWs,vrect,matches,spawnMatchbox,spawnMatch,toggleGas,spawn,spawnBurner,addChem,addNow,startPour,CHEM,tickContainer,view,select,byId,pours};
+
 </script>
 </body>
 </html>
