@@ -188,295 +188,13 @@ textarea,input.t{width:100%;padding:7px 9px;border:1px solid var(--bd);border-ra
  </div>
 </div>
 
+<script src="chemcore.js"></script>
 <script>
-/* ================= CHEMISTRY ENGINE (pure functions on container objects) ================= */
-const KW=1e-14,KA_HAC=1.8e-5,KA1=4.5e-7,KA2=4.7e-11;
-const SUB={"0":"₀","1":"₁","2":"₂","3":"₃","4":"₄","5":"₅","6":"₆","7":"₇","8":"₈","9":"₉"};
-const sub=n=>String(n).split("").map(d=>SUB[d]||d).join("");
-const gcd=(a,b)=>b?gcd(b,a%b):a, lcm=(a,b)=>a*b/gcd(a,b);
-const co=n=>n===1?"":String(n);
-const CATZ={NH4:1,Na:1,K:1,Ag:1,Cu:2,Ba:2,Pb:2,Zn:2,Fe2:2,Fe3:3,Ca:2,Mg:2};
-const CATS={NH4:"NH₄",Na:"Na",K:"K",Ag:"Ag",Cu:"Cu",Ba:"Ba",Pb:"Pb",Zn:"Zn",Fe2:"Fe",Fe3:"Fe",Ca:"Ca",Mg:"Mg"};
-const ANS={Cl:{f:"Cl",z:1,acid:"HCl",h:1},NO3:{f:"NO₃",z:1,acid:"HNO₃",h:1},SO4:{f:"SO₄",z:2,acid:"H₂SO₄",h:2},Ac:{f:"CH₃COO",z:1,acid:"CH₃COOH",h:1}};
-function part(f,n){return n===1?f:(f.length>2&&/[₀-₉]|[A-Z].*[A-Z]/.test(f)?"("+f+")":f)+sub(n)}
-function salt(cat,an){const z1=CATZ[cat],z2=ANS[an].z,g=gcd(z1,z2);return {f:part(CATS[cat],z2/g)+part(ANS[an].f,z1/g),ncat:z2/g}}
-function domAnion(c){const s=c.sp,v={Cl:s.Cl||0,NO3:s.NO3||0,SO4:s.SO4||0,Ac:(s.Ac||0)+(s.HAc||0)};let b="Cl",m=-1;for(const k in v)if(v[k]>m){m=v[k];b=k}return b}
-const MM={zn:65.4,mg:24.3,fe:55.8,cu:63.5,caco3:100.1,cuo:79.5,mgo:40.3,nail:55.8,na:23,cao:56.1,feso4s:278,feso4a:151.9,fe2o3:159.7,pbn:331.2,pbo:223.2,agcl:143.3,agbr:187.8,ag:107.9,baoh2:315.5,nh4cl:53.5,k2so4:174.3,nh4no3:80,cuso4a:159.6};
-const SOLCOL={zn:"#9aa7b3",mg:"#d6dade",fe:"#5d6168",cu:"#b8733a",caco3:"#efe9dc",cuo:"#1c1c1c",mgo:"#f4f4ee",nail:"#5d6168",na:"#b9bdc4",cao:"#f4f1e8",feso4s:"#8fc08f",feso4a:"#e6e6dc",fe2o3:"#8a3b1c",pbn:"#f3f3f0",pbo:"#e8b020",agcl:"#f6f6f4",agbr:"#f2ecc8",ag:"#6e7076",baoh2:"#f2f2f2",nh4cl:"#f6f6f6",k2so4:"#f6f6f6",nh4no3:"#f6f6f6",cuso4a:"#f4f4f2"};
-const SOLNAME={zn:"Zinc",mg:"Magnesium",fe:"Iron",cu:"Copper",caco3:"Marble chips",cuo:"Copper(II) oxide",mgo:"Magnesium oxide (white ash)",nail:"Iron nail",na:"Sodium",cao:"Calcium oxide (quicklime)",feso4s:"Ferrous sulphate crystals",feso4a:"Anhydrous ferrous sulphate",fe2o3:"Iron(III) oxide",pbn:"Lead nitrate",pbo:"Lead(II) oxide",agcl:"Silver chloride",agbr:"Silver bromide",ag:"Silver",baoh2:"Barium hydroxide",nh4cl:"Ammonium chloride",k2so4:"Potassium sulphate",nh4no3:"Ammonium nitrate",cuso4a:"Anhydrous copper sulphate"};
-const DEPCOL={Cu:"#b8733a",Ag:"#cfd2da",Pb:"#7a7a85",Fe:"#5a5a60",Zn:"#9aa7b3"};
-const DEPWORD={Cu:"reddish-brown",Ag:"silvery",Pb:"grey",Fe:"dark grey",Zn:"grey"};
-const DEPMM={Cu:63.5,Ag:107.9,Pb:207.2,Fe:55.8,Zn:65.4};
-const RANK={mg:0,zn:1,fe:2,nail:2,cu:4};
-const CATSOL={mg:"Mg",zn:"Zn",fe:"Fe2",nail:"Fe2",cu:"Cu"};
-const DEPOF={Ag:["Ag",5,1],Cu:["Cu",4,2],Pb:["Pb",3,2],Fe2:["Fe",2,2],Zn:["Zn",1,2]}; // cation key -> [deposit symbol, rank, charge]
-const KDISP={mg:.02,zn:.006,fe:.001,nail:.0009,cu:.004};
-const KACID={mg:.02,zn:.003,fe:.0004,nail:.0003};
-const QACID={mg:467e3,zn:153e3,fe:87e3,nail:87e3};
-const DISS={k2so4:{ion:{K:2,SO4:1},dH:26e3,eq:"K₂SO₄(s) → 2K⁺(aq) + SO₄²⁻(aq)  (dissolving, almost no temperature change)"},
- nh4no3:{ion:{NH4:1,NO3:1},dH:25.7e3,eq:"NH₄NO₃(s) → NH₄⁺(aq) + NO₃⁻(aq)  (endothermic: the solution gets colder)"},
- cuso4a:{ion:{Cu:1,SO4:1},dH:-66.5e3,eq:"CuSO₄(s) + aq → Cu²⁺(aq) + SO₄²⁻(aq)  (exothermic: white powder turns blue)"}};
-const PPT=[
- {id:"AgCl",n:"AgCl",a:"Ag",na:1,b:"Cl",nb:1,ksp:1.8e-10,col:"#f6f6f6",cw:"white curdy",mm:143.3,eq:"AgNO₃ + NaCl → AgCl↓ + NaNO₃",ion:"Ag⁺ + Cl⁻ → AgCl↓"},
- {id:"AgI",n:"AgI",a:"Ag",na:1,b:"I",nb:1,ksp:8e-17,col:"#f2e04a",cw:"yellow",mm:234.8,eq:"AgNO₃ + KI → AgI↓ + KNO₃",ion:"Ag⁺ + I⁻ → AgI↓"},
- {id:"BaSO4",n:"BaSO₄",a:"Ba",na:1,b:"SO4",nb:1,ksp:1.1e-10,col:"#fafafa",cw:"white",mm:233.4,eq:"BaCl₂ + Na₂SO₄ → BaSO₄↓ + 2NaCl",ion:"Ba²⁺ + SO₄²⁻ → BaSO₄↓"},
- {id:"PbSO4",n:"PbSO₄",a:"Pb",na:1,b:"SO4",nb:1,ksp:2e-8,col:"#f4f4f4",cw:"white",mm:303.3,eq:"Pb(NO₃)₂ + Na₂SO₄ → PbSO₄↓ + 2NaNO₃",ion:"Pb²⁺ + SO₄²⁻ → PbSO₄↓"},
- {id:"PbI2",n:"PbI₂",a:"Pb",na:1,b:"I",nb:2,ksp:7e-9,col:"#f0c814",cw:"golden-yellow",mm:461,eq:"Pb(NO₃)₂ + 2KI → PbI₂↓ + 2KNO₃",ion:"Pb²⁺ + 2I⁻ → PbI₂↓"},
- {id:"PbCl2",n:"PbCl₂",a:"Pb",na:1,b:"Cl",nb:2,ksp:1.7e-5,col:"#f2f2f2",cw:"white",mm:278.1,eq:"Pb(NO₃)₂ + 2NaCl → PbCl₂↓ + 2NaNO₃",ion:"Pb²⁺ + 2Cl⁻ → PbCl₂↓"},
- {id:"CuOH2",n:"Cu(OH)₂",a:"Cu",na:1,b:"OH",nb:2,ksp:2.2e-20,col:"#6fa8f0",cw:"pale blue",mm:97.6,hyd:1,eq:"CuSO₄ + 2NaOH → Cu(OH)₂↓ + Na₂SO₄",ion:"Cu²⁺ + 2OH⁻ → Cu(OH)₂↓"},
- {id:"FeOH3",n:"Fe(OH)₃",a:"Fe3",na:1,b:"OH",nb:3,ksp:4e-38,col:"#a8501c",cw:"reddish-brown",mm:106.9,hyd:1,eq:"FeCl₃ + 3NaOH → Fe(OH)₃↓ + 3NaCl",ion:"Fe³⁺ + 3OH⁻ → Fe(OH)₃↓"},
- {id:"FeOH2",n:"Fe(OH)₂",a:"Fe2",na:1,b:"OH",nb:2,ksp:8e-16,col:"#7ba483",cw:"dirty-green",mm:89.9,hyd:1,eq:"FeSO₄ + 2NaOH → Fe(OH)₂↓ + Na₂SO₄",ion:"Fe²⁺ + 2OH⁻ → Fe(OH)₂↓"},
- {id:"ZnOH2",n:"Zn(OH)₂",a:"Zn",na:1,b:"OH",nb:2,ksp:3e-17,col:"#f2f2f2",cw:"white gelatinous",mm:99.4,hyd:1,eq:"ZnSO₄ + 2NaOH → Zn(OH)₂↓ + Na₂SO₄",ion:"Zn²⁺ + 2OH⁻ → Zn(OH)₂↓"},
- {id:"MgOH2",n:"Mg(OH)₂",a:"Mg",na:1,b:"OH",nb:2,ksp:5.6e-12,col:"#f6f6f6",cw:"white",mm:58.3,hyd:1,eq:"MgSO₄ + 2NaOH → Mg(OH)₂↓ + Na₂SO₄",ion:"Mg²⁺ + 2OH⁻ → Mg(OH)₂↓"},
- {id:"CaOH2",n:"Ca(OH)₂",a:"Ca",na:1,b:"OH",nb:2,ksp:5.5e-6,col:"#f6f6f6",cw:"white",mm:74.1,hyd:1,eq:"CaCl₂ + 2NaOH → Ca(OH)₂↓ + 2NaCl",ion:"Ca²⁺ + 2OH⁻ → Ca(OH)₂↓"},
- {id:"CaCO3",n:"CaCO₃",a:"Ca",na:1,b:"CO3",nb:1,ksp:3.3e-9,col:"#fbfbfb",cw:"white (milky)",mm:100.1,carb:1,eq:"Ca(OH)₂ + Na₂CO₃ → CaCO₃↓ + 2NaOH",ion:"Ca²⁺ + CO₃²⁻ → CaCO₃↓"}
-];
-const HYD=[["Cu",5e-8],["Zn",1e-9],["Fe2",1e-8],["Fe3",1e-3],["Pb",1e-8],["Mg",1e-11],["NH4",5.6e-10]];
-const Z=(c,k)=>c.sp[k]||0;
+/* ================= CHEMISTRY ENGINE: provided by chemcore.js (principle-based). Bridge to the names the UI uses ================= */
+if(!window.Engine)document.body.insertAdjacentHTML("afterbegin",'<div style="padding:20px;color:#fff;background:#b00">chemcore.js failed to load. Reload the app.</div>');
+const {phOf,react,step,addLiquid,addSolid,pourTo,newContainer,solnColour,cname,tickContainer,RX,OBS,observe,log,regRx,PPT,SOLCOL,SOLNAME,DEPCOL,DEPWORD,mix,hex,hx,uiColor,WATER,emptyContainer}=window.Engine;
+const Z=(c,k)=>c.sp[k]||0;let simTime=0;
 
-function newContainer(type,label){
- const cap={beaker:250,tube:20,flask:250,cyl:100,btube:30,dish:150,watch:40,mug:500}[type];
- return {id:0,type,label,cap,vol:0,T:25,sp:{},ind:{},sol:{},ppt:{},dep:{},susp:0,gasRate:0,gasType:"",heat:false,heatW:0,boil:false,flash:0,disp:null,mount:null,gh:{},q:{},sunE:0,inv:false,cork:false,stirE:0,drops:0,stir:0,probes:[],neut:0,
-  last:{ppt:{},sol:{},dep:{},gs:{},gas:false,T:25,neut:false,col:[200,225,245],cname:"colourless"}};
-}
-/* pH from charge balance (bisection in log h) */
-function phOf(c){
- const V=c.vol/1000;if(V<2e-4)return null;
- const pos0=Z(c,"NH4")+Z(c,"Na")+Z(c,"K")+Z(c,"Ag")+2*(Z(c,"Cu")+Z(c,"Ba")+Z(c,"Pb")+Z(c,"Zn")+Z(c,"Fe2")+Z(c,"Ca")+Z(c,"Mg"))+3*Z(c,"Fe3");
- const neg0=Z(c,"Cl")+Z(c,"NO3")+Z(c,"I")+2*Z(c,"SO4");
- const T=(Z(c,"HAc")+Z(c,"Ac"))/V,CT=Z(c,"CO3")/V;
- const F=h=>{let p=pos0/V;for(const[k,kh]of HYD)p-=(Z(c,k)/V)*kh/(kh+h);
-  const D=h*h+h*KA1+KA1*KA2,car=CT*(h*KA1+2*KA1*KA2)/D;
-  return p+h-neg0/V-KW/h-T*KA_HAC/(KA_HAC+h)-car};
- let lo=-1,hi=15;
- for(let i=0;i<60;i++){const m=(lo+hi)/2;if(F(Math.pow(10,-m))>0)lo=m;else hi=m}
- return Math.max(0,Math.min(14,(lo+hi)/2));
-}
-function acidAvail(c){return Z(c,"H")+Z(c,"HAc")}
-function consumeAcid(c,mol){const a=Math.min(mol,Z(c,"H"));c.sp.H=Z(c,"H")-a;const r=mol-a;if(r>0){const w=Math.min(r,Z(c,"HAc"));c.sp.HAc=Z(c,"HAc")-w;c.sp.Ac=Z(c,"Ac")+w}}
-function heatIn(c,joules){c.T+=joules/((c.vol+5)*4.18)}
-function acidEqCoef(c){const an=domAnion(c);return {an,a:ANS[an]}}
-/* instantaneous (ionic) reactions */
-function react(c){
- let m=Math.min(Z(c,"H"),Z(c,"OH"));
- if(m>0){c.sp.H-=m;c.sp.OH-=m;c.neut+=m;heatIn(c,m*57300)}
- m=Math.min(Z(c,"HAc"),Z(c,"OH"));
- if(m>0){c.sp.HAc-=m;c.sp.OH-=m;c.sp.Ac=Z(c,"Ac")+m;c.neut+=m;heatIn(c,m*55000)}
- m=Math.min(Z(c,"CO3"),Z(c,"H")/2);
- if(m>1e-12){c.sp.CO3-=m;c.sp.H-=2*m;gas(c,m,"CO2");regRx("Carbonate + acid","CO₃²⁻ + 2H⁺ → H₂O + CO₂↑")}
- m=Math.min(Z(c,"CO3"),Z(c,"HAc")/2);
- if(m>1e-12){c.sp.CO3-=m;consumeAcid(c,2*m);gas(c,m,"CO2");regRx("Carbonate + ethanoic acid","CO₃²⁻ + 2CH₃COOH → 2CH₃COO⁻ + H₂O + CO₂↑")}
- for(const r of PPT){ // acids dissolve hydroxide / carbonate precipitates
-  if(!(r.hyd||r.carb))continue;const p=c.ppt[r.id]||0;if(p<=0)continue;
-  const val=r.hyd?r.nb:2,d=Math.min(p,acidAvail(c)/val);
-  if(d>1e-12){c.ppt[r.id]=p-d;consumeAcid(c,val*d);c.sp[r.a]=Z(c,r.a)+d;if(r.carb)gas(c,d,"CO2");
-   const an=domAnion(c),A=ANS[an],s=salt(r.a,an);
-   if(r.carb)regRx(r.n+" + acid","CaCO₃ + "+co(2/A.h)+A.acid+" → "+s.f+" + H₂O + CO₂↑");
-   else if(Number.isInteger(val/A.h))regRx(r.n+" + acid",r.n+" + "+co(val/A.h)+A.acid+" → "+s.f+" + "+val+"H₂O");
-   else regRx(r.n+" + acid",r.n+" + "+val+"H⁺ → "+CATS[r.a]+({1:"⁺",2:"²⁺",3:"³⁺"}[CATZ[r.a]])+" + "+val+"H₂O")}
- }
- for(let pass=0;pass<2;pass++)for(const r of PPT){
-  const p0=c.ppt[r.id]||0,V=c.vol/1000,At=Z(c,r.a)+r.na*p0,Bt=Z(c,r.b)+r.nb*p0;
-  if(V<2e-4){continue}
-  const pmax=Math.min(At/r.na,Bt/r.nb);
-  const g=p=>Math.pow(Math.max(0,At-r.na*p)/V,r.na)*Math.pow(Math.max(0,Bt-r.nb*p)/V,r.nb)-r.ksp;
-  let p;
-  if(pmax<=0||g(0)<=0)p=0;else if(g(pmax)>0)p=pmax;else{let lo=0,hi=pmax;for(let i=0;i<60;i++){const mid=(lo+hi)/2;if(g(mid)>0)lo=mid;else hi=mid}p=(lo+hi)/2}
-  if(r.hyd&&Z(c,"H")>1e-12&&p>p0)p=p0; // no hydroxide ppt while acid is present
-  if(Math.abs(p-p0)>1e-15){c.sp[r.a]=At-r.na*p;c.sp[r.b]=Bt-r.nb*p;c.ppt[r.id]=p;if(p>p0)c.susp=Math.min(1,Math.max(c.susp,(p-p0)/Math.max(p,1e-12)));if(p>p0+1e-6)regRx(r.n+" precipitation",r.eq,r.ion)}
- }
-}
-function gas(c,mol,t){c._g=(c._g||0)+mol;c.gasType=t;c.gh[t]=(c.gh[t]||0)+mol}
-/* kinetic step */
-function step(c,dt){
- thermal(c,dt);
- if(c.vol<0.2){dryChem(c,dt);return}
- const ph=phOf(c),h=Math.pow(10,-(ph==null?7:ph)),V=c.vol/1000;
- const tf=Math.exp((c.T-25)/25)*(c.stir>0?1.4:1);
- c._g=0;
- const {a:A}=acidEqCoef(c);
- for(const m of["mg","zn","fe","nail"]){const g=c.sol[m]||0;if(g>1e-4&&h>1e-4){
-  const mol=g/MM[m];let dn=KACID[m]*Math.pow(h,.8)*Math.pow(mol,.67)*tf*dt*(c.q[m]||1);dn=Math.min(dn,mol,acidAvail(c)/2);
-  if(dn>1e-14){const an=domAnion(c),AN=ANS[an],s=salt(CATSOL[m],an);
-   c.sol[m]-=dn*MM[m];consumeAcid(c,2*dn);c.sp[CATSOL[m]]=Z(c,CATSOL[m])+dn;gas(c,dn,"H2");heatIn(c,dn*QACID[m]);
-   regRx(SOLNAME[m]+" + acid",CATS[CATSOL[m]]+" + "+co(2/AN.h)+AN.acid+" → "+s.f+" + H₂↑")}}}
- {const g=c.sol.caco3||0;if(g>1e-4&&h>1e-4){const mol=g/MM.caco3;let dn=.012*Math.pow(h,.7)*Math.pow(mol,.67)*tf*dt;dn=Math.min(dn,mol,acidAvail(c)/2);
-  if(dn>1e-14){const an=domAnion(c),AN=ANS[an],s=salt("Ca",an);c.sol.caco3-=dn*MM.caco3;consumeAcid(c,2*dn);c.sp.Ca=Z(c,"Ca")+dn;gas(c,dn,"CO2");
-   regRx("Marble + acid","CaCO₃ + "+co(2/AN.h)+AN.acid+" → "+s.f+" + H₂O + CO₂↑")}}}
- {const g=c.sol.cuo||0;if(g>1e-4&&h>1e-4){const mol=g/MM.cuo;let dn=.005*Math.pow(h,.8)*Math.pow(mol,.67)*Math.exp((c.T-25)/12)*dt;dn=Math.min(dn,mol,acidAvail(c)/2);
-  if(dn>1e-14){const an=domAnion(c),AN=ANS[an],s=salt("Cu",an);c.sol.cuo-=dn*MM.cuo;consumeAcid(c,2*dn);c.sp.Cu=Z(c,"Cu")+dn;
-   regRx("CuO + acid","CuO + "+co(2/AN.h)+AN.acid+" → "+s.f+" + H₂O")}}}
- for(const m of["mg","zn","fe","nail","cu"]){const g=c.sol[m]||0;if(g<=1e-4)continue;
-  for(const ck in DEPOF){const [sym,rk,z]=DEPOF[ck];if(RANK[m]>=rk)continue;if(ck==="Zn"&&m!=="mg")continue;
-   const conc=Z(c,ck)/V;if(conc<1e-4)continue;
-   const mol=(c.sol[m]||0)/MM[m];if(mol<=1e-9)continue;
-   let dC=KDISP[m]*Math.pow(conc,.7)*Math.pow(mol,.67)*tf*dt*(c.q[m]||1);dC=Math.min(dC,Z(c,ck),mol*2/z);
-   if(dC>1e-14){const mc=CATSOL[m];c.sp[ck]-=dC;c.sol[m]-=dC*z/2*MM[m];c.sp[mc]=Z(c,mc)+dC*z/2;c.dep[sym]=(c.dep[sym]||0)+dC*DEPMM[sym];heatIn(c,dC*z/2*60e3);
-    const an=domAnion(c);const eqs=dispEq(m,sym,ck,an);regRx(SOLNAME[m]+" displaces "+sym,eqs.eq,eqs.ion)}}}
- if((c.sol.na||0)>1e-4){const mol=c.sol.na/MM.na;let dn=Math.min(mol,.09*Math.pow(mol,.67)*Math.max(1,c.T/25)*dt);
-  if(dn>1e-14){c.sol.na-=dn*MM.na;c.sp.Na=Z(c,"Na")+dn;c.sp.OH=Z(c,"OH")+dn;c.vol=Math.max(.2,c.vol-dn*18);gas(c,dn/2,"H2");heatIn(c,dn*184e3);c.flash=Math.max(c.flash||0,.4);regRx("Sodium + water","2Na(s) + 2H₂O(l) → 2NaOH(aq) + H₂(g)")}}
- if((c.sol.cao||0)>1e-4){const mol=c.sol.cao/MM.cao;let dn=Math.min(mol,.35*Math.pow(mol,.67)*(c.stir>0?1.6:1)*dt);
-  if(dn>1e-14){c.sol.cao-=dn*MM.cao;c.sp.Ca=Z(c,"Ca")+dn;c.sp.OH=Z(c,"OH")+2*dn;c.vol=Math.max(.2,c.vol-dn*18);heatIn(c,dn*65.2e3);regRx("Slaking of quicklime (a combination reaction, exothermic)","CaO(s) + H₂O(l) → Ca(OH)₂(aq) + heat")}}
- for(const k in DISS){if((c.sol[k]||0)>1e-4){const D=DISS[k],mol=c.sol[k]/MM[k];let dn=Math.min(mol,.05*Math.pow(mol,.67)*(c.stir>0?5:1)*dt);
-  if(dn>1e-14){c.sol[k]-=dn*MM[k];for(const i in D.ion)c.sp[i]=Z(c,i)+D.ion[i]*dn;heatIn(c,-dn*D.dH);regRx("Dissolving "+SOLNAME[k].toLowerCase(),D.eq)}}}
- if((c.gh.CO2||0)>1e-9&&Z(c,"Ca")>1e-9&&Z(c,"OH")>1e-9){const dn=Math.min(c.gh.CO2*(1-Math.exp(-2*dt)),Z(c,"OH")/2,Z(c,"Ca"));
-  if(dn>1e-13){c.gh.CO2-=dn;c.sp.OH-=2*dn;c.sp.CO3=Z(c,"CO3")+dn;regRx("Carbon dioxide + lime water","Ca(OH)₂(aq) + CO₂(g) → CaCO₃(s) + H₂O(l)")}}
- c.gasRate=(c._g||0)/dt;
- react(c);
- c.susp*=Math.exp(-dt*.07);
- if(c.stir>0){c.stir-=dt;c.susp=Math.min(1,c.susp+dt*.4)}
-}
-function thermal(c,dt){
- const W=c.heatW||0,liq=c.vol>=.2;let sm=0;for(const k in c.sol)sm+=c.sol[k];
- const capJ=liq?(c.vol+10)*4.18+sm*.8:14+sm*.8;
- if(W>0){
-  if(liq){if(c.T<100){c.T=Math.min(100,c.T+W*.7*dt/capJ);c.boil=false}else{c.T=100;c.boil=true;c.vol=Math.max(0,c.vol-W*.7*dt/2260);if(c.vol<.2&&c.vol>0)c.vol=0}}
-  else{c.T=Math.min(900,c.T+W*dt/capJ);c.boil=false}
- }else{c.T+=(25-c.T)*Math.min(1,(liq?.02:.012)*dt);if(c.T<99)c.boil=false}
- c.stirE=(c.stirE||0)*Math.exp(-.6*dt);
- endo(c,dt);sunlight(c,dt);
- const ESC={H2:.8,O2:.04,CO2:.05,NO2:.1,SO2:.12,SO3:.1,NH3:.3,Cl2:.08,Br2:.06};
- if(!c.cork&&!c.inv)for(const k in c.gh){c.gh[k]*=Math.exp(-(ESC[k]||.1)*dt);if(c.gh[k]<1e-12)delete c.gh[k]}
- if(c.drops>0)c.drops=Math.max(0,c.drops-.01*dt);
-}
-function endo(c,dt){
- if((c.sol.baoh2||0)>1e-4&&(c.sol.nh4cl||0)>1e-4){
-  const mol=Math.min(c.sol.baoh2/MM.baoh2,c.sol.nh4cl/MM.nh4cl/2),mix=Math.min(1,(c.stirE||0)/250+.015);
-  const d=Math.min(mol,mol*dt*.4*mix);
-  if(d>1e-13){c.sol.baoh2-=d*MM.baoh2;c.sol.nh4cl-=2*d*MM.nh4cl;c.sp.Ba=Z(c,"Ba")+d;c.sp.Cl=Z(c,"Cl")+2*d;c.vol+=d*180;gas(c,2*d,"NH3");heatIn(c,-d*165e3);
-   regRx("Barium hydroxide + ammonium chloride (endothermic)","Ba(OH)₂·8H₂O(s) + 2NH₄Cl(s) → BaCl₂(aq) + 2NH₃(g) + 10H₂O(l)")}}
-}
-function sunlight(c,dt){
- if(!c.sun)return;
- for(const [k,gs,eq] of [["agcl","Cl2","2AgCl(s) → 2Ag(s) + Cl₂(g)   (sunlight)"],["agbr","Br2","2AgBr(s) → 2Ag(s) + Br₂(g)   (sunlight)"]]){
-  if((c.sol[k]||0)>1e-4){const mol=c.sol[k]/MM[k],d=mol*(1-Math.exp(-.012*dt));c.sol[k]-=d*MM[k];c.sol.ag=(c.sol.ag||0)+d*MM.ag;gas(c,d/2,gs);regRx("Decomposition of silver halide by light",eq)}}
-}
-function dryChem(c,dt){
- c._g=0;const T=c.T;
- if((c.sol.mg||0)>1e-4&&T>=((c.q.mg||1)<1?650:450)){
-  const mol=c.sol.mg/MM.mg,d=Math.min(mol,Math.max(mol*dt*.9,3e-4*dt));
-  c.sol.mg-=d*MM.mg;c.sol.mgo=(c.sol.mgo||0)+d*MM.mgo;c.T=Math.min(1400,c.T+d*601e3/(14+(c.sol.mgo||0)*.9+3));c.flash=1;
-  regRx("Burning magnesium in air (combination)","2Mg(s) + O₂(g) → 2MgO(s)");
- }
- if((c.sol.cu||0)>1e-4&&T>=250&&!(c.gh.H2>1e-9)){
-  const mol=c.sol.cu/MM.cu,d=Math.min(mol,mol*dt*.06*(T-200)/150);
-  if(d>0){c.sol.cu-=d*MM.cu;c.sol.cuo=(c.sol.cuo||0)+d*MM.cuo;regRx("Heating copper in air (oxidation)","2Cu(s) + O₂(g) → 2CuO(s)")}
- }
- if((c.gh.H2||0)>1e-9&&(c.sol.cuo||0)>1e-4&&T>=170){
-  const dn=Math.min(c.gh.H2*(1-Math.exp(-3*dt)),c.sol.cuo/MM.cuo);
-  if(dn>1e-13){c.gh.H2-=dn;c.sol.cuo-=dn*MM.cuo;c.sol.cu=(c.sol.cu||0)+dn*MM.cu;c.drops=1;regRx("Hydrogen reduces hot copper(II) oxide (redox)","CuO(s) + H₂(g) → Cu(s) + H₂O(l)")}
- }
- if((c.sol.feso4s||0)>1e-4&&T>=70){
-  const mol=c.sol.feso4s/MM.feso4s,d=Math.min(mol,mol*dt*.06*(T-55)/100+2e-6*dt);
-  c.sol.feso4s-=d*MM.feso4s;c.sol.feso4a=(c.sol.feso4a||0)+d*MM.feso4a;c.drops=1;
-  regRx("Heating ferrous sulphate crystals (loses water)","FeSO₄·7H₂O(s) → FeSO₄(s) + 7H₂O(g)")}
- if((c.sol.feso4a||0)>1e-4&&T>=300){
-  const mol=c.sol.feso4a/MM.feso4a,d=Math.min(mol,mol*dt*.12*(T-250)/100);
-  c.sol.feso4a-=d*MM.feso4a;c.sol.fe2o3=(c.sol.fe2o3||0)+d/2*MM.fe2o3;gas(c,d/2,"SO2");gas(c,d/2,"SO3");
-  regRx("Thermal decomposition of ferrous sulphate","2FeSO₄(s) → Fe₂O₃(s) + SO₂(g) + SO₃(g)")}
- if((c.sol.pbn||0)>1e-4&&T>=230&&!c.crk){c.crk=1;log(c,"the crystals crackle and jump about (decrepitation)")}
- if((c.sol.pbn||0)>1e-4&&T>=380){
-  const mol=c.sol.pbn/MM.pbn,d=Math.min(mol,mol*dt*.18*(T-350)/100);
-  c.sol.pbn-=d*MM.pbn;c.sol.pbo=(c.sol.pbo||0)+d*MM.pbo;gas(c,2*d,"NO2");gas(c,d/2,"O2");
-  regRx("Thermal decomposition of lead nitrate","2Pb(NO₃)₂(s) → 2PbO(s) + 4NO₂(g) + O₂(g)")}
- if((c.sol.caco3||0)>1e-4&&T>=800){
-  const mol=c.sol.caco3/MM.caco3,d=Math.min(mol,mol*dt*.02);
-  c.sol.caco3-=d*MM.caco3;c.sol.cao=(c.sol.cao||0)+d*MM.cao;gas(c,d,"CO2");regRx("Thermal decomposition of limestone","CaCO₃(s) → CaO(s) + CO₂(g)")}
- c.gasRate=(c._g||0)/dt;
-}
-function dispEq(m,dsym,ck,an){
- const msym=CATS[CATSOL[m]],mk=CATSOL[m],zc=DEPOF[ck][2],e=lcm(2,zc),nm=e/2,nc=e/zc;
- const ion=co(nm)+msym+" + "+co(nc)+CATS[ck]+({1:"⁺",2:"²⁺",3:"³⁺"}[zc])+" → "+co(nm)+msym+"²⁺ + "+co(nc)+dsym+"↓";
- if(!ANS[an]||an==="Ac")return{eq:ion.replace(/⁺/g,"⁺"),ion};
- const sc=salt(ck,an),sm=salt(mk,an);
- return{eq:co(nm)+msym+" + "+co(nc/sc.ncat)+sc.f+" → "+co(nm/sm.ncat)+sm.f+" + "+co(nc)+dsym+"↓",ion};
-}
-function sup(n){return {2:"²",3:"³"}[n]||""}
-/* ---- add things ---- */
-function addLiquid(c,ch,ml){
- if(c.vol+ml>c.cap+1e-9)return false;
- const Vn=c.vol+ml;c.T=(c.T*c.vol+25*ml)/Vn;
- for(const k in ch.c)c.sp[k]=Z(c,k)+ch.c[k]*ml/1000;
- if(ch.ind)c.ind[ch.ind]=(c.ind[ch.ind]||0)+ml;
- c.vol=Vn;
- const before=c.T;react(c);return true;
-}
-function addSolid(c,id,g){c.sol[id]=(c.sol[id]||0)+g;return true}
-function pourTo(a,b,f){
- const space=b.cap-b.vol;let amt=a.vol*f;if(amt>space)amt=space;if(amt<=0)return 0;const fr=amt/a.vol;
- const Vn=b.vol+amt;b.T=(b.T*b.vol+a.T*amt)/Vn;
- for(const k in a.sp){b.sp[k]=Z(b,k)+a.sp[k]*fr;a.sp[k]*=1-fr}
- for(const k in a.ind){b.ind[k]=(b.ind[k]||0)+a.ind[k]*fr;a.ind[k]*=1-fr}
- for(const k in a.ppt){b.ppt[k]=(b.ppt[k]||0)+a.ppt[k]*fr*(a.susp);a.ppt[k]-=a.ppt[k]*fr*(a.susp)}
- for(const k in a.dep){} // deposits stay on the metal / vessel
- b.susp=Math.max(b.susp,a.susp);b.vol=Vn;a.vol-=amt;
- if(a.vol<.05){a.vol=0;a.sp={};a.ind={}}
- react(b);return amt;
-}
-/* ---- colour ---- */
-const WATER=[200,225,245];
-function mix(a,b,w){return[a[0]+(b[0]-a[0])*w,a[1]+(b[1]-a[1])*w,a[2]+(b[2]-a[2])*w]}
-const hex=c=>"#"+c.map(v=>Math.round(Math.max(0,Math.min(255,v))).toString(16).padStart(2,"0")).join("");
-const hx=h=>[1,3,5].map(i=>parseInt(h.substr(i,2),16));
-function uiColor(ph){const st=[[0,"#e11d1d"],[2,"#ef4423"],[3.5,"#f58a1f"],[5,"#f6c020"],[6,"#b6d62e"],[7,"#3fae49"],[8,"#1ba58b"],[9,"#2a7fc4"],[10.5,"#4a4fb8"],[12,"#6d3aa8"],[14,"#5a2d8c"]];
- for(let i=1;i<st.length;i++)if(ph<=st[i][0]){const t=(ph-st[i-1][0])/(st[i][0]-st[i-1][0]);return mix(hx(st[i-1][1]),hx(st[i][1]),t)}return hx(st[st.length-1][1])}
-function solnColour(c){
- let col=WATER.slice(),V=c.vol/1000;if(V<2e-4)return{rgb:col,alpha:.35};
- const ions=[["Cu",[40,120,235],2.2],["Fe2",[170,215,170],3],["Fe3",[215,150,50],5]];
- for(const[k,rgb,kk]of ions){const conc=Z(c,k)/V;if(conc>1e-5)col=mix(col,rgb,1-Math.exp(-conc*kk))}
- let alpha=.38+Math.min(.3,(1-Math.exp(-(Z(c,"Cu")/V)*2))*.3);
- const ph=phOf(c);
- for(const k in c.ind){const ml=c.ind[k];if(ml<=1e-6||ph==null)continue;
-  const w0=Math.min(.9,.35+ml/c.vol*60);let ic,w=w0;
-  if(k==="ph"){const f=Math.max(0,Math.min(1,(ph-8.2)/1.8));ic=[225,40,140];w=w0*f}
-  else if(k==="mo"){ic=ph<3.1?[224,52,47]:ph<4.4?mix([224,52,47],[242,194,48],(ph-3.1)/1.3):[242,194,48]}
-  else if(k==="btb"){ic=ph<6?[242,214,50]:ph<7.6?mix([242,214,50],[40,120,215],(ph-6)/1.6):[40,120,215]}
-  else ic=uiColor(ph);
-  col=mix(col,ic,w);alpha=Math.max(alpha,.35+.3*w)}
- return{rgb:col,alpha};
-}
-function cname(rgb){
- const dist=Math.hypot(rgb[0]-WATER[0],rgb[1]-WATER[1],rgb[2]-WATER[2]);if(dist<38)return"colourless";
- const r=rgb[0]/255,g=rgb[1]/255,b=rgb[2]/255,mx=Math.max(r,g,b),mn=Math.min(r,g,b),l=(mx+mn)/2,d=mx-mn;let h=0;
- if(d){if(mx===r)h=((g-b)/d)%6;else if(mx===g)h=(b-r)/d+2;else h=(r-g)/d+4;h*=60;if(h<0)h+=360}
- if(l<.18)return"dark";if(l>.88&&d<.15)return"colourless";
- if(h<14||h>=345)return l>.7?"pink":"red";if(h<40)return l<.5?"brown":"orange";if(h<68)return"yellow";if(h<165)return l>.62?"light green":"green";
- if(h<200)return"cyan / blue-green";if(h<255)return l>.7?"light blue":"blue";if(h<290)return"violet";return l>.62?"pink":"magenta";
-}
-/* ---- registry of reactions & observations ---- */
-const RX=new Map(),OBS=[];let simTime=0;
-function regRx(name,eq,ion){if(!RX.has(eq))RX.set(eq,{name,eq,ion:ion||""});window._rxDirty=true}
-function log(c,text){OBS.push({t:simTime,c:c.label,text});if(OBS.length>300)OBS.shift();window._obsDirty=true}
-function observe(c){
- const L=c.last;
- for(const r of PPT){const p=c.ppt[r.id]||0,w=L.ppt[r.id]||0;
-  if(p>5e-6&&w<=5e-6){log(c,r.cw+" precipitate of "+r.n+" forms");if(c.el&&window.spawnPlume)spawnPlume(c,r.col,.85)}
-  else if(p<=5e-6&&w>5e-6)log(c,"the precipitate of "+r.n+" dissolves");
-  L.ppt[r.id]=p}
- if(c.boil&&!L.boil){log(c,"the liquid boils: vapour bubbles form and steam rises");L.boil=true}else if(!c.boil&&c.T<95)L.boil=false;
- if(c.flash>.8&&!L.flash){log(c,"magnesium burns with a dazzling white flame and leaves a white ash (MgO)");L.flash=true}else if(c.flash<.05)L.flash=false;
- if((c.sol.cuo||0)>(L.sol.cuo||0)+1e-3&&(c.sol.cu||0)<(L.sol.cu||0)&&!L.blk){log(c,"the red-brown copper turns black (copper(II) oxide forms)");L.blk=true}
- const SF={mgo:"white powder of magnesium oxide forms",fe2o3:"the solid turns reddish-brown (iron(III) oxide)",pbo:"a yellow residue of lead(II) oxide is left behind",ag:"the white silver halide turns grey (silver is formed)",feso4a:"the green crystals lose water and turn pale grey-white"};
- for(const k in SF)if((c.sol[k]||0)>2e-3&&!((L.sol[k]||0)>2e-3))log(c,SF[k]);
- const GM={NO2:"brown fumes of nitrogen dioxide are given off (poisonous: do not inhale)",SO2:"a colourless gas with the smell of burning sulphur is given off (SO₂)",SO3:"dense white fumes appear (SO₃)",NH3:"a gas with a sharp ammonia smell is given off",Cl2:"a pale greenish-yellow gas (chlorine) is given off",Br2:"reddish-brown bromine vapour is given off",O2:"colourless gas collects (oxygen)"};
- L.gs=L.gs||{};for(const t in c.gh){if(GM[t]&&c.gh[t]>1e-7&&!L.gs[t]){L.gs[t]=1;log(c,GM[t])}else if(!(c.gh[t]>1e-8))L.gs[t]=0}
- if(c.drops>.5&&!L.drp){L.drp=1;log(c,"tiny drops of water condense on the cooler upper part of the tube")}
- const gr=c.gasRate>2e-7;
- if(gr&&!L.gas){if(c.gasType==="H2")log(c,"colourless, odourless gas bubbles evolve (hydrogen)");else if(c.gasType==="CO2")log(c,"effervescence: colourless gas evolves (carbon dioxide)");L.gas=true}
- else if(!gr&&L.gas&&c.gasRate<5e-8){log(c,"bubbling stops");L.gas=false}
- for(const k in c.sol){const w=L.sol[k]||0,n=c.sol[k]||0;if(w>1e-4&&n<=1e-4&&(c.gasRate>0||k==="cuo"||true))log(c,SOLNAME[k].toLowerCase()+" has completely reacted / disappeared");L.sol[k]=n}
- for(const s in c.dep){const w=L.dep[s]||0,n=c.dep[s];if(n>5e-4&&w<=5e-4)log(c,DEPWORD[s]+" deposit of "+s+" forms on the metal");L.dep[s]=n}
- if(c.neut>5e-5&&!L.neut){log(c,"acid and base neutralise (H⁺ + OH⁻ → H₂O)");L.neut=true}
- if(c.T-L.T>=(c.heatW>0?(c.vol>=.2?15:150):4)){log(c,c.heatW>0?(c.vol>=.2?"the liquid heats up to ":"the dry vessel heats up to ")+c.T.toFixed(0)+" °C":"mixture warms up to "+c.T.toFixed(0)+" °C (exothermic)");L.T=c.T}else if(c.T<L.T-4){if(c.T<22&&!(c.heatW>0))log(c,"the mixture gets colder: "+c.T.toFixed(0)+" °C (an endothermic change)");L.T=c.T}
- const sc=solnColour(c),nm=cname(sc.rgb),d=Math.hypot(sc.rgb[0]-L.col[0],sc.rgb[1]-L.col[1],sc.rgb[2]-L.col[2]);
- if(d>32&&c.vol>.3){if(nm!==L.cname)log(c,nm==="colourless"?"solution turns colourless":"solution turns "+nm);L.cname=nm;L.col=sc.rgb}
-}
-function tickContainer(c,dt){
- const n=Math.max(1,Math.ceil(dt/.25)),h=dt/n;
- for(let i=0;i<n;i++){step(c,h);if(c.gasRate>0)c._lastGas=c.gasRate}
- observe(c);
-}
-window.Engine={phOf,react,step,addLiquid,addSolid,pourTo,newContainer,solnColour,cname,tickContainer,RX,OBS};
 
 /* ================= DATA FOR THE TOOLBOX ================= */
 const CHEM=[
@@ -768,7 +486,7 @@ function drawVessel(c){
  if(c.cork){o+=`<path d="M${f1(cx-rxT*.62)} ${g.ytop} L${f1(cx-rxT*.5)} ${g.ytop-13} L${f1(cx+rxT*.5)} ${g.ytop-13} L${f1(cx+rxT*.62)} ${g.ytop} Z" fill="#b07a3c" stroke="#6f4a1c" stroke-width="1"/><ellipse cx="${cx}" cy="${g.ytop-13}" rx="${f1(rxT*.5)}" ry="2.4" fill="#c99358" stroke="#6f4a1c" stroke-width=".8"/><circle cx="${f1(cx+rxT*.12)}" cy="${g.ytop-13}" r="2" fill="#2a1c0c"/>`}
  return o+"</svg>";
 }
-const POWD={cuo:1,cu:1,mgo:1,cao:1,pbn:1,pbo:1,agcl:1,agbr:1,ag:1,baoh2:1,nh4cl:1,k2so4:1,nh4no3:1,cuso4a:1,fe2o3:1,feso4a:1};
+const POWD={zno:1,cuo:1,cu:1,mgo:1,cao:1,pbn:1,pbo:1,agcl:1,agbr:1,ag:1,baoh2:1,nh4cl:1,k2so4:1,nh4no3:1,cuso4a:1,fe2o3:1,feso4a:1};
 for(const k in GEO)GEO[k].type=k;
 function polyPtsTop(g,y1){const cx=g.cx,P=[];y1=Math.min(y1,g.yb);
  for(let y=g.ytop;y<y1;y+=2)P.push([cx-g.hw(y),y]);P.push([cx-g.hw(y1),y1]);P.push([cx+g.hw(y1),y1]);
@@ -1167,7 +885,7 @@ $("pbody").addEventListener("click",e=>{
  if(a==="uc"){toast("🚧 Delivery tube is under construction");return}
  if(a==="off"){c.mount=null;c.x+=70;clampXY(c);place(c);renderPanel(true);return}
  if(a==="pour"){if(state.items.length<2){toast("Place a second container to pour into");return}state.pour=c;toast("Tap the container to pour into");status("Pouring from "+c.label+": tap the target container");return}
- if(a==="empty"){c.vol=0;c.sp={};c.ind={};c.sol={};c.ppt={};c.dep={};c.susp=0;c.T=25;c.gasRate=0;c.disp=null;c.boil=false;c.last={ppt:{},sol:{},dep:{},gas:false,T:25,neut:false,col:[200,225,245],cname:"colourless"};view(c);renderPanel(true);toast(c.label+" emptied");return}
+ if(a==="empty"){emptyContainer(c);c.disp=null;c.boil=false;view(c);renderPanel(true);toast(c.label+" emptied");return}
  if(a==="stir"){c.stir=4;log(c,"stirred");toast("🌀 Stirring");return}
  if(a==="waft"){const V=c.vol/1000;let m="No noticeable smell.";if(c.vol<.2)m="Nothing to smell: it is empty.";else if(Z(c,"HAc")/V>.1)m="A sharp vinegar-like smell (ethanoic acid).";else if(c.gasType==="H2"&&c.gasRate>0)m="Hydrogen has no smell.";log(c,"wafted: "+m);toast("👃 "+m);return}
 });
@@ -1491,7 +1209,7 @@ const ACTS=[
 let lastT=performance.now();
 function puff(c,cls,n){const v=c.el.querySelector(".vessel"),g=GEO[c.type];for(let i=0;i<n;i++){const p=document.createElement("i");p.className=cls;p.style.cssText=`left:${f1(g.cx+(Math.random()-.5)*g.hw(g.ytop)*1.3)}px;top:${f1(g.ytop-4)}px`;v.appendChild(p);p.onanimationend=()=>p.remove()}}
 setInterval(()=>{
- const now=performance.now(),real=Math.min(.5,(now-lastT)/1000);lastT=now;const dt=real*state.warp;simTime+=dt;
+ const now=performance.now(),real=Math.min(.5,(now-lastT)/1000);lastT=now;const dt=real*state.warp;simTime+=dt;Engine.setTime(simTime);
  runPours(real);tickHeating();tickTiltPour(real);tickFrees(real);tickDtubes(dt);tickElectro(dt);tickSun();tickGasWarn(real);
  for(const c of state.items){
   if(c.vol>0||Object.keys(c.sol).length||Object.keys(c.gh).length||c.heatW||c.T>26||c.T<24)tickContainer(c,dt);

@@ -1,12 +1,12 @@
 /* Service worker for Aalim's Class 10 Command Centre.
    Keep CACHE in step with APP_VERSION in index.html: bump both together
    whenever you publish a new version, so phones pick up the update. */
-const CACHE = "aalim-tracker-v44";
+const CACHE = "aalim-tracker-v45";
 const LIBS = "aalim-libs"; // PDF reader engine, kept across app updates
 const ASSETS = [
   "./",
   "index.html",
-  "chemlab.html",
+  "chemlab.html","chemcore.js",
   "manifest.webmanifest",
   "icon-192.png",
   "icon-512.png"
