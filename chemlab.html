@@ -160,6 +160,9 @@ textarea,input.t{width:100%;padding:7px 9px;border:1px solid var(--bd);border-ra
  .top h1{font-size:14px}
  .status{display:none}
 }
+.it.bottle .vessel{overflow:visible}.it.bottle .capoff{display:none;position:absolute;left:-18px;bottom:2px;width:20px;height:13px;border-radius:3px;background:#15181f;box-shadow:0 2px 3px rgba(0,0,0,.35);transform:rotate(-8deg)}.it.bottle.open .capoff{display:block}
+.it.burette .tapk{cursor:ew-resize;pointer-events:auto}.it.burette .vessel,.it.bottle .vessel{pointer-events:auto}
+@media(max-width:820px) and (orientation:landscape),(max-height:520px){.lab{grid-template-columns:150px 1fr 210px;grid-template-rows:auto 1fr;grid-template-areas:"top top top" "tool ws pan"}.tool{max-height:none;border-right:1px solid var(--bd);border-bottom:0}.cards{display:grid;grid-template-columns:1fr;overflow-x:visible}.card{min-width:0}.pan{border-left:1px solid var(--bd);border-top:0}.status{display:none}}
 @media(prefers-reduced-motion:reduce){.bub,.flame{animation:none}}
 </style>
 </head>
@@ -193,17 +196,22 @@ textarea,input.t{width:100%;padding:7px 9px;border:1px solid var(--bd);border-ra
 /* ================= CHEMISTRY ENGINE: provided by chemcore.js (principle-based). Bridge to the names the UI uses ================= */
 if(!window.Engine)document.body.insertAdjacentHTML("afterbegin",'<div style="padding:20px;color:#fff;background:#b00">chemcore.js failed to load. Reload the app.</div>');
 const {phOf,react,step,addLiquid,addSolid,pourTo,newContainer,solnColour,cname,tickContainer,RX,OBS,observe,log,regRx,PPT,SOLCOL,SOLNAME,DEPCOL,DEPWORD,mix,hex,hx,uiColor,WATER,emptyContainer}=window.Engine;
-const Z=(c,k)=>c.sp[k]||0;let simTime=0;
+const Z=(c,k)=>c.sp[k]||0;let simTime=0;const XCONC=Math.round((0.07+Math.random()*0.06)*1000)/1000; /* hidden strength of "Acid X" for the titration task */
 
 
 /* ================= DATA FOR THE TOOLBOX ================= */
 const CHEM=[
  {id:"water",n:"Distilled water",f:"H₂O",g:"Other",c:{},col:"#dff0ff"},
+ {id:"etoh",n:"Ethanol (absolute)",f:"C₂H₅OH",g:"Other",c:{EtOH:17.2},col:"#f6fbff"},
  {id:"hcl",n:"Hydrochloric acid 1 M",f:"HCl",g:"Acids",c:{H:1,Cl:1},col:"#dff0ff"},
  {id:"h2so4",n:"Sulphuric acid 0.5 M",f:"H₂SO₄",g:"Acids",c:{H:1,SO4:.5},col:"#e8f1ff"},
  {id:"hno3",n:"Nitric acid 1 M",f:"HNO₃",g:"Acids",c:{H:1,NO3:1},col:"#eef7ff"},
  {id:"hac",n:"Ethanoic (acetic) acid 1 M",f:"CH₃COOH",g:"Acids",c:{HAc:1},col:"#f4fbff"},
+ {id:"glac",n:"Glacial ethanoic acid",f:"CH₃COOH",g:"Acids",c:{HAc:17.4},col:"#f6fbff"},
+ {id:"h2so4c",n:"Conc. sulphuric acid 18 M",f:"H₂SO₄",g:"Acids",c:{H:36,SO4:18},col:"#f3f3d8",heat:1.2},
+ {id:"hclx",n:"Acid X (unknown strength)",f:"HCl",g:"Acids",c:{H:XCONC,Cl:XCONC},col:"#dff0ff"},
  {id:"naoh",n:"Sodium hydroxide 1 M",f:"NaOH",g:"Bases",c:{Na:1,OH:1},col:"#eef7ff"},
+ {id:"naoh01",n:"Sodium hydroxide 0.1 M (burette)",f:"NaOH",g:"Bases",c:{Na:.1,OH:.1},col:"#f3f9ff"},
  {id:"koh",n:"Potassium hydroxide 1 M",f:"KOH",g:"Bases",c:{K:1,OH:1},col:"#eef7ff"},
  {id:"lime",n:"Lime water",f:"Ca(OH)₂",g:"Bases",c:{Ca:.011,OH:.022},col:"#f3f9ff"},
  {id:"na2co3",n:"Sodium carbonate 0.5 M",f:"Na₂CO₃",g:"Salts",c:{Na:1,CO3:.5},col:"#f3f9ff"},
@@ -218,6 +226,7 @@ const CHEM=[
  {id:"fecl3",n:"Iron(III) chloride 0.2 M",f:"FeCl₃",g:"Salts",c:{Fe3:.2,Cl:.6},col:"#d9a24a"},
  {id:"znso4",n:"Zinc sulphate 0.5 M",f:"ZnSO₄",g:"Salts",c:{Zn:.5,SO4:.5},col:"#f3f9ff"},
  {id:"mgso4",n:"Magnesium sulphate 0.5 M",f:"MgSO₄",g:"Salts",c:{Mg:.5,SO4:.5},col:"#f3f9ff"},
+ {id:"alcl3",n:"Aluminium chloride 0.2 M",f:"AlCl₃",g:"Salts",c:{Al:.2,Cl:.6},col:"#f3f9ff"},
  {id:"ph",n:"Phenolphthalein",f:"indicator",g:"Indicators",ind:"ph",c:{},col:"#fff"},
  {id:"mo",n:"Methyl orange",f:"indicator",g:"Indicators",ind:"mo",c:{},col:"#f6a53a"},
  {id:"ui",n:"Universal indicator",f:"indicator",g:"Indicators",ind:"ui",c:{},col:"#3fae49"},
@@ -237,7 +246,9 @@ const CHEM=[
  {id:"k2so4",n:"Potassium sulphate",f:"K₂SO₄",g:"Solids",sol:1,col:"#f6f6f6"},
  {id:"nh4no3",n:"Ammonium nitrate",f:"NH₄NO₃",g:"Solids",sol:1,col:"#f6f6f6"},
  {id:"cuso4a",n:"Anhydrous copper sulphate",f:"CuSO₄",g:"Solids",sol:1,col:"#f4f4f2"},
- {id:"na",n:"Sodium metal",f:"Na",g:"Solids",sol:1,col:"#b9bdc4"}
+ {id:"na",n:"Sodium metal",f:"Na",g:"Solids",sol:1,col:"#b9bdc4"},
+ {id:"k",n:"Potassium metal",f:"K",g:"Solids",sol:1,col:"#c9ccd2"},
+ {id:"al",n:"Aluminium turnings",f:"Al",g:"Solids",sol:1,col:SOLCOL.al}
 ];
 const APP=[
  {id:"beaker",n:"Beaker",ic:"🥛",s:"250 mL",k:"cont"},{id:"tube",n:"Test tube",ic:"🧪",s:"20 mL",k:"cont"},
@@ -251,12 +262,15 @@ const APP=[
  {id:"phm",n:"pH meter",ic:"📟",s:"probe",k:"probe"},{id:"th",n:"Thermometer",ic:"🌡️",s:"probe",k:"probe"},
  {id:"rl",n:"Red litmus",ic:"🟥",s:"paper",k:"probe"},{id:"bl",n:"Blue litmus",ic:"🟦",s:"paper",k:"probe"},
  {id:"up",n:"Universal pH paper",ic:"🌈",s:"paper",k:"probe"},
- {id:"x1",n:"Burette + stand",ic:"🧴",s:"under construction",k:"uc"}
+ {id:"burette",n:"Burette + stand",ic:"🧴",s:"titration",k:"tool"}
 ];
 const LIQ_AMT=[.2,1,5,10,25,50],SOL_AMT=[.1,.5,1,2,5];
 const EXPS=["Acid + metal: hydrogen gas and the pop test","Acid + carbonate: carbon dioxide and lime water","Neutralisation with indicators","Titration: find the molarity of unknown acid X","Metal displacement (Zn/Fe/Cu in salt solutions)","Precipitation reactions of salts","Action of heat on lead nitrate / copper sulphate crystals","Burning magnesium ribbon in air","Slaking of quicklime (very exothermic)","Esterification (ethanol + ethanoic acid)"];
 
 const BOT={
+ etoh:{k:"glass",cap:"#2f8a3f",lab:["C₂H₅OH","ethanol"]},glac:{k:"glass",cap:"#2f8a3f",lab:["CH₃COOH","glacial"],hz:"c"},h2so4c:{k:"amber",cap:"#15181f",lab:["H₂SO₄","conc."],hz:"c"},
+ hclx:{k:"glass",cap:"#15181f",lab:["HCl","X = ?"],hz:"c"},naoh01:{k:"plastic",cap:"#1f66d6",lab:["NaOH","0.1 M"]},alcl3:{k:"glass",cap:"stop",lab:["AlCl₃","0.2 M"]},
+ al:{k:"jar",fill:"gran",lab:["Al","turnings"]},k:{k:"jar",amber:1,lab:["K","under oil"],hz:"c"},
  water:{k:"wash",cap:"#2f6bd1",lab:["H₂O","distilled"]},
  hcl:{k:"glass",cap:"#15181f",lab:["HCl","1 M"],hz:"c"},
  h2so4:{k:"glass",cap:"#15181f",lab:["H₂SO₄","0.5 M"],hz:"c"},
@@ -535,6 +549,7 @@ function place(it){
    it.x=mv.left-wr.left+(GEO.mug.cx+(it.slot.i?22:-22))*msc;sc=msc;y=mv.top-wr.top+(GEO.mug.yb-56)*msc+(22+GEO[it.type].ytop)*sc;it.y=y}
   else{it.slot=null;sc=scaleAt(it.y)}}
  else if(b){sc=scaleAt(b.y);it.x=b.x;const G=GEO[it.type];y=b.y-144*sc+(G.H-G.yb-G.flat)*sc;it.y=y}else sc=scaleAt(it.y);
+ if(it.type==="burette")sc=Math.min(sc,Math.max(.42,(it.y-6)/361));
  it.sc=sc;const e=it.el;e.style.left=it.x+"px";e.style.top=y+"px";
  e.style.transform=`translate(-50%,-100%) scale(${sc.toFixed(3)})`;
  e.style.zIndex=it.slot?Math.round(byId(it.slot.host).y)+2:b?Math.round(b.y)+1:Math.round(it.y);
@@ -542,7 +557,7 @@ function place(it){
 }
 new ResizeObserver(()=>{layout();all().forEach(i=>{clampXY(i);place(i)})}).observe(ws);layout();
 const TONGS=`<svg class="tongs" width="90" height="30" viewBox="0 0 90 30"><path d="M2 14 L88 4 M2 18 L88 26" stroke="#b08a2e" stroke-width="3.4" stroke-linecap="round" fill="none"/><circle cx="88" cy="5" r="4" fill="none" stroke="#b08a2e" stroke-width="2.4"/><circle cx="88" cy="25" r="4" fill="none" stroke="#b08a2e" stroke-width="2.4"/></svg>`;
-const ITW={bunsen:120,matchbox:120,sand:120,beaker:104,tube:46,btube:56,flask:118,cyl:62,dish:134,watch:124,mug:124};
+const ITW={bottle:70,burette:90,bunsen:120,matchbox:120,sand:120,beaker:104,tube:46,btube:56,flask:118,cyl:62,dish:134,watch:124,mug:124};
 function freeSpot(w){w=w||100;const r=tr(),rows=[r.y1-24,(r.y0+r.y1)/2+16,r.y0+20];
  for(const y of rows)for(let x=r.x0+30;x<=r.x1-30;x+=30)if(all().every(i=>Math.abs(i.x-x)>=((ITW[i.type]||100)+w)/2+10||Math.abs(i.y-y)*1.3>70))return[x,y];
  return[r.x0+Math.random()*(r.x1-r.x0),r.y1-24]}
@@ -552,7 +567,7 @@ function renderTool(){
  const tb=$("tbody");
  if(state.tool==="app"){
   const rows=k=>APP.filter(a=>a.k===k).map(a=>`<div class="card ${a.k==="uc"?"uc":""}" data-app="${a.id}"><span class="ic">${a.ic}</span>${E(a.n)}<small>${E(a.s)}</small></div>`).join("");
-  tb.innerHTML=`<div class="grp">Glassware</div><div class="cards">${rows("cont")}</div><div class="grp">Fire &amp; heating</div><div class="cards">${rows("tool")}</div><div class="grp">Hand tools</div><div class="cards">${rows("hand")}</div><div class="grp">Metal pieces</div><div class="cards">${rows("piece")}</div><div class="grp">Probes &amp; papers (drop in a container)</div><div class="cards">${rows("probe")}</div><div class="grp">Coming soon 🚧</div><div class="cards">${rows("uc")}</div>`;
+  tb.innerHTML=`<div class="grp">Glassware</div><div class="cards">${rows("cont")}</div><div class="grp">Fire &amp; heating</div><div class="cards">${rows("tool")}</div><div class="grp">Hand tools</div><div class="cards">${rows("hand")}</div><div class="grp">Metal pieces</div><div class="cards">${rows("piece")}</div><div class="grp">Probes &amp; papers (drop in a container)</div><div class="cards">${rows("probe")}</div>`;
  }else{
   const q=state.q.toLowerCase(),list=CHEM.filter(c=>!q||(c.n+" "+c.f+" "+c.g).toLowerCase().includes(q));
   let h=`<input class="search" id="q" placeholder="Search reagents…" value="${E(state.q)}"><div class="amt">Pour: ${LIQ_AMT.map(a=>`<button data-al="${a}" class="${a===state.amtL?"on":""}">${a} mL</button>`).join("")}</div><div class="amt">Solid: ${SOL_AMT.map(a=>`<button data-as="${a}" class="${a===state.amtS?"on":""}">${a} g</button>`).join("")}</div>`;
@@ -587,7 +602,7 @@ function spawnBurner(x,y){
  d.innerHTML=`<div class="vessel" style="width:120px;height:190px"><div class="shadow"></div><div class="svgh">${burnerSVG()}</div></div><div class="lbl">${b.label}</div>`;
  ws.appendChild(d);b.el=d;state.tools.push(b);hookItem(b);place(b);burnerView(b);select(b.id);$("hint").style.display="none";return b;
 }
-function spawnTool(id,x,y){return id==="matchbox"?spawnMatchbox(x,y):spawnBurner(x,y)}
+function spawnTool(id,x,y){return id==="matchbox"?spawnMatchbox(x,y):id==="burette"?spawnBurette(x,y):spawnBurner(x,y)}
 function spawnMatchbox(x,y){
  if(state.tools.some(t=>t.type==="matchbox")){toast("You already have a matchbox on the table");return}
  if(all().length>=14){toast("The table is full. Remove something first.");return}
@@ -750,7 +765,9 @@ function hookItem(c){c.el.addEventListener("pointerdown",e=>{
  const p=wsPt(e);
  if(c.type==="bunsen"){const kn=e.target.closest(".knob"),co=e.target.closest(".collar");
   if(kn||co){drag={ctl:{b:c,kind:kn?"gas":"air",v0:kn?c.gas:c.air,x0:e.clientX,y0:e.clientY},moved:true};return}}
- drag={item:c,x0:e.clientX,y0:e.clientY,moved:false,dx:c.x-p[0],dy:c.y-p[1],swt:!!e.target.closest(".swt")}})}
+ if(c.type==="burette"&&e.target.closest(".tapk")){drag={ctl:{b:c,kind:"tap",v0:c.flow,x0:e.clientX,y0:e.clientY},moved:true};return}
+ const vq=c.type==="bottle"?c.el.querySelector(".vessel").getBoundingClientRect():null,capTap=!!(vq&&e.clientY<vq.top+vq.height*.34);
+ drag={item:c,x0:e.clientX,y0:e.clientY,moved:false,dx:c.x-p[0],dy:c.y-p[1],swt:!!e.target.closest(".swt"),cap:capTap}})}
 addEventListener("pointermove",e=>{
  if(!drag){handMove(e);return}
  if(drag.match){moveMatch(e);return}
@@ -784,6 +801,7 @@ addEventListener("pointerup",e=>{
   if(d.moved){if(e.clientX>t.left&&e.clientX<t.right&&e.clientY>t.top&&e.clientY<t.bottom){removeItem(it);toast("Removed");return}
    if(isC(it)){tryMount(it);trySlot(it)}return}
   if(d.swt&&it.type==="mug"){toggleSwitch(it);return}
+  if(it.type==="bottle"&&d.cap){toggleBottle(it);select(it.id);return}
   if(state.pour&&state.pour!==it&&isC(it)){const f=state.pour;state.pour=null;doPour(f,it);return}
   if(state.armed&&isC(it)){addChem(it,CHEM.find(x=>x.id===state.armed));return}
   if(state.armed&&!isC(it)){toast("Pour into glassware, not the burner");return}
@@ -807,7 +825,7 @@ addEventListener("pointerup",e=>{
    else{const t=byId(state.sel);const tt=isC(t)?t:(state.items.length===1?state.items[0]:null);if(tt)attach(tt,a.id);else toast("Select a container first, or drag this into one")}}
   return}
  if(c.chem){const ch=CHEM.find(x=>x.id===c.chem);
-  if(d.moved){const t=targetAt(e.clientX,e.clientY,true);if(t)addChem(t,ch);else toast("Drop the bottle onto a beaker, flask or tube");return}
+  if(d.moved){const t=targetAt(e.clientX,e.clientY,true);if(t)addChem(t,ch);else if(inWs(e.clientX,e.clientY)){const pp=wsPt(e);spawnBottle(ch,pp[0],pp[1]+40)}else toast("Drop the bottle onto the table (or onto a container to pour it in)");return}
   state.armed=state.armed===ch.id?null:ch.id;renderTool();
   if(state.armed){const amt=ch.sol?state.amtS+" g":ch.ind?"a few drops":state.amtL+" mL";status("Armed: "+ch.n+" ("+amt+"). Tap a container to pour. Tap the bottle again to put it down.")}else status("Bottle put down.")}
 });
@@ -832,6 +850,8 @@ function renderPanel(full){
   if(c.type==="matchbox"){
    if(full||!$("mn"))pb.innerHTML=`<h3 style="margin:0 0 6px">${E(c.label)}</h3><div class="row"><span>Matches left</span><b id="mn"></b></div><div class="muted">Pull a match out by the red heads at the end of the tray. With your goggles on, drag it <b>fast</b> along the rough striker strip to light it. A match burns for about 12 seconds.</div>`;
    $("mn").textContent=c.n;return}
+  if(c.type==="bottle"){renderBottlePanel(c,full);return}
+  if(c.type==="burette"){renderBurettePanel(c,full);return}
   if(c.type==="sand"){pb.innerHTML=`<h3 style="margin:0 0 6px">Sandpaper</h3><div class="muted">Rub a magnesium ribbon or an iron nail back and forth on the rough surface until it turns shiny.</div>`;return}
   if(c.type==="bunsen"){
    if(full||!$("bs"))pb.innerHTML=`<h3 style="margin:0 0 6px">${E(c.label)}</h3><div class="row"><span>Gas flow</span><b id="bg"></b></div><div class="row"><span>Air hole</span><b id="ba"></b></div><div class="row"><span>Flame</span><b id="bs"></b></div><div class="row"><span>Heating</span><b id="bh"></b></div><div class="muted"><b>Working it:</b> 1) close the air hole (drag the brass collar down), 2) turn the black gas knob on the base (drag it to the right), 3) strike a match and hold it to the top of the barrel, 4) open the collar (drag up) for the hot blue flame. Turn the knob back to put it out. Hold test tubes in the flame with the tongs, and rest beakers and dishes on the gauze.</div>`;
@@ -855,8 +875,9 @@ function renderPanel(full){
   if(!full&&!window._rxDirty)return;window._rxDirty=false;
   pb.innerHTML=RX.size?[...RX.values()].map(r=>`<div class="rx"><small>${E(r.name)}</small><b>${E(r.eq)}</b>${r.ion?`<small>Ionic: ${E(r.ion)}</small>`:""}</div>`).join(""):'<div class="muted">Balanced and ionic equations appear here for every reaction you carry out.</div>';
  }else if(state.pan==="exp"){
-  if(!full)return;
-  pb.innerHTML=`<div class="rx"><b>📘 NCERT Class 10, Chapter 1</b><small>Do each activity with your own hands on the table. The reactions you carry out appear in the Reactions tab.</small></div>`+ACTS.map(a=>`<div class="ob"><b>${E(a[0])}</b><small style="color:var(--tx)">${E(a[1])}</small></div>`).join("");
+  if(!full&&!window._obsDirty)return;window._obsDirty=false;
+  const ds=seenSet();
+  pb.innerHTML=`<div class="rx"><b>📘 NCERT Class 10 activities</b><small>Do each activity with your own hands on the table. The lab ticks off each observation when it actually happens. Reactions appear in the Reactions tab.</small></div>`+ACTS.map((a,i)=>`<div class="ob"><b>${E(a[0])}</b><small style="color:var(--tx)">${E(a[1])}</small>${checkHTML(a,i,ds)}</div>`).join("");
  }else if(state.pan==="nb"){if(!full)return;renderNotebook()}
 }
 const NBK="aalimChemLab",nbGet=()=>{try{return JSON.parse(localStorage.getItem(NBK))||[]}catch(e){return[]}};
@@ -952,6 +973,7 @@ const flameH=b=>(b.air>.5?24:40)+60*b.gas;
 function burnerTop(b){const vr=b.el.querySelector(".vessel").getBoundingClientRect(),wr=wsRect(),sc=vr.width/120;return{x:vr.left-wr.left+60*sc,y:vr.top-wr.top+110*sc,sc}}
 function moveCtl(e){
  const d=drag,k=d.ctl,b=k.b;
+ if(k.kind==="tap"){b.flow=clamp(k.v0+((e.clientX-k.x0)+(k.y0-e.clientY))/110,0,1);buretteView(b);status(b.flow>.03?"Tap "+Math.round(b.flow*100)+"% open":"Tap closed");return}
  if(k.kind==="gas"){b.gas=clamp(k.v0+((e.clientX-k.x0)+(k.y0-e.clientY))/170,0,1)}
  else{b.air=clamp(k.v0+(k.y0-e.clientY)/60+(e.clientX-k.x0)/220,0,1)}
  if(b.lit&&b.gas<.04){b.lit=false;log(b,"the flame goes out (not enough gas)")}
@@ -1119,6 +1141,8 @@ function smellOf(c){
  if((gh.NO2||0)>1e-8)return"a sharp, irritating smell: nitrogen dioxide. It is poisonous, so do not breathe it in!";
  if((gh.Cl2||0)>1e-8)return"a choking, bleach-like smell (chlorine)";
  if((gh.Br2||0)>1e-8)return"a harsh, irritating smell (bromine)";
+ if(Z(c,"Ester")/V>.05&&c.vol>.5)return"a sweet, fruity smell (an ester: like pear drops)";
+ if(Z(c,"EtOH")/V>.5&&c.vol>.5)return"a sharp, clean smell of alcohol";
  if(Z(c,"HAc")/V>.1&&c.vol>.5)return"a sharp vinegar-like smell";
  return"no noticeable smell"}
 function handMove(e){
@@ -1188,29 +1212,184 @@ function inBeam(x,y){const W=ws.clientWidth,H=ws.clientHeight,top=tr().wall*.7,t
  const L=W*.05+W*.44*(.4*t),R=W*.05+W*.44*(.22+.78*t);return x>=L&&x<=R}
 function tickSun(){for(const c of state.items){const s=inBeam(c.x,c.y);if(s!==!!c.sun){c.sun=s;if(s&&((c.sol.agcl||0)>0||(c.sol.agbr||0)>0))toast("☀️ "+c.label+" is in the sunlight")}}}
 const ACTS=[
- ["1.1 Burn a magnesium ribbon","Rub a 3-4 cm ribbon with sandpaper, hold it in the flame, keep it away from your eyes and catch the ash in a watch glass."],
- ["1.2 Lead nitrate + potassium iodide","Mix the two solutions in a test tube and look for the yellow precipitate."],
- ["1.3 Zinc + dilute acid","Add acid to zinc granules in a test tube or flask. Look for bubbles and touch the tube."],
- ["1.4 Quicklime + water","Add water slowly to calcium oxide in a beaker and touch the beaker."],
- ["1.5 Heat ferrous sulphate crystals","Heat the crystals in a boiling tube held in the flame and waft the smell. The colour changes."],
- ["1.6 Heat lead nitrate","Heat the powder in a boiling tube. Brown fumes of nitrogen dioxide appear."],
+ ["1.1 Burn a magnesium ribbon","Rub a 3-4 cm ribbon with sandpaper, hold it in the flame, keep it away from your eyes and catch the ash in a watch glass.",[["Dazzling white flame",/dazzling white flame/],["White ash of magnesium oxide",/magnesium oxide forms|white ash/]]],
+ ["1.2 Lead nitrate + potassium iodide","Mix the two solutions in a test tube and look for the yellow precipitate.",[["Yellow precipitate forms",/yellow precipitate/]]],
+ ["1.3 Zinc + dilute acid","Add acid to zinc granules in a test tube or flask. Look for bubbles and touch the tube.",[["Bubbles of hydrogen gas",/hydrogen/],["The tube warms up",/warms up|heats up/]]],
+ ["1.4 Quicklime + water","Add water slowly to calcium oxide in a beaker and touch the beaker.",[["The mixture heats up",/warms up|heats up/],["White slaked lime (calcium hydroxide) appears",/precipitate of Ca\(OH\)/]]],
+ ["1.5 Heat ferrous sulphate crystals","Heat the crystals in a boiling tube held in the flame and waft the smell. The colour changes.",[["Green crystals turn pale grey-white",/lose water/],["Choking smell of burning sulphur",/sulphur/]]],
+ ["1.6 Heat lead nitrate","Heat the powder in a boiling tube. Brown fumes of nitrogen dioxide appear.",[["Brown fumes of nitrogen dioxide",/brown fumes/],["Yellow residue of lead(II) oxide",/yellow residue/]]],
  ["1.7 Electrolysis of water","Fill the mug with water and a few drops of acid, invert two water-filled tubes over the electrodes, switch on, then test each gas with a burning match."],
  ["1.8 Silver chloride in sunlight","Put a china dish of AgCl in the sunbeam from the window and speed up time."],
- ["1.9 Iron nails in copper sulphate","Clean nails with sandpaper, place them in copper sulphate solution, and compare with a second tube."],
- ["1.10 Sodium sulphate + barium chloride","Pour one solution into the other: white barium sulphate forms."],
- ["1.11 Heat copper powder","Heat copper powder in a china dish on the gauze. A black coat of CuO forms."],
- ["Also: CO₂ and lime water","React marble with acid in a corked flask, link it to lime water with a delivery tube."],
+ ["1.9 Iron nails in copper sulphate","Clean nails with sandpaper, place them in copper sulphate solution, and compare with a second tube.",[["Reddish-brown copper coats the nail",/deposit of Cu/],["The blue colour fades",/solution turns (light blue|colourless|green|cyan)/]]],
+ ["1.10 Sodium sulphate + barium chloride","Pour one solution into the other: white barium sulphate forms.",[["White precipitate of barium sulphate",/precipitate of BaSO/]]],
+ ["1.11 Heat copper powder","Heat copper powder in a china dish on the gauze. A black coat of CuO forms.",[["Black coat of copper(II) oxide",/copper\(II\) oxide forms/]]],
+ ["Also: CO₂ and lime water","React marble with acid in a corked flask, link it to lime water with a delivery tube.",[["Lime water turns milky",/precipitate of CaCO/]]],
  ["Also: hydrogen over hot CuO","Make hydrogen from zinc + acid and pass it over heated CuO: black turns brown."],
- ["Carry out: Ba(OH)₂ + NH₄Cl","Mix the two solids in a test tube with the glass rod and touch the bottom. It gets very cold."],
- ["Group activity","Dissolve K₂SO₄, NH₄NO₃ and anhydrous CuSO₄ in 25 mL water, and add iron filings to copper sulphate solution. Note each temperature change."]
+ ["Carry out: Ba(OH)₂ + NH₄Cl","Mix the two solids in a test tube with the glass rod and touch the bottom. It gets very cold.",[["The mixture gets cold",/colder/],["Smell of ammonia",/ammonia/]]],
+ ["Group activity","Dissolve K₂SO₄, NH₄NO₃ and anhydrous CuSO₄ in 25 mL water, and add iron filings to copper sulphate solution. Note each temperature change."],
+ ["1.12 Rusting of iron","Put an iron nail in three vessels: tap water, salt water, and a corked one. Speed up time and compare which rusts.",[["Rust forms on a nail",/rust forms/]]],
+ ["1.13 Aluminium and alkali","Add sodium hydroxide to aluminium chloride a little at a time: a white jelly forms, then it dissolves in excess alkali (amphoteric).",[["White gelatinous precipitate of aluminium hydroxide",/precipitate of Al\(OH\)/],["Precipitate dissolves in excess NaOH",/precipitate of Al\(OH\)\S* dissolves/]]],
+ ["1.14 Potassium compared with sodium","Drop a very small piece of each metal into water in separate beakers (behind goggles). Which is more violent?",[["Potassium burns with a lilac flame",/lilac flame/]]],
+ ["1.15 Make an ester","Mix glacial ethanoic acid and ethanol in a boiling tube, add a few drops of conc. sulphuric acid, warm gently in the flame, then waft: a sweet fruity smell.",[["A sweet, fruity smell appears",/fruity/]]],
+ ["2.1 Titration: how strong is acid X?","Fill a burette with 0.1 M NaOH. Put 10 mL of Acid X and 2 drops of phenolphthalein in a flask under it. Drip the alkali in until the colour just turns pink. Work out M₁V₁ = M₂V₂ and type your answer in the library card of the Acid X bottle.",[["Acid and base neutralise",/neutralise/],["Indicator turns pink at the end-point",/turns (pink|magenta)/]]]
 ];
+
+/* ================= v78: reagent bottles on the table, library, burette, observation checker ================= */
+const LIBD={
+ water:"Distilled water. The solvent for everything here. Neutral (pH 7).",hcl:"A strong acid: it gives H⁺ ions completely. Reacts with metals above hydrogen, carbonates and bases.",
+ h2so4:"A strong acid. Reacts with reactive metals to give hydrogen; forms white BaSO₄ with barium ions.",hno3:"A strong acid, stored in an amber bottle because light slowly breaks it down.",
+ hac:"Ethanoic (acetic) acid is a weak acid: only a few molecules give H⁺, so its pH is higher than HCl of the same strength. It is the sour part of vinegar.",
+ naoh:"A strong base (alkali). Neutralises acids. Corrosive: it burns skin.",koh:"A strong base, like NaOH.",lime:"Saturated calcium hydroxide solution. Turns milky with carbon dioxide.",
+ na2co3:"Washing soda: its carbonate ion makes the solution basic (pH about 12). Fizzes with acids.",nacl:"Common salt solution. Neutral. Gives Cl⁻ ions (and speeds up rusting).",
+ bacl2:"Gives a white precipitate with sulphates. Poisonous!",agno3:"Gives a precipitate with chloride, bromide and iodide. Stains skin black. Poisonous.",pbno3:"Gives a yellow precipitate with iodide. Poisonous.",
+ ki:"A source of iodide ions (I⁻).",cuso4:"Blue copper(II) solution. Copper(II) ions are displaced by more reactive metals.",feso4:"Pale green iron(II) solution.",fecl3:"Yellow-brown iron(III) solution. Gives a red-brown precipitate with alkali.",
+ znso4:"Colourless zinc solution.",mgso4:"Colourless magnesium solution (Epsom salt).",ph:"Indicator: colourless in acid, pink in alkali. Ideal for titrating an acid with an alkali.",
+ mo:"Indicator: red in acid, yellow in alkali.",ui:"Universal indicator: a rainbow of colours across the pH scale.",btb:"Indicator: yellow in acid, green when neutral, blue in alkali.",
+ zn:"A metal above hydrogen: gives hydrogen with dilute acid and displaces copper from its salts.",fe:"A metal more reactive than copper. It rusts in damp air, and salt speeds that up.",cu:"A metal below hydrogen: does not react with dilute acid. Turns black on heating in air (CuO).",
+ caco3:"Marble (calcium carbonate). Fizzes with acid, giving carbon dioxide. Decomposes on strong heating.",cuo:"Black copper(II) oxide. A base: dissolves in acid to give a blue solution.",cao:"Quicklime. Reacts very exothermically with water to give slaked lime.",
+ feso4s:"Green crystals with 7 water molecules. Heating drives off the water, then decomposes it.",pbn:"White powder. Heating gives brown NO₂ fumes and yellow lead(II) oxide.",agcl:"White; turns grey in sunlight as silver forms.",agbr:"Pale yellow; turns grey in sunlight.",
+ baoh2:"Reacts with ammonium chloride and takes in heat: the mixture gets very cold.",nh4cl:"Gives ammonia gas when mixed with a base.",k2so4:"Dissolves with a small temperature change.",nh4no3:"Dissolves and takes in heat: the water gets colder.",cuso4a:"White when anhydrous; dissolves in water giving a blue solution and heat.",
+ na:"A very reactive soft metal. Reacts violently with water. Store under oil. Handle with care!",al:"A reactive metal protected by a thin oxide layer, so it reacts slowly at first. Its hydroxide dissolves in excess alkali (amphoteric).",
+ k:"More reactive than sodium: burns with a lilac flame on water. Stored under oil.",hclx:"A hydrochloric acid solution of UNKNOWN strength. Find its molarity by titrating it against 0.1 M NaOH (M₁V₁ = M₂V₂).",
+ naoh01:"0.1 M sodium hydroxide: the standard solution to put in the burette for titration.",etoh:"Ethanol (alcohol). Reacts with ethanoic acid to make an ester.",glac:"Pure (glacial) ethanoic acid. Strong vinegar smell.",h2so4c:"Concentrated sulphuric acid: it gets very hot when diluted and burns skin. Used as a catalyst for making esters."};
+function spawnBottle(ch,x,y){
+ if(all().length>=14){toast("The table is full. Remove something first.");return null}
+ const mx=ch.sol?200:ch.ind?30:250;
+ const b={id:state.nid++,type:"bottle",ch,label:ch.n,stock:mx,max:mx,open:false,sc:1};
+ const sp=freeSpot(70);b.x=x==null?sp[0]:x;b.y=y==null?sp[1]:y;clampXY(b);
+ const d=document.createElement("div");d.className="it bottle";d.dataset.id=b.id;
+ d.innerHTML=`<div class="vessel" style="width:64px;height:100px"><div class="shadow"></div><div class="svgh">${bottleSVG(ch)}</div><i class="capoff"></i></div><div class="lbl">${E(ch.f.length<9?ch.f:ch.n.split(" ")[0])}</div>`;
+ ws.appendChild(d);b.el=d;state.tools.push(b);hookItem(b);place(b);select(b.id);$("hint").style.display="none";return b}
+function toggleBottle(b){b.open=!b.open;b.el.classList.toggle("open",b.open);toast(b.open?"🧴 Cap off. Tilt the bottle over a container to pour.":"🧴 Cap back on.")}
+function bottleMouth(a){const h=a.el.offsetHeight*a.sc;return{x:a.x,y:a.y-h+16*a.sc}}
+function bottleTarget(a){
+ const m=bottleMouth(a);let best=null,bd=1e9;
+ for(const b of state.items){if(b.inv)continue;const v=vrect(b),rx=v.l+v.G.cx*v.sc,ry=v.t+v.G.ytop*v.sc,dx=Math.abs(m.x-rx);
+  if(dx<v.G.hw(v.G.ytop)*v.sc+30&&m.y<ry+16&&m.y>ry-260*v.sc&&dx<bd){bd=dx;best=b}}
+ for(const b of state.tools){if(b.type!=="burette")continue;const q=buTop(b),dx=Math.abs(m.x-q.x);if(dx<30&&m.y<q.y+18&&m.y>q.y-230&&dx<bd){bd=dx;best=b}}
+ return best}
+let bStream=null;
+function bottleLog(a){if(a._lt&&a._lamt>.04){const ch=a.ch;log(a._lt,(ch.sol?a._lamt.toFixed(1)+" g of "+(SOLNAME[ch.id]||ch.n).toLowerCase():ch.ind?"a few drops of "+ch.n:a._lamt.toFixed(1)+" mL of "+ch.n)+" added from the bottle")}a._lt=null;a._lamt=0}
+function tickBottlePour(real){
+ const d=drag,a=d&&d.item&&d.moved&&d.item.type==="bottle"?d.item:null;
+ for(const b of state.tools){if(b.type==="bottle"&&b!==a&&(b.tilt||0)>0){b.tilt=Math.max(0,b.tilt-240*real);b.el.style.setProperty("--tilt",((b.tdir||1)*b.tilt)+"deg");if(b.tilt<=0)b.el.classList.remove("pouring");if(b._lt)bottleLog(b)}}
+ const stop=()=>{if(bStream){bStream.remove();bStream=null}};
+ if(!a){stop();return}
+ const t=bottleTarget(a);
+ if(!t){a.tilt=Math.max(0,(a.tilt||0)-240*real);a.el.style.setProperty("--tilt",((a.tdir||1)*a.tilt)+"deg");if(a.tilt<=0)a.el.classList.remove("pouring");stop();bottleLog(a);return}
+ if(!a.open){if(!a._w||performance.now()-a._w>3000){a._w=performance.now();toast("🧴 Take the cap off first: tap the top of the bottle.")}stop();return}
+ if(!state.gog){if(!a._w||performance.now()-a._w>3000){a._w=performance.now();toast("🥽 Put on your safety goggles first!")}stop();return}
+ if(a.stock<=.01){if(!a._w||performance.now()-a._w>3000){a._w=performance.now();toast("This bottle is empty.")}stop();return}
+ if(a._lt&&a._lt!==t)bottleLog(a);
+ a.tdir=t.x>=a.x?1:-1;a.tilt=Math.min(112,(a.tilt||0)+90*real);a.el.classList.add("pouring");a.el.style.setProperty("--tilt",(a.tdir*a.tilt)+"deg");
+ if(a.tilt<=40){stop();return}
+ const ch=a.ch,k=Math.min(1,(a.tilt-40)/60),m=bottleMouth(a),mx=m.x+a.tdir*26*a.sc,my=m.y+22*a.sc,col=hex(hx((ch.col||"#dff0ff").length===7?ch.col:"#dff0ff"));
+ let amt=ch.sol?1.4*k*real:ch.ind?.12*real:7*k*real;amt=Math.min(amt,a.stock);
+ if(t.type==="burette"){
+  if(ch.sol||ch.ind){toast("A burette takes liquids only");stop();return}
+  if(t.ch&&t.ch.id!==ch.id&&t.vol>.5){if(!a._w||performance.now()-a._w>3000){a._w=performance.now();toast("The burette already holds "+t.ch.n+". Empty it first (open the tap).")}stop();return}
+  amt=Math.min(amt,t.cap-t.vol);if(amt<=1e-6){stop();return}
+  t.ch=ch;t.vol+=amt;a.stock-=amt;a._lt=t;a._lamt=(a._lamt||0)+amt;buretteView(t);
+  const q=buTop(t);if(!bStream){bStream=document.createElement("div");bStream.className="stream";ws.appendChild(bStream)}
+  bStream.style.cssText=`left:${(mx-2.5).toFixed(1)}px;top:${my.toFixed(1)}px;height:${Math.max(4,q.y+20-my).toFixed(1)}px;--c:${col};z-index:899`;return}
+ const ok=ch.sol?addSolid(t,ch.id,amt):addLiquid(t,ch,amt);
+ if(!ok){toast(t.label+" is full");stop();return}
+ a.stock-=amt;a._lt=t;a._lamt=(a._lamt||0)+amt;
+ const w=vrect(t),ty=w.t+levelY(w.G,t.vol,t.cap)*w.sc,tx=clamp(mx,w.l+(w.G.cx-w.G.hw(w.G.ytop)*.7)*w.sc,w.l+(w.G.cx+w.G.hw(w.G.ytop)*.7)*w.sc);
+ if(!ch.sol&&!ch.ind){
+  if(!bStream){bStream=document.createElement("div");bStream.className="stream";ws.appendChild(bStream)}
+  bStream.style.cssText=`left:${tx.toFixed(1)}px;top:${my.toFixed(1)}px;height:${Math.max(0,ty-my).toFixed(1)}px;--c:${col};z-index:899`;
+  if(!t._pm||performance.now()-t._pm>500){t._pm=performance.now();spawnPlume(t,col,ch.id==="water"?.25:.5)}
+ }else{stop();a._sp=(a._sp||0)-real;
+  if(a._sp<=0){a._sp=ch.sol?.05:.45;const n=ch.sol?2:1;for(let i=0;i<n;i++){const e=document.createElement("i");e.className=ch.sol?"grain":"drop";e.style.cssText=`left:${(tx+Math.random()*6-3).toFixed(1)}px;top:${my.toFixed(1)}px;--d:${Math.max(10,ty-my-4).toFixed(1)}px;--c:${col};background:${ch.sol?ch.col:col}`;ws.appendChild(e);e.onanimationend=()=>{e.remove();if(!ch.sol)spawnPlume(t,col,.35)}}}}
+ observe(t);view(t)}
+/* ---------- library: what does this reagent do with the others? (run by the engine in a scratch beaker) ---------- */
+const LIBC={};
+function scratch(fn){const o0=OBS.length,rk=new Set(RX.keys()),od=window._obsDirty,rd=window._rxDirty;const c=newContainer("beaker","~lib");c.cap=1000;let r=null;try{r=fn(c)}catch(e){}
+ const obs=OBS.splice(o0).filter(o=>o.c==="~lib").map(o=>o.text);for(const k of[...RX.keys()])if(!rk.has(k))RX.delete(k);window._obsDirty=od;window._rxDirty=rd;return{c,obs,r}}
+function libMix(a,b){return scratch(c=>{
+ const order=[a,b].sort((p,q)=>(p.sol?1:p.ind?2:0)-(q.sol?1:q.ind?2:0));
+ if(order.some(x=>x.ind)&&!order.some(x=>!x.sol&&!x.ind))addLiquid(c,CHEM[0],10);
+ for(const x of order){x.sol?addSolid(c,x.id,.5):addLiquid(c,x,x.ind?.2:5);for(let i=0;i<4;i++)tickContainer(c,.25)}
+ for(let i=0;i<40;i++)tickContainer(c,.5)})}
+const LIBKEEP=/precipitate|gas|bubbl|fizz|flame|warms|colder|turns|reacted|fumes|smell|coating|deposit|forms|dissolves|boils/i;
+function libFill(b){
+ const ch=b.ch;if(LIBC[ch.id]&&LIBC[ch.id].done)return;
+ const L=LIBC[ch.id]||(LIBC[ch.id]={rows:[],i:0,done:false,self:null});
+ if(!L.self){const s=scratch(c=>{ch.sol?(addLiquid(c,CHEM[0],50),addSolid(c,ch.id,1)):addLiquid(c,ch,10);for(let i=0;i<60;i++)tickContainer(c,.5);return{ph:phOf(c),col:cname(solnColour(c).rgb),mass:Object.keys(c.sol).length?Object.entries(c.sol).map(([k,v])=>(SOLNAME[k]||k)+" "+v.toFixed(2)+" g").join(", "):null,T:c.T}});L.self=s.r;L.selfObs=s.obs}
+ const others=CHEM.filter(o=>o.id!==ch.id&&!(ch.ind&&o.ind)&&!(ch.sol&&o.sol&&o.id!=="baoh2"&&ch.id!=="baoh2"));
+ for(let n=0;n<5&&L.i<others.length;n++,L.i++){const o=others[L.i],r=libMix(ch,o),obs=[...new Set(r.obs.filter(t=>LIBKEEP.test(t)&&!/touched/.test(t)))];if(obs.length)L.rows.push({n:o.n,obs})}
+ if(L.i>=others.length)L.done=true}
+function libHTML(ch){
+ const L=LIBC[ch.id];if(!L)return"";
+ let h="";if(L.self&&!ch.sol){h+=`<div class="row"><span>pH of the solution</span><b>${L.self.ph==null?"—":L.self.ph.toFixed(1)}</b></div>`}
+ if(L.self&&ch.sol){h+=`<div class="row"><span>In water</span><b>${L.self.mass?"does not dissolve fully":"dissolves / reacts"}</b></div>`}
+ if(L.self&&L.selfObs.length&&ch.sol)h+=`<div class="muted" style="margin:2px 0">On its own in water: ${E([...new Set(L.selfObs)].filter(t=>LIBKEEP.test(t)).join("; ")||"nothing much happens")}</div>`;
+ h+=`<div class="grp" style="margin-top:8px">If I mix it with…</div>`;
+ h+=L.rows.length?L.rows.map(r=>`<div class="ob"><b>${E(r.n)}</b><small style="color:var(--tx)">${E(r.obs.join("; "))}</small></div>`).join(""):'<div class="muted">Working it out…</div>';
+ if(!L.done)h+=`<div class="muted">…still testing (${L.i}/${CHEM.length})</div>`;return h}
+function renderBottlePanel(b,full){
+ const pb=$("pbody"),ch=b.ch;
+ if(full||!$("bst")){
+  const conc=!ch.sol&&!ch.ind&&ch.c&&Object.keys(ch.c).length?Object.entries(ch.c).map(([k,v])=>(k==="OH"||k==="H"||ch.id==="hclx"?"":"")+k+" "+v).join(", "):"";
+  pb.innerHTML=`<h3 style="margin:0 0 6px">${E(ch.n)}</h3><div class="row"><span>Formula</span><b>${ch.f}</b></div><div class="row"><span>Group</span><b>${E(ch.g)}</b></div><div class="row"><span>Cap</span><b id="bcap"></b></div><div class="row"><span>Left in bottle</span><b id="bst"></b></div>
+  <div class="muted" style="margin:6px 0">${E(LIBD[ch.id]||"")}</div>
+  <div class="muted" style="margin:6px 0">Tap the top of the bottle to take the cap off. Drag it so it tilts over a container to pour. Drag it to the bin to throw it away.</div>
+  ${ch.id==="hclx"?`<div class="row"><span>My answer (M)</span><input id="xans" type="number" step="0.001" style="width:90px;padding:3px;border-radius:6px;border:1px solid var(--bd);background:var(--chi,#fff);color:var(--tx)"></div><div id="xres" class="muted"></div>`:""}
+  <div id="blib">${libHTML(ch)}</div>`;
+  const xa=$("xans");if(xa)xa.oninput=()=>{const v=parseFloat(xa.value),r=$("xres");if(!(v>0)){r.textContent="";return}const e=Math.abs(v-XCONC)/XCONC;r.textContent=e<.04?"✅ Correct! (within 4%)":e<.15?"Close: check your end-point volume.":"Not yet. Titrate again and use M₁V₁ = M₂V₂ (1 : 1 acid to alkali)."}}
+ $("bcap").textContent=b.open?"off (open)":"on (closed)";$("bst").textContent=b.stock.toFixed(b.ch.sol?0:0)+(ch.sol?" g":" mL")+" of "+b.max;
+ const L=LIBC[ch.id];if(!L||!L.done){if(!b._lib){b._lib=setTimeout(function step(){b._lib=null;if(state.sel!==b.id||!b.el.isConnected)return;libFill(b);const e=$("blib");if(e)e.innerHTML=libHTML(ch);const L2=LIBC[ch.id];if(!L2||!L2.done)b._lib=setTimeout(step,30)},30)}}}
+/* ---------- burette: fill from a bottle, turn the stopcock by dragging, read the scale ---------- */
+function buretteSVG(){let t="";for(let v=0;v<=50;v+=1){const y=18+2.4*v,big=v%10===0,mid=v%5===0;t+=`<line x1="${big?32:mid?34:36}" x2="44" y1="${y.toFixed(1)}" y2="${y.toFixed(1)}" stroke="#2a3a55" stroke-width="${big?.9:.5}"/>`;if(big)t+=`<text x="46" y="${(y+2).toFixed(1)}" font-size="6" font-family="system-ui" fill="#2a3a55">${v}</text>`}
+ return`<svg viewBox="0 0 70 340" width="70" height="340" style="overflow:visible"><ellipse cx="35" cy="338" rx="32" ry="3" fill="#000" opacity=".22"/><rect x="2" y="322" width="62" height="12" rx="3" fill="#43474e"/><rect x="9" y="24" width="5" height="300" fill="#8a9099"/><rect x="12" y="62" width="22" height="6" fill="#6b7078"/><rect x="30" y="56" width="16" height="18" rx="3" fill="#53585f"/>
+ <rect x="32" y="12" width="12" height="140" rx="3" fill="rgba(200,225,240,.30)" stroke="#6f86a8"/><rect class="blq" x="33" y="138" width="10" height="0" fill="#dff0ff" opacity=".9"/><rect x="33" y="14" width="2.2" height="134" fill="#fff" opacity=".45"/>${t}
+ <rect x="30" y="152" width="16" height="9" rx="2" fill="#2d3138"/><g class="tapk" style="transform-box:view-box;transform-origin:38px 156px"><rect x="44" y="153" width="20" height="7" rx="3.5" fill="#15181f" stroke="#555"/><circle cx="62" cy="156.5" r="5" fill="#d63a2f"/></g>
+ <path d="M34.5 161 L41.5 161 L39.6 190 L36.4 190 Z" fill="rgba(200,225,240,.45)" stroke="#6f86a8"/></svg>`}
+function spawnBurette(x,y){
+ if(all().length>=14){toast("The table is full. Remove something first.");return}
+ state.counts.bur=(state.counts.bur||0)+1;
+ const b={id:state.nid++,type:"burette",label:"Burette "+state.counts.bur,ch:null,vol:0,cap:50,flow:0,sc:1,sp:0};
+ const sp=freeSpot(90);b.x=x==null?sp[0]:x;b.y=y==null?sp[1]:y;clampXY(b);
+ const d=document.createElement("div");d.className="it burette";d.dataset.id=b.id;
+ d.innerHTML=`<div class="vessel" style="width:70px;height:340px"><div class="shadow"></div><div class="svgh">${buretteSVG()}</div></div><div class="lbl">${b.label}</div>`;
+ ws.appendChild(d);b.el=d;state.tools.push(b);hookItem(b);place(b);buretteView(b);select(b.id);$("hint").style.display="none";return b}
+function buretteView(b){
+ const q=b.el.querySelector(".blq"),f=clamp(b.vol/b.cap,0,1),hgt=120*f;q.setAttribute("height",hgt.toFixed(1));q.setAttribute("y",(138-hgt).toFixed(1));
+ q.setAttribute("fill",b.ch?b.ch.col||"#dff0ff":"#dff0ff");
+ const k=b.el.querySelector(".tapk");if(k)k.style.transform=`rotate(${(b.flow*80).toFixed(0)}deg)`}
+function buTop(b){const h=b.el.offsetHeight*b.sc;return{x:b.x+3*b.sc,y:b.y-h+12*b.sc,tip:b.y-h+190*b.sc}}
+function tickBurettes(real){
+ for(const b of state.tools){if(b.type!=="burette")continue;
+  if(!(b.flow>.03&&b.vol>0&&b.ch))continue;
+  const q=buTop(b);let t=null;
+  for(const c of state.items){if(c.inv)continue;const v=vrect(c),rx=v.l+v.G.cx*v.sc,ry=v.t+v.G.ytop*v.sc;if(Math.abs(q.x-rx)<v.G.hw(v.G.ytop)*v.sc*.9&&ry>q.tip-6&&ry-q.tip<200){t=c;break}}
+  const d=Math.min(b.vol,(.02+2.2*b.flow*b.flow)*real);b.vol-=d;buretteView(b);
+  const col=hex(hx((b.ch.col||"#dff0ff").length===7?b.ch.col:"#dff0ff"));
+  if(t){if(!addLiquid(t,b.ch,d)){toast(t.label+" is full");b.flow=0;buretteView(b)}else{observe(t);view(t)}}
+  b.sp-=real;if(b.sp<=0){b.sp=Math.max(.1,.5/(.3+b.flow*4));const e=document.createElement("i");e.className="drop";let ty=q.tip+90;if(t){const w=vrect(t);ty=w.t+levelY(w.G,t.vol,t.cap)*w.sc}
+   e.style.cssText=`left:${q.x.toFixed(1)}px;top:${q.tip.toFixed(1)}px;--d:${Math.max(8,ty-q.tip).toFixed(1)}px;--c:${col}`;ws.appendChild(e);e.onanimationend=()=>e.remove()}}}
+function renderBurettePanel(b,full){
+ const pb=$("pbody");
+ if(full||!$("brd")){pb.innerHTML=`<h3 style="margin:0 0 6px">${E(b.label)}</h3><div class="row"><span>Holds</span><b id="bhd"></b></div><div class="row"><span>Reading</span><b id="brd"></b></div><div class="row"><span>Tap</span><b id="btp"></b></div>
+ <div class="muted" style="margin:6px 0"><b>Titration:</b> 1) pour a solution from an open bottle into the top of the burette (tilt a bottle over it), 2) put a conical flask with the other solution and a few drops of indicator under the tip, 3) drag the red stopcock handle to let it drip, slowly near the end, 4) read the scale where the colour just changes. The scale reads 0 at the top, 50 at the bottom: your volume used is the reading difference.</div>
+ <div class="muted">Tip: the dropper bottle of phenolphthalein goes in the flask. Acid + alkali: colourless to faint pink is the end-point.</div>`}
+ $("bhd").textContent=b.ch?b.ch.n+" ("+b.vol.toFixed(2)+" mL)":"empty";$("brd").textContent=b.ch?(b.cap-b.vol).toFixed(2)+" mL":"—";$("btp").textContent=b.flow>.03?"open ("+Math.round(b.flow*100)+"%)":"closed"}
+/* ---------- activity checker: ticks off what you have actually seen ---------- */
+const DONEK="aalimChemDone";
+const doneGet=()=>{try{return JSON.parse(localStorage.getItem(DONEK))||{}}catch(e){return{}}};
+function seenSet(){const t=OBS.map(o=>o.text).join("\n"),ds=doneGet();let ch=false;
+ ACTS.forEach((a,i)=>{if(!a[2])return;a[2].forEach((c,j)=>{const k=i+"."+j;if(!ds[k]&&c[1].test(t)){ds[k]=1;ch=true}})});
+ if(ch){try{localStorage.setItem(DONEK,JSON.stringify(ds))}catch(e){}}return ds}
+function checkHTML(a,i,ds){if(!a[2])return"";let n=0;const rows=a[2].map((c,j)=>{const ok=ds[i+"."+j];if(ok)n++;return`<div style="font-size:12px;padding:1px 0;color:${ok?"var(--ok,#16a34a)":"var(--mut)"}">${ok?"✔":"○"} ${E(c[0])}</div>`}).join("");
+ return`<div style="margin-top:3px"><small style="color:var(--tx)"><b>${n===a[2].length?"✅ All observations made":"Observations: "+n+"/"+a[2].length}</b></small>${rows}</div>`}
 
 /* ---------- main loop: 10 Hz ---------- */
 let lastT=performance.now();
 function puff(c,cls,n){const v=c.el.querySelector(".vessel"),g=GEO[c.type];for(let i=0;i<n;i++){const p=document.createElement("i");p.className=cls;p.style.cssText=`left:${f1(g.cx+(Math.random()-.5)*g.hw(g.ytop)*1.3)}px;top:${f1(g.ytop-4)}px`;v.appendChild(p);p.onanimationend=()=>p.remove()}}
 setInterval(()=>{
  const now=performance.now(),real=Math.min(.5,(now-lastT)/1000);lastT=now;const dt=real*state.warp;simTime+=dt;Engine.setTime(simTime);
- runPours(real);tickHeating();tickTiltPour(real);tickFrees(real);tickDtubes(dt);tickElectro(dt);tickSun();tickGasWarn(real);
+ runPours(real);tickHeating();tickTiltPour(real);tickBottlePour(real);tickBurettes(real);tickFrees(real);tickDtubes(dt);tickElectro(dt);tickSun();tickGasWarn(real);
  for(const c of state.items){
   if(c.vol>0||Object.keys(c.sol).length||Object.keys(c.gh).length||c.heatW||c.T>26||c.T<24)tickContainer(c,dt);
   /* displayed colour drifts toward the true colour: slowly when unstirred, quickly when stirred */
@@ -1230,7 +1409,7 @@ setInterval(()=>{
  renderPanel(false);
 },100);
 renderTool();renderPanel(true);
-window.LAB={state,frees,dtubes,spawnFree,spawnSand,spawnDtube,toggleHand,toggleSwitch,trySlot,tickHeating,burnerView,moveCtl,mouthWs,vrect,matches,spawnMatchbox,spawnMatch,toggleGas,spawn,spawnBurner,addChem,addNow,startPour,CHEM,tickContainer,view,select,byId,pours};
+window.LAB={spawnBottle,spawnBurette,toggleBottle,tickBottlePour,tickBurettes,LIBC,libFill,libMix,XCONC,state,frees,dtubes,spawnFree,spawnSand,spawnDtube,toggleHand,toggleSwitch,trySlot,tickHeating,burnerView,moveCtl,mouthWs,vrect,matches,spawnMatchbox,spawnMatch,toggleGas,spawn,spawnBurner,addChem,addNow,startPour,CHEM,tickContainer,view,select,byId,pours};
 
 </script>
 </body>

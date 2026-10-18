@@ -10,7 +10,7 @@
    Adding new chemistry = adding data (a species or a reaction line), not code.
    =================================================================== */
 const R_=8.314,F_=96485,TS=298.15;
-const AW={H:1.008,C:12.011,N:14.007,O:15.999,Na:22.99,Mg:24.305,S:32.06,Cl:35.45,K:39.098,Ca:40.078,Fe:55.845,Cu:63.546,Zn:65.38,Br:79.904,Ag:107.87,I:126.9,Ba:137.33,Pb:207.2};
+const AW={H:1.008,C:12.011,N:14.007,O:15.999,Na:22.99,Mg:24.305,S:32.06,Cl:35.45,K:39.098,Ca:40.078,Fe:55.845,Al:26.982,Cu:63.546,Zn:65.38,Br:79.904,Ag:107.87,I:126.9,Ba:137.33,Pb:207.2};
 const sub=n=>String(n).split("").map(d=>"₀₁₂₃₄₅₆₇₈₉"[d]||d).join("");
 const sup=s=>s.split("").map(ch=>({"0":"⁰","1":"¹","2":"²","3":"³","+":"⁺","-":"⁻"}[ch]||ch)).join("");
 const add=(o,p,k)=>{for(const e in p)o[e]=(o[e]||0)+p[e]*(k||1);return o};
@@ -39,7 +39,8 @@ const GRY="#9aa7b3";
 S("Mg(s)",0,32.7,{lid:"mg",sc:"#d6dade",name:"Magnesium",kd:0});S("Zn(s)",0,41.6,{lid:"zn",sc:GRY,name:"Zinc"});
 S("Fe(s)",0,27.3,{lid:"fe",sc:"#5d6168",name:"Iron"});S("FeNail(s)",0,27.3,{lid:"nail",sc:"#5d6168",name:"Iron nail",comp:{Fe:1}});
 S("Cu(s)",0,33.2,{lid:"cu",sc:"#b8733a",name:"Copper"});S("Pb(s)",0,65.1,{sc:"#7a7a85",name:"Lead"});
-S("Ag(s)",0,42.6,{lid:"ag",sc:"#6e7076",name:"Silver"});S("Na(s)",0,51.3,{lid:"na",sc:"#b9bdc4",name:"Sodium"});
+S("Ag(s)",0,42.6,{lid:"ag",sc:"#6e7076",name:"Silver"});S("Na(s)",0,51.3,{lid:"na",sc:"#b9bdc4",name:"Sodium"});S("Al(s)",0,28.3,{lid:"al",sc:"#c5cad1",name:"Aluminium"});S("K(s)",0,64.7,{lid:"k",sc:"#c9ccd2",name:"Potassium"});
+S("FeOOH(s)",-559,60.4,{lid:"rust",sc:"#a2522a",name:"Rust (hydrated iron(III) oxide)",born:"a flaky reddish-brown coating of rust forms",basic:1,nopp:1,kd:.002,kT:12});
 /* oxides */
 S("MgO(s)",-601.6,27.0,{lid:"mgo",sc:"#f4f4ee",name:"Magnesium oxide",born:"white powder of magnesium oxide forms",basic:1,nopp:1,kd:.02,kT:12,d:"MgO(s) + H2O(l) = Mg^2+ + 2OH-",ksp:1e-11});
 S("CuO(s)",-157.3,42.6,{lid:"cuo",sc:"#1c1c1c",name:"Copper(II) oxide",born:"the red-brown copper turns black: copper(II) oxide forms",basic:1,nopp:1,kd:3e-4,kT:12,d:"CuO(s) + H2O(l) = Cu^2+ + 2OH-",ksp:2.2e-20});
@@ -54,6 +55,7 @@ P("Ca(OH)2(s)",-986.1,83.4,{sc:"#f6f6f6",cw:"white (milky)",name:"Calcium hydrox
 P("Cu(OH)2(s)",-449.8,108,{sc:"#6fa8f0",cw:"pale blue",name:"Copper(II) hydroxide",ksp:2.2e-20,d:"Cu(OH)2(s) = Cu^2+ + 2OH-"});
 P("Zn(OH)2(s)",-641.9,81.2,{sc:"#f2f2f2",cw:"white gelatinous",name:"Zinc hydroxide",ksp:3e-17,d:"Zn(OH)2(s) = Zn^2+ + 2OH-"});
 P("Fe(OH)2(s)",-574,88,{sc:"#7ba483",cw:"dirty-green",name:"Iron(II) hydroxide",ksp:8e-16,d:"Fe(OH)2(s) = Fe^2+ + 2OH-"});
+P("Al(OH)3(s)",-1277,71,{sc:"#f4f4f4",cw:"white gelatinous",name:"Aluminium hydroxide",ksp:3e-34,d:"Al(OH)3(s) = Al^3+ + 3OH-"});
 P("Fe(OH)3(s)",-823,106.7,{sc:"#a8501c",cw:"reddish-brown",name:"Iron(III) hydroxide",ksp:4e-38,d:"Fe(OH)3(s) = Fe^3+ + 3OH-"});
 P("CaCO3(s)",-1207.6,91.7,{lid:"caco3",sc:"#fbfbfb",cw:"white (milky)",name:"Calcium carbonate (marble)",ksp:3.3e-9,kd:5e-4,d:"CaCO3(s) = Ca^2+ + CO3^2-",born:"white solid forms"});
 /* insoluble salts */
@@ -87,6 +89,8 @@ AQ("Cl-",-167.2,56.5,{leg:"Cl"});AQ("Br-",-121.6,82.4,{leg:"Br"});AQ("I-",-55.2,
 AQ("SO4^2-",-909.3,20.1,{leg:"SO4"});AQ("NO3-",-207.4,146.4,{leg:"NO3"});
 AQ("CO3^2-",-677.1,-56.9,{leg:"CO3"});AQ("HCO3-",-692.0,91.2,{leg:"HCO3"});AQ("CH3COO-",-486.0,86.6,{leg:"Ac"});
 AQ("CH3COOH(aq)",-485.8,178.7,{leg:"HAc"});AQ("CO2(aq)",-413.8,117.6,{});AQ("NH3(aq)",-80.3,111.3,{});
+AQ("Al^3+",-531,-321.7,{leg:"Al"});AQ("AlOH^2+",0,0,{leg:"Al"});AQ("Al(OH)4-",-1502.5,102.9,{leg:"AlOH4"});
+AQ("C2H5OH(aq)",-288.3,148.5,{leg:"EtOH",name:"ethanol",smell:"a sharp, clean smell of alcohol"});AQ("CH3COOC2H5(aq)",-479.3,259.4,{leg:"Ester",name:"ethyl ethanoate (ester)",smell:"a sweet, fruity smell (like pear drops or nail-polish remover): an ester!"});
 AQ("CuOH+",0,0,{leg:"Cu",cg:"Cu"});AQ("FeOH^2+",0,0,{leg:"Fe3",cg:"Fe3"});AQ("ZnOH+",0,0,{leg:"Zn"});
 AQ("FeOH+",0,0,{leg:"Fe2",cg:"Fe2"});AQ("PbOH+",0,0,{leg:"Pb"});AQ("MgOH+",0,0,{leg:"Mg"});
 S("H2O(l)",-285.8,69.9,{name:"water"});S("H2O(g)",-241.8,188.8,{gk:"H2O"});
@@ -102,7 +106,7 @@ G("NH3(g)",-45.9,192.8,{gk:"NH3",gmsg:"a gas with a sharp ammonia smell is given
 G("Cl2(g)",0,223.1,{gk:"Cl2",col:[190,200,90],ga:.6,gmsg:"a pale greenish-yellow gas (chlorine) is given off",smell:"a choking, bleach-like smell (chlorine)"});
 G("Br2(g)",30.9,245.5,{gk:"Br2",col:[160,70,30],ga:1.4,gmsg:"reddish-brown bromine vapour is given off",smell:"a harsh, irritating smell (bromine)"});
 const GASBY={};for(const id in SP)if(SP[id].gk)GASBY[SP[id].gk]=id;
-const LEG2SP={};for(const id in SP)if(SP[id].leg&&!/^(CuOH|FeOH|ZnOH|PbOH|MgOH)/.test(id))LEG2SP[SP[id].leg]=id;
+const LEG2SP={};for(const id in SP)if(SP[id].leg&&!/^(CuOH|FeOH|ZnOH|PbOH|MgOH|AlOH\^)/.test(id))LEG2SP[SP[id].leg]=id;
 const SOL2SP={};for(const id in SP)if(SP[id].lid)SOL2SP[SP[id].lid]=id;
 /* ---------- reaction parsing, automatic balancing, thermodynamics ---------- */
 function tok(t){const m=t.trim().match(/^(\d+)?(.+)$/);return[m[1]?+m[1]:1,m[2].trim()]}
@@ -141,7 +145,7 @@ function fmtEq(nu,arrow){const L=[],Rr=[];for(const id in nu){const v=nu[id],k=M
 function molEq(nu,c){
  const ions=Object.keys(nu).filter(id=>SP[id].z);if(!ions.length||!c)return null;
  let hasCat=ions.some(i=>SP[i].z>0),hasAn=ions.some(i=>SP[i].z<0);
- const best=sg=>{let b=null,m=0;for(const id in c.n){const s=SP[id];if(!s||s.ph!=="aq"||!s.z||nu[id]!==undefined||/^(CuOH|FeOH|ZnOH|PbOH|MgOH)/.test(id)||id==="H+"||id==="OH-")continue;if(Math.sign(s.z)===sg&&c.n[id]>m){m=c.n[id];b=id}}return b};
+ const best=sg=>{let b=null,m=0;for(const id in c.n){const s=SP[id];if(!s||s.ph!=="aq"||!s.z||nu[id]!==undefined||/^(CuOH|FeOH|ZnOH|PbOH|MgOH|AlOH\^)/.test(id)||id==="H+"||id==="OH-")continue;if(Math.sign(s.z)===sg&&c.n[id]>m){m=c.n[id];b=id}}return b};
  const sc=best(1),sa=best(-1);if((hasCat&&!sa)||(hasAn&&!sc)&&false)return null;
  const need=(side)=>{const out=[];for(const id of ions){const v=nu[id];if((side<0)!==(v<0))continue;out.push([id,Math.abs(v)])}return out};
  const mk=(ion,n,spec)=>{const z1=Math.abs(SP[ion].z),z2=Math.abs(SP[spec].z);const nSpec=n*z1/z2;return{ion,n,spec,nSpec}};
@@ -171,16 +175,17 @@ eq("CO3^2- + H2O(l) = HCO3- + OH-",{K:1e-14/4.7e-11,dH:0});
 eq("HCO3- = CO2(aq) + OH-",{K:1e-14/4.5e-7,dH:0});
 eq("CH3COO- + H2O(l) = CH3COOH(aq) + OH-",{K:1e-14/1.8e-5,dH:0});
 eq("NH3(aq) + H2O(l) = NH4+ + OH-",{K:1e-14/5.6e-10,dH:0});
-for(const [m,k] of [["Cu^2+",5e-8],["Fe^3+",1e-3],["Zn^2+",1e-9],["Fe^2+",1e-8],["Pb^2+",1e-8],["Mg^2+",1e-11]]){const h=m.replace("^2+","OH+").replace("^3+","OH^2+");eq(m+" + H2O(l) = "+h+" + H+",{K:k,dH:0})}
+for(const [m,k] of [["Cu^2+",5e-8],["Fe^3+",1e-3],["Zn^2+",1e-9],["Fe^2+",1e-8],["Pb^2+",1e-8],["Mg^2+",1e-11],["Al^3+",1e-5]]){const h=m.replace("^2+","OH+").replace("^3+","OH^2+");eq(m+" + H2O(l) = "+h+" + H+",{K:k,dH:0})}
 for(const id in SP){const s=SP[id];if(s.d){const r=eq(s.d,{solid:id,kind:"sol"});if(s.ksp!=null)r.K=s.ksp;r.dH=dHof(r.nu)}}
+eq("Al(OH)3(s) + OH- = Al(OH)4-",{K:.3,dH:0,solid:"Al(OH)3(s)",kind:"amph"});
 /* acid routes for basic solids (rate depends on [H+]; K from the solubility product and the acid constants) */
 const KA2=4.7e-11,KA1=4.5e-7,KW=1e-14;
 const ACID=[["CaCO3(s) + 2H+ = Ca^2+ + CO2(aq) + H2O(l)",3.3e-9/(KA2*KA1)],["Mg(OH)2(s) + 2H+ = Mg^2+ + 2H2O(l)",5.6e-12/KW**2],["Ca(OH)2(s) + 2H+ = Ca^2+ + 2H2O(l)",5.5e-6/KW**2],
  ["Cu(OH)2(s) + 2H+ = Cu^2+ + 2H2O(l)",2.2e-20/KW**2],["Zn(OH)2(s) + 2H+ = Zn^2+ + 2H2O(l)",3e-17/KW**2],["Fe(OH)2(s) + 2H+ = Fe^2+ + 2H2O(l)",8e-16/KW**2],
- ["Fe(OH)3(s) + 3H+ = Fe^3+ + 3H2O(l)",4e-38/KW**3],["CuO(s) + 2H+ = Cu^2+ + H2O(l)",null],["ZnO(s) + 2H+ = Zn^2+ + H2O(l)",null],["MgO(s) + 2H+ = Mg^2+ + H2O(l)",null],["CaO(s) + 2H+ = Ca^2+ + H2O(l)",null]];
+ ["Fe(OH)3(s) + 3H+ = Fe^3+ + 3H2O(l)",4e-38/KW**3],["Al(OH)3(s) + 3H+ = Al^3+ + 3H2O(l)",3e-34/KW**3],["FeOOH(s) + 3H+ = Fe^3+ + 2H2O(l)",null],["CuO(s) + 2H+ = Cu^2+ + H2O(l)",null],["ZnO(s) + 2H+ = Zn^2+ + H2O(l)",null],["MgO(s) + 2H+ = Mg^2+ + H2O(l)",null],["CaO(s) + 2H+ = Ca^2+ + H2O(l)",null]];
 for(const [str,K] of ACID){const r=eq(str,{kind:"acid"});for(const id in r.nu)if(r.nu[id]<0&&SP[id].ph==="s")r.solid=id;if(K!=null)r.K=K;r.dH=dHof(r.nu)}
 /* redox: every metal against every oxidant. Spontaneity from dG, speed from the cell potential. */
-const METALS=[["Mg(s)","Mg^2+",.11],["Zn(s)","Zn^2+",1],["Fe(s)","Fe^2+",.3],["FeNail(s)","Fe^2+",.12],["Cu(s)","Cu^2+",2.8],["Pb(s)","Pb^2+",1],["Na(s)","Na+",1.7]];
+const METALS=[["Mg(s)","Mg^2+",.11],["Zn(s)","Zn^2+",1],["Fe(s)","Fe^2+",.3],["FeNail(s)","Fe^2+",.12],["Cu(s)","Cu^2+",2.8],["Pb(s)","Pb^2+",1],["Na(s)","Na+",1.7],["Al(s)","Al^3+",.04],["K(s)","K+",3]];
 const OXID=[["H+",["H2(g)"]],["H2O(l)",["OH-","H2(g)"]],["Cu^2+",["Cu(s)"]],["Ag+",["Ag(s)"]],["Pb^2+",["Pb(s)"]],["Fe^3+",["Fe^2+"]],["Fe^2+",["Fe(s)"]],["Zn^2+",["Zn(s)"]]];
 const REDOX=[];
 for(const [m,ion,kin] of METALS)for(const [ox,red] of OXID){
@@ -188,7 +193,7 @@ for(const [m,ion,kin] of METALS)for(const [ox,red] of OXID){
  const prods=[ion].concat(red).filter((v,i,a)=>a.indexOf(v)===i);if(prods.includes(m))continue;
  const nu=balance([m,ox],prods);if(!nu)continue;
  const dG=dGof(nu,TS);if(dG>-1)continue;
- if(ox==="H2O(l)"&&m!=="Na(s)")continue;
+ if(ox==="H2O(l)"&&m!=="Na(s)"&&m!=="K(s)")continue;
  const n=Math.abs(nu[ion])*SP[ion].z,E=-dG*1000/(n*F_);
  REDOX.push({m,ion,ox,red,nu,E,kin:ox==="H2O(l)"?kin:kin,dH:dHof(nu),water:ox==="H2O(l)",gas:red.includes("H2(g)")})}
 /* reactions with a barrier: thermal decomposition, burning, gas-solid, photolysis, solid-solid. k0 = rate at T0, Ea sets the temperature dependence. */
@@ -216,10 +221,10 @@ const hx=h=>[1,3,5].map(i=>parseInt(h.substr(i,2),16));
 const Z=(c,k)=>c.sp[k]||0;
 const SOLCOL={},SOLNAME={},PPT=[];
 for(const id in SP){const s=SP[id];if(s.lid){SOLCOL[s.lid]=s.sc||"#cccccc";SOLNAME[s.lid]=s.name}
- if(s.ppt)PPT.push({id,n:pretty(id).replace(/\(.*$/,""),col:s.sc,cw:s.cw||"white",mm:s.M})}
+ if(s.ppt)PPT.push({id,n:pretty(id).replace(/\((s|l|g|aq)\)$/,""),col:s.sc,cw:s.cw||"white",mm:s.M})}
 const DEPCOL={Cu:"#b8733a",Ag:"#cfd2da",Pb:"#7a7a85",Fe:"#5a5a60",Zn:"#9aa7b3"},DEPWORD={Cu:"reddish-brown",Ag:"silvery",Pb:"grey",Fe:"dark grey",Zn:"grey"};
 const DEPSYM={"Cu(s)":"Cu","Ag(s)":"Ag","Pb(s)":"Pb","Fe(s)":"Fe","Zn(s)":"Zn"};
-const LEGQ={"Mg(s)":"mg","Zn(s)":"zn","Fe(s)":"fe","FeNail(s)":"nail","Cu(s)":"cu"};
+const LEGQ={"Mg(s)":"mg","Zn(s)":"zn","Fe(s)":"fe","FeNail(s)":"nail","Cu(s)":"cu","Al(s)":"al"};
 function newContainer(type,label){
  const cap={beaker:250,tube:20,flask:250,cyl:100,btube:30,dish:150,watch:40,mug:500}[type];
  return{id:0,type,label,cap,vol:0,T:25,n:{},p:{},d:{},gh:{},ind:{},susp:0,gasRate:0,gasType:"",heat:false,heatW:0,boil:false,flash:0,disp:null,mount:null,q:{},sunE:0,inv:false,cork:false,stirE:0,drops:0,stir:0,probes:[],neut:0,
@@ -289,9 +294,36 @@ function redox(c,dt){
    else c.n[id]=(c.n[id]||0)+dn}
   heatIn(c,-rd.dH*1000*xi);
   if(rd.m==="Na(s)")c.flash=Math.max(c.flash||0,.4);
+  if(rd.m==="K(s)"){c.flash=Math.max(c.flash||0,1);if(!c.last.kf){c.last.kf=1;log(c,"potassium darts about and burns with a lilac flame: more violent than sodium")}}
   regRxNet(c,rd.nu,rd.gas?"Metal + acid / water (redox)":rd.red[0]&&SP[rd.red[0]].ph==="s"?"Displacement reaction":"Redox reaction")}
 }
 function regRxNet(c,nu,name){const e=fmtEq(nu);if(RX.has(e))return;const m=molEq(nu,c);regRx(name,m||e,m?e:"")}
+/* ---------- rusting: iron + oxygen + water (salt speeds it up; sealed or dry iron does not rust) ---------- */
+const RUSTNU=parseRxn("4Fe(s) + 3O2(g) + 2H2O(l) = 4FeOOH(s)");
+function rusting(c,dt){
+ const nFe=(c.n["FeNail(s)"]||0)+(c.n["Fe(s)"]||0);if(nFe<1e-6||c.vol<1)return;
+ if(c.cork||c.inv||c.boil)return;
+ const V=c.vol/1000,salt=Math.min(1,(c.n["Cl-"]||0)/V/.15),acid=(c.n["H+"]||0)/V>.01?.3:1;
+ const cl=(c.q.nail!==undefined?Math.max(.15,c.q.nail):1);
+ let xi=2.8e-6*nFe*(1+30*salt)*tfac(c)*acid*cl*dt;xi=Math.min(xi,nFe);if(!(xi>1e-12))return;
+ take(c,(c.n["FeNail(s)"]||0)>=xi?"FeNail(s)":"Fe(s)",xi);give(c,"FeOOH(s)",xi,"n");
+ if(c.n["FeOOH(s)"]>2e-4&&!c.last.rust){c.last.rust=1;log(c,"a flaky reddish-brown coating of rust forms on the iron");regRx("Rusting (corrosion)",fmtEq(RUSTNU))}
+ else if(c.n["FeOOH(s)"]>2e-3&&!c.last.rust2){c.last.rust2=1;log(c,"the rust layer gets thicker; the iron is slowly being eaten away")}}
+/* ---------- esterification: acid + alcohol with a strong-acid catalyst, hot, reversible ---------- */
+const ESTNU=parseRxn("CH3COOH(aq) + C2H5OH(aq) = CH3COOC2H5(aq) + H2O(l)");
+function esterify(c,dt){
+ const V=c.vol/1000;if(V<5e-4)return;
+ const A="CH3COOH(aq)",O="C2H5OH(aq)",Es="CH3COOC2H5(aq)",nA=c.n[A]||0,nO=c.n[O]||0,nE=c.n[Es]||0;
+ if(nA<1e-6&&nE<1e-6)return;if(nO<1e-6&&nE<1e-6)return;
+ const cH=(c.n["H+"]||0)/V;if(cH<.05)return;
+ const nW=Math.max(0,c.vol-nA*57-nO*58-nE*98)/18;
+ const K=4,Q=(Math.max(nE,1e-9)*Math.max(nW,1e-9))/(Math.max(nA,1e-9)*Math.max(nO,1e-9));
+ const T=c.T+273.15,k=2.5e-3*Math.exp(-6000*(1/T-1/350))*(cH/(cH+.1));
+ const lim=Q<K?Math.min(nA,nO):nE;let xi=k*lim*(1-Q/K)*dt;
+ if(xi>0)xi=Math.min(xi,nA,nO);else xi=-Math.min(-xi,nE);
+ if(Math.abs(xi)<1e-13)return;
+ c.n[A]=Math.max(0,nA-xi);c.n[O]=Math.max(0,nO-xi);c.n[Es]=nE+xi;c.vol=Math.max(.05,c.vol+xi*18+xi*(98-57-58));
+ if(xi>0&&(c.n[Es]>1e-3)&&!c.last.est){c.last.est=1;log(c,"a sweet, fruity smell appears: an ester (ethyl ethanoate) is forming");regRx("Esterification (acid + alcohol, conc. H₂SO₄ catalyst)",fmtEq(ESTNU))}}
 /* ---------- reactions with a barrier ---------- */
 function dataRx(c,dt){
  const T=c.T+273.15,dry=c.vol<.2;
@@ -354,7 +386,7 @@ function addLiquid(c,ch,ml){
  const Vn=c.vol+ml;c.T=(c.T*c.vol+25*ml)/Vn;
  for(const k in ch.c){const id=LEG2SP[k];if(id)c.n[id]=(c.n[id]||0)+ch.c[k]*ml/1000}
  if(ch.ind)c.ind[ch.ind]=(c.ind[ch.ind]||0)+ml;
- c.vol=Vn;eqSolve(c,0);project(c);return true}
+ c.vol=Vn;if(ch.heat)heatIn(c,ch.heat*ml*1000);c.T=Math.min(c.T,98);eqSolve(c,0);project(c);return true}
 function addSolid(c,lid,g){const id=SOL2SP[lid];if(!id)return false;c.n[id]=(c.n[id]||0)+g/SP[id].M;project(c);return true}
 function pourTo(a,b,f){
  const space=b.cap-b.vol;let amtv=a.vol*f;if(amtv>space)amtv=space;if(amtv<=0)return 0;const fr=amtv/a.vol;
@@ -368,7 +400,7 @@ function pourTo(a,b,f){
 function step(c,dt){
  c._g=0;thermal(c,dt);
  if(c.vol>=.2){redox(c,dt)}
- dataRx(c,dt);
+ dataRx(c,dt);rusting(c,dt);esterify(c,dt);
  if(c.vol>=.2){eqSolve(c,dt);gasExchange(c,dt)}
  c.susp*=Math.exp(-dt*.07);if(c.stir>0){c.stir-=dt;c.susp=Math.min(1,c.susp+dt*.4)}
  c.gasRate=(c._g||0)/dt;project(c)}
@@ -400,10 +432,10 @@ function cname(rgb){
 function observe(c){
  const L=c.last;
  for(const id in c.p){const v=c.p[id],w=L.p[id]||0,s=SP[id];
-  if(v>5e-6&&w<=5e-6){log(c,(s.cw||"white")+" precipitate of "+pretty(id).replace(/\(.*$/,"")+" forms");if(c.el&&window.spawnPlume)spawnPlume(c,s.sc,.85)}
-  else if(v<=5e-6&&w>5e-6)log(c,"the precipitate of "+pretty(id).replace(/\(.*$/,"")+" dissolves");L.p[id]=v}
+  if(v>5e-6&&w<=5e-6){log(c,(s.cw||"white")+" precipitate of "+pretty(id).replace(/\((s|l|g|aq)\)$/,"")+" forms");if(c.el&&window.spawnPlume)spawnPlume(c,s.sc,.85)}
+  else if(v<=5e-6&&w>5e-6)log(c,"the precipitate of "+pretty(id).replace(/\((s|l|g|aq)\)$/,"")+" dissolves");L.p[id]=v}
  for(const id in c.made){const s=SP[id],tot=amt(c,id);
-  if(s.ph==="s"&&tot>2e-5&&!L.made[id]&&c.made[id]&&!s.ppt){L.made[id]=1;if(s.born)log(c,s.born);else log(c,(s.cw||"solid")+" "+pretty(id).replace(/\(.*$/,"")+" forms")}}
+  if(s.ph==="s"&&tot>2e-5&&!L.made[id]&&c.made[id]&&!s.ppt){L.made[id]=1;if(s.born)log(c,s.born);else log(c,(s.cw||"solid")+" "+pretty(id).replace(/\((s|l|g|aq)\)$/,"")+" forms")}}
  for(const id in c.d){const v=c.d[id],w=L.d[id]||0,sy=DEPSYM[id];if(sy&&v>8e-6&&w<=8e-6)log(c,DEPWORD[sy]+" deposit of "+sy+" forms on the metal");L.d[id]=v}
  for(const id in c.n){const s=SP[id];if(!s||s.ph!=="s")continue;const v=c.n[id],w=L.n[id]||0;
   if(w>1e-6&&v<=1e-6&&(c.vol>.2||c.heatW>0))log(c,(s.name||pretty(id)).toLowerCase()+" has completely reacted / dissolved");L.n[id]=v}
