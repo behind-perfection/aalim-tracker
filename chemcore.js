@@ -214,7 +214,7 @@ for(const r of RXNS)r.K=undefined;
 const WATER=[200,225,245];
 const RX=new Map(),OBS=[];let simTime=0;
 function regRx(name,eqs,ion){if(!RX.has(eqs)){RX.set(eqs,{name,eq:eqs,ion:ion||""});window._rxDirty=true}}
-function log(c,text){OBS.push({t:simTime,c:c.label,text});if(OBS.length>300)OBS.shift();window._obsDirty=true}
+function log(c,text){OBS.push({t:simTime,c:c.label,text});if(OBS.length>300)OBS.shift();window._obsDirty=true;if(window.onLog)try{window.onLog(c,text)}catch(e){}}
 const mix=(a,b,w)=>[a[0]+(b[0]-a[0])*w,a[1]+(b[1]-a[1])*w,a[2]+(b[2]-a[2])*w];
 const hex=c=>"#"+c.map(v=>Math.round(Math.max(0,Math.min(255,v))).toString(16).padStart(2,"0")).join("");
 const hx=h=>[1,3,5].map(i=>parseInt(h.substr(i,2),16));

@@ -3720,21 +3720,29 @@ function storyTab(r) {
         + `<h3 style="margin:16px 0 6px">🧑 Characters</h3><div class="formgrid"><div><label>Name</label><input id="chN"></div><div><label>Role</label><select id="chR">${rsOpts(["Protagonist", "Antagonist", "Supporting", "Other"], "Protagonist")}</select></div><div class="full"><label>Description and motivation</label><input id="chD"></div></div><button type="button" class="action" style="margin:10px 0" onclick="charAdd()">Add character</button>`
         + (r.chars.map(c => `<div class="insight"><div class="row" style="padding:0"><b>${esc(c.n)}</b><span><span class="pill">${esc(c.role)}</span> <button type="button" class="danger" onclick="resRm('chars','${c.id}')">✕</button></span></div>${c.d ? `<div style="margin-top:4px">${esc(c.d)}</div>` : ""}</div>`).join("") || '<div class="muted">No characters yet.</div>');
 }
-/* ===== Navigation: bottom bar, searchable menu, back button, remembers last page ===== */
-const NAVG = [
-    ["Daily", [["dashboard", "🏠", "Dashboard"], ["today", "📅", "Today"], ["homework", "📚", "Homework"], ["study", "⏱️", "Study Log"], ["calendar", "🗓️", "Calendar & Trends"]]],
-    ["Study", [["syllabus", "📖", "Syllabus"], ["exams", "📝", "Exam Syllabus"], ["practice", "✏️", "Practice"], ["feynman", "🧠", "Feynman Lab"], ["vlab", "🧪", "Virtual Lab"], ["flash", "🗂️", "Flashcards"], ["mistakes", "❌", "Mistakes"]]],
-    ["Create and learn", [["research", "🛠️", "Projects"], ["library", "📕", "Library"], ["movies", "🎬", "Movies"], ["biz", "💼", "Business"]]],
-    ["Review", [["analytics", "📊", "Analytics"], ["report", "📄", "Weekly Report"], ["tasks", "🎯", "Goals"], ["hof", "🏆", "Hall of Fame"]]],
-    ["Life", [["workout", "🏋️", "Workout"], ["lift", "💪", "Strength Lab"], ["deen", "🕌", "Deen Corner"], ["extra", "🎭", "Extra-Curriculars"]]],
-    ["App", [["settings", "⚙️", "Settings"]]]
+/* ===== Navigation v79: 7 grouped tabs with sub-tabs, laptop sidebar + keyboard shortcuts, phone bottom bar ===== */
+const LAB_LOCKED = true; // The Virtual Lab is locked. To open it again: set this to false here AND in chemlab.html, and add chemlab.html + chemcore.js back to ASSETS in sw.js.
+const HUBS = [
+    { id: "home", ic: "🏠", l: "Home", k: "1", pages: [["dashboard", "Dashboard"], ["today", "Today"], ["calendar", "Calendar & Trends"]] },
+    { id: "study", ic: "📖", l: "Study", k: "2", pages: [["study", "Study Log"], ["syllabus", "Syllabus"], ["exams", "Exams"], ["homework", "Homework"], ["practice", "Practice"]] },
+    { id: "revise", ic: "🧠", l: "Revise", k: "3", pages: [["flash", "Flashcards"], ["mistakes", "Mistakes"], ["feynman", "Feynman Lab"]] },
+    { id: "create", ic: "🛠️", l: "Create", k: "4", pages: [["research", "Projects"], ["library", "Library"], ["movies", "Movies"], ["biz", "Business"]] },
+    { id: "progress", ic: "📊", l: "Progress", k: "5", pages: [["analytics", "Analytics"], ["report", "Weekly Report"], ["tasks", "Goals"], ["hof", "Hall of Fame"]] },
+    { id: "life", ic: "💪", l: "Life", k: "6", pages: [["workout", "Workout"], ["lift", "Strength Lab"], ["deen", "Deen Corner"], ["extra", "Extra-Curriculars"]] },
+    { id: "lab", ic: "🧪", l: "Virtual Lab", k: "7", lock: LAB_LOCKED, pages: [["vlab", "Virtual Lab"]] },
+    { id: "set", ic: "⚙️", l: "Settings", k: "8", pages: [["settings", "Settings"]] }
 ];
-const NAVF = NAVG.flatMap(g => g[1].map(x => ({ id: x[0], ic: x[1], l: x[2], g: g[0] })));
+const NAVF = HUBS.flatMap(h => h.pages.map(([id, l]) => ({ id, ic: h.ic, l, g: h.l, h: h.id, lock: !!h.lock })));
+const hubOf = id => HUBS.find(h => h.pages.some(p => p[0] === id));
 let curPage = "dashboard", popping = 0;
-const recentPages = () => { try { return JSON.parse(localStorage.getItem("aalimRecent")) || []; } catch (e) { return []; } };
+const lsGet = (k, d) => { try { return JSON.parse(localStorage.getItem(k)) || d; } catch (e) { return d; } };
+const recentPages = () => lsGet("aalimRecent", []);
+function openHub(hid) { const h = HUBS.find(x => x.id === hid); if (!h) return; const last = lsGet("aalimHubSub", {})[hid]; showPage(last && h.pages.some(p => p[0] === last) ? last : h.pages[0][0]); }
+function subStep(d) { const h = hubOf(curPage); if (!h || h.pages.length < 2) return; const i = h.pages.findIndex(p => p[0] === curPage); showPage(h.pages[(i + d + h.pages.length) % h.pages.length][0]); }
+function sideToggle() { document.body.classList.toggle("sideMini"); try { localStorage.setItem("aalimSideMini", document.body.classList.contains("sideMini") ? "1" : "0"); } catch (e) { } }
 function menuRender() {
     const q = ($("mq").value || "").trim().toLowerCase();
-    const btn = x => `<button type="button" class="${x.id === curPage ? "on" : ""}" onclick="menuGo('${x.id}')"><span>${x.ic}</span>${esc(x.l)}</button>`;
+    const btn = x => `<button type="button" class="${x.id === curPage ? "on" : ""}" onclick="menuGo('${x.id}')"><span>${x.lock ? "🔒" : x.ic}</span>${esc(x.l)}</button>`;
     let h = "";
     if (q) {
         const m = NAVF.filter(x => (x.l + " " + x.g).toLowerCase().includes(q));
@@ -3743,7 +3751,7 @@ function menuRender() {
     else {
         const r = recentPages().map(id => NAVF.find(x => x.id === id)).filter(Boolean).slice(0, 4);
         if (r.length) h += `<div class="mt">Recent</div><div class="mg">${r.map(btn).join("")}</div>`;
-        h += NAVG.map(([g, it]) => `<div class="mt">${g}</div><div class="mg">${it.map(([id, ic, l]) => btn({ id, ic, l })).join("")}</div>`).join("");
+        h += HUBS.map(hb => `<div class="mt">${hb.ic} ${hb.l}${hb.lock ? " (locked)" : ""}</div><div class="mg">${hb.pages.map(([id, l]) => btn({ id, l, ic: hb.ic, lock: !!hb.lock })).join("")}</div>`).join("");
     }
     $("mlist").innerHTML = h;
 }
@@ -3752,52 +3760,91 @@ function menuClose() { $("menu").style.display = "none"; document.body.classList
 function menuGo(id) { menuClose(); showPage(id); }
 function navSync(id) {
     curPage = id;
-    const it = NAVF.find(x => x.id === id);
-    document.querySelectorAll("#btm button[data-p]").forEach(b => b.classList.toggle("on", b.dataset.p === id));
-    $("btmMore").classList.toggle("on", !["dashboard", "today", "study", "research"].includes(id));
-    $("curPg").textContent = it ? it.ic + " " + it.l : "";
+    const it = NAVF.find(x => x.id === id), h = hubOf(id);
+    if (h) {
+        const st = lsGet("aalimHubSub", {}); st[h.id] = id;
+        try { localStorage.setItem("aalimHubSub", JSON.stringify(st)); } catch (e) { }
+        document.querySelectorAll("#side button[data-h],#btm button[data-h]").forEach(b => b.classList.toggle("on", b.dataset.h === h.id));
+        $("subtabs").innerHTML = h.pages.length > 1 ? h.pages.map(([pid, l]) => `<button type="button" class="${pid === id ? "on" : ""}" onclick="showPage('${pid}')">${esc(l)}</button>`).join("") : "";
+        const sub = $("subtabs"), act = sub.querySelector(".on"); if (act) sub.scrollLeft = act.offsetLeft - sub.clientWidth / 2 + act.clientWidth / 2;
+        $("curPg").textContent = (h.lock ? "🔒" : h.ic) + " " + (h.pages.length > 1 ? h.l + " › " + it.l : it.l);
+        $("btmMore").classList.toggle("on", !["home", "study", "revise", "create"].includes(h.id));
+    }
     document.title = (it ? it.l + " · " : "") + "Class 10 Command Centre";
 }
 function navInit() {
     const st = document.createElement("style");
-    st.textContent = `#curPg,#btm,#menu{display:none}#menu{position:fixed;inset:0;z-index:1500;background:rgba(0,0,0,.5)}.mbox{position:absolute;left:50%;top:6vh;transform:translateX(-50%);width:min(680px,94vw);max-height:88vh;overflow:auto;background:var(--card);color:var(--text);border-radius:16px;padding:14px;box-shadow:0 12px 40px rgba(0,0,0,.35)}.mtop{display:flex;gap:8px;position:sticky;top:-14px;background:var(--card);padding:0 0 10px;z-index:1}.mtop input{flex:1;font-size:16px}.mt{font-size:12px;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin:12px 0 6px}.mg{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px}.mg button{display:flex;gap:8px;align-items:center;text-align:left;background:var(--bg);color:var(--text);border:1px solid var(--border);border-radius:12px;padding:12px;font-weight:700;font-size:14px}.mg button.on{border-color:var(--accent);box-shadow:inset 0 0 0 1px var(--accent)}.mg button span{font-size:20px}body.menuOpen{overflow:hidden}header{padding-top:10px;padding-bottom:8px}header h1{font-size:clamp(20px,3vw,28px)}nav{margin-top:10px}
-@media(max-width:760px){header{position:sticky!important;padding:8px 4vw}header h1,header p,#nav{display:none}.brand{flex-direction:row!important;flex-wrap:nowrap!important;align-items:center!important}.brand>div{flex:1;min-width:0}.brand>span{flex:none;white-space:nowrap}#curPg{display:block;font-weight:800;font-size:19px}.brand .action{padding:6px 10px}.mbox{top:0;left:0;transform:none;width:100%;height:100%;max-height:100vh;border-radius:0}.mg{grid-template-columns:1fr 1fr}#btm{display:flex;position:fixed;left:0;right:0;bottom:0;z-index:1000;background:var(--card);border-top:1px solid var(--border);padding:6px 4px calc(6px + env(safe-area-inset-bottom));gap:2px}#btm button{flex:1;background:none;border:0;color:var(--muted);font-size:11px;font-weight:700;padding:5px 2px;border-radius:10px;display:flex;flex-direction:column;align-items:center;gap:2px}#btm button span{font-size:21px;line-height:1}#btm button.on{color:var(--accent);background:color-mix(in srgb,var(--accent) 14%,transparent)}body{padding-bottom:84px}#remBn{bottom:84px!important}}`;
+    st.textContent = `#curPg,#btm,#menu,#side{display:none}#subtabs:empty{display:none}#menu{position:fixed;inset:0;z-index:1500;background:rgba(0,0,0,.5)}.mbox{position:absolute;left:50%;top:6vh;transform:translateX(-50%);width:min(720px,94vw);max-height:88vh;overflow:auto;background:var(--card);color:var(--text);border-radius:16px;padding:14px;box-shadow:0 12px 40px rgba(0,0,0,.35)}.mtop{display:flex;gap:8px;position:sticky;top:-14px;background:var(--card);padding:0 0 10px;z-index:1}.mtop input{flex:1;font-size:16px}.mt{font-size:12px;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin:12px 0 6px}.mg{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px}.mg button{display:flex;gap:8px;align-items:center;text-align:left;background:var(--bg);color:var(--text);border:1px solid var(--border);border-radius:12px;padding:11px;font-weight:700;font-size:14px}.mg button.on{border-color:var(--accent);box-shadow:inset 0 0 0 1px var(--accent)}.mg button span{font-size:20px}body.menuOpen{overflow:hidden}
+#subtabs{display:flex;gap:4px;overflow-x:auto;scrollbar-width:none}#subtabs::-webkit-scrollbar{display:none}#subtabs button{border:0;background:none;color:var(--muted);font-weight:700;font-size:14px;padding:7px 13px;border-radius:9px;white-space:nowrap}#subtabs button:hover{background:var(--border)}#subtabs button.on{background:var(--accent);color:#fff}
+.kb{font:600 11px/1 ui-monospace,Consolas,monospace;opacity:.6;border:1px solid currentColor;border-radius:5px;padding:2px 5px;margin-left:4px}
+@media(max-width:760px){header{position:sticky!important;padding:8px 4vw}header h1,header p,#nav,#srchBtn{display:none}.brand{flex-direction:row!important;flex-wrap:nowrap!important;align-items:center!important}.brand>div{flex:1;min-width:0}.brand>span{flex:none;white-space:nowrap}#curPg{display:block;font-weight:800;font-size:18px}.brand .action{padding:6px 10px}#subtabs{margin-top:8px}#subtabs button{color:#dbe3ff;background:#ffffff1c}#subtabs button.on{background:#fff;color:#182848}.mbox{top:0;left:0;transform:none;width:100%;height:100%;max-height:100vh;border-radius:0}.mg{grid-template-columns:1fr 1fr}#btm{display:flex;position:fixed;left:0;right:0;bottom:0;z-index:1000;background:var(--card);border-top:1px solid var(--border);padding:6px 4px calc(6px + env(safe-area-inset-bottom));gap:2px}#btm button{flex:1;background:none;border:0;color:var(--muted);font-size:11px;font-weight:700;padding:5px 2px;border-radius:10px;display:flex;flex-direction:column;align-items:center;gap:2px}#btm button span{font-size:21px;line-height:1}#btm button.on{color:var(--accent);background:color-mix(in srgb,var(--accent) 14%,transparent)}body{padding-bottom:84px}#remBn{bottom:84px!important}}
+/* laptop layout: left sidebar, slim top bar with sub-tabs, denser cards, wide content */
+@media(min-width:761px){:root{--sw:208px}body.sideMini{--sw:64px}body{padding-left:var(--sw)}
+#side{display:flex;position:fixed;left:0;top:0;bottom:0;width:var(--sw);z-index:30;flex-direction:column;gap:2px;padding:14px 10px;background:linear-gradient(185deg,#111827,#1f3380);color:#fff;overflow:auto;scrollbar-width:none}
+.sbrand{display:flex;gap:10px;align-items:center;padding:2px 6px 14px;font-weight:800;line-height:1.15}.sbrand b{font-size:24px}.sbrand small{display:block;font-weight:600;opacity:.65;font-size:11px}
+#side button{display:flex;align-items:center;gap:11px;width:100%;border:0;background:none;color:#e8ecff;padding:10px 11px;border-radius:10px;font-weight:700;font-size:14.5px;text-align:left;transition:background .12s}#side button:hover{background:#ffffff1f}#side button.on{background:#fff;color:#182848}#side button i{font-style:normal;font-size:19px;width:24px;text-align:center}#side button span{flex:1;white-space:nowrap}#side button span.kb{flex:none;color:inherit}#side button.on .kb{opacity:.5}
+.sfoot{margin-top:auto;border-top:1px solid #ffffff26;padding-top:8px;display:flex;flex-direction:column;gap:2px}
+body.sideMini #side span,body.sideMini #side .kb,body.sideMini .sbrand div{display:none}body.sideMini #side button{justify-content:center;padding:10px 0}body.sideMini .sbrand{justify-content:center;padding:2px 0 12px}
+header{position:sticky;top:0;z-index:20;background:color-mix(in srgb,var(--bg) 90%,transparent);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);color:var(--text);padding:9px 24px;box-shadow:none;border-bottom:1px solid var(--border)}
+header .header{max-width:none;display:flex;flex-wrap:wrap;align-items:center;gap:6px 16px}.brand{display:contents}.brand>div{order:1}#subtabs{order:2;flex:1;min-width:0}.brand>span{order:3;display:flex;gap:6px;align-items:center}#pomoBar{order:4}header h1,header p,#nav{display:none}#curPg{display:block;font-size:19px;font-weight:800;white-space:nowrap}
+.brand>span .action[onclick*="settings"]{display:none}#srchBtn{background:var(--card);color:var(--text);border:1px solid var(--border);font-weight:600}#srchBtn .kb{margin-left:8px}@media(max-width:1200px){#srchBtn .st,#srchBtn .kb{display:none}}#themeBtn{background:var(--card);color:var(--text);border:1px solid var(--border)}.pbar{margin:0;background:color-mix(in srgb,var(--accent) 12%,transparent)}.pbar b,.pbar .t{color:var(--text)}
+main{width:auto;max-width:1600px;margin:16px 24px 36px}footer{width:auto;margin-left:24px;margin-right:24px}
+.card{padding:15px 17px;border-radius:14px;margin-bottom:12px}.grid,.grid2{gap:12px}.card h2{font-size:18px}}
+@media(min-width:761px) and (max-width:1023px){body:not(.sideWide){--sw:64px}body:not(.sideWide) #side span,body:not(.sideWide) #side .kb,body:not(.sideWide) .sbrand div{display:none}body:not(.sideWide) #side button{justify-content:center;padding:10px 0}body:not(.sideWide) .sbrand{justify-content:center}}`;
     document.head.appendChild(st);
+    try { if (localStorage.getItem("aalimSideMini") === "1") document.body.classList.add("sideMini"); } catch (e) { }
+    if (innerWidth >= 1024) document.body.classList.add("sideWide");
+    /* sidebar */
+    const sd = document.createElement("aside");
+    sd.id = "side";
+    sd.innerHTML = `<div class="sbrand"><b>⚡</b><div>Command Centre<small>Class 10 · ${APP_VERSION}</small></div></div>` + HUBS.map(h => `<button type="button" data-h="${h.id}" title="${h.l} (${h.k})" onclick="openHub('${h.id}')"><i>${h.lock ? "🔒" : h.ic}</i><span>${h.l}</span><span class="kb">${h.k}</span></button>`).join("") + `<div class="sfoot"><button type="button" onclick="menuOpen()" title="Search pages (/)"><i>🔍</i><span>Search</span><span class="kb">/</span></button><button type="button" onclick="sideToggle()" title="Collapse sidebar (B)"><i>◧</i><span>Collapse</span><span class="kb">B</span></button></div>`;
+    document.body.prepend(sd);
+    /* header: current page title, sub-tabs, search */
+    document.querySelector("header h1").insertAdjacentHTML("afterend", '<div id="curPg"></div>');
+    document.querySelector(".brand").insertAdjacentHTML("afterend", '<div id="subtabs"></div>');
+    const th = $("themeBtn"); if (th) th.insertAdjacentHTML("beforebegin", '<button type="button" class="action secondary" id="srchBtn" onclick="menuOpen()">🔍<span class="st"> Search</span> <span class="kb">Ctrl K</span></button> ');
+    /* phone bottom bar */
     const b = document.createElement("div");
     b.id = "btm";
-    b.innerHTML = [["dashboard", "🏠", "Home"], ["today", "📅", "Today"], ["study", "⏱️", "Log"], ["research", "🛠️", "Projects"]].map(([id, ic, l]) => `<button type="button" data-p="${id}" onclick="showPage('${id}')"><span>${ic}</span>${l}</button>`).join("") + '<button type="button" id="btmMore" onclick="menuOpen()"><span>☰</span>More</button>';
+    b.innerHTML = ["home", "study", "revise", "create"].map(id => { const h = HUBS.find(x => x.id === id); return `<button type="button" data-h="${id}" onclick="openHub('${id}')"><span>${h.ic}</span>${h.l}</button>`; }).join("") + '<button type="button" id="btmMore" onclick="menuOpen()"><span>☰</span>More</button>';
     document.body.appendChild(b);
+    /* search / all-pages palette */
     const m = document.createElement("div");
     m.id = "menu";
-    m.innerHTML = `<div class="mbox"><div class="mtop"><input id="mq" type="search" placeholder="Search pages… (press / anywhere)" oninput="menuRender()" autocomplete="off"><button type="button" class="secondary" onclick="menuClose()">✕</button></div><div id="mlist"></div><div class="muted" style="font-size:12px;text-align:center;margin-top:12px">Version ${APP_VERSION}</div></div>`;
+    m.innerHTML = `<div class="mbox"><div class="mtop"><input id="mq" type="search" placeholder="Search pages…  (Enter opens the first match)" oninput="menuRender()" autocomplete="off"><button type="button" class="secondary" onclick="menuClose()">✕</button></div><div id="mlist"></div><div class="muted" style="font-size:12px;text-align:center;margin-top:12px">Keys: 1–8 tabs · [ ] sub-tabs · / or Ctrl K search · B sidebar · T theme · Version ${APP_VERSION}</div></div>`;
     m.addEventListener("click", e => { if (e.target === m) menuClose(); });
     document.body.appendChild(m);
-    $("nav").insertAdjacentHTML("afterbegin", '<button type="button" onclick="menuOpen()">☰ All pages</button>');
-    document.querySelector("header h1").insertAdjacentHTML("afterend", '<div id="curPg"></div>');
     const orig = showPage;
     showPage = function (id) {
         orig(id); navSync(id);
         try {
             localStorage.setItem("aalimPage", id);
             localStorage.setItem("aalimRecent", JSON.stringify([id].concat(recentPages().filter(x => x !== id)).slice(0, 6)));
-            if (!popping && location.hash !== "#" + id) history.pushState({ p: id }, "", "#" + id);
+            if (!popping && location.hash !== "#!" + id) history.pushState({ p: id }, "", "#!" + id);
         }
         catch (e) { }
     };
-    window.addEventListener("popstate", () => { const id = location.hash.slice(1), el = id && $(id); if (el && el.classList.contains("page")) { popping = 1; showPage(id); popping = 0; } });
+    window.addEventListener("popstate", () => { const id = location.hash.replace(/^#!?/, ""), el = id && $(id); if (el && el.classList.contains("page")) { popping = 1; showPage(id); popping = 0; } });
     document.addEventListener("keydown", e => {
         const t = e.target, typing = t && (/^(INPUT|TEXTAREA|SELECT)$/.test(t.tagName) || t.isContentEditable), rd = $("rdr") && $("rdr").style.display !== "none";
         if (e.key === "Escape" && $("menu").style.display === "block") return menuClose();
         if (rd) return;
         if (e.key === "Enter" && t && t.id === "mq") { const f = $("mlist").querySelector("button"); if (f) f.click(); return; }
-        if (((e.key === "k" || e.key === "K") && (e.ctrlKey || e.metaKey)) || (e.key === "/" && !typing)) { e.preventDefault(); menuOpen(); }
+        if (((e.key === "k" || e.key === "K") && (e.ctrlKey || e.metaKey)) || (e.key === "/" && !typing)) { e.preventDefault(); menuOpen(); return; }
+        if (typing || e.ctrlKey || e.metaKey || e.altKey || $("menu").style.display === "block") return;
+        const hub = HUBS.find(h => h.k === e.key);
+        if (hub) { e.preventDefault(); openHub(hub.id); }
+        else if (e.key === "]" || e.key === ".") { e.preventDefault(); subStep(1); }
+        else if (e.key === "[" || e.key === ",") { e.preventDefault(); subStep(-1); }
+        else if (e.key === "b" || e.key === "B") sideToggle();
+        else if (e.key === "t" || e.key === "T") toggleTheme();
     });
-    const start = location.hash.slice(1) || localStorage.getItem("aalimPage") || "dashboard";
-    if ($(start) && $(start).classList.contains("page")) showPage(start); else navSync("dashboard");
+    const start = location.hash.replace(/^#!?/, "") || localStorage.getItem("aalimPage") || "dashboard";
+    if ($(start) && $(start).classList.contains("page")) showPage(start); else { showPage("dashboard"); }
 }
 setTimeout(navInit, 0);
 /* ===== Version label ===== */
-const APP_VERSION = "v78"; // keep in step with CACHE in sw.js
+const APP_VERSION = "v79"; // keep in step with CACHE in sw.js
 function paintVer() { ["appVer", "appVer2"].forEach(id => { const el = $(id); if (el)
     el.textContent = APP_VERSION + (navigator.onLine ? "" : " · offline"); }); }
 window.addEventListener("online", paintVer);
@@ -4168,6 +4215,7 @@ window.__appBooted = true;
 const $=id=>document.getElementById(id),E=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 function init(){
   const sec=document.createElement("section");sec.id="vlab";sec.className="page";
+  if(typeof LAB_LOCKED!=="undefined"&&LAB_LOCKED){sec.innerHTML='<div class="card" style="text-align:center;padding:60px 20px"><div style="font-size:64px">🔒</div><h2 style="margin:10px 0 6px">The Virtual Lab is locked</h2><p class="muted" style="max-width:480px;margin:0 auto">This part of the app is switched off for now. Carry on with the other tabs.</p><p class="muted" style="font-size:12px;margin-top:18px">Owner: to open it again, set LAB_LOCKED to false in index.html and chemlab.html.</p></div>';document.querySelector("main").appendChild(sec);return}
   sec.innerHTML='<div class="card" style="padding:0;overflow:hidden"><iframe id="vlabFrame" title="Virtual Chemistry Lab" style="width:100%;height:calc(100vh - 150px);min-height:640px;border:0;display:block"></iframe></div>';
   document.querySelector("main").appendChild(sec);
 }
@@ -4180,7 +4228,7 @@ function aiReveal(){
   Ls.classList.remove("aiGo");Ls.style.display="none";Ls.before(t);
   setTimeout(()=>{t.remove();Ls.style.display="";[...Ls.children].forEach((c,i)=>c.style.setProperty("--i",i));Ls.classList.add("aiGo");setTimeout(()=>Ls.classList.remove("aiGo"),2600)},750);
 }
-const sp=window.showPage;window.showPage=function(id){sp.apply(this,arguments);if(id==="today")aiReveal();if(id==="vlab"){const f=$("vlabFrame");if(f&&!f.getAttribute("src")){fetch("chemlab.html",{cache:"no-cache"}).then(r=>{if(!r.ok)throw new Error(r.status);f.src="chemlab.html"}).catch(()=>{const box=f.parentNode;if(box)box.innerHTML='<div style="padding:22px;line-height:1.5"><b>🧪 The Virtual Lab file was not found.</b><br>Upload <code>chemlab.html</code> to the same folder as <code>index.html</code> (the name must be all lowercase), then reload the app.</div>'})}}};
+const sp=window.showPage;window.showPage=function(id){sp.apply(this,arguments);if(id==="today")aiReveal();if(id==="vlab"&&!(typeof LAB_LOCKED!=="undefined"&&LAB_LOCKED)){const f=$("vlabFrame");if(f&&!f.getAttribute("src")){fetch("chemlab.html",{cache:"no-cache"}).then(r=>{if(!r.ok)throw new Error(r.status);f.src="chemlab.html"}).catch(()=>{const box=f.parentNode;if(box)box.innerHTML='<div style="padding:22px;line-height:1.5"><b>🧪 The Virtual Lab file was not found.</b><br>Upload <code>chemlab.html</code> to the same folder as <code>index.html</code> (the name must be all lowercase), then reload the app.</div>'})}}};
 })();
 </script>
 

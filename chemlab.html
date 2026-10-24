@@ -170,6 +170,7 @@ textarea,input.t{width:100%;padding:7px 9px;border:1px solid var(--bd);border-ra
 <div class="lab" id="lab">
  <div class="top">
   <h1>🧪 <span class="long">Virtual Chemistry Lab</span></h1>
+  <button class="btn" id="sndBtn" aria-label="Sound">🔊</button>
   <button class="btn" id="gogBtn">🥽 Goggles: OFF</button>
   <div class="warp"><span>Time</span><button class="btn on" data-w="1">×1</button><button class="btn" data-w="2">×2</button><button class="btn" data-w="5">×5</button><button class="btn" data-w="10">×10</button></div>
   <button class="btn danger" id="resetBtn">🧹 Clear table</button>
@@ -191,8 +192,14 @@ textarea,input.t{width:100%;padding:7px 9px;border:1px solid var(--bd);border-ra
  </div>
 </div>
 
-<script src="chemcore.js"></script>
 <script>
+/* The Virtual Lab is LOCKED. To open it again set LAB_LOCKED to false here AND in index.html. */
+var LAB_LOCKED=true;
+if(LAB_LOCKED){document.body.innerHTML='<div style="position:fixed;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;background:#111827;color:#fff;font-family:system-ui,sans-serif;text-align:center;padding:20px"><div style="font-size:64px">🔒</div><h2 style="margin:0">The Virtual Lab is locked</h2><p style="opacity:.7;margin:0">This part of the app is switched off for now.</p></div>'}
+</script>
+<script>if(!window.LAB_LOCKED)document.write('<script src="chemcore.js"><\/script>')</script>
+<script>
+if(window.LAB_LOCKED)throw new Error("Virtual Lab locked");
 /* ================= CHEMISTRY ENGINE: provided by chemcore.js (principle-based). Bridge to the names the UI uses ================= */
 if(!window.Engine)document.body.insertAdjacentHTML("afterbegin",'<div style="padding:20px;color:#fff;background:#b00">chemcore.js failed to load. Reload the app.</div>');
 const {phOf,react,step,addLiquid,addSolid,pourTo,newContainer,solnColour,cname,tickContainer,RX,OBS,observe,log,regRx,PPT,SOLCOL,SOLNAME,DEPCOL,DEPWORD,mix,hex,hx,uiColor,WATER,emptyContainer}=window.Engine;
@@ -649,13 +656,13 @@ function moveMatch(e){
   if(box){const r=box.el.querySelector(".strip").getBoundingClientRect();
    const inside=e.clientX>=r.left-8&&e.clientX<=r.right+8&&e.clientY>=r.top-10&&e.clientY<=r.bottom+10;
    if(inside&&m.wasIn){
-    if(speed>.3)m.strike+=dist;else if(dist>1&&m.strike<6&&now-m.slowT>2500){m.slowT=now;toast("Too slow. Strike it faster along the rough strip")}
+    if(speed>.3){m.strike+=dist;SFX.scratch(speed*.1)}else if(dist>1&&m.strike<6&&now-m.slowT>2500){m.slowT=now;toast("Too slow. Strike it faster along the rough strip")}
     if(m.strike>36)lightMatch(m)}
    else if(!inside)m.strike=0;
    m.wasIn=inside}}
 }
 function toggleGas(b){
- b.gas=!b.gas;b.gasT=0;b.warned=false;
+ SFX.click();b.gas=!b.gas;b.gasT=0;b.warned=false;
  if(!b.gas){if(b.lit){b.lit=false;log(b,"gas tap closed: the flame goes out")}else log(b,"gas tap closed")}
  else log(b,"gas tap opened: gas is flowing but not lit. Strike a match and hold it to the top of the barrel");
  burnerView(b);toast(b.gas?"Gas tap open (hissing). Light it with a match!":"Gas tap closed");renderPanel(true);
@@ -704,14 +711,15 @@ function runPours(real){
    /* visuals */
    const col=hex(hx(j.ch.col.length===7?j.ch.col:"#dff0ff"));
    if(j.kind==="liq"){
+    SFX.pour(c.vol/c.cap,.5);
     if(!j.stream){j.stream=document.createElement("div");j.stream.className="stream";ws.appendChild(j.stream)}
     const top=my+6*g.sc,h=Math.max(0,g.ys-top);
     j.stream.style.cssText=`left:${(mx-2.5).toFixed(1)}px;top:${top.toFixed(1)}px;height:${h.toFixed(1)}px;--c:${col}`;
     j.pl-=real;if(j.pl<=0){j.pl=.55;spawnPlume(c,col,j.ch.id==="water"?.25:.55)}
    }else if(j.kind==="drop"){
-    j.sp-=real;if(j.sp<=0){j.sp=.42;const dr=document.createElement("i");dr.className="drop";dr.style.cssText=`left:${mx.toFixed(1)}px;top:${(my+8*g.sc).toFixed(1)}px;--d:${Math.max(10,g.ys-my-10).toFixed(1)}px;--c:${col}`;ws.appendChild(dr);dr.onanimationend=()=>{dr.remove();spawnPlume(c,col,.35)}}
+    j.sp-=real;if(j.sp<=0){j.sp=.42;const dr=document.createElement("i");dr.className="drop";dr.style.cssText=`left:${mx.toFixed(1)}px;top:${(my+8*g.sc).toFixed(1)}px;--d:${Math.max(10,g.ys-my-10).toFixed(1)}px;--c:${col}`;ws.appendChild(dr);dr.onanimationend=()=>{dr.remove();SFX.plink(c.x);spawnPlume(c,col,.35)}}
    }else{
-    j.sp-=real;if(j.sp<=0){j.sp=.04;for(let i=0;i<2;i++){const gr=document.createElement("i");gr.className="grain";gr.style.cssText=`left:${(mx+Math.random()*8-4).toFixed(1)}px;top:${(my+8*g.sc).toFixed(1)}px;--d:${Math.max(10,g.ys-my-6).toFixed(1)}px;background:${j.ch.col}`;ws.appendChild(gr);gr.onanimationend=()=>gr.remove()}}
+    j.sp-=real;if(j.sp<=0){j.sp=.04;SFX.grain(c.x);for(let i=0;i<2;i++){const gr=document.createElement("i");gr.className="grain";gr.style.cssText=`left:${(mx+Math.random()*8-4).toFixed(1)}px;top:${(my+8*g.sc).toFixed(1)}px;--d:${Math.max(10,g.ys-my-6).toFixed(1)}px;background:${j.ch.col}`;ws.appendChild(gr);gr.onanimationend=()=>gr.remove()}}
    }
    observe(c);view(c);
   }else{
@@ -799,7 +807,7 @@ addEventListener("pointerup",e=>{
  if(d.dt){dropDt(d);return}
  if(d.item){const it=d.item;it.el.classList.remove("drag");const t=$("trash").getBoundingClientRect();$("trash").classList.remove("hot");
   if(d.moved){if(e.clientX>t.left&&e.clientX<t.right&&e.clientY>t.top&&e.clientY<t.bottom){removeItem(it);toast("Removed");return}
-   if(isC(it)){tryMount(it);trySlot(it)}return}
+   SFX.set(it);if(isC(it)){tryMount(it);trySlot(it)}return}
   if(d.swt&&it.type==="mug"){toggleSwitch(it);return}
   if(it.type==="bottle"&&d.cap){toggleBottle(it);select(it.id);return}
   if(state.pour&&state.pour!==it&&isC(it)){const f=state.pour;state.pour=null;doPour(f,it);return}
@@ -1042,6 +1050,7 @@ function tickTiltPour(real){
  if(a.tilt>38){
   const rate=Math.min(20,(a.tilt-38)/70*20),amt=pourTo(a,t,clamp(rate*real/a.vol,0,1));
   if(amt>0){
+   SFX.pour(t.vol/t.cap,rate/20);
    if(!a._pl||performance.now()-a._pl>4000){a._pl=performance.now();log(t,"liquid poured in from "+a.label)}
    const v=vrect(a),w=vrect(t),col=hex(solnColour(a).rgb),mx=v.l+(v.G.cx+a.tdir*v.G.hw(v.G.ytop)*.9)*v.sc,my=v.t+v.G.ytop*v.sc+4;
    const ty=w.t+levelY(w.G,t.vol,t.cap)*w.sc,tx=clamp(mx,w.l+(w.G.cx-w.G.hw(w.G.ytop)*.7)*w.sc,w.l+(w.G.cx+w.G.hw(w.G.ytop)*.7)*w.sc);
@@ -1068,10 +1077,11 @@ function placeFree(f){f.el.style.left=f.x+"px";f.el.style.top=f.y+"px";f.el.styl
 function removeFree(f){f.el.remove();const i=frees.indexOf(f);if(i>=0)frees.splice(i,1)}
 function defaultFreePos(){const r=tr();return[clamp(ws.clientWidth*.5+Math.random()*80-40,100,ws.clientWidth-60),r.y1-70-Math.random()*60]}
 function rubVis(f){
+ SFX.scrape();
  if(f.kind==="ribbon"){const k=f.rub;f.el.querySelector(".rib").setAttribute("stroke",hex(mix([125,129,136],[232,236,242],k)));f.el.querySelector(".ribhi").setAttribute("opacity",(k*.9).toFixed(2))}
  else{f.el.querySelector(".nl").setAttribute("fill",hex(mix([110,95,85],[184,188,196],f.rub)));f.el.querySelector(".nlh").setAttribute("opacity",(f.rub*.8).toFixed(2))}
 }
-function stirIn(c,dist){c.stir=Math.max(c.stir,.7);c.stirE=(c.stirE||0)+dist;if(!c._sl||performance.now()-c._sl>3000){c._sl=performance.now();log(c,"stirred with the glass rod")}}
+function stirIn(c,dist){SFX.tink(c.x);c.stir=Math.max(c.stir,.7);c.stirE=(c.stirE||0)+dist;if(!c._sl||performance.now()-c._sl>3000){c._sl=performance.now();log(c,"stirred with the glass rod")}}
 function moveFree(e){
  const d=drag,f=d.free;
  if(!d.moved&&Math.hypot(e.clientX-d.x0,e.clientY-d.y0)>4){d.moved=true;f.el.classList.add("held")}
@@ -1183,7 +1193,7 @@ function tickDtubes(dt){
 }
 /* ---------- electrolysis cell: switch, gas collected in two inverted tubes ---------- */
 function elxHTML(){return `<svg width="220" height="192" viewBox="0 0 220 192" style="overflow:visible"><path d="M40 160 Q40 184 100 181" fill="none" stroke="#2c3e50" stroke-width="3"/><path d="M122 181 L160 183 L198 150" fill="none" stroke="#2c3e50" stroke-width="3"/><path d="M84 160 Q84 192 150 189 L160 152" fill="none" stroke="#c0392b" stroke-width="3"/><rect x="150" y="148" width="58" height="42" rx="5" fill="#2d3340" stroke="#12151b"/><rect x="154" y="153" width="50" height="15" rx="2" fill="#f4d03f"/><text x="179" y="165" text-anchor="middle" font-size="10" font-weight="800" fill="#1a1a1a">6 V</text><circle cx="160" cy="146" r="3.6" fill="#c0392b"/><circle cx="198" cy="146" r="3.6" fill="#2c3e50"/><rect x="96" y="178" width="30" height="9" rx="2" fill="#5a5f68"/><line class="lev" x1="100" y1="176" x2="122" y2="176" stroke="#d6dae0" stroke-width="3.6" stroke-linecap="round"/><rect class="swt" x="92" y="158" width="40" height="32" fill="transparent"/></svg>`}
-function toggleSwitch(m){m.sw=!m.sw;m.el.classList.toggle("on",m.sw);toast(m.sw?"🔌 Switch ON: current flows through the water":"Switch OFF");log(m,m.sw?"the 6 V battery is switched on":"the battery is switched off");if(m.sw)m.eb=0}
+function toggleSwitch(m){SFX.click();m.sw=!m.sw;m.el.classList.toggle("on",m.sw);toast(m.sw?"🔌 Switch ON: current flows through the water":"Switch OFF");log(m,m.sw?"the 6 V battery is switched on":"the battery is switched off");if(m.sw)m.eb=0}
 function trySlot(t){
  if(t.type!=="tube"&&t.type!=="btube")return;
  for(const m of state.items){if(m.type!=="mug")continue;const w=vrect(m);
@@ -1260,7 +1270,7 @@ function spawnBottle(ch,x,y){
  const d=document.createElement("div");d.className="it bottle";d.dataset.id=b.id;
  d.innerHTML=`<div class="vessel" style="width:64px;height:100px"><div class="shadow"></div><div class="svgh">${bottleSVG(ch)}</div><i class="capoff"></i></div><div class="lbl">${E(ch.f.length<9?ch.f:ch.n.split(" ")[0])}</div>`;
  ws.appendChild(d);b.el=d;state.tools.push(b);hookItem(b);place(b);select(b.id);$("hint").style.display="none";return b}
-function toggleBottle(b){b.open=!b.open;b.el.classList.toggle("open",b.open);toast(b.open?"🧴 Cap off. Tilt the bottle over a container to pour.":"🧴 Cap back on.")}
+function toggleBottle(b){SFX.cap();b.open=!b.open;b.el.classList.toggle("open",b.open);toast(b.open?"🧴 Cap off. Tilt the bottle over a container to pour.":"🧴 Cap back on.")}
 function bottleMouth(a){const h=a.el.offsetHeight*a.sc;return{x:a.x,y:a.y-h+16*a.sc}}
 function bottleTarget(a){
  const m=bottleMouth(a);let best=null,bd=1e9;
@@ -1289,19 +1299,19 @@ function tickBottlePour(real){
   if(ch.sol||ch.ind){toast("A burette takes liquids only");stop();return}
   if(t.ch&&t.ch.id!==ch.id&&t.vol>.5){if(!a._w||performance.now()-a._w>3000){a._w=performance.now();toast("The burette already holds "+t.ch.n+". Empty it first (open the tap).")}stop();return}
   amt=Math.min(amt,t.cap-t.vol);if(amt<=1e-6){stop();return}
-  t.ch=ch;t.vol+=amt;a.stock-=amt;a._lt=t;a._lamt=(a._lamt||0)+amt;buretteView(t);
+  SFX.pour(t.vol/t.cap,.5);t.ch=ch;t.vol+=amt;a.stock-=amt;a._lt=t;a._lamt=(a._lamt||0)+amt;buretteView(t);
   const q=buTop(t);if(!bStream){bStream=document.createElement("div");bStream.className="stream";ws.appendChild(bStream)}
   bStream.style.cssText=`left:${(mx-2.5).toFixed(1)}px;top:${my.toFixed(1)}px;height:${Math.max(4,q.y+20-my).toFixed(1)}px;--c:${col};z-index:899`;return}
  const ok=ch.sol?addSolid(t,ch.id,amt):addLiquid(t,ch,amt);
  if(!ok){toast(t.label+" is full");stop();return}
  a.stock-=amt;a._lt=t;a._lamt=(a._lamt||0)+amt;
  const w=vrect(t),ty=w.t+levelY(w.G,t.vol,t.cap)*w.sc,tx=clamp(mx,w.l+(w.G.cx-w.G.hw(w.G.ytop)*.7)*w.sc,w.l+(w.G.cx+w.G.hw(w.G.ytop)*.7)*w.sc);
- if(!ch.sol&&!ch.ind){
+ if(!ch.sol&&!ch.ind){SFX.pour(t.vol/t.cap,k);
   if(!bStream){bStream=document.createElement("div");bStream.className="stream";ws.appendChild(bStream)}
   bStream.style.cssText=`left:${tx.toFixed(1)}px;top:${my.toFixed(1)}px;height:${Math.max(0,ty-my).toFixed(1)}px;--c:${col};z-index:899`;
   if(!t._pm||performance.now()-t._pm>500){t._pm=performance.now();spawnPlume(t,col,ch.id==="water"?.25:.5)}
  }else{stop();a._sp=(a._sp||0)-real;
-  if(a._sp<=0){a._sp=ch.sol?.05:.45;const n=ch.sol?2:1;for(let i=0;i<n;i++){const e=document.createElement("i");e.className=ch.sol?"grain":"drop";e.style.cssText=`left:${(tx+Math.random()*6-3).toFixed(1)}px;top:${my.toFixed(1)}px;--d:${Math.max(10,ty-my-4).toFixed(1)}px;--c:${col};background:${ch.sol?ch.col:col}`;ws.appendChild(e);e.onanimationend=()=>{e.remove();if(!ch.sol)spawnPlume(t,col,.35)}}}}
+  if(a._sp<=0){a._sp=ch.sol?.05:.45;const n=ch.sol?2:1;for(let i=0;i<n;i++){SFX[ch.sol?"grain":"plink"](t.x);const e=document.createElement("i");e.className=ch.sol?"grain":"drop";e.style.cssText=`left:${(tx+Math.random()*6-3).toFixed(1)}px;top:${my.toFixed(1)}px;--d:${Math.max(10,ty-my-4).toFixed(1)}px;--c:${col};background:${ch.sol?ch.col:col}`;ws.appendChild(e);e.onanimationend=()=>{e.remove();if(!ch.sol)spawnPlume(t,col,.35)}}}}
  observe(t);view(t)}
 /* ---------- library: what does this reagent do with the others? (run by the engine in a scratch beaker) ---------- */
 const LIBC={};
@@ -1368,7 +1378,7 @@ function tickBurettes(real){
   const col=hex(hx((b.ch.col||"#dff0ff").length===7?b.ch.col:"#dff0ff"));
   if(t){if(!addLiquid(t,b.ch,d)){toast(t.label+" is full");b.flow=0;buretteView(b)}else{observe(t);view(t)}}
   b.sp-=real;if(b.sp<=0){b.sp=Math.max(.1,.5/(.3+b.flow*4));const e=document.createElement("i");e.className="drop";let ty=q.tip+90;if(t){const w=vrect(t);ty=w.t+levelY(w.G,t.vol,t.cap)*w.sc}
-   e.style.cssText=`left:${q.x.toFixed(1)}px;top:${q.tip.toFixed(1)}px;--d:${Math.max(8,ty-q.tip).toFixed(1)}px;--c:${col}`;ws.appendChild(e);e.onanimationend=()=>e.remove()}}}
+   e.style.cssText=`left:${q.x.toFixed(1)}px;top:${q.tip.toFixed(1)}px;--d:${Math.max(8,ty-q.tip).toFixed(1)}px;--c:${col}`;ws.appendChild(e);e.onanimationend=()=>{e.remove();SFX.plink(t?t.x:q.x)}}}}
 function renderBurettePanel(b,full){
  const pb=$("pbody");
  if(full||!$("brd")){pb.innerHTML=`<h3 style="margin:0 0 6px">${E(b.label)}</h3><div class="row"><span>Holds</span><b id="bhd"></b></div><div class="row"><span>Reading</span><b id="brd"></b></div><div class="row"><span>Tap</span><b id="btp"></b></div>
@@ -1384,12 +1394,96 @@ function seenSet(){const t=OBS.map(o=>o.text).join("\n"),ds=doneGet();let ch=fal
 function checkHTML(a,i,ds){if(!a[2])return"";let n=0;const rows=a[2].map((c,j)=>{const ok=ds[i+"."+j];if(ok)n++;return`<div style="font-size:12px;padding:1px 0;color:${ok?"var(--ok,#16a34a)":"var(--mut)"}">${ok?"✔":"○"} ${E(c[0])}</div>`}).join("");
  return`<div style="margin-top:3px"><small style="color:var(--tx)"><b>${n===a[2].length?"✅ All observations made":"Observations: "+n+"/"+a[2].length}</b></small>${rows}</div>`}
 
+/* ================= v78: sound effects, all synthesised live with the Web Audio API (no files, works offline) ================= */
+const SFX=(()=>{
+ let ctx=null,mst=null,nb=null,on=true;const loops={},last={};let sinceFlow=9,flowLv=0,flowFill=0,flowSolid=false,flowT=0;
+ try{on=localStorage.getItem("aalimChemSnd")!=="0"}catch(e){}
+ const R=Math.random,now=()=>ctx?ctx.currentTime:0;
+ function init(){
+  if(ctx){if(ctx.state==="suspended")ctx.resume();return}
+  if(!on)return;const AC=window.AudioContext||window.webkitAudioContext;if(!AC)return;
+  try{ctx=new AC()}catch(e){return}
+  mst=ctx.createGain();mst.gain.value=.6;const cp=ctx.createDynamicsCompressor();cp.threshold.value=-18;cp.ratio.value=5;mst.connect(cp);cp.connect(ctx.destination);
+  const n=ctx.sampleRate*2,b=ctx.createBuffer(1,n,ctx.sampleRate),d=b.getChannelData(0);for(let i=0;i<n;i++)d[i]=R()*2-1;nb=b}
+ const ready=()=>on&&ctx&&ctx.state==="running";
+ const panOf=x=>typeof x==="number"&&ws?clamp((x/Math.max(1,ws.clientWidth)-.5)*1.5,-.8,.8):0;
+ function dest(x){if(ctx.createStereoPanner){const p=ctx.createStereoPanner();p.pan.value=panOf(x);p.connect(mst);return p}return mst}
+ /* a short burst of filtered noise with an attack/decay envelope */
+ function noise(o){if(!ready())return;const t=now()+(o.at||0),s=ctx.createBufferSource();s.buffer=nb;s.loopStart=0;
+  const f=ctx.createBiquadFilter();f.type=o.type||"bandpass";f.frequency.value=o.f||2000;f.Q.value=o.q||.7;
+  if(o.f2)f.frequency.exponentialRampToValueAtTime(o.f2,t+o.d);
+  const g=ctx.createGain();g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(o.g||.3,t+(o.a||.002));g.gain.exponentialRampToValueAtTime(.0001,t+o.d);
+  s.connect(f);f.connect(g);g.connect(dest(o.x));s.start(t,R()*1.5,o.d+.05)}
+ function tone(o){if(!ready())return;const t=now()+(o.at||0),os=ctx.createOscillator();os.type=o.type||"sine";os.frequency.setValueAtTime(o.f,t);
+  if(o.f2)os.frequency.exponentialRampToValueAtTime(o.f2,t+o.d);
+  const g=ctx.createGain();g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(o.g||.2,t+(o.a||.003));g.gain.exponentialRampToValueAtTime(.0001,t+o.d);os.connect(g);g.connect(dest(o.x));os.start(t);os.stop(t+o.d+.05)}
+ /* persistent noise loops whose level and pitch we steer every frame */
+ function loop(name,type,f,q){if(loops[name])return loops[name];const s=ctx.createBufferSource();s.buffer=nb;s.loop=true;
+  const fl=ctx.createBiquadFilter();fl.type=type;fl.frequency.value=f;fl.Q.value=q||.7;const g=ctx.createGain();g.gain.value=0;s.connect(fl);fl.connect(g);g.connect(mst);s.start();
+  return loops[name]={g,fl,s}}
+ function lvl(name,type,f,q,level,freq){const L=loop(name,type,f,q),t=now();L.g.gain.setTargetAtTime(level,t,.07);if(freq)L.fl.frequency.setTargetAtTime(freq,t,.1)}
+ const th=(k,ms)=>{const n=performance.now();if(last[k]&&n-last[k]<ms)return false;last[k]=n;return true};
+ /* ---- one-off sounds ---- */
+ const GL={tube:[3300,.7],btube:[2900,.8],beaker:[2100,1],flask:[1900,1.1],cyl:[2600,.9],dish:[1500,1],watch:[3400,.5],mug:[1300,1.2]};
+ function glass(type,x,g){if(!ready())return;const [f0,dl]=GL[type]||[2200,1];g=g||.22;
+  [[1,1,.28],[2.76,.5,.17],[5.4,.28,.1],[8.93,.12,.06]].forEach(([r,a,d])=>tone({f:f0*r*(1+R()*.02),d:d*dl,g:g*a,x,a:.001}));
+  noise({type:"bandpass",f:4200,q:1.2,d:.012,g:g*.9,x})}
+ function thud(x,g){noise({type:"lowpass",f:380,q:.5,d:.1,g:(g||.5)});tone({f:130,f2:55,d:.11,g:(g||.5)*.7,x});noise({type:"highpass",f:2500,d:.008,g:.12,x})}
+ function cap(){if(!ready())return;for(let i=0;i<4;i++)noise({type:"bandpass",f:1700+R()*300,q:5,d:.02,g:.14,at:i*.045});tone({f:900,f2:420,d:.05,g:.12,at:.19});noise({type:"bandpass",f:2300,q:2,d:.03,g:.2,at:.19})}
+ function click(){noise({type:"highpass",f:1500,d:.02,g:.22});tone({f:1900,f2:900,d:.025,g:.1})}
+ function plink(x){if(!ready())return;const f=650+R()*700;tone({f,f2:f*1.35,d:.075,g:.12+R()*.05,x});tone({f:f*2.3,d:.03,g:.03,x})}
+ function bubble(g,lo,hi,x){if(!ready())return;const f=(lo||250)+R()*((hi||900)-(lo||250));tone({f,f2:f*1.6,d:.03+R()*.03,g:g||.07,x,a:.001,at:R()*.1})}
+ function grain(x,g){noise({type:"bandpass",f:2500+R()*4000,q:2,d:.006+R()*.006,g:g||.07,x})}
+ function pop(x){noise({type:"bandpass",f:1400,q:.3,d:.07,g:.9,a:.001,x});tone({f:260,f2:70,d:.09,g:.6,a:.001,x});noise({type:"highpass",f:3000,d:.25,g:.12,at:.02,x})}
+ function whump(x){noise({type:"lowpass",f:520,f2:140,q:.6,d:.28,g:.7,a:.01,x});tone({f:75,f2:45,d:.3,g:.5,a:.01,x});noise({type:"highpass",f:3500,d:.2,g:.1,at:.02,x})}
+ function pff(x){noise({type:"lowpass",f:700,f2:200,d:.18,g:.3,x})}
+ function strike(x){noise({type:"highpass",f:2200,f2:900,d:.45,g:.22,a:.005,x});for(let i=0;i<5;i++)noise({type:"highpass",f:4000,d:.01,g:.18,at:R()*.25,x});noise({type:"lowpass",f:500,d:.2,g:.15,at:.03,x})}
+ function crackle(n,dur,x,g){for(let i=0;i<n;i++)noise({type:"highpass",f:2500+R()*3500,d:.004+R()*.012,g:(g||.28)*(.4+R()*.6),at:R()*dur,x})}
+ function flash(x){noise({type:"highpass",f:2800,f2:1200,d:1.1,g:.35,a:.01,x});crackle(35,1.2,x,.3);noise({type:"lowpass",f:900,d:.5,g:.25,x})}
+ function scratch(sp){if(!th("scr",45))return;noise({type:"bandpass",f:2600+R()*1500,q:.9,d:.05,g:.09+Math.min(.12,sp||0),x:undefined})}
+ function scrape(){if(!th("scp",55))return;noise({type:"bandpass",f:1800+R()*2500,q:.8,d:.06,g:.1})}
+ function tink(x){if(!th("tink",160))return;tone({f:3600+R()*900,d:.12,g:.07,x,a:.001});tone({f:7200,d:.05,g:.03,x})}
+ function set(it){if(!it)return;if(GL[it.type])glass(it.type,it.x,.2);else thud(it.x,.4)}
+ /* ---- pouring: a bandpass noise whose pitch rises as the vessel fills, with a gentle glug ---- */
+ function pour(fill,flow,solid){flowLv=Math.max(flowLv,.1+.3*clamp(flow,0,1));flowFill=fill;flowSolid=!!solid;flowT=performance.now()}
+ /* ---- continuous sounds, called from the main loop ---- */
+ function tick(real){
+  if(!ready()){return}
+  const pouring=performance.now()-flowT<220&&!flowSolid;
+  lvl("pour","bandpass",1600,.8,pouring?flowLv:0,700+clamp(flowFill,0,1)*2300);flowLv=0;
+  if(pouring&&th("glug",120))tone({f:260+R()*140,f2:420+R()*100,d:.06,g:.05,a:.002});
+  let hiss=0,roar=0,fizz=0,boil=0,sizz=0;
+  for(const b of state.tools){if(b.type!=="bunsen")continue;if(b.lit)roar=Math.max(roar,.1+b.gas*.35);else if(b.gas>.05)hiss=Math.max(hiss,.04+b.gas*.16)}
+  let bps=0,minPan=undefined,hot=0;
+  for(const c of state.items){
+   const rate=Math.max(c.gasRate||0,c.boil?1.6e-4:0,c._xg||0);
+   if(rate>0&&c.vol>.3){bps+=clamp(rate/1.2e-4*7,0,40);fizz=Math.max(fizz,clamp(rate/7e-4,0,1)*.22);if(c.boil)boil=Math.max(boil,.2);minPan=c.x}
+   if((c.flash||0)>.3)sizz=Math.max(sizz,.25*c.flash);
+   if(c.heatW>0&&c.type!=="beaker"&&Math.random()<real*.8)hot=1;}
+  lvl("hiss","highpass",5200,.5,hiss);lvl("roar","lowpass",420,.6,roar,300+roar*900);
+  lvl("fizz","highpass",6500,.4,fizz);lvl("boil","lowpass",260,.6,boil);lvl("sizz","highpass",4200,.5,sizz);
+  if(roar>0&&Math.random()<real*5)noise({type:"bandpass",f:180+R()*200,q:2,d:.08,g:.05});
+  let n=bps*real;n=Math.min(14,Math.floor(n)+(Math.random()<n%1?1:0));
+  for(let i=0;i<n;i++)bubble(.045+R()*.05,boil>0?140:260,boil>0?420:1000,minPan);
+  if(hot)tink(undefined)}
+ function toggle(){on=!on;try{localStorage.setItem("aalimChemSnd",on?"1":"0")}catch(e){}
+  if(on)init();else for(const k in loops)loops[k].g.gain.value=0;return on}
+ return{init,tick,toggle,isOn:()=>on,glass,thud,cap,click,plink,bubble,grain,pop,whump,pff,strike,crackle,flash,scratch,scrape,tink,set,pour}})();
+window.onLog=(c,t)=>{const x=c&&typeof c.x==="number"?c.x:undefined;
+ if(/squeaky pop/.test(t))SFX.pop(x);else if(/match is struck/.test(t))SFX.strike();else if(/lit with a match/.test(t))SFX.whump(x);
+ else if(/flame goes out|goes out at the mouth|goes out \(/.test(t))SFX.pff(x);else if(/dazzling white flame/.test(t))SFX.flash(x);
+ else if(/lilac flame/.test(t)){SFX.flash(x);SFX.pop(x)}else if(/crackle and jump/.test(t))SFX.crackle(40,2.5,x);
+ else if(/burns brighter/.test(t))SFX.whump(x)};
+["pointerdown","keydown","touchstart"].forEach(ev=>addEventListener(ev,()=>SFX.init(),{passive:true}));
+document.addEventListener("visibilitychange",()=>{});
+const sndBtn=$("sndBtn");if(sndBtn){const sv=()=>{sndBtn.textContent=SFX.isOn()?"🔊":"🔇";sndBtn.title=SFX.isOn()?"Sound on":"Sound off"};sv();sndBtn.onclick=()=>{SFX.toggle();sv();if(SFX.isOn())SFX.click()}}
+
 /* ---------- main loop: 10 Hz ---------- */
 let lastT=performance.now();
 function puff(c,cls,n){const v=c.el.querySelector(".vessel"),g=GEO[c.type];for(let i=0;i<n;i++){const p=document.createElement("i");p.className=cls;p.style.cssText=`left:${f1(g.cx+(Math.random()-.5)*g.hw(g.ytop)*1.3)}px;top:${f1(g.ytop-4)}px`;v.appendChild(p);p.onanimationend=()=>p.remove()}}
 setInterval(()=>{
  const now=performance.now(),real=Math.min(.5,(now-lastT)/1000);lastT=now;const dt=real*state.warp;simTime+=dt;Engine.setTime(simTime);
- runPours(real);tickHeating();tickTiltPour(real);tickBottlePour(real);tickBurettes(real);tickFrees(real);tickDtubes(dt);tickElectro(dt);tickSun();tickGasWarn(real);
+ runPours(real);tickHeating();tickTiltPour(real);tickBottlePour(real);tickBurettes(real);tickFrees(real);tickDtubes(dt);tickElectro(dt);tickSun();tickGasWarn(real);SFX.tick(real);
  for(const c of state.items){
   if(c.vol>0||Object.keys(c.sol).length||Object.keys(c.gh).length||c.heatW||c.T>26||c.T<24)tickContainer(c,dt);
   /* displayed colour drifts toward the true colour: slowly when unstirred, quickly when stirred */
