@@ -87,6 +87,15 @@ nav button{transition:background .15s}nav button:hover{background:#ffffff38}nav{
 .musc{cursor:pointer;transition:fill-opacity .15s;stroke:var(--card);stroke-width:1.5}.musc:hover{stroke:var(--accent2)}.musc.sel{stroke:var(--accent2);stroke-width:3}
 @media(prefers-reduced-motion:reduce){.page.active{animation:none}}
 @media print{header,nav,footer,.noprint,button{display:none!important}.page{display:none!important}#report.page{display:block!important}body{background:#fff!important;color:#000}main{width:100%;margin:0}.card{box-shadow:none;break-inside:avoid;border:1px solid #ccc}:root,[data-theme=dark]{--bg:#fff;--card:#fff;--text:#000;--muted:#444;--border:#ccc;--ringbg:#eee}input,select,textarea{background:#fff!important;color:#000!important}.bar{opacity:1}}
+.hbgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(310px,1fr));gap:12px}.hbcard{border:1px solid var(--border);border-radius:14px;padding:13px;background:var(--card)}.hbcard.arch{opacity:.7}.hbhead{display:flex;gap:8px;align-items:center}.hbname{font-weight:800;font-size:16px;flex:1;min-width:0}.hbst{width:auto;flex:none}.hbprog{margin:8px 0;font-size:13px;color:var(--muted)}.hbfields{display:grid;grid-template-columns:1fr 1fr;gap:8px}.hbfields label{font-size:11px;color:var(--muted);font-weight:700}.hbfields input,.hbfields select{margin-top:2px}.hbms{display:flex;flex-wrap:wrap;gap:6px 12px;margin-top:10px;font-size:13px;align-items:center}.hbms input[type=checkbox]{width:auto}.hbms span input{width:130px}.hbact{margin-top:10px;display:flex;gap:6px;flex-wrap:wrap}
+@media(min-width:900px){#extra .formgrid{grid-template-columns:repeat(3,1fr)}#extra .formgrid .full{grid-column:1/-1}}
+.hbtabs{display:flex;gap:6px;overflow-x:auto;padding:2px 0 12px;margin:0 0 4px;position:sticky;top:0;z-index:5;background:var(--bg)}.hbtabs button{flex:none;border:1px solid var(--border);background:var(--card);color:var(--text);border-radius:999px;padding:8px 14px;font-weight:700;font-size:14px;box-shadow:none}.hbtabs button.on{background:var(--accent);color:#fff;border-color:var(--accent)}.hbpanel{display:none}.hbpanel.on{display:block}
+.qhead{display:flex;gap:16px;align-items:center;flex-wrap:wrap}.qflame{text-align:center;min-width:76px}.qflame b{display:block;font-size:26px}.qflame span{font-size:11px;color:var(--muted)}.qlv{flex:1;min-width:220px}.qlist{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:8px;margin-top:12px}.q{display:flex;align-items:center;gap:10px;text-align:left;background:var(--bg);color:var(--text);border:1px solid var(--border);border-radius:12px;padding:11px 12px;box-shadow:none;font-weight:600}.q.ok{background:#eaf8ef;border-color:#b6e5c5}.q .qt{flex:1}.q .qp{font-size:12px;color:var(--muted)}.qi{font-size:20px}
+.chip{border:1px solid var(--border);background:var(--card);color:var(--text);border-radius:999px;padding:7px 13px;font-weight:700;box-shadow:none;margin:0 6px 6px 0}.chip.on{background:var(--accent);color:#fff;border-color:var(--accent)}.chip b{opacity:.7;margin-left:4px}
+.lbGrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:14px}.bk{display:flex;gap:12px;border:1px solid var(--border);border-radius:14px;padding:12px;background:var(--card)}.bkc{flex:none;width:76px;height:108px;border-radius:8px 12px 12px 8px;color:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;position:relative;box-shadow:3px 4px 10px #0003}.bkl{font-size:34px;font-weight:800}.bkty{position:absolute;bottom:6px;font-size:9px;letter-spacing:.06em;text-transform:uppercase;opacity:.85}.bkb{flex:1;min-width:0}.bkt{display:block;line-height:1.25}.bkst{display:flex;gap:4px;margin:8px 0}.bkst button{flex:1;padding:5px 2px;font-size:12px;background:var(--bg);color:var(--muted);border:1px solid var(--border);box-shadow:none}.bkst button.on{background:var(--accent);color:#fff;border-color:var(--accent)}.bkact{display:flex;gap:6px;flex-wrap:wrap;align-items:center}.bkact a.secondary{padding:8px 11px;border-radius:9px;background:#eef1f7;color:#344054;text-decoration:none;font-weight:700;font-size:13px}.lbBar{display:flex;gap:8px;flex-wrap:wrap;margin:6px 0 12px}.lbBar input,.lbBar select{flex:1;min-width:140px}
+.wbrow{display:grid;grid-template-columns:minmax(120px,1fr) 2fr auto;gap:10px;align-items:center;padding:8px 0;border-bottom:1px solid var(--border)}.wbact{display:flex;gap:6px;flex-wrap:wrap}@media(max-width:700px){.wbrow{grid-template-columns:1fr}}
+#rdr .tools .grp{display:inline-flex;gap:4px;align-items:center;padding:0 6px;border-right:1px solid var(--border)}#rdr .bar button{min-height:34px;padding:6px 11px;font-size:14px}#rdr .sw{width:26px;height:26px;min-height:0!important;padding:0!important;border-radius:50%;border:2px solid transparent}#rdr .sw.sel{border-color:var(--text);transform:scale(1.15)}#rdr .tools button.on{background:var(--accent);color:#fff}#rdWm{background:#2563eb!important;color:#fff!important;font-weight:800}#rdWm:not(.on){opacity:.85}#rdWm.on{outline:3px solid #93c5fd}#rdH{font-size:13px;padding:6px 12px;background:var(--card);border-bottom:1px solid var(--border);color:var(--muted)}#rdH.wm{background:#dbeafe;color:#1e3a8a}#rdWd{display:none;position:fixed;left:50%;bottom:16px;transform:translateX(-50%);width:min(460px,94vw);background:var(--card);color:var(--text);border:2px solid #60a5fa;border-radius:16px;padding:14px;box-shadow:0 12px 40px #0006;z-index:5}#rdWd textarea{width:100%;min-height:64px;margin:8px 0}#rdWdT{font-size:20px}
+[data-theme=dark] .q.ok{background:#14351f;border-color:#256b3c}[data-theme=dark] #rdH.wm{background:#1e3a8a;color:#dbeafe}[data-theme=dark] .bkact a.secondary{background:#26304a;color:#c3cff2}
 .card{position:relative}
 .fsb{position:absolute;top:3px;right:3px;width:20px;height:20px;padding:0;border:0;background:none;color:var(--muted);opacity:.3;border-radius:5px;display:flex;align-items:center;justify-content:center;transition:opacity .15s,background .15s;z-index:2}
 .card:hover>.fsb,.fsb:focus-visible{opacity:.7}.fsb:hover{opacity:1;background:var(--ringbg)}
@@ -127,6 +136,8 @@ body.fs-open{overflow:hidden}
 <div class="card"><div class="small">Academic Progress</div><div class="big" id="overallPct">0%</div><div class="progress"><div class="fill" id="overallBar"></div></div><div class="muted" style="margin-top:8px">chapter mastery</div></div>
 <div class="card"><div class="small">Study Time</div><div class="big" id="totalHours">0h</div><div class="muted" id="sessionCount">0 sessions</div></div>
 </div>
+<div class="card"><h2>🏆 Today's Quests</h2><div id="questBox"></div></div>
+<div class="card"><h2>🗓️ This Week <span style="float:right;font-size:13px;font-weight:600"><button type="button" class="secondary" onclick="hbOpen('runs')">+ Run</button> <button type="button" class="secondary" onclick="hbOpen('karate')">+ Karate</button> <button type="button" class="secondary" onclick="showPage('extra')">Hobbies</button></span></h2><div id="wkSummary"></div></div>
 <div class="grid2"><div class="card"><h2>🎯 Weekly Goal & Streak</h2><div id="goalStreak"></div></div><div class="card"><h2>⚠ Needs Attention</h2><div id="attention"></div></div></div>
 <div class="card"><h2>📚 Homework Corner <button type="button" class="secondary" style="float:right" onclick="showPage('homework')">Open ›</button></h2><div id="hwDash"></div></div>
 <div class="card"><h2>💬 Motivation</h2><div id="quoteBox"></div></div>
@@ -281,11 +292,13 @@ body.fs-open{overflow:hidden}
 <div class="card"><h3>Reminders for hard days</h3><div class="insight"><b>With hardship comes ease.</b> Qur'an 94:5–6</div><div class="insight"><b>Allah does not burden a soul beyond what it can bear.</b> Qur'an 2:286</div><div class="insight"><b>The most beloved deeds are the most consistent, even if small.</b> Hadith (Bukhari and Muslim). Small daily study counts too.</div><div class="insight" style="text-align:center"><span style="font-size:22px">رَبِّ زِدْنِي عِلْمًا</span><br><span class="muted">"My Lord, increase me in knowledge" · Qur'an 20:114</span></div><div class="muted" style="font-size:13px">These are paraphrased. Check the full text in your Qur'an or hadith collection.</div></div>
 </section>
 <section id="library" class="page">
-<div class="card"><h2>⏱ Reading Timer &amp; Reader</h2><div class="pomo" id="rtD" style="font-size:42px">00:00</div><div class="formgrid"><div class="full"><label>Reading</label><select id="rtBook"></select></div></div><div class="row" style="margin-top:10px;justify-content:flex-start;flex-wrap:wrap;gap:8px"><button type="button" class="action" id="rtBtn" onclick="rtToggle()">▶ Start</button><button type="button" class="secondary" onclick="rtStop()">Stop &amp; log</button><button type="button" class="secondary" onclick="$('pdfIn').click()">📂 Add PDF / EPUB</button><input id="pdfIn" type="file" accept="application/pdf,.pdf,application/epub+zip,.epub" style="display:none" onchange="addPdf(event)"></div><div class="muted" id="rtInfo" style="font-size:13px;margin-top:6px"></div></div>
+<div class="grid2" style="align-items:stretch"><div class="card" id="lbHero"></div><div class="card"><h2>⏱ Reading Timer</h2><div class="pomo" id="rtD" style="font-size:42px">00:00</div><div class="formgrid"><div class="full"><label>Reading</label><select id="rtBook"></select></div></div><div class="row" style="margin-top:10px;justify-content:flex-start;flex-wrap:wrap;gap:8px"><button type="button" class="action" id="rtBtn" onclick="rtToggle()">▶ Start</button><button type="button" class="secondary" onclick="rtStop()">Stop &amp; log</button><button type="button" class="secondary" onclick="$('pdfIn').click()">📂 Add PDF / EPUB</button><input id="pdfIn" type="file" accept="application/pdf,.pdf,application/epub+zip,.epub" style="display:none" onchange="addPdf(event)"></div><div class="muted" id="rtInfo" style="font-size:13px;margin-top:6px"></div></div>
+</div>
 <div class="card"><h2>📊 Reading Stats</h2><div id="rdStats"></div></div>
-<div class="grid2"><div class="card"><h2>📚 Add to Library</h2><div class="formgrid"><div class="full"><label>Title</label><input id="lbT" placeholder="e.g. NCERT Science Class 10"></div><div><label>Author</label><input id="lbA"></div><div><label>Type</label><select id="lbTy"><option>Book</option><option>Notes</option><option>PDF</option><option>Video</option><option>Website</option><option>Other</option></select></div>
-<div><label>Subject</label><input id="lbS" list="lbSubj" placeholder="Maths, Islamic, ..."><datalist id="lbSubj"></datalist></div><div><label>Link (optional)</label><input id="lbL" placeholder="https://..."></div><div class="full"><label>Note</label><input id="lbN"></div><div class="full"><button class="action" type="button" onclick="addBook()">+ Add</button></div></div></div>
-<div class="card"><h2>Shelf</h2><div class="formgrid"><div><label>Status</label><select id="lbF" onchange="renderLib()"><option value="">All</option><option>To read</option><option>Reading</option><option>Done</option></select></div><div><label>Search</label><input id="lbQ" oninput="renderLib()" placeholder="title, author, subject"></div><div><label>Subject</label><select id="lbC" onchange="renderLib()"></select></div><div><label>Level</label><select id="lbV" onchange="renderLib()"><option value="">All</option><option value="1">Easy start</option><option value="2">Medium</option><option value="3">Heavy</option></select></div><div class="full"><button class="secondary" type="button" onclick="importReadingBtn()">+ Add any missing books from my reading list</button></div></div><div id="lbSum" style="margin:10px 0"></div><div id="lbList"></div></div></div>
+<div class="card"><h2>📚 My Shelf</h2><div id="lbSum" style="margin-top:6px"></div><div class="lbBar"><input id="lbQ" oninput="renderLib()" placeholder="🔍 Search title, author, subject"><select id="lbC" onchange="renderLib()"></select><select id="lbV" onchange="renderLib()"><option value="">Any level</option><option value="1">Easy start</option><option value="2">Medium</option><option value="3">Heavy</option></select><button class="secondary" type="button" onclick="importReadingBtn()">+ Add missing books from my reading list</button></div><div id="lbList" class="lbGrid"></div></div>
+<details class="card"><summary><b>➕ Add a book or link to the library</b></summary><div class="formgrid"><div class="full"><label>Title</label><input id="lbT" placeholder="e.g. NCERT Science Class 10"></div><div><label>Author</label><input id="lbA"></div><div><label>Type</label><select id="lbTy"><option>Book</option><option>Notes</option><option>PDF</option><option>Video</option><option>Website</option><option>Other</option></select></div>
+<div><label>Subject</label><input id="lbS" list="lbSubj" placeholder="Maths, Islamic, ..."><datalist id="lbSubj"></datalist></div><div><label>Link (optional)</label><input id="lbL" placeholder="https://..."></div><div class="full"><label>Note</label><input id="lbN"></div><div class="full"><button class="action" type="button" onclick="addBook()">+ Add</button></div></div></details>
+<div class="card" id="wbCard"><h2>📘 Word Bank <span id="wbCount" class="muted" style="font-size:14px;font-weight:600"></span></h2><p class="muted" style="text-transform:none;font-size:13px">Every word you save with the blue 📘 tool in the reader, in one place. Edit meanings here and turn words into flashcards.</p><input placeholder="🔍 Search words or meanings" oninput="wbQ=this.value;renderWordBank()" style="margin-bottom:8px"><div id="wbList"></div></div>
 </section>
 <section id="biz" class="page">
 <div class="grid2"><div class="card"><h2>💼 Ventures</h2><div class="formgrid"><div><label>Name</label><input id="bzN" placeholder="e.g. Notes printing"></div><div><label>Status</label><select id="bzS"><option>Idea</option><option>Planning</option><option>Running</option><option>Paused</option></select></div>
@@ -317,18 +330,52 @@ body.fs-open{overflow:hidden}
 </section>
 
 <section id="extra" class="page">
+<div id="hbTabs" class="hbtabs"></div>
+<div class="hbpanel on" data-p="over">
 <div class="card"><h2>🚀 Extra-Curriculars</h2><p class="muted">This section is deliberately separate from your board percentage. Tap a preset to add it, or add your own below.</p><div class="formgrid">
 <div><input id="extraName" placeholder="Activity e.g. Screenwriting"></div><div><input id="extraProject" placeholder="Current project"></div>
 <div><input id="extraGoal" placeholder="Goal"></div><div><input id="extraHours" type="number" min="0" step=".5" placeholder="Hours invested"></div>
-<div><select id="extraStatus"><option>Active</option><option>Paused</option><option>Completed</option></select></div><div><button class="action" onclick="addExtra()">+ Add Activity</button></div>
+<div><select id="extraStatus"><option>Active</option><option>Paused</option><option>Completed</option><option>Study-only</option></select></div><div><input id="extraCat" placeholder="Category e.g. Arts"></div><div><select id="extraMeasure" title="Progress measured by"><option value="minutes">Progress by: Minutes</option><option value="sessions">Progress by: Sessions</option><option value="score">Progress by: Best score</option><option value="milestones">Progress by: Milestones</option></select></div><div><button class="action" onclick="addExtra()">+ Add Activity</button></div>
 </div><div style="margin:14px 0 4px"><div class="small" style="margin-bottom:6px">Quick add</div><div id="extraPresets" class="tabs" style="margin:0"></div></div><br><div id="extraTable"></div></div>
+<details class="card"><summary><b>💡 Hobby ideas (optional)</b></summary><p class="muted">Nothing here is a task. Add only what interests you, mark it Active, Paused, Completed or Study-only, and ignore the rest. Ideas are editable.</p><div id="hbCat" class="statline" style="grid-template-columns:repeat(auto-fill,minmax(250px,1fr))"></div><p style="margin-top:12px"><button type="button" class="secondary" onclick="hbNew()">+ New idea</button> <button type="button" class="secondary" onclick="hbRestore()">Restore defaults</button></p></details>
 <div class="card"><h2>📓 Extra-Curricular Log</h2><p class="muted">Log every session on an activity, just like the Study Log. This stays separate from your board study hours.</p>
 <div class="formgrid"><div><label>Date</label><input id="elDate" type="date"></div><div><label>Activity</label><select id="elActivity"></select></div>
-<div><label>Minutes</label><input id="elMins" type="number" min="1" placeholder="45"></div><div><label>What did you do?</label><input id="elNote" placeholder="e.g. Wrote scene 3 of the script"></div>
+<div><label>Minutes</label><input id="elMins" type="number" min="1" placeholder="45"></div><div><label>Score / value (optional)</label><input id="elVal" type="number" step="any" placeholder="only for score hobbies"></div><div><label>What did you do?</label><input id="elNote" placeholder="e.g. Wrote scene 3 of the script"></div>
 <div class="full"><button class="action" onclick="addExtraLog()">+ Add Session</button></div></div>
 <div id="elStats" style="margin-top:14px"></div></div>
 <div class="card"><h2>Session History</h2><div id="elTable"></div></div>
+</div>
+<div class="hbpanel" data-p="runs">
+<div class="grid2" style="align-items:start"><div class="card"><h2>🏃 Run in Place</h2><p class="muted">Indoor jogging log. Count every foot landing as one step and type your totals in; nothing is detected automatically. Stationary running covers no forward distance.</p>
+<div class="formgrid"><div><label>Date</label><input id="rnDate" type="date"></div><div><label>Duration (min)</label><input id="rnMins" type="number" min="1" step="any" oninput="runPreview()" placeholder="10"></div>
+<div><label>Total steps</label><input id="rnSteps" type="number" min="0" oninput="runPreview()" placeholder="1200"></div><div><label>Cadence</label><div id="rnCad" style="padding:10px 0"><b>—</b></div></div>
+<div><label>Effort</label><select id="rnEff"><option>Easy</option><option selected>Moderate</option><option>Hard</option></select></div><div><label>Notes (optional)</label><input id="rnNote" placeholder="e.g. felt strong"></div>
+<div class="full"><button id="rnSave" class="action" onclick="saveRun()">+ Add Run</button> <button id="rnCancel" class="secondary" style="display:none" onclick="cancelRun()">Cancel edit</button></div></div>
+<p class="muted" style="margin-top:8px;font-size:12.5px;text-transform:none">🛡 Use a flat, non-slip surface and supportive shoes; warm up, and stop if you feel dizzy or any pain.</p></div>
+<div class="card"><h2>Totals</h2><div id="rnStats"></div></div></div>
+<div class="grid2" style="align-items:start"><div class="card"><h2>📍 Outdoor-equivalent estimate (optional)</h2><div id="rnEst"></div></div>
+<div class="card"><h2>📈 Weekly minutes (last 8 weeks)</h2><div id="rnTrend"></div></div></div>
+<div class="card"><h2>Session History</h2><div id="rnHist"></div></div>
+</div>
+<div class="hbpanel" data-p="karate">
+<div class="grid2" style="align-items:start"><div class="card"><h2>🥋 Karate</h2><p class="muted">Log solo practice: controlled basics, stances, footwork and kata. Minutes show consistency, not skill or rank; your instructor judges those.</p>
+<div class="formgrid"><div><label>Date</label><input id="kaDate" type="date"></div><div><label>Minutes</label><input id="kaMins" type="number" min="1" step="any" placeholder="30"></div>
+<div><label>Focus area</label><select id="kaFocus" onchange="kaFocusChange()"></select><input id="kaCustom" placeholder="Your own focus area" style="display:none;margin-top:6px"></div><div><label>Effort</label><select id="kaEff"><option>Easy</option><option selected>Moderate</option><option>Hard</option></select></div>
+<div class="full"><label>Notes (optional)</label><input id="kaNote" placeholder="e.g. kept my back leg straight in the stance"></div>
+<div class="full"><button id="kaSave" class="action" onclick="saveKarate()">+ Add Session</button> <button id="kaCancel" class="secondary" style="display:none" onclick="cancelKa()">Cancel edit</button></div></div>
+<p class="muted" style="margin-top:8px;font-size:12.5px;text-transform:none">🛡 Safe solo practice only: warm up, controlled basics and kata, on a clear non-slip floor. No solo throws, no striking hard objects, no risky conditioning. Partner techniques only with a qualified instructor.</p></div>
+<div class="card"><h2>Consistency</h2><div id="kaStats"></div></div></div>
+<div class="grid2"><div class="card"><h2>🎯 Focus areas (minutes)</h2><div id="kaFocusBox"></div></div><div class="card"><h2>📝 Progress notes</h2><div class="formgrid"><div class="full"><input id="knText" placeholder="What improved? What to work on next?"></div><div class="full"><button class="action" onclick="addKNote()">+ Add note</button></div></div><div id="kaNotes" style="margin-top:8px"></div></div></div>
+<div class="card"><h2>Session History</h2><div id="kaHist"></div></div>
+</div>
+<div class="hbpanel" data-p="sec"><div id="secPanel"></div></div>
+<div class="hbpanel" data-p="read"><div id="readPanel"></div></div>
+<div class="hbpanel" data-p="new"><div id="secNew"></div></div>
 </section>
+
+
+
+
 
 <section id="hof" class="page">
 <div class="card"><h2>🏆 Hall of Fame</h2><p class="muted">Everything you achieve, not just marks: exams, effort, fitness, character, creativity and service. Badges unlock by themselves as you use the tracker, and you can add your own wins below.</p><div id="hofStats"></div></div>
@@ -361,6 +408,7 @@ body.fs-open{overflow:hidden}
 <section id="analytics" class="page">
 <div class="grid2"><div class="card"><h2>📈 Analytics</h2><div id="analyticsMain"></div></div><div class="card"><h2>🧩 Revision Health</h2><div id="revisionHealth"></div></div></div>
 <div class="card"><h2>📊 Study Trend</h2><div id="trendChart"></div></div>
+<div class="card"><h2>⚖️ Weekly Balance (last 8 weeks)</h2><p class="muted small">Study, karate, indoor cardio and hobby logs side by side. Study stays separate from fitness and leisure.</p><div id="balChart"></div></div>
 <div class="grid2"><div class="card"><h2>🧮 Subjects per Week</h2><div id="subjTrend"></div></div><div class="card"><h2>🎯 Marks Trend</h2><div id="markTrend"></div></div></div>
 <div class="grid2"><div class="card"><h2>🕐 Best Study Hours</h2><div id="heatMap"></div></div><div class="card"><h2>🗓️ Board Countdown Plan</h2><div id="planBox"></div></div></div>
 <div class="card"><h2>🔁 Revision Reminders</h2><div id="srBox"></div></div>
@@ -470,14 +518,14 @@ function planAdvance(x, on) {
 }
 const STORAGE_KEY = "aalimTrackerV2";
 const defaultState = () => normalize({});
-const KEYS = ["progress", "study", "tasks", "extra", "exams", "marks", "questions", "feynman", "workouts", "plan", "extraLog", "flashcards", "mistakes", "homework", "lifts", "library", "quran", "prayers", "dream", "biz", "bizLog", "hof", "goal10", "movies", "research"];
+const KEYS = ["progress", "study", "tasks", "extra", "exams", "marks", "questions", "feynman", "workouts", "plan", "extraLog", "flashcards", "mistakes", "homework", "lifts", "library", "quran", "prayers", "dream", "biz", "bizLog", "hof", "goal10", "movies", "research", "runs", "karate", "karateNotes", "hobbyCat", "hobbyCfg", "hobbySec", "hobbyLog"];
 const DEFAULT_BATCHES = ["Udaan", "Udaan Advanced", "Business/AI", "Extra-curricular", "Other"];
 function normalize(x) {
     var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l;
     x = x && typeof x === "object" ? x : {};
     const A = v => Array.isArray(v) ? v : [], O = v => v && typeof v === "object" && !Array.isArray(v) ? v : {};
     return { progress: Object.fromEntries(Object.entries(O(x.progress)).map(([k, v]) => [k, mig(v)])), study: A(x.study), tasks: A(x.tasks), extra: A(x.extra), exams: A(x.exams).filter(e => e && Array.isArray(e.topics)).map(e => (Object.assign(Object.assign({}, e), { topics: e.topics.map(t => (Object.assign(Object.assign({}, t), { status: mig(t.status) }))), papers: Array.isArray(e.papers) ? e.papers.filter(p => p && p.subject) : [] }))),
-        marks: A(x.marks), questions: A(x.questions), feynman: A(x.feynman), workouts: A(x.workouts), extraLog: A(x.extraLog), flashcards: A(x.flashcards), mistakes: A(x.mistakes), quotes: A(x.quotes), homework: A(x.homework), plan: O(x.plan), meta: O(x.meta), dream: O(x.dream), lifts: A(x.lifts), prayers: O(x.prayers), quran: A(x.quran), library: A(x.library), biz: A(x.biz), bizLog: A(x.bizLog), hof: A(x.hof), goal10: O(x.goal10), reader: O(x.reader), movies: A(x.movies), research: A(x.research),
+        marks: A(x.marks), questions: A(x.questions), feynman: A(x.feynman), workouts: A(x.workouts), extraLog: A(x.extraLog), flashcards: A(x.flashcards), mistakes: A(x.mistakes), quotes: A(x.quotes), homework: A(x.homework), plan: O(x.plan), meta: O(x.meta), dream: O(x.dream), lifts: A(x.lifts), prayers: O(x.prayers), quran: A(x.quran), library: A(x.library), biz: A(x.biz), bizLog: A(x.bizLog), hof: A(x.hof), goal10: O(x.goal10), reader: O(x.reader), movies: A(x.movies), research: A(x.research), runs: A(x.runs).filter(r => r && typeof r === "object"), karate: A(x.karate).filter(r => r && typeof r === "object"), karateNotes: A(x.karateNotes).filter(r => r && typeof r === "object"), hobbyCat: A(x.hobbyCat).filter(r => r && typeof r === "object"), hobbyCfg: Object.assign({ stepLen: 0.7 }, O(x.hobbyCfg)), hobbySec: A(x.hobbySec).filter(r => r && typeof r === "object" && r.id), hobbyLog: A(x.hobbyLog).filter(r => r && typeof r === "object"),
         batches: A(x.batches).length ? A(x.batches) : [...DEFAULT_BATCHES],
         settings: { mid: ((_a = x.settings) === null || _a === void 0 ? void 0 : _a.mid) || "", board: ((_b = x.settings) === null || _b === void 0 ? void 0 : _b.board) || "", weeklyGoal: Math.max(0, Number((_c = x.settings) === null || _c === void 0 ? void 0 : _c.weeklyGoal) || 0), theme: ((_d = x.settings) === null || _d === void 0 ? void 0 : _d.theme) === "dark" ? "dark" : "light", autoPlan: ((_e = x.settings) === null || _e === void 0 ? void 0 : _e.autoPlan) !== false, autoBreak: ((_f = x.settings) === null || _f === void 0 ? void 0 : _f.autoBreak) !== false, autoNext: !!((_g = x.settings) === null || _g === void 0 ? void 0 : _g.autoNext), sound: ((_h = x.settings) === null || _h === void 0 ? void 0 : _h.sound) !== false, notify: !!((_j = x.settings) === null || _j === void 0 ? void 0 : _j.notify), wake: okTime((_k = x.settings) === null || _k === void 0 ? void 0 : _k.wake, "06:00"), sleep: okTime((_l = x.settings) === null || _l === void 0 ? void 0 : _l.sleep, "22:00") } };
 }
@@ -717,10 +765,10 @@ function addExtra() {
     const hours = Number($("extraHours").value) || 0;
     if (hours < 0)
         return alert("Hours cannot be negative.");
-    state.extra.push({ name: n, project: $("extraProject").value.trim(), goal: $("extraGoal").value.trim(), hours, status: $("extraStatus").value });
+    state.extra.push({ name: n, project: $("extraProject").value.trim(), goal: $("extraGoal").value.trim(), hours, status: $("extraStatus").value, cat: $("extraCat").value.trim(), measure: $("extraMeasure").value, ms: [] });
     if (!save())
         return;
-    ["extraName", "extraProject", "extraGoal", "extraHours"].forEach(id => $(id).value = "");
+    ["extraName", "extraProject", "extraGoal", "extraHours", "extraCat"].forEach(id => $(id).value = "");
     renderExtra();
 }
 const EXTRA_PRESETS = ["Screenwriting", "Filmmaking", "Business / AI", "Coding", "Reading", "Creative Writing", "Sports", "Music", "Public Speaking", "Debate / MUN"];
@@ -736,8 +784,10 @@ function renderExtra() {
     const have = state.extra.map(x => String(x.name).toLowerCase());
     $("extraPresets").innerHTML = EXTRA_PRESETS.filter(n => !have.includes(n.toLowerCase())).map(n => `<button type="button" class="secondary preset" data-name="${esc(n)}">+ ${esc(n)}</button>`).join(" ") || '<span class="muted">All presets added.</span>';
     $("extraPresets").querySelectorAll(".preset").forEach(b => b.addEventListener("click", () => addPresetExtra(b.dataset.name)));
-    const total = state.extra.reduce((n, x) => n + (Number(x.hours) || 0) + extraMins(x.name) / 60, 0);
-    $("extraTable").innerHTML = state.extra.length ? `<div style="overflow-x:auto"><table><tr><th>Activity</th><th>Project</th><th>Goal</th><th style="width:110px">Prior hours</th><th>Logged</th><th>Status</th><th></th></tr>${state.extra.map((x, i) => `<tr><td><input data-f="name" data-i="${i}" value="${esc(x.name)}"></td><td><input data-f="project" data-i="${i}" value="${esc(x.project)}"></td><td><input data-f="goal" data-i="${i}" value="${esc(x.goal)}"></td><td><input data-f="hours" data-i="${i}" type="number" min="0" step=".5" value="${Number(x.hours) || 0}"></td><td>${hrs(extraMins(x.name))}</td><td><select data-f="status" data-i="${i}">${["Active", "Paused", "Completed"].map(o => `<option ${o === x.status ? "selected" : ""}>${o}</option>`).join("")}</select></td><td><button type="button" class="danger delete-extra" data-index="${i}">Delete</button></td></tr>`).join("")}</table></div><p class="muted">Total invested: <b>${total.toFixed(1)}h</b> (prior hours + logged sessions). Every field is editable and saves automatically.</p>` : '<div class="empty">No extra-curricular activities yet.</div>';
+    const total = state.extra.reduce((n, x) => n + (Number(x.hours) || 0) + actMins(x) / 60, 0);
+    const vis = state.extra.map((x, i) => ({ x, i })), act = vis.filter(o => o.x.status !== "Archived"), arc = vis.filter(o => o.x.status === "Archived"), head = '<tr><th>Activity</th><th>Category</th><th>Project</th><th>Goal</th><th>Prior hrs</th><th>Progress by</th><th>Progress</th><th>Status</th><th></th></tr>';
+    $("extraTable").innerHTML = state.extra.length ? `<div class="hbgrid">${act.map(o => hobbyRow(o.x, o.i)).join("")}</div>` + (arc.length ? `<details style="margin-top:10px"><summary>Archived (${arc.length})</summary><div class="hbgrid" style="margin-top:10px">${arc.map(o => hobbyRow(o.x, o.i)).join("")}</div></details>` : "") + `<p class="muted">Total invested: <b>${total.toFixed(1)}h</b> (prior hours + logged sessions). Progress is measured the way suits each hobby. Every field is editable and saves automatically.</p>` : '<div class="empty">No extra-curricular activities yet.</div>';
+    safeRun(renderHobbyCat); safeRun(renderWkSummary); safeRun(renderBalance); safeRun(hbRender); safeRun(renderQuests);
     $("extraTable").querySelectorAll("[data-f]").forEach(el => el.addEventListener("change", () => {
         const x = state.extra[Number(el.dataset.i)], f = el.dataset.f;
         if (f === "hours") {
@@ -761,6 +811,7 @@ function renderExtra() {
             });
             x.name = v;
         }
+        else if (f === "measure") x.measure = el.value;
         else
             x[f] = el.value.trim();
         save();
@@ -1657,22 +1708,6 @@ function addBook() {
 function setBook(i, v) { state.library[i].st = v; save(); renderLib(); }
 function delBook(i) { const b = state.library[i]; if (b && b.id) { bio("del", b.id).catch(() => { }); delete state.reader[b.id]; } state.library.splice(i, 1); save(); renderLib(); }
 function bookPlan(i) { addPlan("Read: " + state.library[i].t); }
-function renderLib() {
-    const el = $("lbList");
-    if (!el)
-        return;
-    if (!$("lbSubj").children.length)
-        $("lbSubj").innerHTML = Object.keys(syllabus).map(k => `<option value="${esc(k)}">`).join("") + '<option value="Islamic">' + READ_CATS.map(x => `<option value="${esc(x)}">`).join("");
-    const cats = [...new Set(state.library.map(b => b.s).filter(Boolean))].sort(), cs = $("lbC"), cc = cs.value;
-    cs.innerHTML = '<option value="">All</option>' + cats.map(x => `<option>${esc(x)}</option>`).join("");
-    cs.value = cc;
-    const f = $("lbF").value, q = $("lbQ").value.toLowerCase(), c = cs.value, v = $("lbV").value, L = state.library;
-    const cnt = k => L.filter(b => b.st === k).length, nx = L.filter(b => b.st === "To read" && b.lv === 1).slice(0, 3);
-    $("lbSum").innerHTML = `<div class="statline"><div class="stat"><strong>${cnt("To read")}</strong><span class="muted">to read</span></div><div class="stat"><strong>${cnt("Reading")}</strong><span class="muted">reading</span></div><div class="stat"><strong>${cnt("Done")}</strong><span class="muted">done</span></div></div>` + (nx.length ? `<div class="insight" style="margin-top:8px">📖 <b>Up next (easy starts):</b> ${nx.map(b => esc(b.t)).join(" · ")}</div>` : "");
-    const rows = L.map((b, i) => ({ b, i })).filter(({ b }) => (!f || b.st === f) && (!c || b.s === c) && (!v || String(b.lv || 0) === v) && (!q || [b.t, b.a, b.s, b.n].join(" ").toLowerCase().includes(q)));
-    el.innerHTML = rows.length ? rows.map(({ b, i }) => `<div class="insight"><b>${esc(b.t)}</b>${b.a ? " · " + esc(b.a) : ""} <span class="pill">${esc(b.ty)}</span>${b.s ? ` <span class="pill">${esc(b.s)}</span>` : ""}${b.lv ? ` <span class="pill">${["", "Easy start", "Medium", "Heavy"][b.lv]}</span>` : ""}${b.n ? `<div class="muted" style="font-size:13px">${esc(b.n)}</div>` : ""}
-   <div style="margin-top:6px;display:flex;gap:6px;flex-wrap:wrap;align-items:center"><select onchange="setBook(${i},this.value)">${["To read", "Reading", "Done"].map(x => `<option${x === b.st ? " selected" : ""}>${x}</option>`).join("")}</select>${/^https?:\/\//i.test(b.l) ? `<a href="${esc(b.l)}" target="_blank" rel="noopener noreferrer">Open ↗</a>` : ""}<button type="button" class="secondary" onclick="bookPlan(${i})">Add to today</button>${b.file && b.id ? `<button type="button" class="action" onclick="openReader('${esc(b.id)}')">📖 Read</button>` : ""}<button type="button" class="danger" onclick="delBook(${i})">✕</button></div></div>`).join("") : `<div class="muted">${L.length ? "No matches." : "Your shelf is empty. Add a book, notes or link on the left."}</div>`;
-}
 /* business */
 const inr = n => "₹" + Number(n || 0).toLocaleString("en-IN", { maximumFractionDigits: 2 });
 function addVenture() {
@@ -2371,13 +2406,18 @@ function addExtraLog() {
     const a = $("elActivity").value;
     if (!a)
         return alert("Add an activity in the table above first, then log time on it.");
-    const m = Number($("elMins").value);
-    if (!Number.isFinite(m) || m <= 0)
+    const hx = state.extra.find(x => x.name === a) || {}, ms = hx.measure || "minutes", m = $("elMins").value === "" ? 0 : Number($("elMins").value), vRaw = $("elVal").value;
+    if (!Number.isFinite(m) || m < 0)
+        return alert("Minutes cannot be negative.");
+    if (ms === "minutes" && m <= 0)
         return alert("Enter minutes greater than 0.");
-    state.extraLog.unshift({ date: $("elDate").value || today(), activity: a, mins: m, note: $("elNote").value.trim() });
+    if (ms === "score" && (vRaw === "" || !Number.isFinite(Number(vRaw))))
+        return alert("Enter the score for this session.");
+    state.extraLog.unshift({ date: $("elDate").value || today(), activity: a, mins: m, note: $("elNote").value.trim(), val: vRaw === "" ? "" : Number(vRaw) });
     if (!save())
         return;
     $("elMins").value = "";
+    $("elVal").value = "";
     $("elNote").value = "";
     renderExtra();
 }
@@ -2385,8 +2425,8 @@ function editEL(i) { editingEL = i; renderExtraLog(); }
 function cancelEL() { editingEL = -1; renderExtraLog(); }
 function saveEL(i) {
     const m = Number($("eeMins").value);
-    if (!Number.isFinite(m) || m <= 0)
-        return alert("Minutes must be greater than 0.");
+    if (!Number.isFinite(m) || m < 0)
+        return alert("Minutes cannot be negative.");
     const l = state.extraLog[i];
     l.date = $("eeDate").value || l.date;
     l.activity = $("eeAct").value;
@@ -2399,8 +2439,8 @@ function saveEL(i) {
 function delEL(i) { state.extraLog.splice(i, 1); editingEL = -1; save(); renderExtra(); }
 function renderExtraLog() {
     const sel = $("elActivity"), v = sel.value;
-    sel.innerHTML = state.extra.map(x => `<option>${esc(x.name)}</option>`).join("");
-    if (state.extra.some(x => x.name === v))
+    sel.innerHTML = state.extra.filter(x => x.status !== "Archived" && !isKind(x)).map(x => `<option>${esc(x.name)}</option>`).join("");
+    if ([...sel.options].some(o => o.value === v))
         sel.value = v;
     if (!$("elDate").value)
         $("elDate").value = today();
@@ -2421,12 +2461,464 @@ function renderExtraLog() {
             const names = state.extra.map(x => x.name);
             if (!names.includes(l.activity))
                 names.push(l.activity);
-            return `<tr><td><input type="date" id="eeDate" value="${esc(l.date)}"></td><td><select id="eeAct">${names.map(n => `<option ${n === l.activity ? "selected" : ""}>${esc(n)}</option>`).join("")}</select></td><td><input id="eeMins" type="number" min="1" value="${Number(l.mins) || 0}"></td><td><input id="eeNote" value="${esc(l.note)}"></td><td style="white-space:nowrap"><button type="button" class="action" onclick="saveEL(${i})">Save</button> <button type="button" class="secondary" onclick="cancelEL()">Cancel</button></td></tr>`;
+            return `<tr><td><input type="date" id="eeDate" value="${esc(l.date)}"></td><td><select id="eeAct">${names.map(n => `<option ${n === l.activity ? "selected" : ""}>${esc(n)}</option>`).join("")}</select></td><td><input id="eeMins" type="number" min="0" value="${Number(l.mins) || 0}"></td><td><input id="eeNote" value="${esc(l.note)}"></td><td style="white-space:nowrap"><button type="button" class="action" onclick="saveEL(${i})">Save</button> <button type="button" class="secondary" onclick="cancelEL()">Cancel</button></td></tr>`;
         }
         return `<tr><td>${esc(l.date)}</td><td>${esc(l.activity)}</td><td>${Number(l.mins) || 0}</td><td>${esc(l.note)}</td><td style="white-space:nowrap"><button type="button" class="secondary" onclick="editEL(${i})">Edit</button> <button type="button" class="danger" onclick="delEL(${i})">Delete</button></td></tr>`;
     }).join("");
     $("elTable").innerHTML = log.length ? `<div style="overflow-x:auto"><table><tr><th>Date</th><th>Activity</th><th>Min</th><th>Note</th><th></th></tr>${rows}</table></div>` : '<div class="empty">No extra-curricular sessions logged yet.</div>';
 }
+/* ===== v80: running in place, karate, hobby catalogue, weekly balance ===== */
+const uid2 = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
+const EFFORTS = ["Easy", "Moderate", "Hard"];
+const KFOCUS = ["Stance & balance", "Footwork", "Basic techniques", "Kata", "Coordination", "Mobility / warm-up", "Theory"];
+const hcfg = () => state.hobbyCfg;
+const num = v => { const n = Number(v); return Number.isFinite(n) ? n : 0; };
+const okDate = d => /^\d{4}-\d{2}-\d{2}$/.test(String(d || ""));
+const wkRange = off => { const s = addDays(weekStart(new Date()), off * 7); return [dkey(s), dkey(addDays(s, 6)), s]; };
+const inRng = (d, a, b) => String(d) >= a && String(d) <= b;
+const sumF = (l, f) => l.reduce((n, x) => n + num(x[f]), 0);
+const kindNames = k => state.extra.filter(x => x.kind === k).map(x => x.name);
+function hobbyMins(a, b) {
+    const skip = new Set([...kindNames("karate"), ...kindNames("run")]);
+    return state.extraLog.filter(l => !skip.has(l.activity) && inRng(l.date, a, b)).reduce((n, l) => n + num(l.mins), 0) + state.hobbyLog.filter(l => inRng(l.date, a, b)).reduce((n, l) => n + num(l.mins), 0);
+}
+function weekTotals(off) {
+    const [a, b] = wkRange(off), m = dayMap();
+    let study = 0;
+    for (const k in m) if (inRng(k, a, b)) study += m[k];
+    const ka = state.karate.filter(x => inRng(x.date, a, b)), ru = state.runs.filter(x => inRng(x.date, a, b));
+    return { a, b, study, karate: sumF(ka, "mins"), kn: ka.length, run: sumF(ru, "mins"), rn: ru.length, steps: sumF(ru, "steps"), hobby: hobbyMins(a, b) };
+}
+const hbBars = (items, unit) => { const mx = Math.max(1, ...items.map(i => i.v)); return items.map(i => `<div style="display:flex;align-items:center;gap:8px;margin:3px 0;font-size:12px"><span style="width:62px;flex:none" class="muted">${esc(i.l)}</span><div style="flex:1;background:rgba(127,127,127,.15);border-radius:6px;height:12px"><div style="width:${Math.round(i.v / mx * 100)}%;height:12px;border-radius:6px;background:#4f7cff"></div></div><b style="width:64px;text-align:right;flex:none">${i.v}${unit || ""}</b></div>`).join(""); };
+const wkLabel = s => `${s.getDate()} ${MONTHS[s.getMonth()].slice(0, 3)}`;
+/* ---- Run in place ---- */
+let editRun = null;
+const cadence = (steps, mins) => mins > 0 ? Math.round(steps / mins * 10) / 10 : 0;
+function runPreview() { const m = num($("rnMins").value), s = num($("rnSteps").value); $("rnCad").textContent = m > 0 && s > 0 ? cadence(s, m) + " steps/min" : "—"; }
+function saveRun() {
+    const mins = num($("rnMins").value), steps = Math.round(num($("rnSteps").value));
+    if (mins <= 0) return alert("Enter the duration in minutes (more than 0).");
+    if (steps < 0 || $("rnSteps").value === "") return alert("Enter your total steps (count each foot landing as one).");
+    const rec = { date: okDate($("rnDate").value) ? $("rnDate").value : today(), mins, steps, effort: $("rnEff").value, note: $("rnNote").value.trim() };
+    if (editRun) { const r = state.runs.find(x => x.id === editRun); if (r) Object.assign(r, rec); } else state.runs.push(Object.assign({ id: uid2() }, rec));
+    if (!save()) return;
+    editRun = null; $("rnMins").value = ""; $("rnSteps").value = ""; $("rnNote").value = "";
+    renderRuns(); renderWkSummary(); renderBalance(); renderExtra();
+}
+function editRunBtn(id) { const r = state.runs.find(x => x.id === id); if (!r) return; editRun = id; $("rnDate").value = r.date; $("rnMins").value = r.mins; $("rnSteps").value = r.steps; $("rnEff").value = r.effort; $("rnNote").value = r.note || ""; runPreview(); renderRuns(); $("rnDate").scrollIntoView({ block: "center" }); }
+function cancelRun() { editRun = null; $("rnMins").value = ""; $("rnSteps").value = ""; $("rnNote").value = ""; renderRuns(); }
+function delRun(id) { if (!confirm("Delete this run session?")) return; state.runs = state.runs.filter(x => x.id !== id); if (editRun === id) editRun = null; save(); renderRuns(); renderWkSummary(); renderBalance(); renderExtra(); }
+function setStepLen() { const v = num($("rnLen").value); if (v < 0.2 || v > 2) { alert("Step length should be between 0.2 and 2 metres."); } else hcfg().stepLen = v; save(); renderRuns(); }
+function toggleEst(on) { hcfg().showOutdoorEst = !!on; save(); renderRuns(); }
+function renderRuns() {
+    if (!$("rnHist")) return;
+    if (!$("rnDate").value) $("rnDate").value = today();
+    $("rnSave").textContent = editRun ? "Save changes" : "+ Add Run";
+    $("rnCancel").style.display = editRun ? "" : "none";
+    const R = state.runs.filter(x => x && num(x.mins) > 0), w = weekTotals(0), tm = sumF(R, "mins"), ts = sumF(R, "steps");
+    const len = num(hcfg().stepLen) || 0.7, est = hcfg().showOutdoorEst;
+    $("rnStats").innerHTML = `<div class="statline"><div class="stat"><strong>${w.rn}</strong><span class="muted">session${w.rn === 1 ? "" : "s"} this week</span></div><div class="stat"><strong>${w.run} min</strong><span class="muted">this week</span></div><div class="stat"><strong>${w.steps.toLocaleString()}</strong><span class="muted">steps this week</span></div>
+<div class="stat"><strong>${hrs(tm)}</strong><span class="muted">total time (${R.length} session${R.length === 1 ? "" : "s"})</span></div><div class="stat"><strong>${ts.toLocaleString()}</strong><span class="muted">total steps</span></div><div class="stat"><strong>${cadence(ts, tm)}</strong><span class="muted">average steps/min</span></div></div>
+<p class="muted" style="margin-top:10px">Forward distance travelled: <b>0 km</b> (you stay in one place).</p>`;
+    $("rnEst").innerHTML = `<label style="display:flex;gap:8px;align-items:center"><input type="checkbox" ${est ? "checked" : ""} onchange="toggleEst(this.checked)" style="width:auto"> Show an optional outdoor-running-equivalent estimate</label>` +
+        (est ? `<div class="formgrid" style="margin-top:10px"><div><label>Assumed outdoor step length (m)</label><input id="rnLen" type="number" min="0.2" max="2" step="0.01" value="${len}" onchange="setStepLen()"></div></div>
+<p style="margin-top:10px">Estimate: this week <b>${(w.steps * len / 1000).toFixed(2)} km</b> · all sessions <b>${(ts * len / 1000).toFixed(2)} km</b> <span class="muted">(steps × ${len} m ÷ 1000)</span></p>` : "") +
+        `<p class="muted" style="font-size:12.5px;text-transform:none" style="margin-top:8px">⚠ Illustrative only, not a validated conversion. 0.70 m is just a starting assumption. Running in place is not the same as running outdoors (no forward travel, different effort and impact), and this app does not detect steps or estimate calories: you count steps yourself and type them in.</p>`;
+    const items = []; for (let o = -7; o <= 0; o++) { const [a, b, s] = wkRange(o); items.push({ l: wkLabel(s), v: Math.round(sumF(R.filter(x => inRng(x.date, a, b)), "mins")) }); }
+    $("rnTrend").innerHTML = R.length ? hbBars(items, " min") : '<div class="empty">Log a session to see your weekly trend.</div>';
+    const rows = state.runs.filter(x => x && x.id).sort((a, b) => String(b.date).localeCompare(String(a.date)));
+    $("rnHist").innerHTML = rows.length ? `<div style="overflow-x:auto"><table><tr><th>Date</th><th>Min</th><th>Steps</th><th>Steps/min</th><th>Effort</th><th>Note</th><th></th></tr>${rows.map(r => `<tr><td>${esc(r.date)}</td><td>${num(r.mins)}</td><td>${num(r.steps).toLocaleString()}</td><td>${cadence(num(r.steps), num(r.mins))}</td><td>${esc(r.effort || "")}</td><td>${esc(r.note || "")}</td><td style="white-space:nowrap"><button type="button" class="secondary" onclick="editRunBtn('${esc(r.id)}')">Edit</button> <button type="button" class="danger" onclick="delRun('${esc(r.id)}')">Delete</button></td></tr>`).join("")}</table></div>` : '<div class="empty">No running-in-place sessions yet.</div>';
+}
+/* ---- Karate ---- */
+let editKa = null;
+const kFocusList = () => [...KFOCUS, ...(Array.isArray(hcfg().karateFocus) ? hcfg().karateFocus : [])];
+function kaFocusChange() { $("kaCustom").style.display = $("kaFocus").value === "__c" ? "" : "none"; }
+function saveKarate() {
+    const mins = num($("kaMins").value);
+    if (mins <= 0) return alert("Enter the minutes practised (more than 0).");
+    let f = $("kaFocus").value;
+    if (f === "__c") {
+        f = $("kaCustom").value.trim();
+        if (!f) return alert("Type your custom focus area.");
+        if (!kFocusList().some(x => x.toLowerCase() === f.toLowerCase())) { if (!Array.isArray(hcfg().karateFocus)) hcfg().karateFocus = []; hcfg().karateFocus.push(f); }
+    }
+    const rec = { date: okDate($("kaDate").value) ? $("kaDate").value : today(), mins, focus: f, effort: $("kaEff").value, note: $("kaNote").value.trim() };
+    if (editKa) { const r = state.karate.find(x => x.id === editKa); if (r) Object.assign(r, rec); } else state.karate.push(Object.assign({ id: uid2() }, rec));
+    if (!save()) return;
+    editKa = null; $("kaMins").value = ""; $("kaNote").value = ""; $("kaCustom").value = "";
+    renderKarate(); renderWkSummary(); renderBalance(); renderExtra();
+}
+function editKaBtn(id) { const r = state.karate.find(x => x.id === id); if (!r) return; editKa = id; $("kaDate").value = r.date; $("kaMins").value = r.mins; $("kaEff").value = r.effort; $("kaNote").value = r.note || ""; renderKarate(); const has = [...$("kaFocus").options].some(o => o.value === r.focus); $("kaFocus").value = has ? r.focus : "__c"; $("kaCustom").value = has ? "" : r.focus || ""; kaFocusChange(); $("kaDate").scrollIntoView({ block: "center" }); }
+function cancelKa() { editKa = null; $("kaMins").value = ""; $("kaNote").value = ""; renderKarate(); }
+function delKa(id) { if (!confirm("Delete this karate session?")) return; state.karate = state.karate.filter(x => x.id !== id); if (editKa === id) editKa = null; save(); renderKarate(); renderWkSummary(); renderBalance(); renderExtra(); }
+function addKNote() { const t = $("knText").value.trim(); if (!t) return; state.karateNotes.unshift({ id: uid2(), date: today(), text: t }); save(); $("knText").value = ""; renderKarate(); }
+function delKNote(id) { state.karateNotes = state.karateNotes.filter(x => x.id !== id); save(); renderKarate(); }
+function renderKarate() {
+    if (!$("kaHist")) return;
+    if (!$("kaDate").value) $("kaDate").value = today();
+    const cur = $("kaFocus").value;
+    $("kaFocus").innerHTML = kFocusList().map(f => `<option>${esc(f)}</option>`).join("") + '<option value="__c">Custom…</option>';
+    if ([...$("kaFocus").options].some(o => o.value === cur)) $("kaFocus").value = cur;
+    kaFocusChange();
+    $("kaSave").textContent = editKa ? "Save changes" : "+ Add Session"; $("kaCancel").style.display = editKa ? "" : "none";
+    const K = state.karate.filter(x => x && num(x.mins) > 0), w = weekTotals(0);
+    const days28 = new Set(K.filter(x => withinLastDays(x.date, 28)).map(x => x.date)).size;
+    let active = 0; for (let o = -7; o <= 0; o++) { const [a, b] = wkRange(o); if (K.some(x => inRng(x.date, a, b))) active++; }
+    $("kaStats").innerHTML = `<div class="statline"><div class="stat"><strong>${w.kn}</strong><span class="muted">session${w.kn === 1 ? "" : "s"} this week</span></div><div class="stat"><strong>${w.karate} min</strong><span class="muted">this week</span></div><div class="stat"><strong>${hrs(sumF(K, "mins"))}</strong><span class="muted">total practice (${K.length} session${K.length === 1 ? "" : "s"})</span></div>
+<div class="stat"><strong>${days28}/28</strong><span class="muted">days practised, last 28</span></div><div class="stat"><strong>${active}/8</strong><span class="muted">weeks with practice, last 8</span></div></div><p class="muted" style="font-size:12.5px;text-transform:none" style="margin-top:10px">Practice time shows consistency. It does not measure skill, mastery or rank; those come from your instructor.</p>`;
+    const by = {}; K.forEach(x => { const f = x.focus || "Unspecified"; by[f] = (by[f] || 0) + num(x.mins); });
+    $("kaFocusBox").innerHTML = K.length ? hbBars(Object.entries(by).sort((a, b) => b[1] - a[1]).map(([l, v]) => ({ l: l.length > 9 ? l.slice(0, 8) + "…" : l, v })), " min") : '<div class="empty">Your focus areas will appear here.</div>';
+    $("kaNotes").innerHTML = state.karateNotes.length ? state.karateNotes.filter(n => n && n.id).map(n => `<div class="row" style="padding:5px 0;align-items:flex-start"><span><span class="muted" style="font-size:12.5px;text-transform:none">${esc(n.date)}</span><br>${esc(n.text)}</span><button type="button" class="danger" onclick="delKNote('${esc(n.id)}')">×</button></div>`).join("") : '<div class="empty">No progress notes yet. Write what improved or what to fix next.</div>';
+    const rows = state.karate.filter(x => x && x.id).sort((a, b) => String(b.date).localeCompare(String(a.date)));
+    $("kaHist").innerHTML = rows.length ? `<div style="overflow-x:auto"><table><tr><th>Date</th><th>Min</th><th>Focus</th><th>Effort</th><th>Note</th><th></th></tr>${rows.map(r => `<tr><td>${esc(r.date)}</td><td>${num(r.mins)}</td><td>${esc(r.focus || "")}</td><td>${esc(r.effort || "")}</td><td>${esc(r.note || "")}</td><td style="white-space:nowrap"><button type="button" class="secondary" onclick="editKaBtn('${esc(r.id)}')">Edit</button> <button type="button" class="danger" onclick="delKa('${esc(r.id)}')">Delete</button></td></tr>`).join("")}</table></div>` : '<div class="empty">No karate sessions yet.</div>';
+}
+/* ---- Hobby suggestion catalogue ---- */
+const HB_DEFAULT = [
+    { id: "karate", n: "Karate", c: "Physical skill", d: "Physical skill and coordination.", m: "minutes", k: "karate", s: "Practise controlled solo basics and kata only. No solo throws, no striking hard objects, no unsafe conditioning; partner work only with a qualified instructor." },
+    { id: "run", n: "Running in place / indoor cardio", c: "Fitness", d: "Endurance and general fitness.", m: "minutes", k: "run", s: "Flat, non-slip surface and supportive shoes. Warm up first, and stop if you feel dizzy or any pain." },
+    { id: "paper", n: "DIY paper-ball target game", c: "Skill game", d: "Aim, consistency and scorekeeping.", m: "score", s: "Soft paper projectiles only. Keep people, pets and breakable things out of the line of fire." },
+    { id: "chess", n: "Chess", c: "Mind games", d: "Strategy, calculation and pattern recognition.", m: "sessions" },
+    { id: "robot", n: "Engineering and robotics", c: "Making", d: "Design, build, test, document and iterate.", m: "milestones", ms: ["Design", "Build", "Test", "Document", "Iterate"] },
+    { id: "draw", n: "Drawing", c: "Arts", d: "Observation and visual representation.", m: "sessions" },
+    { id: "write", n: "Creative writing and playwriting", c: "Arts", d: "Storytelling and language.", m: "milestones" },
+    { id: "sing", n: "Singing", c: "Music", d: "Vocal skill and musical listening.", m: "minutes" },
+    { id: "arabic", n: "Arabic and Quran understanding", c: "Language & Deen", d: "Language learning and comprehension.", m: "milestones" },
+    { id: "maps", n: "Cartography and map study", c: "Geography", d: "Spatial knowledge and map-reading.", m: "sessions" },
+    { id: "artapp", n: "Art appreciation", c: "Arts", d: "Observation and analysis.", m: "sessions" },
+    { id: "speak", n: "Public speaking", c: "Communication", d: "Structured expression and communication.", m: "sessions" },
+    { id: "archery", n: "Archery theory and history", c: "Study-only", d: "Study only until supervised range practice is available.", m: "milestones", so: 1, s: "Theory and history only. Do not shoot without a qualified coach and a proper range." },
+    { id: "riding", n: "Horse-riding theory and equine care", c: "Study-only", d: "Study only until supervised instruction is available.", m: "milestones", so: 1, s: "Theory and care knowledge only. Do not ride or handle horses without a qualified instructor." },
+    { id: "swim", n: "Swimming theory and water safety", c: "Study-only", d: "Study only until supervised pool instruction is available.", m: "milestones", so: 1, s: "Theory and water safety only. Never swim without supervision." },
+    { id: "chem", n: "Real Chemistry", c: "Science", d: "Theory and safe, supervised practical work.", m: "sessions", s: "Only safe experiments with an adult present; never mix unknown chemicals." },
+    { id: "act", n: "Acting", c: "Arts", d: "Voice, expression and performance.", m: "sessions" },
+    { id: "seerah", n: "Prophetic biography, Sunnah and Islamic history", c: "Deen & History", d: "Reading and reflection.", m: "sessions" }
+];
+let editHb = null;
+function seedHobbyCat() { if (!hcfg().catSeeded) { state.hobbyCat = HB_DEFAULT.map(x => Object.assign({}, x)); hcfg().catSeeded = true; hcfg().catV2 = true; save(); } else if (!hcfg().catV2) { const have = new Set(state.hobbyCat.map(x => x.id)); HB_DEFAULT.filter(x => x.id === "chem" || x.id === "act").forEach(x => { if (!have.has(x.id)) state.hobbyCat.push(Object.assign({}, x)); }); hcfg().catV2 = true; save(); } }
+function hbActivate(id, studyOnly) {
+    const h = state.hobbyCat.find(x => x.id === id); if (!h) return;
+    const ex = state.extra.find(x => x.catId === id || String(x.name).toLowerCase() === String(h.n).toLowerCase());
+    if (ex) { if (ex.status === "Archived") ex.status = studyOnly ? "Study-only" : "Active"; else return alert(h.n + " is already in your list below."); }
+    else state.extra.push({ name: h.n, project: "", goal: "", hours: 0, status: studyOnly || h.so ? "Study-only" : "Active", cat: h.c || "", measure: h.m || "minutes", kind: h.k || "", catId: h.id, ms: (h.ms || []).map(t => ({ t, done: false })) });
+    save(); renderExtra();
+}
+function hbEdit(id) { editHb = id; renderHobbyCat(); }
+function hbSave(id) {
+    const h = state.hobbyCat.find(x => x.id === id); if (!h) return;
+    const n = $("hbN").value.trim(); if (!n) return alert("Give the idea a name.");
+    h.n = n; h.c = $("hbC").value.trim(); h.d = $("hbD").value.trim(); h.m = $("hbM").value; editHb = null; save(); renderHobbyCat();
+}
+function hbNew() { const id = "c" + uid2(); state.hobbyCat.push({ id, n: "New idea", c: "", d: "", m: "sessions" }); editHb = id; save(); renderHobbyCat(); }
+function hbDel(id) { if (!confirm("Remove this idea from the catalogue? Hobbies you already added stay.")) return; state.hobbyCat = state.hobbyCat.filter(x => x.id !== id); save(); renderHobbyCat(); }
+function hbRestore() { const have = new Set(state.hobbyCat.map(x => x.id)); HB_DEFAULT.forEach(x => { if (!have.has(x.id)) state.hobbyCat.push(Object.assign({}, x)); }); save(); renderHobbyCat(); }
+const MEASURES = [["minutes", "Minutes"], ["sessions", "Sessions"], ["score", "Best score"], ["milestones", "Milestones"]];
+function renderHobbyCat() {
+    if (!$("hbCat")) return;
+    seedHobbyCat();
+    $("hbCat").innerHTML = state.hobbyCat.filter(h => h && h.id).map(h => {
+        const ex = state.extra.find(x => x.catId === h.id || String(x.name).toLowerCase() === String(h.n).toLowerCase()), on = ex && ex.status !== "Archived";
+        if (editHb === h.id) return `<div class="stat"><input id="hbN" value="${esc(h.n)}" placeholder="Name"><input id="hbC" value="${esc(h.c || "")}" placeholder="Category" style="margin-top:6px"><input id="hbD" value="${esc(h.d || "")}" placeholder="What it builds" style="margin-top:6px"><select id="hbM" style="margin-top:6px">${MEASURES.map(([v, l]) => `<option value="${v}" ${v === h.m ? "selected" : ""}>Progress by: ${l}</option>`).join("")}</select><div style="margin-top:8px"><button type="button" class="action" onclick="hbSave('${esc(h.id)}')">Save</button> <button type="button" class="secondary" onclick="editHb=null;renderHobbyCat()">Cancel</button></div></div>`;
+        return `<div class="stat"><b>${esc(h.n)}</b> ${h.so ? '<span class="pill">study-only</span>' : ""}<div class="muted" style="font-size:12.5px;text-transform:none">${esc(h.c || "")}</div><div style="font-size:13px;margin:4px 0">${esc(h.d || "")}</div>${h.s ? `<div class="muted" style="font-size:12.5px;text-transform:none">🛡 ${esc(h.s)}</div>` : ""}<div style="margin-top:8px">${HB_SEC[h.id] ? `<button type="button" class="action" onclick="hbOpen('${HB_SEC[h.id]}')">Open section</button> ` : ""}${HB_SEC[h.id] && !h.k ? "" : on ? `<span class="pill ok">In your list · ${esc(ex.status)}</span>` : `<button type="button" class="action" onclick="hbActivate('${esc(h.id)}',false)">${h.so ? "Add (study-only)" : "Add"}</button>${h.so ? "" : ` <button type="button" class="secondary" onclick="hbActivate('${esc(h.id)}',true)">Study-only</button>`}`} <button type="button" class="secondary" onclick="hbEdit('${esc(h.id)}')">Edit</button> <button type="button" class="danger" onclick="hbDel('${esc(h.id)}')">×</button></div></div>`;
+    }).join("") || '<div class="empty">Catalogue is empty. Use Restore defaults.</div>';
+}
+/* ---- hobby progress helpers ---- */
+const isKind = x => x.kind === "karate" || x.kind === "run";
+function actMins(x) { return x.kind === "karate" ? sumF(state.karate, "mins") : x.kind === "run" ? sumF(state.runs, "mins") : extraMins(x.name); }
+function actProgress(x) {
+    if (x.kind === "karate") return `${state.karate.length} session${state.karate.length === 1 ? "" : "s"} · ${hrs(actMins(x))} <a href="#!karate" onclick="hbOpen('karate');return false">open</a>`;
+    if (x.kind === "run") return `${state.runs.length} session${state.runs.length === 1 ? "" : "s"} · ${hrs(actMins(x))} <a href="#!runs" onclick="hbOpen('runs');return false">open</a>`;
+    const L = state.extraLog.filter(l => l.activity === x.name), m = x.measure || "minutes";
+    if (m === "sessions") return L.length + " session" + (L.length === 1 ? "" : "s");
+    if (m === "score") { const v = L.map(l => l.val).filter(v => v !== "" && v != null && Number.isFinite(Number(v))).map(Number); return v.length ? "Best " + Math.max(...v) + " · " + v.length + " scored" : "No scores yet"; }
+    if (m === "milestones") { const ms = Array.isArray(x.ms) ? x.ms : []; return ms.length ? ms.filter(q => q.done).length + "/" + ms.length + " done" : "No milestones yet"; }
+    return hrs(actMins(x));
+}
+function msToggle(i, j) { const q = state.extra[i].ms[j]; q.done = !q.done; save(); renderExtra(); }
+function msAdd(i) { const el = document.getElementById("msIn" + i), t = el.value.trim(); if (!t) return; const x = state.extra[i]; if (!Array.isArray(x.ms)) x.ms = []; x.ms.push({ t, done: false }); save(); renderExtra(); }
+function msDel(i, j) { state.extra[i].ms.splice(j, 1); save(); renderExtra(); }
+function setArchived(i, on) { const x = state.extra[i]; x.status = on ? "Archived" : "Active"; save(); renderExtra(); }
+function hobbyRow(x, i) {
+    const st = ["Active", "Paused", "Completed", "Study-only", "Archived"], m = x.measure || "minutes", ms = Array.isArray(x.ms) ? x.ms : [], arch = x.status === "Archived", cls = { Active: "ok" }[x.status] || "";
+    const f = (k, ph, v) => `<input data-f="${k}" data-i="${i}" value="${esc(v)}" placeholder="${ph}">`;
+    return `<div class="hbcard${arch ? " arch" : ""}"><div class="hbhead"><input class="hbname" data-f="name" data-i="${i}" value="${esc(x.name)}"><select data-f="status" data-i="${i}" class="hbst ${cls}">${st.map(o => `<option ${o === x.status ? "selected" : ""}>${o}</option>`).join("")}</select></div>
+<div class="hbprog">${actProgress(x)}</div>
+<div class="hbfields"><label>Category${f("cat", "e.g. Arts", x.cat || "")}</label><label>Progress by<select data-f="measure" data-i="${i}" ${isKind(x) ? "disabled" : ""}>${MEASURES.map(([v, l]) => `<option value="${v}" ${v === m ? "selected" : ""}>${l}</option>`).join("")}</select></label><label>Project${f("project", "current project", x.project || "")}</label><label>Goal (optional)${f("goal", "goal", x.goal || "")}</label><label>Prior hours<input data-f="hours" data-i="${i}" type="number" min="0" step=".5" value="${num(x.hours)}"></label></div>
+${m === "milestones" && !isKind(x) ? `<div class="hbms">${ms.map((q, j) => `<label><input type="checkbox" ${q.done ? "checked" : ""} onchange="msToggle(${i},${j})"> ${esc(q.t)} <a href="#" onclick="msDel(${i},${j});return false" title="remove">×</a></label>`).join("")}<span><input id="msIn${i}" placeholder="Add milestone"> <button type="button" class="secondary" onclick="msAdd(${i})">+</button></span></div>` : ""}
+<div class="hbact">${arch ? `<button type="button" class="secondary" onclick="setArchived(${i},false)">Restore</button>` : x.status === "Paused" ? `<button type="button" class="secondary" onclick="setStatus(${i},'Active')">Resume</button>` : x.status === "Active" ? `<button type="button" class="secondary" onclick="setStatus(${i},'Paused')">Pause</button>` : ""}${arch ? "" : ` <button type="button" class="secondary" onclick="setArchived(${i},true)">Archive</button>`} <button type="button" class="danger delete-extra" data-index="${i}">Delete</button></div></div>`;
+}
+function setStatus(i, s) { state.extra[i].status = s; save(); renderExtra(); }
+/* ---- Dashboard + analytics + report ---- */
+function renderWkSummary() {
+    if (!$("wkSummary")) return;
+    const w = weekTotals(0), act = state.extra.filter(x => x.status === "Active").length, comb = !!hcfg().combined, tot = w.study + w.karate + w.run + w.hobby;
+    $("wkSummary").innerHTML = `<div class="statline"><div class="stat"><strong>${hrs(w.study)}</strong><span class="muted">📖 study</span></div><div class="stat"><strong>${w.karate} min</strong><span class="muted">🥋 karate · ${w.kn} session${w.kn === 1 ? "" : "s"}</span></div><div class="stat"><strong>${w.run} min</strong><span class="muted">🏃 indoor cardio · ${w.steps.toLocaleString()} steps</span></div></div>
+<p class="muted" style="font-size:12.5px;text-transform:none" style="margin-top:8px">🎨 ${act} active hobb${act === 1 ? "y" : "ies"}${w.hobby ? " · " + hrs(w.hobby) + " logged this week" : ""} <span style="float:right"><label><input type="checkbox" style="width:auto" ${comb ? "checked" : ""} onchange="hcfg().combined=this.checked;save();renderWkSummary()"> show combined total</label></span></p>${comb ? `<p style="margin-top:6px">Combined this week: <b>${hrs(tot)}</b> <span class="muted" style="font-size:12.5px;text-transform:none">(study + karate + cardio + hobby logs; each session counted once)</span></p>` : ""}`;
+}
+function renderBalance() {
+    if (!$("balChart")) return;
+    const cols = [["study", "#4f7cff", "Study"], ["karate", "#e8833a", "Karate"], ["run", "#27a36b", "Cardio"], ["hobby", "#a15cd6", "Hobbies"]], rows = [];
+    for (let o = -7; o <= 0; o++) { const t = weekTotals(o), tot = cols.reduce((n, [k]) => n + t[k], 0); rows.push({ s: wkRange(o)[2], t, tot }); }
+    const mx = Math.max(1, ...rows.map(r => r.tot));
+    $("balChart").innerHTML = rows.map(r => `<div style="display:flex;align-items:center;gap:8px;margin:3px 0;font-size:12px"><span style="width:50px;flex:none" class="muted">${wkLabel(r.s)}</span><div style="flex:1;display:flex;height:14px;background:rgba(127,127,127,.12);border-radius:6px;overflow:hidden">${cols.map(([k, c]) => r.t[k] ? `<div title="${k}: ${r.t[k]} min" style="width:${r.t[k] / mx * 100}%;background:${c}"></div>` : "").join("")}</div><b style="width:56px;text-align:right;flex:none">${hrs(r.tot)}</b></div>`).join("") +
+        `<p style="margin-top:8px;font-size:12.5px">${cols.map(([, c, l]) => `<span style="color:${c}">■</span> ${l}`).join(" &nbsp; ")} <span class="muted">· study kept separate in colour; each session counted once</span></p>`;
+}
+function reportExtra(hl, inR) {
+    const ka = state.karate.filter(x => inR(x.date)), ru = state.runs.filter(x => inR(x.date));
+    if (ka.length) hl.push(`Karate: <b>${ka.length}</b> session${ka.length === 1 ? "" : "s"}, <b>${sumF(ka, "mins")} min</b>.`);
+    const hs = state.hobbyLog.filter(x => inR(x.date)); if (hs.length) hl.push(`Skill practice (drawing, languages, chemistry, acting and more): <b>${hs.length}</b> session${hs.length === 1 ? "" : "s"}, <b>${sumF(hs, "mins")} min</b>.`);
+    if (ru.length) hl.push(`Running in place: <b>${ru.length}</b> session${ru.length === 1 ? "" : "s"}, <b>${sumF(ru, "mins")} min</b>, <b>${sumF(ru, "steps").toLocaleString()}</b> steps.`);
+}
+/* ===== v82: hobby sections, reading link, word bank, quests ===== */
+let hbTab = (() => { try { return localStorage.getItem("aalimHbTab") || "over"; } catch (e) { return "over"; } })();
+function hbOpen(t) { hbTab = t; try { localStorage.setItem("aalimHbTab", t); } catch (e) { } if (curPage !== "extra") showPage("extra"); else { hbRender(); window.scrollTo({ top: 0 }); } }
+const SEC_DEFAULT = [
+    { id: "draw", n: "Drawing & Sketching", ic: "🎨", foc: ["Gesture / quick sketch", "Shading & tone", "Proportion", "Perspective", "Colour", "Still life", "Portrait", "Imagination", "Digital"], tl: "Subject / piece", vl: "Pieces finished", ms: ["Basic shapes to forms", "Light and shadow", "Proportions of a face", "One-point perspective", "Colour wheel and mixing", "Finish one complete piece"], tip: "Short daily sketches beat rare long sessions. Draw from real objects when you can." },
+    { id: "lang", n: "Languages", ic: "🌍", foc: ["Vocabulary", "Reading", "Listening", "Speaking", "Writing", "Grammar", "Quran understanding"], tl: "Language", vl: "New words learned", ms: [], tip: "Add a language by typing it in the Language box, e.g. Arabic, Urdu, French. Each gets its own totals." },
+    { id: "chem", n: "Real Chemistry", ic: "🧪", foc: ["Reading theory", "Watching a demo", "Home-safe experiment (adult present)", "Problem solving", "Lab notes / report", "Virtual lab"], tl: "Topic / experiment", vl: "Experiments done", ms: ["Lab safety rules and equipment", "Acids, bases and indicators", "Reactions and equations", "Metals and non-metals", "Carbon compounds", "Write a proper lab report"], tip: "🛡 Real experiments only with an adult present, using safe everyday materials. Never mix unknown chemicals, never taste or smell chemicals, wear eye protection." },
+    { id: "act", n: "Acting", ic: "🎭", foc: ["Voice & breath", "Facial expression", "Body & movement", "Monologue", "Improvisation", "Script reading", "Memorising lines", "Performance"], tl: "Piece / role", vl: "Performances", ms: ["Memorise a monologue", "Perform for family", "Do an improv scene", "Record and review a performance"], tip: "Record yourself now and then and watch it back. It is the fastest way to see what to fix." }
+];
+const HB_SEC = { karate: "karate", run: "runs", draw: "draw", arabic: "lang", chem: "chem", act: "act" };
+const secOf = id => state.hobbySec.find(s => s && s.id === id);
+function seedSections() { if (!hcfg().secSeeded) { state.hobbySec = SEC_DEFAULT.map(s => JSON.parse(JSON.stringify(s))).map(s => Object.assign(s, { ms: s.ms.map(t => ({ t, done: false })) })); hcfg().secSeeded = true; save(); } }
+function hbRender() {
+    if (!$("hbTabs")) return;
+    seedSections();
+    const secs = state.hobbySec.filter(s => s && s.id), valid = ["over", "karate", "runs", "read", ...secs.map(s => s.id), "new"];
+    if (!valid.includes(hbTab)) hbTab = "over";
+    const tabs = [["over", "🏠 Overview"], ["karate", "🥋 Karate"], ["runs", "🏃 Run in Place"], ["read", "📖 Reading"], ...secs.map(s => [s.id, (s.ic || "⭐") + " " + s.n]), ["new", "＋ Add section"]];
+    $("hbTabs").innerHTML = tabs.map(([id, l]) => `<button type="button" class="${id === hbTab ? "on" : ""}" onclick="hbOpen('${esc(id)}')">${esc(l)}</button>`).join("");
+    const gen = secs.some(s => s.id === hbTab);
+    document.querySelectorAll("#extra .hbpanel").forEach(p => p.classList.toggle("on", p.dataset.p === (gen ? "sec" : hbTab)));
+    if (gen) safeRun(renderSecPanel); else if (hbTab === "read") safeRun(renderReadPanel); else if (hbTab === "new") safeRun(renderNewSec);
+}
+/* ---- generic skill sections ---- */
+let editSg = null;
+function sgFocusList(s) { return Array.isArray(s.foc) ? s.foc : []; }
+function sgSave() {
+    const s = secOf(hbTab); if (!s) return;
+    const mins = num($("sgMins").value);
+    if (mins <= 0) return alert("Enter the minutes practised (more than 0).");
+    let f = $("sgFocus").value; if (f === "__c") { f = $("sgCustom").value.trim(); if (f && !sgFocusList(s).includes(f)) s.foc = [...sgFocusList(s), f]; }
+    const vRaw = $("sgVal").value, rec = { sec: s.id, date: okDate($("sgDate").value) ? $("sgDate").value : today(), mins, focus: f, title: $("sgTitle").value.trim(), val: vRaw === "" || !Number.isFinite(Number(vRaw)) ? "" : Math.max(0, Number(vRaw)), note: $("sgNote").value.trim() };
+    if (editSg) { const r = state.hobbyLog.find(x => x.id === editSg); if (r) Object.assign(r, rec); } else state.hobbyLog.push(Object.assign({ id: uid2() }, rec));
+    if (!save()) return;
+    editSg = null; $("sgMins").value = ""; $("sgVal").value = ""; $("sgNote").value = ""; if ($("sgCustom")) $("sgCustom").value = "";
+    renderSecPanel(); renderWkSummary(); renderBalance(); renderQuests();
+}
+function sgEdit(id) { const r = state.hobbyLog.find(x => x.id === id); if (!r) return; editSg = id; renderSecPanel(); $("sgDate").value = r.date; $("sgMins").value = r.mins; $("sgTitle").value = r.title || ""; $("sgVal").value = r.val === "" ? "" : r.val; $("sgNote").value = r.note || ""; const has = [...$("sgFocus").options].some(o => o.value === r.focus); $("sgFocus").value = has ? r.focus : "__c"; $("sgCustom").value = has ? "" : r.focus || ""; sgFocusCh(); $("sgDate").scrollIntoView({ block: "center" }); }
+function sgCancel() { editSg = null; renderSecPanel(); }
+function sgDel(id) { if (!confirm("Delete this session?")) return; state.hobbyLog = state.hobbyLog.filter(x => x.id !== id); if (editSg === id) editSg = null; save(); renderSecPanel(); renderWkSummary(); renderBalance(); renderQuests(); }
+function sgFocusCh() { $("sgCustom").style.display = $("sgFocus").value === "__c" ? "" : "none"; }
+function sgMs(j) { const s = secOf(hbTab); s.ms[j].done = !s.ms[j].done; save(); renderSecPanel(); }
+function sgMsAdd() { const s = secOf(hbTab), v = $("sgMsIn").value.trim(); if (!v) return; s.ms.push({ t: v, done: false }); save(); renderSecPanel(); }
+function sgMsDel(j) { secOf(hbTab).ms.splice(j, 1); save(); renderSecPanel(); }
+function secSaveEdit() {
+    const s = secOf(hbTab), n = $("seN").value.trim(); if (!n) return alert("Give the section a name.");
+    s.n = n; s.ic = $("seI").value.trim() || "⭐"; s.tl = $("seT").value.trim() || "Topic / piece"; s.vl = $("seV").value.trim() || "Items completed";
+    s.foc = $("seF").value.split(",").map(x => x.trim()).filter(Boolean); save(); renderSecPanel(); hbRender();
+}
+function secDelete() {
+    const s = secOf(hbTab), n = state.hobbyLog.filter(l => l.sec === s.id).length;
+    if (!confirm(`Delete the section "${s.n}"${n ? ` and its ${n} logged session${n === 1 ? "" : "s"}` : ""}? This cannot be undone. Save a backup first if unsure.`)) return;
+    state.hobbyLog = state.hobbyLog.filter(l => l.sec !== s.id); state.hobbySec = state.hobbySec.filter(x => x.id !== s.id); hbTab = "over"; save(); hbRender(); renderWkSummary(); renderBalance();
+}
+function renderSecPanel() {
+    const s = secOf(hbTab), el = $("secPanel"); if (!el || !s) return;
+    const L = state.hobbyLog.filter(l => l && l.sec === s.id && num(l.mins) > 0), w = wkRange(0), wl = L.filter(l => inRng(l.date, w[0], w[1]));
+    const d28 = new Set(L.filter(l => withinLastDays(l.date, 28)).map(l => l.date)).size, tv = sumF(L, "val");
+    const by = {}, byT = {}; L.forEach(l => { const f = l.focus || "Other"; by[f] = (by[f] || 0) + num(l.mins); const t = l.title || ""; if (t) { const o = byT[t] = byT[t] || { m: 0, v: 0, n: 0 }; o.m += num(l.mins); o.v += num(l.val); o.n++; } });
+    const titles = Object.keys(byT), cur = editSg ? state.hobbyLog.find(x => x.id === editSg) : null, lastT = (L.slice().sort((a, b) => String(b.date).localeCompare(String(a.date)))[0] || {}).title || (s.id === "lang" ? "Arabic" : "");
+    const fl = sgFocusList(s), rows = state.hobbyLog.filter(l => l && l.sec === s.id && l.id).sort((a, b) => String(b.date).localeCompare(String(a.date)));
+    el.innerHTML = `<div class="grid2" style="align-items:start"><div class="card"><h2>${esc(s.ic || "⭐")} ${esc(s.n)}</h2>${s.tip ? `<p class="muted" style="text-transform:none;font-size:13px">${esc(s.tip)}</p>` : ""}
+<div class="formgrid"><div><label>Date</label><input id="sgDate" type="date" value="${esc(today())}"></div><div><label>Minutes</label><input id="sgMins" type="number" min="1" step="any" placeholder="30"></div>
+<div><label>Focus</label><select id="sgFocus" onchange="sgFocusCh()">${fl.map(f => `<option>${esc(f)}</option>`).join("")}<option value="__c">Custom…</option></select><input id="sgCustom" placeholder="Your own focus" style="display:none;margin-top:6px"></div>
+<div><label>${esc(s.tl || "Topic / piece")}</label><input id="sgTitle" list="sgTl" value="${esc(editSg ? "" : lastT)}" placeholder="optional"><datalist id="sgTl">${titles.map(t => `<option value="${esc(t)}">`).join("")}</datalist></div>
+<div><label>${esc(s.vl || "Items completed")} (optional)</label><input id="sgVal" type="number" min="0" step="any" placeholder="0"></div><div><label>Notes (optional)</label><input id="sgNote" placeholder="what you did or learned"></div>
+<div class="full"><button class="action" onclick="sgSave()">${editSg ? "Save changes" : "+ Add Session"}</button> ${editSg ? '<button class="secondary" onclick="sgCancel()">Cancel edit</button>' : ""}</div></div></div>
+<div class="card"><h2>Progress</h2><div class="statline"><div class="stat"><strong>${wl.length}</strong><span class="muted">session${wl.length === 1 ? "" : "s"} this week</span></div><div class="stat"><strong>${sumF(wl, "mins")} min</strong><span class="muted">this week</span></div><div class="stat"><strong>${hrs(sumF(L, "mins"))}</strong><span class="muted">total · ${L.length} session${L.length === 1 ? "" : "s"}</span></div><div class="stat"><strong>${d28}/28</strong><span class="muted">days practised</span></div><div class="stat"><strong>${tv}</strong><span class="muted">${esc(s.vl || "items")} total</span></div></div>
+<p class="muted" style="font-size:12.5px;text-transform:none;margin-top:8px">Practice time shows consistency, not mastery.</p></div></div>
+<div class="grid2" style="align-items:start"><div class="card"><h2>Focus breakdown (min)</h2>${L.length ? hbBars(Object.entries(by).sort((a, b) => b[1] - a[1]).map(([l, v]) => ({ l: l.length > 9 ? l.slice(0, 8) + "…" : l, v })), "") : '<div class="empty">Log a session to see this.</div>'}${titles.length ? `<h3 style="margin:14px 0 4px;font-size:14px">By ${esc((s.tl || "topic").toLowerCase())}</h3>${titles.sort((a, b) => byT[b].m - byT[a].m).slice(0, 6).map(t => `<div class="row" style="padding:3px 0"><span>${esc(t)} <span class="muted">· ${byT[t].n} session${byT[t].n === 1 ? "" : "s"}</span></span><b>${byT[t].m} min${byT[t].v ? " · " + byT[t].v + " " + esc((s.vl || "").toLowerCase()) : ""}</b></div>`).join("")}` : ""}</div>
+<div class="card"><h2>Checklist</h2><p class="muted" style="font-size:12.5px;text-transform:none">Things to try, in any order. Tick them off at your own pace.</p><div class="hbms" style="flex-direction:column;align-items:flex-start">${(s.ms || []).map((q, j) => `<label><input type="checkbox" ${q.done ? "checked" : ""} onchange="sgMs(${j})"> ${esc(q.t)} <a href="#" onclick="sgMsDel(${j});return false">×</a></label>`).join("") || '<span class="muted">No items yet.</span>'}</div><div style="margin-top:10px"><input id="sgMsIn" placeholder="Add an item" style="width:70%"> <button class="secondary" onclick="sgMsAdd()">+</button></div></div></div>
+<div class="card"><h2>Session History</h2>${rows.length ? `<div style="overflow-x:auto"><table><tr><th>Date</th><th>Min</th><th>Focus</th><th>${esc(s.tl || "Topic")}</th><th>${esc(s.vl || "Count")}</th><th>Note</th><th></th></tr>${rows.map(r => `<tr><td>${esc(r.date)}</td><td>${num(r.mins)}</td><td>${esc(r.focus || "")}</td><td>${esc(r.title || "")}</td><td>${r.val === "" || r.val == null ? "" : num(r.val)}</td><td>${esc(r.note || "")}</td><td style="white-space:nowrap"><button class="secondary" onclick="sgEdit('${esc(r.id)}')">Edit</button> <button class="danger" onclick="sgDel('${esc(r.id)}')">Delete</button></td></tr>`).join("")}</table></div>` : '<div class="empty">No sessions yet.</div>'}</div>
+<details class="card"><summary><b>⚙️ Edit this section</b></summary><div class="formgrid" style="margin-top:10px"><div><label>Name</label><input id="seN" value="${esc(s.n)}"></div><div><label>Icon (emoji)</label><input id="seI" value="${esc(s.ic || "")}"></div><div><label>Label for the topic box</label><input id="seT" value="${esc(s.tl || "")}"></div><div><label>Label for the count</label><input id="seV" value="${esc(s.vl || "")}"></div><div class="full"><label>Focus options (comma separated)</label><input id="seF" value="${esc(fl.join(", "))}"></div><div class="full"><button class="action" onclick="secSaveEdit()">Save</button> <button class="danger" onclick="secDelete()">Delete section</button></div></div></details>`;
+    if (cur) {/* values set by sgEdit */ }
+    sgFocusCh();
+}
+function renderNewSec() {
+    $("secNew").innerHTML = `<div class="card"><h2>＋ Add a section</h2><p class="muted" style="text-transform:none;font-size:13px">Create a practice log for anything: guitar, chess openings, calligraphy, coding, cooking… It gets its own tab, logs, focus options and checklist, and counts in your weekly summary.</p>
+<div class="formgrid"><div><label>Name</label><input id="nsN" placeholder="e.g. Calligraphy"></div><div><label>Icon (emoji)</label><input id="nsI" placeholder="✒️"></div><div><label>Label for the topic box</label><input id="nsT" placeholder="Topic / piece"></div><div><label>Label for the count</label><input id="nsV" placeholder="Items completed"></div><div class="full"><label>Focus options (comma separated, optional)</label><input id="nsF" placeholder="Technique, Theory, Revision"></div><div class="full"><button class="action" onclick="addSection()">Create section</button></div></div></div>`;
+}
+function addSection() {
+    const n = $("nsN").value.trim(); if (!n) return alert("Give the section a name.");
+    const foc = $("nsF").value.split(",").map(x => x.trim()).filter(Boolean);
+    const s = { id: "s" + uid2(), n, ic: $("nsI").value.trim() || "⭐", tl: $("nsT").value.trim() || "Topic / piece", vl: $("nsV").value.trim() || "Items completed", foc: foc.length ? foc : ["Practice", "Learning", "Revision"], ms: [], tip: "" };
+    state.hobbySec.push(s); save(); hbOpen(s.id);
+}
+/* ---- Reading panel (linked to the Library) ---- */
+const isWordHl = h => h && (h.k === "w" || h.c === "#60a5fa");
+const wordTxt = h => String(h.w || h.t || "").trim();
+function wordList() { const o = []; state.library.forEach(b => { const R = state.reader[b.id]; if (R && Array.isArray(R.hl)) R.hl.filter(isWordHl).forEach(h => o.push({ b, h })); }); return o; }
+function renderReadPanel() {
+    const el = $("readPanel"); if (!el) return;
+    const L = state.library, rd1 = L.filter(b => b.st === "Reading"), dn = L.filter(b => b.st === "Done").length, tr = L.filter(b => b.st === "To read").length;
+    const mins = L.reduce((n, b) => n + num((state.reader[b.id] || {}).mins), 0), [a, b2] = wkRange(0), wk = state.study.filter(x => String(x.note || "").startsWith("📖") && inRng(x.date, a, b2)).reduce((n, x) => n + num(x.mins), 0), W = wordList().length;
+    const card = b => { const r = state.reader[b.id] || {}, pc = r.n ? Math.round((r.mx || 0) / r.n * 100) : 0; return `<div class="stat"><b>${esc(b.t)}</b><div class="muted" style="font-size:12px">${esc(b.a || "")}${b.s ? " · " + esc(b.s) : ""}</div>${r.n ? `<div class="progress" style="margin:8px 0"><div class="fill" style="width:${pc}%"></div></div><div class="muted" style="font-size:12px">${pc}% · page ${r.page || 1}/${r.n}</div>` : ""}<div style="margin-top:8px">${b.file && b.id ? `<button class="action" onclick="openReader('${esc(b.id)}')">Continue</button> ` : ""}<button class="secondary" onclick="setBookById('${esc(b.id)}','Done')">Mark done</button></div></div>`; };
+    el.innerHTML = `<div class="card"><h2>📖 Reading</h2><p class="muted" style="text-transform:none;font-size:13px">This is your Library, seen from the hobby side. Reading time is already counted in your Study Log, so it is not added a second time to the weekly hobby totals.</p>
+<div class="statline"><div class="stat"><strong>${rd1.length}</strong><span class="muted">reading now</span></div><div class="stat"><strong>${dn}</strong><span class="muted">finished</span></div><div class="stat"><strong>${tr}</strong><span class="muted">to read</span></div><div class="stat"><strong>${wk} min</strong><span class="muted">read this week</span></div><div class="stat"><strong>${hrs(mins)}</strong><span class="muted">total reading time</span></div><div class="stat"><strong>${W}</strong><span class="muted">words in word bank</span></div></div>
+<p style="margin-top:12px"><button class="action" onclick="showPage('library')">📚 Open Library</button> <button class="secondary" onclick="showPage('library');setTimeout(()=>{const e=$('wbCard');e&&e.scrollIntoView()},300)">📘 Word bank</button></p></div>
+<div class="card"><h2>Currently reading</h2>${rd1.length ? `<div class="hbgrid">${rd1.map(card).join("")}</div>` : '<div class="empty">Nothing in progress. Pick a book in the Library and mark it Reading.</div>'}</div>`;
+}
+function setBookById(id, v) { const b = state.library.find(x => x.id === id); if (b) { b.st = v; save(); renderAll(); } }
+/* ---- XP, streak and daily quests ---- */
+function activityMins(k) {
+    const skip = new Set([...kindNames("karate"), ...kindNames("run")]);
+    return sumF(state.study.filter(x => x.date === k), "mins") + sumF(state.karate.filter(x => x.date === k), "mins") + sumF(state.runs.filter(x => x.date === k), "mins") + sumF(state.hobbyLog.filter(x => x.date === k), "mins") + sumF(state.extraLog.filter(x => x.date === k && !skip.has(x.activity)), "mins");
+}
+function activityDates() { const s = new Set(); [state.study, state.karate, state.runs, state.hobbyLog, state.extraLog].forEach(a => a.forEach(x => { if (x && okDate(x.date) && num(x.mins) > 0) s.add(x.date); })); return s; }
+const LV_TITLES = ["Rookie", "Learner", "Explorer", "Scholar", "Achiever", "Strategist", "Master", "Legend"];
+function renderQuests() {
+    const el = $("questBox"); if (!el) return;
+    const t = today(), ds = activityDates(); let xp = 0; ds.forEach(k => xp += activityMins(k));
+    let streak = 0, d = new Date(); if (!ds.has(dkey(d))) d = addDays(d, -1); while (ds.has(dkey(d))) { streak++; d = addDays(d, -1); }
+    const lv = Math.floor(Math.sqrt(xp / 40)) + 1, lo = 40 * (lv - 1) ** 2, hi = 40 * lv ** 2, pc = Math.round((xp - lo) / (hi - lo) * 100);
+    const study = sumF(state.study.filter(x => x.date === t), "mins"), skillToday = activityMins(t) - study, readM = state.study.filter(x => x.date === t && String(x.note || "").startsWith("📖")).reduce((n, x) => n + num(x.mins), 0), wordsToday = wordList().filter(o => o.h.ts && dkey(new Date(o.h.ts)) === t).length;
+    const Q = [{ ic: "📖", t: "Study 30 minutes", p: Math.min(study, 30) + "/30", ok: study >= 30, go: "showPage('study')" }, { ic: "🎯", t: "Do one hobby or skill session", p: skillToday > 0 ? "done" : "not yet", ok: skillToday > 0, go: "hbOpen('over')" }, { ic: "📚", t: "Read 10 minutes or save a new word", p: wordsToday ? wordsToday + " word" + (wordsToday === 1 ? "" : "s") : Math.min(readM, 10) + "/10", ok: readM >= 10 || wordsToday > 0, go: "showPage('library')" }];
+    const dn = Q.filter(q => q.ok).length;
+    el.innerHTML = `<div class="qhead"><div class="qflame"><b>🔥 ${streak}</b><span>day streak</span></div><div class="qlv"><div class="row" style="padding:0"><b>Level ${lv} · ${LV_TITLES[Math.min(LV_TITLES.length - 1, lv - 1)]}</b><span class="muted" style="font-size:12px">${xp} XP · ${hi - xp} to level ${lv + 1}</span></div><div class="progress" style="margin-top:6px"><div class="fill" style="width:${Math.max(2, pc)}%"></div></div><div class="muted" style="font-size:11.5px;margin-top:4px;text-transform:none">1 XP per minute of study or practice you log. Streak counts any logged day.</div></div></div>
+<div class="qlist">${Q.map(q => `<button type="button" class="q ${q.ok ? "ok" : ""}" onclick="${q.go}"><span class="qi">${q.ok ? "✅" : q.ic}</span><span class="qt">${q.t}</span><span class="qp">${q.p}</span></button>`).join("")}</div>${dn === 3 ? '<p style="margin:10px 0 0;font-weight:700;color:var(--green)">🎉 All three quests done today. Great work!</p>' : ""}`;
+}
+/* ---- Word bank + library ---- */
+let libF = "", wbQ = "";
+function setLibF(v) { libF = v; renderLib(); }
+const bkHue = s => { let h = 0; for (const c of String(s)) h = (h * 31 + c.charCodeAt(0)) % 360; return h; };
+function renderWordBank() {
+    const el = $("wbList"); if (!el) return;
+    const q = wbQ.toLowerCase(), all = wordList(), seen = new Map();
+    all.forEach(o => { const k = wordTxt(o.h).toLowerCase(); if (!seen.has(k)) seen.set(k, o); });
+    const rows = [...seen.values()].filter(o => !q || (wordTxt(o.h) + " " + (o.h.m || "")).toLowerCase().includes(q)).sort((a, b) => wordTxt(a.h).localeCompare(wordTxt(b.h)));
+    $("wbCount").textContent = seen.size ? `${seen.size} word${seen.size === 1 ? "" : "s"}` : "";
+    el.innerHTML = rows.length ? rows.map(o => `<div class="wbrow"><div><b>${esc(wordTxt(o.h))}</b><span class="muted" style="font-size:12px"> · ${esc(o.b.t)}, p.${num(o.h.p)}</span></div><input value="${esc(o.h.m || "")}" placeholder="Add the meaning…" onchange="wbMean('${esc(o.b.id)}','${esc(o.h.id)}',this.value)"><div class="wbact"><button class="secondary" onclick="wbFlash('${esc(o.b.id)}','${esc(o.h.id)}')">→ Flashcard</button> ${o.b.file ? `<button class="secondary" onclick="rdOpenAt('${esc(o.b.id)}',${num(o.h.p)})">Open page</button>` : ""}</div></div>`).join("") : `<div class="empty">${seen.size ? "No match." : "No words yet. In the reader, tap 📘 Word meaning, select a word and save its meaning. It appears here."}</div>`;
+}
+function wbMean(bid, hid, v) { const h = ((state.reader[bid] || {}).hl || []).find(x => x.id === hid); if (h) { h.m = v.trim(); save(); } }
+function wbFlash(bid, hid) {
+    const h = ((state.reader[bid] || {}).hl || []).find(x => x.id === hid); if (!h) return;
+    if (!h.m) return alert("Add the meaning first.");
+    const w = wordTxt(h); if (state.flashcards.some(c => c.front === w && c.type === "Vocabulary")) return alert("Already a flashcard.");
+    state.flashcards.push({ subject: "English", type: "Vocabulary", front: w, back: h.m, box: 1, due: today(), reviews: 0 }); save(); alert("Flashcard added.");
+}
+function rdOpenAt(id, p) { const R = rd(id); R.page = p; save(true); openReader(id); }
+function renderLib() {
+    const el = $("lbList"); if (!el) return;
+    if (!$("lbSubj").children.length) $("lbSubj").innerHTML = Object.keys(syllabus).map(k => `<option value="${esc(k)}">`).join("") + '<option value="Islamic">' + READ_CATS.map(x => `<option value="${esc(x)}">`).join("");
+    const cats = [...new Set(state.library.map(b => b.s).filter(Boolean))].sort(), cs = $("lbC"), cc = cs.value;
+    cs.innerHTML = '<option value="">All subjects</option>' + cats.map(x => `<option>${esc(x)}</option>`).join(""); cs.value = cc;
+    const q = $("lbQ").value.toLowerCase(), c = cs.value, v = $("lbV").value, L = state.library, cnt = k => L.filter(b => b.st === k).length;
+    $("lbSum").innerHTML = ["", "To read", "Reading", "Done"].map(k => `<button type="button" class="chip ${libF === k ? "on" : ""}" onclick="setLibF('${k}')">${k || "All"} <b>${k ? cnt(k) : L.length}</b></button>`).join("");
+    const rows = L.map((b, i) => ({ b, i })).filter(({ b }) => (!libF || b.st === libF) && (!c || b.s === c) && (!v || String(b.lv || 0) === v) && (!q || [b.t, b.a, b.s, b.n].join(" ").toLowerCase().includes(q)));
+    el.innerHTML = rows.length ? rows.map(({ b, i }) => {
+        const r = state.reader[b.id] || {}, pc = r.n ? Math.round((r.mx || 0) / r.n * 100) : 0, h = bkHue(b.t);
+        return `<div class="bk"><div class="bkc" style="background:linear-gradient(135deg,hsl(${h} 55% 46%),hsl(${(h + 40) % 360} 60% 32%))"><span class="bkl">${esc(String(b.t).trim().charAt(0).toUpperCase())}</span><span class="bkty">${esc(b.ty)}</span></div><div class="bkb"><b class="bkt">${esc(b.t)}</b><div class="muted" style="font-size:12px">${esc(b.a || "")}${b.s ? (b.a ? " · " : "") + esc(b.s) : ""}${b.lv ? " · " + ["", "Easy start", "Medium", "Heavy"][b.lv] : ""}</div>${b.n ? `<div class="muted" style="font-size:12px;text-transform:none">${esc(b.n)}</div>` : ""}${r.n ? `<div class="progress" style="margin:8px 0 2px"><div class="fill" style="width:${pc}%"></div></div><div class="muted" style="font-size:11.5px">${pc}% · page ${r.page || 1}/${r.n}${r.mins ? " · " + hrs(r.mins) : ""}</div>` : ""}
+<div class="bkst">${["To read", "Reading", "Done"].map(x => `<button type="button" class="${x === b.st ? "on" : ""}" onclick="setBook(${i},'${x}')">${x}</button>`).join("")}</div>
+<div class="bkact">${b.file && b.id ? `<button type="button" class="action" onclick="openReader('${esc(b.id)}')">📖 ${r.n ? "Continue" : "Read"}</button>` : ""}${/^https?:\/\//i.test(b.l) ? `<a class="secondary" href="${esc(b.l)}" target="_blank" rel="noopener noreferrer">Open ↗</a>` : ""}<button type="button" class="secondary" onclick="bookPlan(${i})">+ Today</button><button type="button" class="danger" onclick="delBook(${i})" title="Delete">✕</button></div></div></div>`;
+    }).join("") : `<div class="empty">${L.length ? "No books match these filters." : "Your shelf is empty. Add a PDF or EPUB above, or use “Add any missing books from my reading list”."}</div>`;
+    renderLibHero(); renderWordBank();
+}
+function renderLibHero() {
+    const el = $("lbHero"); if (!el) return;
+    const fb = state.library.filter(b => b.file && b.id && state.reader[b.id] && state.reader[b.id].lo && b.st !== "Done").sort((a, b) => state.reader[b.id].lo - state.reader[a.id].lo)[0] || state.library.find(b => b.st === "Reading" && b.file) || state.library.find(b => b.st === "Reading");
+    if (!fb) { el.innerHTML = '<h2>📚 Your Library</h2><p class="muted">Add a PDF or EPUB to start reading here. Your page, time, highlights and word meanings are all kept per book.</p><button type="button" class="action" onclick="$(\'pdfIn\').click()">📂 Add PDF / EPUB</button>'; return; }
+    const r = state.reader[fb.id] || {}, pc = r.n ? Math.round((r.mx || 0) / r.n * 100) : 0, left = r.n ? Math.max(0, r.n - (r.mx || 0)) : 0;
+    el.innerHTML = `<div class="muted" style="font-size:12px;font-weight:800;letter-spacing:.05em">CONTINUE READING</div><h2 style="margin:4px 0">${esc(fb.t)}</h2><div class="muted">${esc(fb.a || "")}</div>${r.n ? `<div class="progress" style="margin:12px 0 4px"><div class="fill" style="width:${pc}%"></div></div><div class="muted" style="font-size:13px">${pc}% done · page ${r.page || 1} of ${r.n} · ${left} page${left === 1 ? "" : "s"} left</div>` : ""}<div style="margin-top:12px">${fb.file && fb.id ? `<button type="button" class="action" onclick="openReader('${esc(fb.id)}')">📖 Continue reading</button> ` : ""}<button type="button" class="secondary" onclick="$('pdfIn').click()">📂 Add PDF / EPUB</button></div>`;
+}
+/* ---- reader: word meanings (blue) ---- */
+let rdWm = false, wdCur = null;
+const HL_COLS = ["#facc15", "#4ade80", "#f472b6", "#ef4444", "#a78bfa", "#111827"];
+function rdCol(c) { hlCol = c; rdWm = false; hlOn = true; rdMode(); }
+function rdWordMode() { rdWm = !rdWm; rdMode(); }
+function rdMode() {
+    if (!$("rdM")) return;
+    $("rdM").textContent = hlOn ? "🖍 Highlight on" : "🖍 Highlight off"; $("rdM").classList.toggle("on", hlOn && !rdWm);
+    $("rdWm").classList.toggle("on", rdWm);
+    document.querySelectorAll("#rdPal .sw").forEach(b => b.classList.toggle("sel", !rdWm && b.dataset.c === hlCol));
+    $("rdH").innerHTML = rdWm ? "📘 <b>Word meaning mode:</b> select a word to save its meaning. Blue is used only for words." : "🖍 Select text to highlight. Blue is kept for <b>📘 word meanings</b>; tap a blue word to see its meaning.";
+    $("rdH").classList.toggle("wm", rdWm);
+}
+function rdOverlap(h, rs, o) {
+    if (!isWordHl(h) || h.p !== pg) return false;
+    if (o && h.o) return o[0] < h.o[1] && o[1] > h.o[0];
+    if (rs && h.r) return rs.some(a => h.r.some(b => { const w = Math.min(a[0] + a[2], b[0] + b[2]) - Math.max(a[0], b[0]), t = Math.min(a[1] + a[3], b[1] + b[3]) - Math.max(a[1], b[1]); return w > 0 && t > 0 && w * t > .4 * Math.min(a[2] * a[3], b[2] * b[3]); }));
+    return false;
+}
+function rdSel() {
+    const W = $("rdW"), s = getSelection();
+    if (!(hlOn || rdWm) || !W || $("rdr").style.display === "none" || !s.rangeCount || s.isCollapsed) return;
+    const g = s.getRangeAt(0); if (!W.contains(g.commonAncestorContainer)) return;
+    const txt = s.toString().trim(); if (!txt) return;
+    let rs = null, o = null;
+    if (ep) { const pre = document.createRange(); pre.selectNodeContents(W); pre.setEnd(g.startContainer, g.startOffset); const a = pre.toString().length; o = [a, a + g.toString().length]; }
+    else { const B = W.getBoundingClientRect(); rs = [...g.getClientRects()].filter(q => q.width > 1 && q.height > 1).map(q => [(q.left - B.left) / B.width, (q.top - B.top) / B.height, q.width / B.width, q.height / B.height]); if (!rs.length) return; }
+    const ex = rd(cur).hl.find(h => rdOverlap(h, rs, o));
+    s.removeAllRanges();
+    if (ex) return wordPop(ex.id);
+    if (rdWm) {
+        const w = txt.replace(/\s+/g, " ").slice(0, 80), same = wordList().find(x => wordTxt(x.h).toLowerCase() === w.toLowerCase());
+        return wordPop(null, { w, rs, o, p: pg }, same);
+    }
+    const h = { id: uid(), p: pg, c: hlCol, t: txt.slice(0, 400), n: "" }; if (ep) { h.e = 1; h.o = o; } else h.r = rs;
+    rd(cur).hl.push(h); save(); ep ? showEp(1) : rdHl();
+}
+function wordPop(id, pend, same) {
+    const h = id ? rd(cur).hl.find(x => x.id === id) : null; if (id && !h) return;
+    wdCur = { id, pend };
+    const w = h ? wordTxt(h) : pend.w, m = h ? h.m || "" : (same && same.h.m) || "";
+    $("rdWdT").textContent = w;
+    $("rdWdS").innerHTML = h ? "📘 Already highlighted in this book" + (h.m ? "" : " · no meaning yet") : same ? `📘 Already in your word bank (${esc(same.b.t)}, p.${num(same.h.p)}). Saving highlights it here too.` : "New word";
+    $("rdWdM").value = m; $("rdWd").style.display = "block"; $("rdWdM").focus();
+}
+function rdWdClose() { $("rdWd").style.display = "none"; wdCur = null; }
+function rdWdSave() {
+    if (!wdCur) return; const m = $("rdWdM").value.trim();
+    if (wdCur.id) { const h = rd(cur).hl.find(x => x.id === wdCur.id); if (h) { h.m = m; if (!h.k) { h.k = "w"; h.w = h.w || h.t; } } }
+    else { const p = wdCur.pend, h = { id: uid(), p: p.p, c: "#60a5fa", k: "w", w: p.w, m, t: p.w, n: "", ts: Date.now() }; if (p.o) { h.e = 1; h.o = p.o; } else h.r = p.rs; rd(cur).hl.push(h); }
+    save(); rdWdClose(); ep ? showEp(1) : rdHl(); renderQuests();
+}
+async function rdWdLookup() {
+    const w = $("rdWdT").textContent.trim(); if (!w || /\s/.test(w)) return alert("Look-up works for a single word. Type the meaning yourself.");
+    $("rdWdS").textContent = "Looking up…";
+    try { const r = await fetch("https://api.dictionaryapi.dev/api/v2/entries/en/" + encodeURIComponent(w)); if (!r.ok) throw 0; const j = await r.json(), d = j[0].meanings[0].definitions[0].definition; $("rdWdM").value = d; $("rdWdS").textContent = "Suggested meaning from an online dictionary. Edit it, then Save."; }
+    catch (e) { $("rdWdS").textContent = "Couldn't look it up (offline or not found). Type your own meaning."; }
+}
+function rdWdFlash() { if (!wdCur || !wdCur.id) return alert("Save the word first."); const h = rd(cur).hl.find(x => x.id === wdCur.id); if (h) { h.m = $("rdWdM").value.trim(); wbFlash(cur, h.id); save(); } }
+function rdWdDel() { if (!wdCur || !wdCur.id) return rdWdClose(); rd(cur).hl = rd(cur).hl.filter(x => x.id !== wdCur.id); save(); rdWdClose(); ep ? showEp(1) : rdHl(); }
+function rdHl() {
+    const L = document.querySelector("#rdW .hlL");
+    if (L) L.innerHTML = rd(cur).hl.filter(h => h.p === pg && h.r).map(h => h.r.map(q => `<i style="left:${q[0] * 100}%;top:${q[1] * 100}%;width:${q[2] * 100}%;height:${q[3] * 100}%;background:${isWordHl(h) ? "#60a5fa" : h.c};${isWordHl(h) ? "opacity:.5;border-bottom:2px solid #1d4ed8" : ""}"></i>`).join("")).join("");
+    const W = $("rdW"); if (W && !W.dataset.wc) { W.dataset.wc = 1; W.addEventListener("click", e => { if (!getSelection().isCollapsed) return; const B = W.getBoundingClientRect(), x = (e.clientX - B.left) / B.width, y = (e.clientY - B.top) / B.height, h = rd(cur).hl.find(h => isWordHl(h) && h.p === pg && h.r && h.r.some(q => x >= q[0] && x <= q[0] + q[2] && y >= q[1] && y <= q[1] + q[3])); if (h) wordPop(h.id); }); }
+    rdList();
+}
+function epHl() {
+    const W = $("rdW"); if (!W || !ep) return;
+    rd(cur).hl.filter(h => h.e && h.p === pg).forEach(h => {
+        let pos = 0; const tn = [], w = document.createTreeWalker(W, NodeFilter.SHOW_TEXT);
+        while (w.nextNode()) tn.push(w.currentNode);
+        tn.forEach(n => {
+            const a = pos, b = pos + n.length; pos = b; const s = Math.max(h.o[0], a), e = Math.min(h.o[1], b); if (s >= e) return;
+            const m = n.splitText(s - a); m.splitText(e - s);
+            const k = document.createElement("mark"); k.style.cssText = isWordHl(h) ? "background:#60a5fa88;color:inherit;border-bottom:2px solid #1d4ed8;cursor:pointer" : `background:${h.c}99;color:inherit`;
+            if (isWordHl(h)) k.dataset.w = h.id;
+            m.parentNode.replaceChild(k, m); k.appendChild(m);
+        });
+    });
+    W.onclick = e => { const m = e.target.closest && e.target.closest("mark[data-w]"); if (m && getSelection().isCollapsed) wordPop(m.dataset.w); };
+    rdList();
+}
+function rdList() {
+    const p = $("rdL"); if (!p || p.style.display !== "block") return;
+    const H = rd(cur).hl.slice().sort((a, b) => a.p - b.p), Wd = H.filter(isWordHl), Ot = H.filter(h => !isWordHl(h));
+    const item = h => isWordHl(h) ? `<div class="insight" style="border-left-color:#60a5fa"><div class="muted" style="font-size:12px">📘 Word · page ${h.p} · <a href="#" onclick="rdJump(${h.p});return false">go to page</a></div><b>${esc(wordTxt(h))}</b><input placeholder="Meaning…" value="${esc(h.m || "")}" onchange="rdMean('${h.id}',this.value)" style="margin-top:6px"><button type="button" class="danger" style="margin-top:6px" onclick="rdDel('${h.id}')">Delete</button></div>` : `<div class="insight" style="border-left-color:${h.c}"><div class="muted" style="font-size:12px">Page ${h.p} · <a href="#" onclick="rdJump(${h.p});return false">go to page</a></div>${esc(h.t)}<input placeholder="Add a note…" value="${esc(h.n)}" onchange="rdNote('${h.id}',this.value)" style="margin-top:6px"><button type="button" class="danger" style="margin-top:6px" onclick="rdDel('${h.id}')">Delete</button></div>`;
+    p.innerHTML = `<div class="row"><b>Words &amp; notes (${H.length})</b><button type="button" class="secondary" onclick="rdPanel()">✕</button></div>` + (Wd.length ? `<h3 style="font-size:14px;margin:10px 0 4px">📘 Word meanings (${Wd.length})</h3>${Wd.map(item).join("")}` : "") + (Ot.length ? `<h3 style="font-size:14px;margin:10px 0 4px">🖍 Highlights (${Ot.length})</h3>${Ot.map(item).join("")}` : "") + (H.length ? "" : '<div class="muted">Nothing yet. Select text to highlight, or use 📘 Word meaning.</div>');
+}
+function rdMean(id, v) { const h = rd(cur).hl.find(x => x.id === id); if (h) { h.m = v.trim(); save(); } }
 /* ===== v8: planner, exam targets, flashcards, mistakes, weekly report ===== */
 const numDays = v => {
     const d = parseDateOnly(v);
@@ -2891,6 +3383,7 @@ function renderReport() {
     const hd = state.homework.filter(h => h.done && inR(h.done));
     if (hd.length)
         hl.push(`Finished <b>${hd.length}</b> homework item${hd.length === 1 ? "" : "s"}.`);
+    safeRun(() => reportExtra(hl, inR));
     if (exm)
         hl.push(`Spent <b>${hrs(exm)}</b> on extra-curriculars${wo ? ` and ${wo} min exercising` : ""}.`);
     else if (wo)
@@ -2973,7 +3466,7 @@ function mergeState(a, b) {
         });
         return o;
     };
-    return { progress: Object.assign(Object.assign({}, a.progress), b.progress), study: u(a.study, b.study), tasks: u(a.tasks, b.tasks), extra: u(a.extra, b.extra), exams: mergeById(a.exams, b.exams), marks: u(a.marks, b.marks), questions: u(a.questions, b.questions), feynman: u(a.feynman, b.feynman), workouts: u(a.workouts, b.workouts), extraLog: u(a.extraLog, b.extraLog), flashcards: u(a.flashcards, b.flashcards), mistakes: u(a.mistakes, b.mistakes), quotes: u(a.quotes, b.quotes), homework: u(a.homework, b.homework), plan: Object.assign(Object.assign({}, b.plan), a.plan), meta: Object.assign(Object.assign({}, b.meta), a.meta), dream: Object.assign(Object.assign({}, b.dream), a.dream), lifts: u(a.lifts, b.lifts), quran: u(a.quran, b.quran), library: u(a.library, b.library), biz: u(a.biz, b.biz), bizLog: u(a.bizLog, b.bizLog), movies: mergeById(a.movies, b.movies), research: mergeById(a.research, b.research), hof: mergeById(a.hof, b.hof), goal10: Object.assign(Object.assign({}, b.goal10), a.goal10), reader: Object.assign(Object.assign({}, b.reader), a.reader), prayers: Object.assign(Object.assign({}, b.prayers), a.prayers), batches: [...new Set([...a.batches, ...b.batches])], settings: Object.assign(Object.assign({}, b.settings), Object.fromEntries(Object.entries(a.settings).filter(([, v]) => v))) };
+    return { progress: Object.assign(Object.assign({}, a.progress), b.progress), study: u(a.study, b.study), tasks: u(a.tasks, b.tasks), extra: u(a.extra, b.extra), exams: mergeById(a.exams, b.exams), marks: u(a.marks, b.marks), questions: u(a.questions, b.questions), feynman: u(a.feynman, b.feynman), workouts: u(a.workouts, b.workouts), extraLog: u(a.extraLog, b.extraLog), flashcards: u(a.flashcards, b.flashcards), mistakes: u(a.mistakes, b.mistakes), quotes: u(a.quotes, b.quotes), homework: u(a.homework, b.homework), plan: Object.assign(Object.assign({}, b.plan), a.plan), meta: Object.assign(Object.assign({}, b.meta), a.meta), dream: Object.assign(Object.assign({}, b.dream), a.dream), lifts: u(a.lifts, b.lifts), quran: u(a.quran, b.quran), library: u(a.library, b.library), biz: u(a.biz, b.biz), bizLog: u(a.bizLog, b.bizLog), movies: mergeById(a.movies, b.movies), research: mergeById(a.research, b.research), hof: mergeById(a.hof, b.hof), runs: mergeById(a.runs, b.runs), karate: mergeById(a.karate, b.karate), karateNotes: mergeById(a.karateNotes, b.karateNotes), hobbyCat: mergeById(a.hobbyCat, b.hobbyCat), hobbySec: mergeById(a.hobbySec, b.hobbySec), hobbyLog: mergeById(a.hobbyLog, b.hobbyLog), hobbyCfg: Object.assign({}, b.hobbyCfg, a.hobbyCfg), goal10: Object.assign(Object.assign({}, b.goal10), a.goal10), reader: Object.assign(Object.assign({}, b.reader), a.reader), prayers: Object.assign(Object.assign({}, b.prayers), a.prayers), batches: [...new Set([...a.batches, ...b.batches])], settings: Object.assign(Object.assign({}, b.settings), Object.fromEntries(Object.entries(a.settings).filter(([, v]) => v))) };
 }
 function importData(e) {
     var _a;
@@ -3139,7 +3632,9 @@ function injectRdr() {
     document.head.appendChild(st);
     const d = document.createElement("div");
     d.id = "rdr";
-    d.innerHTML = `<div class="bar"><button type="button" class="secondary" onclick="closeReader()">✕</button><b id="rdN" style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap"></b><b id="rdT"></b><button type="button" class="secondary" onclick="rtToggle()">⏯</button></div><div class="bar"><button type="button" class="secondary" onclick="rdGo(-1)">‹</button><span id="rdI"></span><button type="button" class="secondary" onclick="rdGo(1)">›</button><button type="button" class="secondary" onclick="rdZ(-.2)">−</button><button type="button" class="secondary" onclick="rdZ(.2)">＋</button>${["#facc15", "#4ade80", "#f472b6", "#60a5fa", "#ef4444", "#111827"].map(c => `<button type="button" class="secondary" style="background:${c};width:26px;height:26px;padding:0" onclick="hlCol='${c}'"></button>`).join("")}<button type="button" class="secondary" id="rdM" onclick="hlOn=!hlOn;rdMode()"></button><button type="button" class="secondary" id="rdPn" onclick="rdPen()">✏️ Pen</button><button type="button" class="secondary" onclick="rdUndo()">↶</button><button type="button" class="secondary" onclick="rdPanel()">📝 Notes</button></div><div id="rdS"><div id="rdP"></div></div><div id="rdL"></div>`;
+    d.innerHTML = `<div class="bar"><button type="button" class="secondary" onclick="closeReader()">✕ Close</button><b id="rdN" style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap"></b><b id="rdT"></b><button type="button" class="secondary" onclick="rtToggle()" title="Pause or resume the reading timer">⏯</button></div>
+<div class="bar tools"><span class="grp"><button type="button" class="secondary" onclick="rdGo(-1)" title="Previous page">‹</button><span id="rdI" style="min-width:48px;text-align:center"></span><button type="button" class="secondary" onclick="rdGo(1)" title="Next page">›</button></span><span class="grp"><button type="button" class="secondary" onclick="rdZ(-.2)" title="Smaller">A−</button><button type="button" class="secondary" onclick="rdZ(.2)" title="Larger">A＋</button></span><span class="grp" id="rdPal">${HL_COLS.map(c => `<button type="button" class="sw" data-c="${c}" style="background:${c}" title="Highlight colour" onclick="rdCol('${c}')"></button>`).join("")}<button type="button" class="secondary" id="rdM" onclick="hlOn=!hlOn;rdMode()"></button></span><button type="button" id="rdWm" onclick="rdWordMode()" title="Blue highlight: save a word and its meaning">📘 Word meaning</button><span class="grp"><button type="button" class="secondary" id="rdPn" onclick="rdPen()">✏️ Pen</button><button type="button" class="secondary" onclick="rdUndo()" title="Undo last pen stroke">↶</button></span><button type="button" class="secondary" onclick="rdPanel()">📝 Words &amp; notes</button></div><div id="rdH"></div><div id="rdS"><div id="rdP"></div></div><div id="rdL"></div>
+<div id="rdWd"><b id="rdWdT"></b><div id="rdWdS" class="muted" style="font-size:12.5px;text-transform:none"></div><textarea id="rdWdM" placeholder="Meaning, in your own words"></textarea><div style="display:flex;gap:6px;flex-wrap:wrap"><button type="button" class="action" onclick="rdWdSave()">Save</button><button type="button" class="secondary" onclick="rdWdLookup()">🌐 Look up</button><button type="button" class="secondary" onclick="rdWdFlash()">→ Flashcard</button><button type="button" class="danger" onclick="rdWdDel()">Delete</button><button type="button" class="secondary" onclick="rdWdClose()">Close</button></div></div>`;
     document.body.appendChild(d);
     document.addEventListener("selectionchange", () => { clearTimeout(selT); selT = setTimeout(rdSel, 700); });
 }
@@ -3150,6 +3645,7 @@ async function openReader(id) {
     cur = id;
     ep = null;
     injectRdr();
+    rd(id).lo = Date.now();
     $("rdr").style.display = "flex";
     document.body.classList.add("fs-open");
     $("rdN").textContent = b.t;
@@ -3198,47 +3694,7 @@ async function showPg() {
 }
 function rdGo(d) { const n = ep ? ep.ch.length : pd && pd.numPages; if (n) { pg = Math.min(n, Math.max(1, pg + d)); ep ? showEp() : showPg(); } }
 function rdZ(d) { zoom = Math.min(3, Math.max(.6, zoom + d)); if (ep) $("rdW").style.fontSize = 15 * zoom + "px"; else showPg(); }
-function rdMode() { $("rdM").textContent = hlOn ? "🖍 Highlight: on" : "🖍 Highlight: off"; }
-function rdHl() {
-    const L = document.querySelector("#rdW .hlL");
-    if (L)
-        L.innerHTML = rd(cur).hl.filter(h => h.p === pg && h.r).map(h => h.r.map(q => `<i style="left:${q[0] * 100}%;top:${q[1] * 100}%;width:${q[2] * 100}%;height:${q[3] * 100}%;background:${h.c}"></i>`).join("")).join("");
-    rdList();
-}
-function rdSel() {
-    const W = $("rdW"), s = getSelection();
-    if (!hlOn || !W || $("rdr").style.display === "none" || !s.rangeCount || s.isCollapsed)
-        return;
-    const g = s.getRangeAt(0);
-    if (!W.contains(g.commonAncestorContainer))
-        return;
-    if (ep) {
-        const pre = document.createRange();
-        pre.selectNodeContents(W);
-        pre.setEnd(g.startContainer, g.startOffset);
-        const a = pre.toString().length;
-        rd(cur).hl.push({ id: uid(), p: pg, e: 1, o: [a, a + g.toString().length], c: hlCol, t: s.toString().trim().slice(0, 400), n: "" });
-        s.removeAllRanges();
-        save();
-        showEp(1);
-        return;
-    }
-    const B = W.getBoundingClientRect(), rs = [...g.getClientRects()].filter(q => q.width > 1 && q.height > 1).map(q => [(q.left - B.left) / B.width, (q.top - B.top) / B.height, q.width / B.width, q.height / B.height]);
-    if (!rs.length)
-        return;
-    rd(cur).hl.push({ id: uid(), p: pg, c: hlCol, r: rs, t: s.toString().trim().slice(0, 400), n: "" });
-    s.removeAllRanges();
-    save();
-    rdHl();
-}
 function rdPanel() { const p = $("rdL"); p.style.display = p.style.display === "block" ? "none" : "block"; rdList(); }
-function rdList() {
-    const p = $("rdL");
-    if (!p || p.style.display !== "block")
-        return;
-    const H = rd(cur).hl.slice().sort((a, b) => a.p - b.p);
-    p.innerHTML = `<div class="row"><b>Highlights &amp; notes (${H.length})</b><button type="button" class="secondary" onclick="rdPanel()">✕</button></div>` + (H.map(h => `<div class="insight" style="border-left-color:${h.c}"><div class="muted" style="font-size:12px">Page ${h.p} · <a href="#" onclick="rdJump(${h.p});return false">go to page</a></div>${esc(h.t)}<input placeholder="Add a note…" value="${esc(h.n)}" onchange="rdNote('${h.id}',this.value)" style="margin-top:6px"><button type="button" class="danger" style="margin-top:6px" onclick="rdDel('${h.id}')">Delete</button></div>`).join("") || '<div class="muted">Select text on the page and it is highlighted. Add a note to any highlight here.</div>');
-}
 function rdNote(id, v) { const h = rd(cur).hl.find(x => x.id === id); if (h) {
     h.n = v.trim();
     save();
@@ -3458,21 +3914,6 @@ function showEp(keep) {
     $("rdW").style.fontSize = 15 * zoom + "px";
     if (!keep) $("rdS").scrollTop = 0;
     epHl();
-}
-function epHl() {
-    const W = $("rdW"); if (!W || !ep) return;
-    rd(cur).hl.filter(h => h.e && h.p === pg).forEach(h => {
-        let pos = 0; const tn = [], w = document.createTreeWalker(W, NodeFilter.SHOW_TEXT);
-        while (w.nextNode()) tn.push(w.currentNode);
-        tn.forEach(n => {
-            const a = pos, b = pos + n.length; pos = b;
-            const s = Math.max(h.o[0], a), e = Math.min(h.o[1], b); if (s >= e) return;
-            const m = n.splitText(s - a); m.splitText(e - s);
-            const k = document.createElement("mark"); k.style.cssText = `background:${h.c}99;color:inherit`;
-            m.parentNode.replaceChild(k, m); k.appendChild(m);
-        });
-    });
-    rdList();
 }
 function rdJump(p) { pg = p; ep ? showEp() : showPg(); }
 /* ===== Daily reminders + study goal ===== */
@@ -3844,7 +4285,7 @@ main{width:auto;max-width:1600px;margin:16px 24px 36px}footer{width:auto;margin-
 }
 setTimeout(navInit, 0);
 /* ===== Version label ===== */
-const APP_VERSION = "v79"; // keep in step with CACHE in sw.js
+const APP_VERSION = "v82"; // keep in step with CACHE in sw.js
 function paintVer() { ["appVer", "appVer2"].forEach(id => { const el = $(id); if (el)
     el.textContent = APP_VERSION + (navigator.onLine ? "" : " · offline"); }); }
 window.addEventListener("online", paintVer);
@@ -4085,7 +4526,7 @@ ${cbseBlock(avg)}
 <p class="muted" style="font-size:12px;margin-bottom:0">Figures are first-list cut-offs for the general category from news reports; only Ravenshaw and BJB are from the latest (2026-27) list, the rest are older and may have moved. Reserved categories, later lists and spot rounds differ. Your test average is only a guide to your Board percentage. Check the official SAMS notice (<a href="https://samsodisha.gov.in" target="_blank" rel="noopener noreferrer">samsodisha.gov.in</a>) for how Class 10 marks are counted, usually after results in May–June, with the first list in July. <a href="https://odishatv.in/odisha/ravenshaw-higher-secondary-school-tops-odisha-2-cut-off-list-again-429-lakh-students-selected-in-first-phase-12146413" target="_blank" rel="noopener noreferrer">Source: OdishaTV, 2026-27 list ↗</a></p>`;
 }
 function renderAll() {
-    [renderBatches, updateCountdowns, renderSummary, renderSyllabus, renderStudy, renderTasks, renderExtra, renderExams, renderExamSummary, renderTracking, renderInsights, renderAnalytics, renderSettings, renderToday, renderMarks, renderQuestions, renderFeynman, renderWorkout, renderDash, renderDream, renderLift, renderDeen, renderLib, renderBiz, renderFlash, renderMistakes, renderReport, renderHomework, renderHof, renderTmrw, renderGoal10, renderReadTimer, renderTrend, renderSubjTrend, renderMarkTrend, renderRdStats, renderHeat, renderPlan, renderQuiz, renderRem, renderSR, renderMovies, renderResearch].forEach(safeRun);
+    [renderBatches, updateCountdowns, renderSummary, renderSyllabus, renderStudy, renderTasks, renderExtra, renderExams, renderExamSummary, renderTracking, renderInsights, renderAnalytics, renderSettings, renderToday, renderMarks, renderQuestions, renderFeynman, renderWorkout, renderDash, renderDream, renderLift, renderDeen, renderLib, renderBiz, renderFlash, renderMistakes, renderReport, renderHomework, renderHof, renderTmrw, renderGoal10, renderReadTimer, renderTrend, renderSubjTrend, renderMarkTrend, renderRdStats, renderHeat, renderPlan, renderQuiz, renderRem, renderSR, renderMovies, renderResearch, renderRuns, renderKarate, renderHobbyCat, renderWkSummary, renderBalance, hbRender, renderQuests].forEach(safeRun);
 }
 safeRun(initNav);
 safeRun(applyTheme);
