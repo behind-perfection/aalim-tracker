@@ -96,6 +96,8 @@ nav button{transition:background .15s}nav button:hover{background:#ffffff38}nav{
 .wbrow{display:grid;grid-template-columns:minmax(120px,1fr) 2fr auto;gap:10px;align-items:center;padding:8px 0;border-bottom:1px solid var(--border)}.wbact{display:flex;gap:6px;flex-wrap:wrap}@media(max-width:700px){.wbrow{grid-template-columns:1fr}}
 #rdr .tools .grp{display:inline-flex;gap:4px;align-items:center;padding:0 6px;border-right:1px solid var(--border)}#rdr .bar button{min-height:34px;padding:6px 11px;font-size:14px}#rdr .sw{width:26px;height:26px;min-height:0!important;padding:0!important;border-radius:50%;border:2px solid transparent}#rdr .sw.sel{border-color:var(--text);transform:scale(1.15)}#rdr .tools button.on{background:var(--accent);color:#fff}#rdWm{background:#2563eb!important;color:#fff!important;font-weight:800}#rdWm:not(.on){opacity:.85}#rdWm.on{outline:3px solid #93c5fd}#rdH{font-size:13px;padding:6px 12px;background:var(--card);border-bottom:1px solid var(--border);color:var(--muted)}#rdH.wm{background:#dbeafe;color:#1e3a8a}#rdWd{display:none;position:fixed;left:50%;bottom:16px;transform:translateX(-50%);width:min(460px,94vw);background:var(--card);color:var(--text);border:2px solid #60a5fa;border-radius:16px;padding:14px;box-shadow:0 12px 40px #0006;z-index:5}#rdWd textarea{width:100%;min-height:64px;margin:8px 0}#rdWdT{font-size:20px}
 [data-theme=dark] .q.ok{background:#14351f;border-color:#256b3c}[data-theme=dark] #rdH.wm{background:#1e3a8a;color:#dbeafe}[data-theme=dark] .bkact a.secondary{background:#26304a;color:#c3cff2}
+.dcbar{position:relative;display:flex;height:22px;border-radius:8px;overflow:hidden;background:#c8ccd4}.dcbar div{height:100%}.dcnow{position:absolute;top:-2px;bottom:-2px;width:3px;background:#111827;box-shadow:0 0 0 1px #fff}.dclg{display:flex;flex-wrap:wrap;gap:6px 14px;margin-top:8px;font-size:12.5px}.dclg b{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:5px}
+.gl{display:flex;gap:8px;align-items:center;padding:4px 0}.gl.ok{text-decoration:line-through;opacity:.65}.ring{width:64px;height:64px;border-radius:50%;display:grid;place-items:center;flex:none;position:relative}.ring::before{content:"";position:absolute;inset:7px;border-radius:50%;background:var(--card)}.ring span{position:relative;font-weight:800;font-size:13px}
 .card{position:relative}
 .fsb{position:absolute;top:3px;right:3px;width:20px;height:20px;padding:0;border:0;background:none;color:var(--muted);opacity:.3;border-radius:5px;display:flex;align-items:center;justify-content:center;transition:opacity .15s,background .15s;z-index:2}
 .card:hover>.fsb,.fsb:focus-visible{opacity:.7}.fsb:hover{opacity:1;background:var(--ringbg)}
@@ -129,7 +131,7 @@ body.fs-open{overflow:hidden}
 
 <main>
 <section id="dashboard" class="page active">
-<div class="card"><div class="row" style="padding:0 0 6px"><h2 style="margin:0">☀️ My Day <span class="muted" style="font-size:13px;font-weight:600" id="dayWinD"></span></h2><button type="button" class="secondary" onclick="showPage('today')">Open ›</button></div><div id="dayTimerDash"></div></div>
+<div class="card"><div class="row" style="padding:0 0 6px"><h2 style="margin:0">☀️ My Day <span class="muted" style="font-size:13px;font-weight:600" id="dayWinD"></span></h2><button type="button" class="secondary" onclick="showPage('today')">Open ›</button></div><div id="dayTimerDash"></div><div id="dayCoverD" style="margin-top:12px"></div></div>
 <div class="grid">
 <div class="card countdown"><div class="label">📘 Mid-Terms</div><div><div class="count" id="midCD">—</div><div class="date" id="midDate">Set date in Settings</div><div id="midExam" style="margin-top:8px"></div></div></div>
 <div class="card countdown"><div class="label">🏆 Board Exams</div><div><div class="count" id="boardCD">—</div><div class="date" id="boardDate">Set date in Settings</div><div id="boardExam" style="margin-top:8px"></div></div></div>
@@ -137,6 +139,8 @@ body.fs-open{overflow:hidden}
 <div class="card"><div class="small">Study Time</div><div class="big" id="totalHours">0h</div><div class="muted" id="sessionCount">0 sessions</div></div>
 </div>
 <div class="card"><h2>🏆 Today's Quests</h2><div id="questBox"></div></div>
+<div class="card" style="display:none"><h2>🎯 This week's goals</h2><div id="goalsBox"></div></div>
+<div class="card"><h2>🔤 Word of the Day</h2><div id="wotdBox"></div></div>
 <div class="card"><h2>🗓️ This Week <span style="float:right;font-size:13px;font-weight:600"><button type="button" class="secondary" onclick="hbOpen('runs')">+ Run</button> <button type="button" class="secondary" onclick="hbOpen('karate')">+ Karate</button> <button type="button" class="secondary" onclick="showPage('extra')">Hobbies</button></span></h2><div id="wkSummary"></div></div>
 <div class="grid2"><div class="card"><h2>🎯 Weekly Goal & Streak</h2><div id="goalStreak"></div></div><div class="card"><h2>⚠ Needs Attention</h2><div id="attention"></div></div></div>
 <div class="card"><h2>📚 Homework Corner <button type="button" class="secondary" style="float:right" onclick="showPage('homework')">Open ›</button></h2><div id="hwDash"></div></div>
@@ -173,6 +177,8 @@ body.fs-open{overflow:hidden}
 
 <section id="today" class="page">
 <div class="card countdown"><div class="label">☀️ My Day <span id="dayWin"></span></div><div id="dayTimer" style="width:100%"></div></div>
+<div class="grid2" style="align-items:start"><div class="card"><h2>🧭 Day Coverage</h2><div id="dayCover"></div></div><div class="card"><h2>😴 Sleep &amp; Idle Time</h2><div id="sleepBox"></div></div></div>
+<div class="grid2" style="align-items:start"><div class="card"><h2>📆 Revision Schedule</h2><div id="revSched"></div></div><div class="card"><h2>🥗 Health Check-ins</h2><div id="healthBox"></div></div></div>
 <div class="card"><h2>🎯 Suggested for Today</h2><p class="muted">Ranked from your marks, flags, revision gaps, open mistakes and upcoming exams.</p><div id="weakSubjects" class="tabs"></div><div id="suggestList"></div></div>
 <div class="grid2">
 <div class="card"><h2>✅ Today's Plan</h2><div class="small" id="planDate"></div>
@@ -251,7 +257,7 @@ body.fs-open{overflow:hidden}
 <div class="formgrid"><div><label>Date</label><input id="mDate" type="date"></div><div><label>Subject</label><select id="mSubject"></select></div><div><label>Chapter</label><select id="mChapter"></select></div>
 <div><label>Why did you lose marks?</label><select id="mReason"></select></div><div><label>Marks lost</label><input id="mLost" type="number" min="0" step=".5" value="1"></div>
 <div class="full"><label>What went wrong?</label><textarea id="mQ" rows="2"></textarea></div><div class="full"><label>Correct approach / how I'll avoid it</label><textarea id="mFix" rows="2"></textarea></div>
-<div class="full"><button class="action" onclick="addMistake()">+ Add Mistake</button></div></div></div>
+<div class="full"><label style="display:flex;gap:8px;align-items:center"><input id="mFc" type="checkbox" checked style="width:auto"> Also make a flashcard so it comes back for review</label></div><div class="full"><button class="action" onclick="addMistake()">+ Add Mistake</button> <button class="secondary" type="button" onclick="mistakesToCards()">Turn all open mistakes into flashcards</button></div></div></div>
 <div class="card"><h2>📊 Why I Lose Marks</h2><div id="mStats"></div></div></div>
 <div class="card"><div class="row"><select id="mFilter" style="width:auto" onchange="renderMistakes()"></select><span class="muted" id="mCount"></span></div><div id="mList"></div></div></section>
 
@@ -298,6 +304,7 @@ body.fs-open{overflow:hidden}
 <div class="card"><h2>📚 My Shelf</h2><div id="lbSum" style="margin-top:6px"></div><div class="lbBar"><input id="lbQ" oninput="renderLib()" placeholder="🔍 Search title, author, subject"><select id="lbC" onchange="renderLib()"></select><select id="lbV" onchange="renderLib()"><option value="">Any level</option><option value="1">Easy start</option><option value="2">Medium</option><option value="3">Heavy</option></select><button class="secondary" type="button" onclick="importReadingBtn()">+ Add missing books from my reading list</button></div><div id="lbList" class="lbGrid"></div></div>
 <details class="card"><summary><b>➕ Add a book or link to the library</b></summary><div class="formgrid"><div class="full"><label>Title</label><input id="lbT" placeholder="e.g. NCERT Science Class 10"></div><div><label>Author</label><input id="lbA"></div><div><label>Type</label><select id="lbTy"><option>Book</option><option>Notes</option><option>PDF</option><option>Video</option><option>Website</option><option>Other</option></select></div>
 <div><label>Subject</label><input id="lbS" list="lbSubj" placeholder="Maths, Islamic, ..."><datalist id="lbSubj"></datalist></div><div><label>Link (optional)</label><input id="lbL" placeholder="https://..."></div><div class="full"><label>Note</label><input id="lbN"></div><div class="full"><button class="action" type="button" onclick="addBook()">+ Add</button></div></div></details>
+<div class="card"><h2>🖋 Commonplace Book</h2><p class="muted" style="text-transform:none;font-size:13px">Your highlights, notes and favourite quotes from every book, in one place.</p><div class="formgrid"><div class="full"><input id="cqT" placeholder="Add a quote or idea you like"></div><div><input id="cqS" placeholder="Source (book, person…)"></div><div><button class="action" onclick="cqAdd()">+ Save quote</button></div></div><input placeholder="🔍 Search" oninput="cpQ=this.value;renderCommon()" style="margin:10px 0"><div id="cpList"></div></div>
 <div class="card" id="wbCard"><h2>📘 Word Bank <span id="wbCount" class="muted" style="font-size:14px;font-weight:600"></span></h2><p class="muted" style="text-transform:none;font-size:13px">Every word you save with the blue 📘 tool in the reader, in one place. Edit meanings here and turn words into flashcards.</p><input placeholder="🔍 Search words or meanings" oninput="wbQ=this.value;renderWordBank()" style="margin-bottom:8px"><div id="wbList"></div></div>
 </section>
 <section id="biz" class="page">
@@ -331,7 +338,7 @@ body.fs-open{overflow:hidden}
 
 <section id="extra" class="page">
 <div id="hbTabs" class="hbtabs"></div>
-<div class="hbpanel on" data-p="over">
+<div class="hbpanel on" data-p="over"><div class="card"><h2>🏁 Challenges</h2><div id="chBox"></div></div>
 <div class="card"><h2>🚀 Extra-Curriculars</h2><p class="muted">This section is deliberately separate from your board percentage. Tap a preset to add it, or add your own below.</p><div class="formgrid">
 <div><input id="extraName" placeholder="Activity e.g. Screenwriting"></div><div><input id="extraProject" placeholder="Current project"></div>
 <div><input id="extraGoal" placeholder="Goal"></div><div><input id="extraHours" type="number" min="0" step=".5" placeholder="Hours invested"></div>
@@ -367,6 +374,7 @@ body.fs-open{overflow:hidden}
 <div class="card"><h2>Consistency</h2><div id="kaStats"></div></div></div>
 <div class="grid2"><div class="card"><h2>🎯 Focus areas (minutes)</h2><div id="kaFocusBox"></div></div><div class="card"><h2>📝 Progress notes</h2><div class="formgrid"><div class="full"><input id="knText" placeholder="What improved? What to work on next?"></div><div class="full"><button class="action" onclick="addKNote()">+ Add note</button></div></div><div id="kaNotes" style="margin-top:8px"></div></div></div>
 <div class="card"><h2>Session History</h2><div id="kaHist"></div></div>
+<div class="card" id="kaGoals"></div>
 </div>
 <div class="hbpanel" data-p="sec"><div id="secPanel"></div></div>
 <div class="hbpanel" data-p="read"><div id="readPanel"></div></div>
@@ -377,9 +385,12 @@ body.fs-open{overflow:hidden}
 
 
 
+<section id="paper" class="page"><div id="ppBox"></div></section>
+<section id="review" class="page"><div id="rvBox"></div></section>
 <section id="hof" class="page">
 <div class="card"><h2>🏆 Hall of Fame</h2><p class="muted">Everything you achieve, not just marks: exams, effort, fitness, character, creativity and service. Badges unlock by themselves as you use the tracker, and you can add your own wins below.</p><div id="hofStats"></div></div>
 <div class="card"><h2>🏅 Badges</h2><div id="hofBadges" class="hofgrid"></div></div>
+<div class="card"><h2>🎁 Reward Store</h2><div id="rwBox"></div></div>
 <div class="grid2"><div class="card"><h2>➕ Add an achievement</h2><div class="formgrid">
 <div class="full"><label>What did you achieve?</label><input id="hofT" placeholder="e.g. Won the school quiz, ran 5 km, led a clean-up drive" onkeydown="if(event.key==='Enter')addHof()"></div>
 <div><label>Area of life</label><select id="hofC"></select></div><div><label>Level</label><select id="hofL"></select></div>
@@ -409,6 +420,10 @@ body.fs-open{overflow:hidden}
 <div class="grid2"><div class="card"><h2>📈 Analytics</h2><div id="analyticsMain"></div></div><div class="card"><h2>🧩 Revision Health</h2><div id="revisionHealth"></div></div></div>
 <div class="card"><h2>📊 Study Trend</h2><div id="trendChart"></div></div>
 <div class="card"><h2>⚖️ Weekly Balance (last 8 weeks)</h2><p class="muted small">Study, karate, indoor cardio and hobby logs side by side. Study stays separate from fitness and leisure.</p><div id="balChart"></div></div>
+<div class="card"><h2>🧭 Daily Rhythm (last 7 days)</h2><p class="muted" style="text-transform:none;font-size:13px">Sleep, school, tuition, study, hobbies and idle time together.</p><div id="dayAn"></div></div>
+<div class="card"><h2>🥗 Health habits (last 7 days)</h2><div id="healthAn"></div></div>
+<div class="card"><h2>💡 Insights &amp; suggestions for tomorrow</h2><div id="dayIns"></div></div>
+<div class="card"><h2>🤖 AI Coach <span class="pill">optional · needs internet</span></h2><div id="aiBox"></div></div>
 <div class="grid2"><div class="card"><h2>🧮 Subjects per Week</h2><div id="subjTrend"></div></div><div class="card"><h2>🎯 Marks Trend</h2><div id="markTrend"></div></div></div>
 <div class="grid2"><div class="card"><h2>🕐 Best Study Hours</h2><div id="heatMap"></div></div><div class="card"><h2>🗓️ Board Countdown Plan</h2><div id="planBox"></div></div></div>
 <div class="card"><h2>🔁 Revision Reminders</h2><div id="srBox"></div></div>
@@ -420,14 +435,14 @@ body.fs-open{overflow:hidden}
 <section id="settings" class="page">
 <div class="card"><h2>⚙ Exam Dates & Settings</h2><p class="muted">Countdowns tick every second and show days, hours, minutes and seconds. Enter the actual date/time once your school/CBSE schedule is known.</p>
 <div class="formgrid"><div><label>Mid-Term date & time</label><input id="midInput" type="datetime-local"></div><div><label>Board exam date & time</label><input id="boardInput" type="datetime-local"></div><div><button class="action" onclick="saveSettings()">Save Dates</button></div></div></div>
-<div class="card"><h2>😴 Daily Schedule</h2><p class="muted">Your waking day drives the "My Day" timer on the Dashboard and Today page.</p><div class="formgrid"><div><label>Wake up</label><input id="wakeInput" type="time" onchange="saveDay()"></div><div><label>Sleep</label><input id="sleepInput" type="time" onchange="saveDay()"></div></div></div>
+<div class="card"><h2>😴 Daily Schedule</h2><p class="muted">Your waking day drives the "My Day" timer on the Dashboard and Today page.</p><div class="formgrid"><div><label>Wake up</label><input id="wakeInput" type="time" onchange="saveDay()"></div><div><label>Sleep</label><input id="sleepInput" type="time" onchange="saveDay()"></div></div><div id="dayCfgBox"></div></div>
 <div class="card"><h2>🤖 Automation & Focus</h2><div class="formgrid" id="autoOpts"></div></div>
 <div class="card"><h2>🏷 Batches & Study Types</h2><p class="muted">Add coaching batches or programmes (like Udaan, Udaan Advanced…). They appear in the Study Log and Pomodoro timer.</p><div id="batchList" class="tabs"></div><div class="row" style="flex-wrap:nowrap"><input id="batchName" placeholder="e.g. Test Series"><button class="action" onclick="addBatch()">+ Add</button></div></div>
 <div class="card"><h2>☁️ Sync & Backup</h2>
 <h3 style="margin:6px 0">🖥 Cloud-folder sync (desktop Chrome / Edge)</h3>
 <p class="muted">Create a sync file <b>inside your Google Drive, OneDrive or iCloud folder</b>. The page keeps it up to date automatically and checks it again when you return to the tab. Link the same file on your other computer.</p>
 <div id="syncStatus" style="margin:8px 0"></div>
-<div id="syncBtns" class="row" style="justify-content:flex-start"><button type="button" class="action" onclick="syncCreate()">➕ Create sync file</button><button type="button" class="action secondary" onclick="syncConnect()">🔗 Connect existing file</button><button type="button" class="secondary" id="syncNow" onclick="syncRun(true)">⟳ Sync now</button><button type="button" class="danger" id="syncUnlink" onclick="syncDisconnect()">Unlink</button></div>
+<div style="margin:8px 0"><label>Remind me to back up every </label><select id="bkInt" onchange="bkSet(this.value)" style="width:auto"><option value="7">week</option><option value="14">2 weeks</option><option value="30">month</option></select></div><div id="syncBtns" class="row" style="justify-content:flex-start"><button type="button" class="action" onclick="syncCreate()">➕ Create sync file</button><button type="button" class="action secondary" onclick="syncConnect()">🔗 Connect existing file</button><button type="button" class="secondary" id="syncNow" onclick="syncRun(true)">⟳ Sync now</button><button type="button" class="danger" id="syncUnlink" onclick="syncDisconnect()">Unlink</button></div>
 <hr style="border:0;border-top:1px solid var(--border);margin:16px 0">
 <h3 style="margin:6px 0">📱 Phone & any other device</h3>
 <p class="muted">Phones can't link a folder, so use quick backup and restore: save the file to Drive (or send it to yourself), then import it on the other device.</p>
@@ -518,14 +533,14 @@ function planAdvance(x, on) {
 }
 const STORAGE_KEY = "aalimTrackerV2";
 const defaultState = () => normalize({});
-const KEYS = ["progress", "study", "tasks", "extra", "exams", "marks", "questions", "feynman", "workouts", "plan", "extraLog", "flashcards", "mistakes", "homework", "lifts", "library", "quran", "prayers", "dream", "biz", "bizLog", "hof", "goal10", "movies", "research", "runs", "karate", "karateNotes", "hobbyCat", "hobbyCfg", "hobbySec", "hobbyLog"];
+const KEYS = ["progress", "study", "tasks", "extra", "exams", "marks", "questions", "feynman", "workouts", "plan", "extraLog", "flashcards", "mistakes", "homework", "lifts", "library", "quran", "prayers", "dream", "biz", "bizLog", "hof", "goal10", "movies", "research", "runs", "karate", "karateNotes", "hobbyCat", "hobbyCfg", "hobbySec", "hobbyLog", "dayLog", "dayCfg", "gam", "papers", "reviews"];
 const DEFAULT_BATCHES = ["Udaan", "Udaan Advanced", "Business/AI", "Extra-curricular", "Other"];
 function normalize(x) {
     var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l;
     x = x && typeof x === "object" ? x : {};
     const A = v => Array.isArray(v) ? v : [], O = v => v && typeof v === "object" && !Array.isArray(v) ? v : {};
     return { progress: Object.fromEntries(Object.entries(O(x.progress)).map(([k, v]) => [k, mig(v)])), study: A(x.study), tasks: A(x.tasks), extra: A(x.extra), exams: A(x.exams).filter(e => e && Array.isArray(e.topics)).map(e => (Object.assign(Object.assign({}, e), { topics: e.topics.map(t => (Object.assign(Object.assign({}, t), { status: mig(t.status) }))), papers: Array.isArray(e.papers) ? e.papers.filter(p => p && p.subject) : [] }))),
-        marks: A(x.marks), questions: A(x.questions), feynman: A(x.feynman), workouts: A(x.workouts), extraLog: A(x.extraLog), flashcards: A(x.flashcards), mistakes: A(x.mistakes), quotes: A(x.quotes), homework: A(x.homework), plan: O(x.plan), meta: O(x.meta), dream: O(x.dream), lifts: A(x.lifts), prayers: O(x.prayers), quran: A(x.quran), library: A(x.library), biz: A(x.biz), bizLog: A(x.bizLog), hof: A(x.hof), goal10: O(x.goal10), reader: O(x.reader), movies: A(x.movies), research: A(x.research), runs: A(x.runs).filter(r => r && typeof r === "object"), karate: A(x.karate).filter(r => r && typeof r === "object"), karateNotes: A(x.karateNotes).filter(r => r && typeof r === "object"), hobbyCat: A(x.hobbyCat).filter(r => r && typeof r === "object"), hobbyCfg: Object.assign({ stepLen: 0.7 }, O(x.hobbyCfg)), hobbySec: A(x.hobbySec).filter(r => r && typeof r === "object" && r.id), hobbyLog: A(x.hobbyLog).filter(r => r && typeof r === "object"),
+        marks: A(x.marks), questions: A(x.questions), feynman: A(x.feynman), workouts: A(x.workouts), extraLog: A(x.extraLog), flashcards: A(x.flashcards), mistakes: A(x.mistakes), quotes: A(x.quotes), homework: A(x.homework), plan: O(x.plan), meta: O(x.meta), dream: O(x.dream), lifts: A(x.lifts), prayers: O(x.prayers), quran: A(x.quran), library: A(x.library), biz: A(x.biz), bizLog: A(x.bizLog), hof: A(x.hof), goal10: O(x.goal10), reader: O(x.reader), movies: A(x.movies), research: A(x.research), runs: A(x.runs).filter(r => r && typeof r === "object"), karate: A(x.karate).filter(r => r && typeof r === "object"), karateNotes: A(x.karateNotes).filter(r => r && typeof r === "object"), hobbyCat: A(x.hobbyCat).filter(r => r && typeof r === "object"), hobbyCfg: Object.assign({ stepLen: 0.7 }, O(x.hobbyCfg)), hobbySec: A(x.hobbySec).filter(r => r && typeof r === "object" && r.id), hobbyLog: A(x.hobbyLog).filter(r => r && typeof r === "object"), dayLog: O(x.dayLog), dayCfg: O(x.dayCfg), gam: O(x.gam), papers: A(x.papers).filter(r => r && typeof r === "object"), reviews: A(x.reviews).filter(r => r && typeof r === "object" && Array.isArray(r.goals)),
         batches: A(x.batches).length ? A(x.batches) : [...DEFAULT_BATCHES],
         settings: { mid: ((_a = x.settings) === null || _a === void 0 ? void 0 : _a.mid) || "", board: ((_b = x.settings) === null || _b === void 0 ? void 0 : _b.board) || "", weeklyGoal: Math.max(0, Number((_c = x.settings) === null || _c === void 0 ? void 0 : _c.weeklyGoal) || 0), theme: ((_d = x.settings) === null || _d === void 0 ? void 0 : _d.theme) === "dark" ? "dark" : "light", autoPlan: ((_e = x.settings) === null || _e === void 0 ? void 0 : _e.autoPlan) !== false, autoBreak: ((_f = x.settings) === null || _f === void 0 ? void 0 : _f.autoBreak) !== false, autoNext: !!((_g = x.settings) === null || _g === void 0 ? void 0 : _g.autoNext), sound: ((_h = x.settings) === null || _h === void 0 ? void 0 : _h.sound) !== false, notify: !!((_j = x.settings) === null || _j === void 0 ? void 0 : _j.notify), wake: okTime((_k = x.settings) === null || _k === void 0 ? void 0 : _k.wake, "06:00"), sleep: okTime((_l = x.settings) === null || _l === void 0 ? void 0 : _l.sleep, "22:00") } };
 }
@@ -1428,7 +1443,7 @@ function renderSync() {
         b = '☁️ Sync is paused. <button type="button" class="secondary" onclick="syncRun(true)">Reconnect</button>';
     else if (!syncHandle && !syncDismiss && hasData()) {
         const last = Math.max(lastExported(), m.lastSync), days = Math.floor((Date.now() - last) / 864e5);
-        if (!last || days >= 7)
+        if (!last || days >= bkDays())
             b = `💾 ${last ? `It's been ${days} days since your last backup.` : "You haven't backed up this data yet."} <button type="button" class="secondary" onclick="shareBackup()">Save a backup</button><button type="button" class="secondary" onclick="syncDismiss=true;renderSync()">Later</button>`;
     }
     bar.style.display = b ? "flex" : "none";
@@ -2776,17 +2791,6 @@ function activityMins(k) {
 }
 function activityDates() { const s = new Set(); [state.study, state.karate, state.runs, state.hobbyLog, state.extraLog].forEach(a => a.forEach(x => { if (x && okDate(x.date) && num(x.mins) > 0) s.add(x.date); })); return s; }
 const LV_TITLES = ["Rookie", "Learner", "Explorer", "Scholar", "Achiever", "Strategist", "Master", "Legend"];
-function renderQuests() {
-    const el = $("questBox"); if (!el) return;
-    const t = today(), ds = activityDates(); let xp = 0; ds.forEach(k => xp += activityMins(k));
-    let streak = 0, d = new Date(); if (!ds.has(dkey(d))) d = addDays(d, -1); while (ds.has(dkey(d))) { streak++; d = addDays(d, -1); }
-    const lv = Math.floor(Math.sqrt(xp / 40)) + 1, lo = 40 * (lv - 1) ** 2, hi = 40 * lv ** 2, pc = Math.round((xp - lo) / (hi - lo) * 100);
-    const study = sumF(state.study.filter(x => x.date === t), "mins"), skillToday = activityMins(t) - study, readM = state.study.filter(x => x.date === t && String(x.note || "").startsWith("📖")).reduce((n, x) => n + num(x.mins), 0), wordsToday = wordList().filter(o => o.h.ts && dkey(new Date(o.h.ts)) === t).length;
-    const Q = [{ ic: "📖", t: "Study 30 minutes", p: Math.min(study, 30) + "/30", ok: study >= 30, go: "showPage('study')" }, { ic: "🎯", t: "Do one hobby or skill session", p: skillToday > 0 ? "done" : "not yet", ok: skillToday > 0, go: "hbOpen('over')" }, { ic: "📚", t: "Read 10 minutes or save a new word", p: wordsToday ? wordsToday + " word" + (wordsToday === 1 ? "" : "s") : Math.min(readM, 10) + "/10", ok: readM >= 10 || wordsToday > 0, go: "showPage('library')" }];
-    const dn = Q.filter(q => q.ok).length;
-    el.innerHTML = `<div class="qhead"><div class="qflame"><b>🔥 ${streak}</b><span>day streak</span></div><div class="qlv"><div class="row" style="padding:0"><b>Level ${lv} · ${LV_TITLES[Math.min(LV_TITLES.length - 1, lv - 1)]}</b><span class="muted" style="font-size:12px">${xp} XP · ${hi - xp} to level ${lv + 1}</span></div><div class="progress" style="margin-top:6px"><div class="fill" style="width:${Math.max(2, pc)}%"></div></div><div class="muted" style="font-size:11.5px;margin-top:4px;text-transform:none">1 XP per minute of study or practice you log. Streak counts any logged day.</div></div></div>
-<div class="qlist">${Q.map(q => `<button type="button" class="q ${q.ok ? "ok" : ""}" onclick="${q.go}"><span class="qi">${q.ok ? "✅" : q.ic}</span><span class="qt">${q.t}</span><span class="qp">${q.p}</span></button>`).join("")}</div>${dn === 3 ? '<p style="margin:10px 0 0;font-weight:700;color:var(--green)">🎉 All three quests done today. Great work!</p>' : ""}`;
-}
 /* ---- Word bank + library ---- */
 let libF = "", wbQ = "";
 function setLibF(v) { libF = v; renderLib(); }
@@ -2828,7 +2832,7 @@ function renderLibHero() {
     const fb = state.library.filter(b => b.file && b.id && state.reader[b.id] && state.reader[b.id].lo && b.st !== "Done").sort((a, b) => state.reader[b.id].lo - state.reader[a.id].lo)[0] || state.library.find(b => b.st === "Reading" && b.file) || state.library.find(b => b.st === "Reading");
     if (!fb) { el.innerHTML = '<h2>📚 Your Library</h2><p class="muted">Add a PDF or EPUB to start reading here. Your page, time, highlights and word meanings are all kept per book.</p><button type="button" class="action" onclick="$(\'pdfIn\').click()">📂 Add PDF / EPUB</button>'; return; }
     const r = state.reader[fb.id] || {}, pc = r.n ? Math.round((r.mx || 0) / r.n * 100) : 0, left = r.n ? Math.max(0, r.n - (r.mx || 0)) : 0;
-    el.innerHTML = `<div class="muted" style="font-size:12px;font-weight:800;letter-spacing:.05em">CONTINUE READING</div><h2 style="margin:4px 0">${esc(fb.t)}</h2><div class="muted">${esc(fb.a || "")}</div>${r.n ? `<div class="progress" style="margin:12px 0 4px"><div class="fill" style="width:${pc}%"></div></div><div class="muted" style="font-size:13px">${pc}% done · page ${r.page || 1} of ${r.n} · ${left} page${left === 1 ? "" : "s"} left</div>` : ""}<div style="margin-top:12px">${fb.file && fb.id ? `<button type="button" class="action" onclick="openReader('${esc(fb.id)}')">📖 Continue reading</button> ` : ""}<button type="button" class="secondary" onclick="$('pdfIn').click()">📂 Add PDF / EPUB</button></div>`;
+    el.innerHTML = `<div class="muted" style="font-size:12px;font-weight:800;letter-spacing:.05em">CONTINUE READING</div><h2 style="margin:4px 0">${esc(fb.t)}</h2><div class="muted">${esc(fb.a || "")}</div>${r.n ? `<div class="progress" style="margin:12px 0 4px"><div class="fill" style="width:${pc}%"></div></div><div class="muted" style="font-size:13px">${pc}% done · page ${r.page || 1} of ${r.n} · ${left} page${left === 1 ? "" : "s"} left</div>` : ""}${pgGoal(fb, r)}<div style="margin-top:12px">${fb.file && fb.id ? `<button type="button" class="action" onclick="openReader('${esc(fb.id)}')">📖 Continue reading</button> ` : ""}<button type="button" class="secondary" onclick="$('pdfIn').click()">📂 Add PDF / EPUB</button></div>`;
 }
 /* ---- reader: word meanings (blue) ---- */
 let rdWm = false, wdCur = null;
@@ -2919,6 +2923,370 @@ function rdList() {
     p.innerHTML = `<div class="row"><b>Words &amp; notes (${H.length})</b><button type="button" class="secondary" onclick="rdPanel()">✕</button></div>` + (Wd.length ? `<h3 style="font-size:14px;margin:10px 0 4px">📘 Word meanings (${Wd.length})</h3>${Wd.map(item).join("")}` : "") + (Ot.length ? `<h3 style="font-size:14px;margin:10px 0 4px">🖍 Highlights (${Ot.length})</h3>${Ot.map(item).join("")}` : "") + (H.length ? "" : '<div class="muted">Nothing yet. Select text to highlight, or use 📘 Word meaning.</div>');
 }
 function rdMean(id, v) { const h = rd(cur).hl.find(x => x.id === id); if (h) { h.m = v.trim(); save(); } }
+/* ===== v83: day coverage (school, tuition, hobby blocks), sleep + idle log, day analytics, optional AI coach ===== */
+const DOWN = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"], DAYC = ["#c8ccd4", "#e8833a", "#8b5cf6", "#27a36b"];
+const t2m = t => { const [h, m] = String(t || "00:00").split(":").map(Number); return (h || 0) * 60 + (m || 0); };
+const m2t = m => { m = ((Math.round(m) % 1440) + 1440) % 1440; return pad(Math.floor(m / 60)) + ":" + pad(m % 60); };
+const hm = m => { m = Math.max(0, Math.round(m)); return m < 60 ? m + "m" : Math.floor(m / 60) + "h " + pad(m % 60) + "m"; };
+function dayCfg() {
+    const c = state.dayCfg || {}, dd = [1, 2, 3, 4, 5], D = (o, x) => Object.assign({ on: false, days: dd.slice() }, o, x && typeof x === "object" ? x : {});
+    return { school: D({ start: "08:00", end: "14:30" }, c.school), tuition: D({ start: "16:30", end: "18:00" }, c.tuition), blocks: Array.isArray(c.blocks) ? c.blocks.filter(b => b && b.id) : [], sleepGoal: num(c.sleepGoal) || 8 };
+}
+function setCfg(fn) { state.dayCfg = state.dayCfg || {}; fn(state.dayCfg, dayCfg()); save(); renderDayCfg(); renderDayCover(); renderDayAnalytics(); }
+function dayCover(d) {
+    const cfg = dayCfg(), wake = t2m(state.settings.wake), sl = t2m(state.settings.sleep), len = ((sl - wake + 1440) % 1440) || 1440, arr = new Array(len).fill(0), dow = d.getDay();
+    const put = (start, mins, code) => { const s = ((t2m(start) - wake + 1440) % 1440); for (let i = s; i < Math.min(len, s + mins); i++) if (!arr[i]) arr[i] = code; };
+    if (cfg.school.on && cfg.school.days.includes(dow)) put(cfg.school.start, (t2m(cfg.school.end) - t2m(cfg.school.start) + 1440) % 1440, 1);
+    if (cfg.tuition.on && cfg.tuition.days.includes(dow)) put(cfg.tuition.start, (t2m(cfg.tuition.end) - t2m(cfg.tuition.start) + 1440) % 1440, 2);
+    cfg.blocks.filter(b => !b.days || b.days.includes(dow)).forEach(b => put(b.start, num(b.mins), 3));
+    const c = [0, 0, 0, 0]; arr.forEach(v => c[v]++);
+    return { arr, len, wake, school: c[1], tuition: c[2], hobby: c[3], free: c[0] };
+}
+function renderDayCover() {
+    const el = $("dayCover"); if (!el) return;
+    const now = new Date(), cv = dayCover(now), t = today(), nowRel = (now.getHours() * 60 + now.getMinutes() - cv.wake + 1440) % 1440, inWin = nowRel < cv.len;
+    const study = sumF(state.study.filter(x => x.date === t), "mins"), hob = activityMins(t) - study, log = (state.dayLog || {})[t] || {}, idle = sumF(Array.isArray(log.idle) ? log.idle : [], "m");
+    const runs = []; let a = 0; for (let i = 1; i <= cv.len; i++) if (i === cv.len || cv.arr[i] !== cv.arr[a]) { runs.push([cv.arr[a], i - a]); a = i; }
+    const freeLeft = inWin ? cv.arr.slice(nowRel).filter(v => !v).length : 0, names = ["Free", "School", "Tuition", "Hobby time"];
+    el.innerHTML = `<div class="dcbar">${runs.map(([c, n]) => `<div title="${names[c]} ${hm(n)}" style="width:${n / cv.len * 100}%;background:${DAYC[c]}"></div>`).join("")}${inWin ? `<i class="dcnow" style="left:${nowRel / cv.len * 100}%"></i>` : ""}</div>
+<div class="dclg">${names.map((n, i) => `<span><b style="background:${DAYC[i]}"></b>${n} ${hm([cv.free, cv.school, cv.tuition, cv.hobby][i])}</span>`).join("")}</div>
+<div class="statline" style="margin-top:10px"><div class="stat"><strong>${hm(cv.len)}</strong><span class="muted">awake today</span></div><div class="stat"><strong>${hm(freeLeft)}</strong><span class="muted">free time left</span></div><div class="stat"><strong>${hm(study)}</strong><span class="muted">studied</span></div><div class="stat"><strong>${hm(Math.max(0, hob))}</strong><span class="muted">hobbies &amp; fitness</span></div><div class="stat"><strong>${hm(idle)}</strong><span class="muted">idle logged</span></div><div class="stat"><strong>${hm(Math.max(0, cv.free - study - Math.max(0, hob) - idle))}</strong><span class="muted">not logged yet</span></div></div>
+<p class="muted" style="font-size:12.5px;text-transform:none;margin-top:8px">Set school, tuition and hobby time in Settings → Daily Schedule. Free time is your awake time minus those blocks.</p>`;
+    const d = $("dayCoverD"); if (d) { const bar = el.querySelector(".dcbar"), lg = el.querySelector(".dclg"); d.innerHTML = '<div class="small" style="margin-bottom:6px">Today\'s coverage</div>' + (bar ? bar.outerHTML : "") + (lg ? lg.outerHTML : "") + `<div class="muted" style="margin-top:6px;font-size:13px">Free time left: <b>${hm(freeLeft)}</b></div>`; }
+}
+/* ---- sleep and idle log ---- */
+const dayRec = k => { state.dayLog = state.dayLog && typeof state.dayLog === "object" ? state.dayLog : {}; return state.dayLog[k] = state.dayLog[k] || {}; };
+const nowT = () => { const d = new Date(); return pad(d.getHours()) + ":" + pad(d.getMinutes()); };
+const sleepMins = o => o && o.bed && o.wake ? (t2m(o.wake) - t2m(o.bed) + 1440) % 1440 : 0;
+function sleepNow() { const d = new Date(), k = d.getHours() >= 12 ? dkey(addDays(d, 1)) : dkey(d); dayRec(k).bed = nowT(); save(); renderSleep(); alert("Good night! Bedtime " + fmtT(nowT()) + " saved. Tap “I just woke up” tomorrow morning."); }
+function wokeNow() { dayRec(today()).wake = nowT(); save(); renderSleep(); renderDayAnalytics(); }
+function sleepSave() { const b = $("slBed").value, w = $("slWake").value, o = dayRec(today()); if (b) o.bed = b; else delete o.bed; if (w) o.wake = w; else delete o.wake; save(); if (document.activeElement && document.activeElement.blur) document.activeElement.blur(); renderSleep(); renderDayAnalytics(); }
+function idleAdd(m) { m = num(m); if (m <= 0 || m > 600) return alert("Enter minutes between 1 and 600."); const o = dayRec(today()); o.idle = Array.isArray(o.idle) ? o.idle : []; o.idle.push({ id: uid2(), m: Math.round(m), n: ($("idN") && $("idN").value || "").trim() }); save(); if ($("idN")) $("idN").value = ""; renderSleep(); renderDayCover(); renderDayAnalytics(); renderQuests(); }
+function idleDel(id) { const o = dayRec(today()); o.idle = (o.idle || []).filter(x => x.id !== id); save(); renderSleep(); renderDayCover(); renderDayAnalytics(); }
+function renderSleep() {
+    const el = $("sleepBox"); if (!el) return; if (el.contains(document.activeElement) && document.activeElement.tagName === "INPUT") return;
+    const o = (state.dayLog || {})[today()] || {}, sm = sleepMins(o), g = dayCfg().sleepGoal, idle = Array.isArray(o.idle) ? o.idle : [];
+    const verdict = !sm ? "" : sm > 16 * 60 ? "Check the times: that is more than 16 hours." : sm >= g * 60 - 30 ? `✅ Met your ${g}h goal` : `Short by ${hm(g * 60 - sm)} of your ${g}h goal`;
+    el.innerHTML = `<div class="formgrid"><div><label>Bedtime (last night)</label><input id="slBed" type="time" value="${esc(o.bed || "")}" onchange="sleepSave()"></div><div><label>Woke up</label><input id="slWake" type="time" value="${esc(o.wake || "")}" onchange="sleepSave()"></div></div>
+<div style="margin:8px 0;display:flex;gap:6px;flex-wrap:wrap"><button type="button" class="action" onclick="wokeNow()">☀️ I just woke up</button><button type="button" class="secondary" onclick="sleepNow()">🌙 Going to sleep now</button></div>
+${sm ? `<p><b>${hm(sm)}</b> slept <span class="muted">· ${esc(verdict)}</span></p>` : '<p class="muted">Log bedtime and wake time to track your sleep.</p>'}
+<h3 style="font-size:15px;margin:14px 0 4px">🕳 Time wasted / doing nothing</h3><p class="muted" style="font-size:12.5px;text-transform:none;margin:0 0 6px">Be honest, it is only for you. It shows up in Analytics so you can win that time back.</p>
+<div style="display:flex;gap:6px;flex-wrap:wrap;align-items:center">${[10, 15, 30, 60].map(n => `<button type="button" class="secondary" onclick="idleAdd(${n})">+${n} min</button>`).join("")}<input id="idM" type="number" min="1" placeholder="min" style="width:80px"><input id="idN" placeholder="what happened (optional)" style="flex:1;min-width:140px"><button type="button" class="action" onclick="idleAdd($('idM').value)">Add</button></div>
+<div style="margin-top:8px">${idle.length ? idle.map(x => `<div class="row" style="padding:3px 0"><span><b>${num(x.m)} min</b> ${x.n ? "· " + esc(x.n) : ""}</span><button type="button" class="danger" onclick="idleDel('${esc(x.id)}')">×</button></div>`).join("") + `<div class="muted" style="font-size:13px">Today: <b>${hm(sumF(idle, "m"))}</b></div>` : '<span class="muted">Nothing logged today.</span>'}</div>`;
+}
+/* ---- schedule settings ---- */
+function renderDayCfg() {
+    const el = $("dayCfgBox"); if (!el) return; if (el.contains(document.activeElement) && document.activeElement.tagName === "INPUT") return;
+    const c = dayCfg(), row = (k, label) => `<div style="margin-top:12px"><label style="display:flex;gap:8px;align-items:center;font-weight:700"><input type="checkbox" style="width:auto" ${c[k].on ? "checked" : ""} onchange="setCfg(x=>{x.${k}=Object.assign({},dayCfg().${k},{on:this.checked})})"> ${label}</label>
+<div class="formgrid" style="margin-top:6px"><div><label>From</label><input type="time" value="${c[k].start}" onchange="setCfg(x=>{x.${k}=Object.assign({},dayCfg().${k},{start:this.value})})"></div><div><label>To</label><input type="time" value="${c[k].end}" onchange="setCfg(x=>{x.${k}=Object.assign({},dayCfg().${k},{end:this.value})})"></div></div>
+<div class="tabs" style="margin:6px 0 0">${[1, 2, 3, 4, 5, 6, 0].map(d => `<button type="button" class="${c[k].days.includes(d) ? "active" : ""}" onclick="dayTog('${k}',${d})">${DOWN[d]}</button>`).join("")}</div></div>`;
+    const names = [...new Set([...state.extra.filter(x => x.status !== "Archived").map(x => x.name), ...state.hobbySec.map(s => s.n), "Karate", "Run in Place", "Reading"])];
+    el.innerHTML = `${row("school", "🏫 School")}${row("tuition", "📚 Tuition")}
+<div style="margin-top:14px"><label>Sleep goal (hours)</label><input type="number" min="5" max="12" step=".5" value="${c.sleepGoal}" onchange="setCfg(x=>{x.sleepGoal=Math.min(12,Math.max(5,num(this.value)||8))})" style="max-width:120px"></div>
+<h3 style="font-size:15px;margin:16px 0 4px">🎨 Hobby time blocks</h3><p class="muted" style="font-size:12.5px;text-transform:none;margin:0 0 6px">Reserve a daily time for a hobby. It appears in My Day and in the suggestions.</p>
+${c.blocks.map(b => `<div class="row" style="padding:3px 0"><span><b>${esc(b.n)}</b> · ${fmtT(b.start)} for ${num(b.mins)} min · ${(b.days || []).length === 7 ? "daily" : (b.days || []).map(d => DOWN[d]).join(" ")}</span><button type="button" class="danger" onclick="blockDel('${esc(b.id)}')">×</button></div>`).join("") || '<div class="muted">No blocks yet.</div>'}
+<div class="formgrid" style="margin-top:8px"><div><input id="hbN" list="hbNames" placeholder="Hobby e.g. Karate"><datalist id="hbNames">${names.map(n => `<option value="${esc(n)}">`).join("")}</datalist></div><div><input id="hbS" type="time" value="17:30"></div><div><input id="hbM" type="number" min="5" step="5" value="30" placeholder="minutes"></div><div><button type="button" class="action" onclick="blockAdd()">+ Add block</button></div></div>`;
+}
+function dayTog(k, d) { setCfg((x, c) => { const a = c[k].days.includes(d) ? c[k].days.filter(v => v !== d) : [...c[k].days, d]; x[k] = Object.assign({}, c[k], { days: a }); }); }
+function blockAdd() { const n = $("hbN").value.trim(), s = $("hbS").value, m = num($("hbM").value); if (!n || !s || m < 5) return alert("Enter the hobby, a start time and at least 5 minutes."); setCfg((x, c) => { x.blocks = [...c.blocks, { id: uid2(), n, start: s, mins: Math.round(m), days: [0, 1, 2, 3, 4, 5, 6] }]; }); }
+function blockDel(id) { setCfg((x, c) => { x.blocks = c.blocks.filter(b => b.id !== id); }); }
+/* ---- analytics + insights ---- */
+function dayStats(n) {
+    const out = [];
+    for (let i = n - 1; i >= 0; i--) {
+        const d = addDays(new Date(), -i), k = dkey(d), o = (state.dayLog || {})[k] || {}, cv = dayCover(d), study = sumF(state.study.filter(x => x.date === k), "mins"), hob = activityMins(k) - study, idle = sumF(Array.isArray(o.idle) ? o.idle : [], "m");
+        out.push({ k, d, sleep: sleepMins(o), bed: o.bed, wake: o.wake, idle, study, hob: Math.max(0, hob), school: cv.school, tuition: cv.tuition, free: cv.free, hasIdle: Array.isArray(o.idle) });
+    }
+    return out;
+}
+const avg = (a, f) => { const v = a.map(f).filter(x => x > 0); return v.length ? v.reduce((s, x) => s + x, 0) / v.length : 0; };
+function circAvg(list) { if (!list.length) return null; let x = 0, y = 0; list.forEach(m => { x += Math.cos(m / 1440 * 2 * Math.PI); y += Math.sin(m / 1440 * 2 * Math.PI); }); return ((Math.atan2(y, x) / (2 * Math.PI) * 1440) + 1440) % 1440; }
+function dayInsights() {
+    const D = dayStats(7), cfg = dayCfg(), tom = addDays(new Date(), 1), cvT = dayCover(tom), out = [], sl = D.filter(x => x.sleep > 0), idl = D.filter(x => x.hasIdle);
+    const wakeT = t2m(state.settings.wake), g = cfg.sleepGoal, bedBy = wakeT - g * 60;
+    const tp = []; if (cfg.school.on && cfg.school.days.includes(tom.getDay())) tp.push("school " + fmtT(cfg.school.start) + "–" + fmtT(cfg.school.end)); if (cfg.tuition.on && cfg.tuition.days.includes(tom.getDay())) tp.push("tuition " + fmtT(cfg.tuition.start) + "–" + fmtT(cfg.tuition.end));
+    const free = cvT.free, studyGoal = Math.min(180, Math.round(free * .5 / 15) * 15), hobGoal = Math.min(90, Math.round(free * .25 / 15) * 15);
+    out.push({ ic: "📅", t: `Tomorrow is ${DOWN[tom.getDay()]}${tp.length ? " with " + tp.join(" and ") : " with no school or tuition set"}. You will have about <b>${hm(free)}</b> of free time. A balanced plan: <b>${hm(studyGoal)}</b> study, <b>${hm(hobGoal)}</b> hobby or fitness, and the rest for meals, rest and flexibility.` });
+    if (sl.length >= 2) {
+        const as = avg(sl, x => x.sleep), diff = g * 60 - as;
+        out.push({ ic: "😴", t: diff > 30 ? `You averaged <b>${hm(as)}</b> of sleep over ${sl.length} logged nights, <b>${hm(diff)}</b> short of your ${g}h goal. Aim to be in bed by <b>${fmtT(m2t(bedBy))}</b> tomorrow night for a ${fmtT(state.settings.wake)} wake-up.` : `Sleep is on track: <b>${hm(as)}</b> average against a ${g}h goal. Keep bedtime around <b>${fmtT(m2t(bedBy))}</b>.` });
+        const beds = sl.filter(x => x.bed).map(x => (t2m(x.bed) + 720) % 1440), spread = beds.length > 1 ? Math.max(...beds) - Math.min(...beds) : 0;
+        if (spread > 60) out.push({ ic: "🕰", t: `Your bedtime moved by <b>${hm(spread)}</b> across the week. A steady bedtime (within 30 minutes) makes waking easier.` });
+        const wk = circAvg(sl.filter(x => x.wake).map(x => t2m(x.wake))); if (wk != null && Math.abs(((wk - wakeT + 1440 + 720) % 1440) - 720) > 30) out.push({ ic: "⏰", t: `You usually wake near <b>${fmtT(m2t(wk))}</b>, but your day starts at <b>${fmtT(state.settings.wake)}</b>. Either adjust the schedule in Settings or try waking closer to plan.` });
+    } else out.push({ ic: "😴", t: "Log your bedtime and wake time for a couple of days (Today → Sleep) to unlock sleep insights." });
+    if (idl.length >= 2) {
+        const ai = idl.reduce((s, x) => s + x.idle, 0) / idl.length;
+        out.push({ ic: "🕳", t: ai >= 45 ? `You logged about <b>${hm(ai)}</b> of doing nothing per day. Tomorrow, turn just the first 30 minutes of that into a hobby session or a study block you pick tonight.` : ai > 0 ? `Idle time is low, around <b>${hm(ai)}</b> per day. Nice.` : "No idle time logged. Add it honestly to see the real picture." });
+    }
+    const un = D.filter(x => x.hasIdle || x.study || x.hob).map(x => Math.max(0, x.free - x.study - x.hob - x.idle)); if (un.length >= 3) { const a = un.reduce((s, x) => s + x, 0) / un.length; if (a > 60) out.push({ ic: "🔎", t: `On average <b>${hm(a)}</b> of your free time each day is not logged as study, hobby or idle. Logging it, even roughly, helps find where time goes.` }); }
+    const hrsB = Array(8).fill(0); state.study.forEach(x => { if (typeof x.h === "number" && withinLastDays(x.date, 30)) hrsB[Math.floor(x.h / 3)] += num(x.mins); }); const bi = hrsB.indexOf(Math.max(...hrsB)); if (hrsB[bi] > 0) { const H = ["12–3 AM", "3–6 AM", "6–9 AM", "9 AM–12", "12–3 PM", "3–6 PM", "6–9 PM", "9 PM–12"]; out.push({ ic: "🧠", t: `Most of your study happens in <b>${H[bi]}</b>. Put your hardest subject there tomorrow.` }); }
+    const [a, b] = [dkey(addDays(new Date(), -6)), today()], seen = Object.fromEntries(bySubject(a, b)), subs = Object.keys(syllabus).filter(s => !seen[s]); if (state.study.length && subs.length) out.push({ ic: "📚", t: `No study logged this week for <b>${esc(subs.slice(0, 3).join(", "))}</b>. Add one short session for ${esc(subs[0])} tomorrow.` });
+    const last = {}; state.karate.forEach(x => last.Karate = !last.Karate || x.date > last.Karate ? x.date : last.Karate); state.runs.forEach(x => last["Run in Place"] = !last["Run in Place"] || x.date > last["Run in Place"] ? x.date : last["Run in Place"]); state.hobbyLog.forEach(x => { const s = secOf(x.sec); if (s) last[s.n] = !last[s.n] || x.date > last[s.n] ? x.date : last[s.n]; });
+    const quiet = Object.entries(last).filter(([, d]) => !withinLastDays(d, 4)).map(([n]) => n); if (quiet.length) out.push({ ic: "🎯", t: `Not practised for 4+ days: <b>${esc(quiet.slice(0, 3).join(", "))}</b>. A 15-minute session tomorrow keeps the habit alive.` });
+    const hb = cfg.blocks.reduce((s, b) => s + num(b.mins), 0); if (hb && sumF(D, "hob") < hb * 3) out.push({ ic: "⏳", t: `You reserved <b>${hm(hb)}</b> a day for hobbies but logged only <b>${hm(sumF(D, "hob"))}</b> this week. Try to protect that block tomorrow.` });
+    healthInsights(out); paperInsights(out);
+    return out;
+}
+function renderDayAnalytics() {
+    const el = $("dayAn"), el2 = $("dayIns"); if (!el) return;
+    const D = dayStats(7), sl = D.filter(x => x.sleep > 0), as = avg(D, x => x.sleep), ai = D.filter(x => x.hasIdle).length ? D.reduce((s, x) => s + x.idle, 0) / D.filter(x => x.hasIdle).length : 0;
+    const bed = circAvg(sl.filter(x => x.bed).map(x => (t2m(x.bed) + 720) % 1440)), wk = circAvg(sl.filter(x => x.wake).map(x => t2m(x.wake)));
+    const mx = Math.max(60, ...D.map(x => x.study + x.hob + x.idle + x.school + x.tuition));
+    el.innerHTML = `<div class="statline"><div class="stat"><strong>${as ? hm(as) : "—"}</strong><span class="muted">avg sleep</span></div><div class="stat"><strong>${bed != null ? fmtT(m2t(bed - 720)) : "—"}</strong><span class="muted">avg bedtime</span></div><div class="stat"><strong>${wk != null ? fmtT(m2t(wk)) : "—"}</strong><span class="muted">avg wake-up</span></div><div class="stat"><strong>${ai ? hm(ai) : "—"}</strong><span class="muted">idle per day</span></div><div class="stat"><strong>${hm(avg(D, x => x.school))}</strong><span class="muted">school per day</span></div><div class="stat"><strong>${hm(avg(D, x => x.tuition))}</strong><span class="muted">tuition per day</span></div></div>
+<div style="margin-top:14px">${D.map(x => `<div style="display:flex;align-items:center;gap:8px;margin:4px 0;font-size:12px"><span style="width:58px;flex:none" class="muted">${DOWN[x.d.getDay()]} ${x.d.getDate()}</span><div style="flex:1;display:flex;height:16px;background:rgba(127,127,127,.12);border-radius:6px;overflow:hidden">${[[x.school, "#e8833a", "School"], [x.tuition, "#8b5cf6", "Tuition"], [x.study, "#4f7cff", "Study"], [x.hob, "#27a36b", "Hobbies"], [x.idle, "#ef4444", "Idle"]].map(([v, c, n]) => v ? `<div title="${n} ${hm(v)}" style="width:${v / mx * 100}%;background:${c}"></div>` : "").join("")}</div><span style="width:78px;flex:none;text-align:right" class="muted">${x.sleep ? "😴 " + hm(x.sleep) : ""}</span></div>`).join("")}</div>
+<p class="small" style="margin-top:8px;text-transform:none;font-size:12.5px"><span style="color:#e8833a">■</span> School <span style="color:#8b5cf6">■</span> Tuition <span style="color:#4f7cff">■</span> Study <span style="color:#27a36b">■</span> Hobbies <span style="color:#ef4444">■</span> Idle</p>`;
+    el2.innerHTML = dayInsights().map(i => `<div class="insight"><span style="font-size:18px">${i.ic}</span> ${i.t}</div>`).join("");
+}
+/* ---- optional AI coach (Hugging Face, cloud, needs internet) ---- */
+const AI_K = "aalimAiCfg";
+const aiCfg = () => { try { return Object.assign({ tok: "", model: "meta-llama/Llama-3.1-8B-Instruct", ok: 0 }, JSON.parse(localStorage.getItem(AI_K) || "{}")); } catch (e) { return { tok: "", model: "meta-llama/Llama-3.1-8B-Instruct", ok: 0 }; } };
+function aiSave() { try { localStorage.setItem(AI_K, JSON.stringify({ tok: $("aiTok").value.trim(), model: $("aiMod").value.trim() || "meta-llama/Llama-3.1-8B-Instruct", ok: $("aiOk").checked ? 1 : 0 })); } catch (e) { alert("Couldn't save the settings in this browser."); } renderAi(); }
+function aiClear() { try { localStorage.removeItem(AI_K); } catch (e) { } renderAi(); }
+function aiSummary() {
+    const D = dayStats(7), [a, b] = [dkey(addDays(new Date(), -6)), today()], hob = {};
+    state.karate.filter(x => inRng(x.date, a, b)).forEach(x => hob.Karate = (hob.Karate || 0) + num(x.mins)); state.runs.filter(x => inRng(x.date, a, b)).forEach(x => hob["Run in place"] = (hob["Run in place"] || 0) + num(x.mins));
+    state.hobbyLog.filter(x => inRng(x.date, a, b)).forEach(x => { const s = secOf(x.sec); const n = s ? s.n : "Other"; hob[n] = (hob[n] || 0) + num(x.mins); });
+    return { student: "Class 10 CBSE student", tomorrow: DOWN[addDays(new Date(), 1).getDay()], sleepGoalHours: dayCfg().sleepGoal, plannedWake: state.settings.wake, plannedSleep: state.settings.sleep, freeMinutesTomorrow: dayCover(addDays(new Date(), 1)).free,
+        last7Days: D.map(x => ({ day: DOWN[x.d.getDay()], sleepMin: x.sleep, bed: x.bed || null, wake: x.wake || null, idleMin: x.idle, studyMin: x.study, hobbyMin: x.hob, schoolMin: x.school, tuitionMin: x.tuition })), studyBySubjectMin: Object.fromEntries(bySubject(a, b)), hobbyMinutes: hob, weeklyStudyGoalHours: num(state.settings.weeklyGoal) || null };
+}
+async function aiAsk() {
+    const c = aiCfg(); if (!c.tok || !c.ok) return alert("Save your token and tick the permission box first."); const q = ($("aiQ").value || "").trim() || "Suggest a realistic plan and 5 tips for tomorrow.";
+    const out = $("aiOut"); out.textContent = "Thinking…"; $("aiBtn").disabled = true;
+    try {
+        const r = await fetch("https://router.huggingface.co/v1/chat/completions", { method: "POST", headers: { Authorization: "Bearer " + c.tok, "Content-Type": "application/json" }, body: JSON.stringify({ model: c.model, max_tokens: 450, temperature: .5, messages: [{ role: "system", content: "You are a kind, practical study-and-habits coach for a Class 10 CBSE student. Use only the JSON data provided. Reply in under 200 words as a short bullet list with concrete times. Do not give medical advice. Never invent numbers." }, { role: "user", content: "My last 7 days (JSON):\n" + JSON.stringify(aiSummary()) + "\n\n" + q }] }) });
+        const j = await r.json(); if (!r.ok) throw new Error((j && (j.error && (j.error.message || j.error) || j.message)) || "HTTP " + r.status);
+        out.textContent = (j.choices && j.choices[0] && j.choices[0].message && j.choices[0].message.content || "").trim() || "No answer came back.";
+    } catch (e) { out.textContent = "Couldn't reach the AI coach: " + (e.message || e) + ". Check the internet, token and model name. Your own insights above still work offline."; }
+    $("aiBtn").disabled = false;
+}
+function renderAi() {
+    const el = $("aiBox"); if (!el) return; if (el.contains(document.activeElement) && document.activeElement.tagName === "INPUT") return; const c = aiCfg();
+    el.innerHTML = `<p class="muted" style="text-transform:none;font-size:13px">Optional and off until you set it up. When you press Ask, a <b>summary of numbers</b> (sleep, idle, study and hobby minutes, subject names) is sent over the internet to Hugging Face's cloud AI. No notes, names or files are sent. It works only online; everything else in the app stays offline. The answer is a suggestion from a general AI model, not a trained tutor and not medical advice.</p>
+<details ${c.tok ? "" : "open"}><summary><b>Setup</b></summary><div class="formgrid" style="margin-top:8px"><div class="full"><label>Hugging Face access token (a parent should create it at huggingface.co/settings/tokens, with permission to call Inference Providers)</label><input id="aiTok" type="password" autocomplete="off" value="${esc(c.tok)}" placeholder="hf_…"></div><div class="full"><label>Model</label><input id="aiMod" value="${esc(c.model)}"></div><div class="full"><label style="display:flex;gap:8px;align-items:center"><input id="aiOk" type="checkbox" style="width:auto" ${c.ok ? "checked" : ""}> I understand a summary of my numbers is sent to Hugging Face when I press Ask. The token stays only in this browser and is not part of backups.</label></div><div class="full"><button class="action" onclick="aiSave()">Save</button> <button class="secondary" onclick="aiClear()">Remove token</button></div></div></details>
+<div style="margin-top:10px"><input id="aiQ" placeholder="Ask something, or leave empty for tomorrow's plan"><div style="margin-top:8px"><button id="aiBtn" class="action" onclick="aiAsk()" ${c.tok && c.ok ? "" : "disabled"}>🤖 Ask the coach</button></div><div id="aiOut" style="white-space:pre-wrap;margin-top:10px"></div></div>`;
+}
+/* ===== v84: revision schedule, past papers, weekly review, rewards, challenges, health, commonplace, karate self-study ===== */
+const G = () => { const g = state.gam = state.gam && typeof state.gam === "object" ? state.gam : {}; ["rest", "rewards", "claims", "cq", "kg", "ch"].forEach(k => { if (!Array.isArray(g[k])) g[k] = []; }); if (!g.wd || typeof g.wd !== "object") g.wd = {}; g.bonus = num(g.bonus); return g; };
+const wkKey = d => dkey(weekStart(d || new Date()));
+/* ---- 1. Revision schedule ---- */
+function revDays() {
+    const b = state.settings.board; if (!b) return null;
+    const left = Math.ceil((new Date(String(b).slice(0, 10) + "T00:00:00") - new Date(today() + "T00:00:00")) / 864e5); if (!(left >= 1)) return null;
+    const ri = statuses.indexOf("Revised"), subj = Object.keys(syllabus).sort((a, b) => pct(a) - pct(b)), per = subj.map(s => syllabus[s].filter(c => statuses.indexOf(state.progress[s + "|" + c] || "Not Started") < ri).map(c => ({ s, c })));
+    const todo = []; for (let i = 0; per.some(l => l.length); i++) per.forEach(l => { if (l.length) todo.push(l.shift()); });
+    const end = left > 21 ? left - 14 : left, days = [];
+    for (let i = 0; i < Math.max(1, end); i++) { const d = addDays(new Date(), i), cv = dayCover(d), cap = Math.max(1, Math.min(6, Math.floor(cv.free * .5 / 45))); days.push({ d, cap, items: [] }); }
+    let k = 0; days.forEach(dy => { for (let n = 0; n < dy.cap && k < todo.length; n++) dy.items.push(todo[k++]); });
+    return { left, end, todo: todo.length, days, over: todo.length - k, cap: days.reduce((n, d) => n + d.cap, 0) };
+}
+function revAddToday() { const R = revDays(); if (!R) return; R.days[0].items.forEach(x => addPlan(`${x.s}: ${x.c}`)); renderToday(); }
+function renderRevSched() {
+    const el = $("revSched"); if (!el) return; const R = revDays();
+    if (!R) { el.innerHTML = '<div class="muted">Set your board-exam date in Settings to get a day-by-day revision schedule.</div>'; return; }
+    if (!R.todo) { el.innerHTML = '<div class="insight">🎉 Every chapter is already Revised or better. Spend the time on past papers.</div>'; return; }
+    const need = Math.ceil(R.todo / R.end), st = R.over > 0 ? `<div class="insight" style="border-left-color:var(--red)">⚠ At your current free time you can fit ${R.cap} of ${R.todo} chapters before the revision deadline. You are about <b>${R.over}</b> behind. Aim for <b>${need}</b> per day (or free up study time).</div>` : `<div class="insight" style="border-left-color:var(--green)">✅ On track: ${R.todo} chapters across ${R.end} days (about ${need} per day). The schedule re-balances automatically as you finish chapters.</div>`;
+    el.innerHTML = `<div class="statline"><div class="stat"><strong>${R.left}</strong><span class="muted">days to boards</span></div><div class="stat"><strong>${R.todo}</strong><span class="muted">chapters to revise</span></div><div class="stat"><strong>${R.days[0].items.length}</strong><span class="muted">planned today</span></div></div>${st}
+${R.days.slice(0, 7).map((d, i) => `<div class="row" style="padding:5px 0;align-items:flex-start"><b style="width:70px;flex:none">${i === 0 ? "Today" : DOWN[d.d.getDay()] + " " + d.d.getDate()}</b><span style="flex:1">${d.items.length ? d.items.map(x => `<span class="pill">${esc(x.s.split(" – ")[0].slice(0, 14))}: ${esc(x.c)}</span>`).join(" ") : '<span class="muted">rest or catch-up</span>'}</span></div>`).join("")}
+${R.days[0].items.length ? '<p style="margin-top:8px"><button class="action" onclick="revAddToday()">+ Add today\'s chapters to my plan</button></p>' : ""}`;
+}
+/* ---- 2. Mistakes to flashcards ---- */
+function mistakeCard(m) {
+    if (m.card || !(m.q || m.fix)) return false;
+    state.flashcards.push({ subject: m.subject, type: "Mistake", front: (m.q || "Redo the question from " + (m.chapter || "this chapter")).slice(0, 400), back: m.fix || "(Work out the correct approach.)", box: 1, due: today(), reviews: 0, mid: m.id });
+    m.card = 1; return true;
+}
+function mistakesToCards() { let n = 0; state.mistakes.filter(m => !m.fixed).forEach(m => { if (!m.id) m.id = uid2(); if (mistakeCard(m)) n++; }); save(); renderAll(); alert(n ? n + " flashcard" + (n === 1 ? "" : "s") + " created. They will come back in your reviews." : "No new open mistakes to convert."); }
+/* ---- 3. Past papers ---- */
+let pp = null, ppRows = [];
+function ppStart() { const a = num($("ppAllowed").value); if (a <= 0) return alert("Enter the time allowed in minutes."); pp = { t0: Date.now(), allowed: a }; ppTick(); }
+function ppTick() { const el = $("ppClock"); if (!el) return; if (!pp) { el.textContent = "Not started"; return; } const left = pp.allowed * 60000 - (Date.now() - pp.t0); el.textContent = (left < 0 ? "⏰ over by " : "⏱ ") + fmtClk(Math.abs(left)); el.style.color = left < 0 ? "var(--red)" : ""; }
+setInterval(ppTick, 1000);
+function ppSubj() { const s = $("ppSub").value; $("ppCh").innerHTML = (syllabus[s] || []).map(c => `<option>${esc(c)}</option>`).join(""); }
+function ppAddRow() { const l = num($("ppLost").value); if (l <= 0) return alert("Enter the marks lost (more than 0)."); ppRows.push({ c: $("ppCh").value, lost: l }); $("ppLost").value = ""; renderPapers(); }
+function ppSave() {
+    const max = num($("ppMax").value), sc = $("ppScore").value, s = Number(sc);
+    if (max <= 0 || sc === "" || !Number.isFinite(s) || s < 0 || s > max) return alert("Enter the marks out of and a score between 0 and that maximum.");
+    const took = pp ? Math.round((Date.now() - pp.t0) / 60000) : num($("ppTook").value), id = uid2(), name = $("ppName").value.trim() || "Past paper", date = okDate($("ppDate").value) ? $("ppDate").value : today();
+    state.papers.push({ id, date, subject: $("ppSub").value, name, max, score: s, allowed: num($("ppAllowed").value), took, topics: ppRows.slice() });
+    state.marks.push({ date, subject: $("ppSub").value, test: name, score: s, max, pid: id });
+    pp = null; ppRows = []; $("ppScore").value = ""; $("ppName").value = ""; save(); renderAll(); alert("Paper saved. It also appears in your Marks Log.");
+}
+function ppDel(id) { if (!confirm("Delete this paper (and its Marks Log entry)?")) return; state.papers = state.papers.filter(p => p.id !== id); state.marks = state.marks.filter(m => m.pid !== id); save(); renderAll(); }
+function paperWeak() { const o = {}; state.papers.forEach(p => (p.topics || []).forEach(t => { const k = p.subject + "|" + t.c; o[k] = (o[k] || 0) + num(t.lost); })); return Object.entries(o).sort((a, b) => b[1] - a[1]).map(([k, v]) => ({ s: k.split("|")[0], c: k.split("|").slice(1).join("|"), lost: v })); }
+function renderPapers() {
+    const el = $("ppBox"); if (!el) return; if (el.contains(document.activeElement) && /INPUT|SELECT/.test(document.activeElement.tagName)) { ppTick(); return; }
+    const subs = Object.keys(syllabus), P = state.papers.slice().sort((a, b) => String(b.date).localeCompare(String(a.date))), weak = paperWeak().slice(0, 6), keep = $("ppSub") ? $("ppSub").value : subs[0];
+    const f = { n: $("ppName") ? $("ppName").value : "", m: $("ppMax") ? $("ppMax").value : "80", a: $("ppAllowed") ? $("ppAllowed").value : "180", sc: $("ppScore") ? $("ppScore").value : "" };
+    const avgp = P.length ? P.reduce((n, p) => n + p.score / p.max * 100, 0) / P.length : 0;
+    el.innerHTML = `<div class="grid2" style="align-items:start"><div class="card"><h2>📄 Past Paper</h2><p class="muted" style="text-transform:none;font-size:13px">Start the timer, write the paper on real paper, then enter your marks and where you lost them.</p>
+<div class="formgrid"><div><label>Date</label><input id="ppDate" type="date" value="${today()}"></div><div><label>Subject</label><select id="ppSub" onchange="ppSubj()">${subs.map(s => `<option ${s === keep ? "selected" : ""}>${esc(s)}</option>`).join("")}</select></div><div class="full"><label>Paper name</label><input id="ppName" value="${esc(f.n)}" placeholder="e.g. CBSE 2024 Science"></div><div><label>Marks out of</label><input id="ppMax" type="number" value="${esc(f.m)}"></div><div><label>Time allowed (min)</label><input id="ppAllowed" type="number" value="${esc(f.a)}"></div></div>
+<div style="margin:10px 0;display:flex;gap:10px;align-items:center;flex-wrap:wrap"><b id="ppClock" style="font-size:24px"></b><button class="action" onclick="ppStart()">▶ Start timer</button></div>
+<div class="formgrid"><div><label>Your score</label><input id="ppScore" type="number" step=".5" value="${esc(f.sc)}"></div><div><label>Time taken (min, if no timer)</label><input id="ppTook" type="number"></div></div>
+<h3 style="font-size:14px;margin:14px 0 4px">Where did you lose marks?</h3><div class="formgrid"><div><select id="ppCh"></select></div><div style="display:flex;gap:6px"><input id="ppLost" type="number" step=".5" placeholder="marks lost"><button class="secondary" onclick="ppAddRow()">+</button></div></div>
+${ppRows.map((r, i) => `<div class="row" style="padding:3px 0"><span>${esc(r.c)} <b>−${r.lost}</b></span><button class="danger" onclick="ppRows.splice(${i},1);renderPapers()">×</button></div>`).join("")}
+<p style="margin-top:12px"><button class="action" onclick="ppSave()">Save paper</button></p></div>
+<div class="card"><h2>📊 Weak chapters from papers</h2>${weak.length ? weak.map(w => `<div class="row" style="padding:4px 0"><span>${esc(w.c)} <span class="muted">· ${esc(w.s.split(" – ")[0])}</span></span><b>−${w.lost}</b></div>`).join("") + '<p class="muted" style="font-size:12.5px;text-transform:none">Marks lost per chapter across all your papers. Revise the top ones first.</p>' : '<div class="empty">Log where you lose marks and the weakest chapters show here.</div>'}${P.length ? `<div class="statline" style="margin-top:12px"><div class="stat"><strong>${P.length}</strong><span class="muted">papers</span></div><div class="stat"><strong>${avgp.toFixed(1)}%</strong><span class="muted">average</span></div></div>` : ""}</div></div>
+<div class="card"><h2>History</h2>${P.length ? `<div style="overflow-x:auto"><table><tr><th>Date</th><th>Subject</th><th>Paper</th><th>Score</th><th>Time</th><th></th></tr>${P.map(p => `<tr><td>${esc(p.date)}</td><td>${esc(String(p.subject).split(" – ")[0])}</td><td>${esc(p.name)}</td><td>${p.score}/${p.max} (${Math.round(p.score / p.max * 100)}%)</td><td>${p.took ? p.took + "/" + p.allowed + " min" : ""}</td><td><button class="danger" onclick="ppDel('${esc(p.id)}')">Delete</button></td></tr>`).join("")}</table></div>` : '<div class="empty">No papers yet.</div>'}</div>`;
+    ppSubj(); ppTick();
+}
+/* ---- 5/6. Weekly review + goals ---- */
+const reviewFor = k => state.reviews.find(r => r.wk === k);
+const goalsThisWeek = () => state.reviews.filter(r => r.target === wkKey()).flatMap(r => r.goals.map((g, i) => ({ r, g, i })));
+function reviewStats() {
+    const [a, b] = wkRange(0), D = dayStats(7), sl = D.filter(x => x.sleep > 0), w = weekTotals(0), qd = [...activityDates()].filter(d => inRng(d, a, b)).length;
+    return { study: w.study, goal: num(state.settings.weeklyGoal), karate: w.karate, run: w.run, hobby: w.hobby, days: qd, sleep: sl.length ? avg(sl, x => x.sleep) : 0, idle: D.filter(x => x.hasIdle).length ? D.reduce((s, x) => s + x.idle, 0) / D.filter(x => x.hasIdle).length : 0, words: wordList().filter(o => o.h.ts && inRng(dkey(new Date(o.h.ts)), a, b)).length };
+}
+function reviewSave() {
+    const goals = [1, 2, 3].map(i => $("rvG" + i).value.trim()).filter(Boolean).map(t => ({ t, done: false })), k = wkKey();
+    if (!$("rvW").value.trim() && !$("rvH").value.trim() && !goals.length) return alert("Write at least one thing: a win, a struggle or a goal.");
+    const old = reviewFor(k), rec = { wk: k, win: $("rvW").value.trim(), hard: $("rvH").value.trim(), goals, target: dkey(addDays(weekStart(new Date()), 7)), date: today() };
+    if (old) { rec.id = old.id; rec.goals = goals.map((g, i) => (old.goals[i] && old.goals[i].t === g.t) ? old.goals[i] : g); Object.assign(old, rec); } else { rec.id = uid2(); state.reviews.push(rec); G().bonus += 30; }
+    save(); renderAll(); alert("Review saved. Your goals for next week will appear on the dashboard.");
+}
+function goalTog(rid, i) { const r = state.reviews.find(x => x.id === rid); if (r && r.goals[i]) { r.goals[i].done = !r.goals[i].done; save(); renderGoals(); renderReview(); } }
+function renderGoals() {
+    const el = $("goalsBox"); if (!el) return; const gs = goalsThisWeek(), now = new Date(), due = (now.getDay() === 0 || now.getDay() === 6) && !reviewFor(wkKey());
+    el.parentNode.style.display = gs.length || due ? "" : "none";
+    el.innerHTML = (gs.length ? gs.map(({ r, g, i }) => `<label class="gl ${g.done ? "ok" : ""}"><input type="checkbox" style="width:auto" ${g.done ? "checked" : ""} onchange="goalTog('${esc(r.id)}',${i})"> ${esc(g.t)}</label>`).join("") + `<div class="muted" style="font-size:12.5px;margin-top:4px">${gs.filter(x => x.g.done).length}/${gs.length} done this week</div>` : "") + (due ? `<div class="insight" style="margin-top:8px">🗓 Weekend! Do your 3-minute weekly review and set goals for next week. <button class="action" onclick="showPage('review')">Start review</button></div>` : "");
+}
+function renderReview() {
+    const el = $("rvBox"); if (!el) return; if (el.contains(document.activeElement) && /INPUT|TEXTAREA/.test(document.activeElement.tagName)) return;
+    const s = reviewStats(), cur = reviewFor(wkKey()) || { win: "", hard: "", goals: [] }, past = state.reviews.slice().sort((a, b) => b.wk.localeCompare(a.wk)).slice(0, 6);
+    el.innerHTML = `<div class="card"><h2>🗓 Weekly Review</h2><p class="muted" style="text-transform:none;font-size:13px">Look back for a minute, then choose up to three goals for next week.</p>
+<div class="statline"><div class="stat"><strong>${hm(s.study)}</strong><span class="muted">studied${s.goal ? " of " + s.goal + "h goal" : ""}</span></div><div class="stat"><strong>${s.days}/7</strong><span class="muted">active days</span></div><div class="stat"><strong>${hm(s.karate + s.run + s.hobby)}</strong><span class="muted">hobbies and fitness</span></div><div class="stat"><strong>${s.sleep ? hm(s.sleep) : "—"}</strong><span class="muted">avg sleep</span></div><div class="stat"><strong>${s.idle ? hm(s.idle) : "—"}</strong><span class="muted">idle per day</span></div><div class="stat"><strong>${s.words}</strong><span class="muted">new words</span></div></div>
+<div class="formgrid" style="margin-top:12px"><div class="full"><label>🏅 A win this week</label><input id="rvW" value="${esc(cur.win)}"></div><div class="full"><label>🧗 Something that was hard</label><input id="rvH" value="${esc(cur.hard)}"></div>${[1, 2, 3].map(i => `<div class="full"><label>🎯 Goal ${i} for next week</label><input id="rvG${i}" value="${esc((cur.goals[i - 1] || {}).t || "")}" placeholder="${["e.g. Finish 5 Science chapters", "e.g. Karate 4 days", "e.g. In bed by 10 PM on 5 nights"][i - 1]}"></div>`).join("")}<div class="full"><button class="action" onclick="reviewSave()">Save review (+30 XP the first time)</button></div></div></div>
+<div class="card"><h2>Past reviews</h2>${past.length ? past.map(r => `<div class="insight"><b>Week of ${esc(r.wk)}</b>${r.win ? `<div>🏅 ${esc(r.win)}</div>` : ""}${r.hard ? `<div>🧗 ${esc(r.hard)}</div>` : ""}${r.goals.map((g, i) => `<label class="gl ${g.done ? "ok" : ""}"><input type="checkbox" style="width:auto" ${g.done ? "checked" : ""} onchange="goalTog('${esc(r.id)}',${i})"> ${esc(g.t)}</label>`).join("")}</div>`).join("") : '<div class="empty">No reviews yet.</div>'}</div>`;
+}
+/* ---- XP, rest days, quests (replaces v82 renderQuests) ---- */
+function xpEarned() { let xp = 0; activityDates().forEach(k => xp += activityMins(k)); return xp + G().bonus; }
+const xpSpent = () => G().claims.filter(c => c.st !== "Refunded").reduce((n, c) => n + num(c.c), 0);
+function restUse(k) { const g = G(); if (g.rest.some(d => wkKey(parseDateOnly(d)) === wkKey(parseDateOnly(k)))) return alert("You already used this week's rest day."); g.rest.push(k); save(); renderQuests(); }
+function renderQuests() {
+    const el = $("questBox"); if (!el) return;
+    const t = today(), ds = activityDates(), g = G(), xp = xpEarned(), restSet = new Set(g.rest);
+    let streak = 0, d = new Date(); if (!ds.has(dkey(d)) && !restSet.has(dkey(d))) d = addDays(d, -1);
+    for (let i = 0; i < 4000; i++) { const k = dkey(d); if (ds.has(k)) streak++; else if (!restSet.has(k)) break; d = addDays(d, -1); }
+    const lv = Math.floor(Math.sqrt(xp / 40)) + 1, lo = 40 * (lv - 1) ** 2, hi = 40 * lv ** 2, pc = Math.round((xp - lo) / (hi - lo) * 100);
+    const study = sumF(state.study.filter(x => x.date === t), "mins"), skillToday = activityMins(t) - study, readM = state.study.filter(x => x.date === t && String(x.note || "").startsWith("📖")).reduce((n, x) => n + num(x.mins), 0), wordsToday = wordList().filter(o => o.h.ts && dkey(new Date(o.h.ts)) === t).length, wd = g.wd[t];
+    const Q = [{ ic: "📖", t: "Study 30 minutes", p: Math.min(study, 30) + "/30", ok: study >= 30, go: "showPage('study')" }, { ic: "🎯", t: "Do one hobby or skill session", p: skillToday > 0 ? "done" : "not yet", ok: skillToday > 0, go: "hbOpen('over')" }, { ic: "📚", t: "Read 10 minutes, save a word or do the word of the day", p: wordsToday ? wordsToday + " word" + (wordsToday === 1 ? "" : "s") : wd ? "done" : Math.min(readM, 10) + "/10", ok: readM >= 10 || wordsToday > 0 || !!wd, go: "showPage('library')" }];
+    const dn = Q.filter(q => q.ok).length, yk = dkey(addDays(new Date(), -1)), idleToday = !ds.has(t) && !restSet.has(t), lastAct = [...ds].sort().pop(), gap = lastAct ? Math.floor((new Date(t) - new Date(lastAct)) / 864e5) : 0;
+    const usedWeek = g.rest.some(x => wkKey(parseDateOnly(x)) === wkKey()), canRest = !usedWeek && streak > 0 && (idleToday || (!ds.has(yk) && !restSet.has(yk)));
+    el.innerHTML = `<div class="qhead"><div class="qflame"><b>🔥 ${streak}</b><span>day streak</span></div><div class="qlv"><div class="row" style="padding:0"><b>Level ${lv} · ${LV_TITLES[Math.min(LV_TITLES.length - 1, lv - 1)]}</b><span class="muted" style="font-size:12px">${xp} XP · ${hi - xp} to level ${lv + 1}${xpSpent() ? " · " + (xp - xpSpent()) + " to spend" : ""}</span></div><div class="progress" style="margin-top:6px"><div class="fill" style="width:${Math.max(2, pc)}%"></div></div><div class="muted" style="font-size:11.5px;margin-top:4px;text-transform:none">1 XP per minute logged, plus bonuses for challenges and reviews. One rest day a week keeps your streak.</div></div></div>
+<div class="qlist">${Q.map(q => `<button type="button" class="q ${q.ok ? "ok" : ""}" onclick="${q.go}"><span class="qi">${q.ok ? "✅" : q.ic}</span><span class="qt">${q.t}</span><span class="qp">${q.p}</span></button>`).join("")}</div>${dn === 3 ? '<p style="margin:10px 0 0;font-weight:700;color:var(--green)">🎉 All three quests done today. Great work!</p>' : ""}
+${gap >= 2 && !restSet.has(t) && !ds.has(t) ? `<p style="margin:10px 0 0">👋 <b>Welcome back!</b> One 15-minute session today starts a new streak. Small is fine.</p>` : ""}${restSet.has(t) ? '<p class="muted" style="margin:10px 0 0">😌 Rest day used today. Your streak is safe.</p>' : ""}${canRest ? `<p style="margin:10px 0 0"><button class="secondary" onclick="restUse('${idleToday ? t : yk}')">😌 Use my rest day for ${idleToday ? "today" : "yesterday"}</button></p>` : ""}`;
+}
+/* ---- 8. Rewards ---- */
+function rwAdd() { const n = $("rwN").value.trim(), c = Math.round(num($("rwC").value)); if (!n || c < 10) return alert("Give the reward a name and a cost of at least 10 XP."); G().rewards.push({ id: uid2(), n, c }); save(); $("rwN").value = ""; renderRewards(); }
+function rwSuggest() { const g = G(); [["🎬 Movie night", 400], ["🎮 One hour of a game", 250], ["🍕 Pick the family dinner", 300], ["📚 A book of my choice", 600], ["🛝 Day-out choice", 800]].forEach(([n, c]) => { if (!g.rewards.some(r => r.n === n)) g.rewards.push({ id: uid2(), n, c }); }); save(); renderRewards(); }
+function rwDel(id) { G().rewards = G().rewards.filter(r => r.id !== id); save(); renderRewards(); }
+function rwClaim(id) { const r = G().rewards.find(x => x.id === id); if (!r) return; if (xpEarned() - xpSpent() < r.c) return alert("Not enough XP yet. Keep going!"); if (!confirm(`Spend ${r.c} XP on "${r.n}"? A parent then approves it.`)) return; G().claims.unshift({ id: uid2(), rid: id, n: r.n, c: r.c, date: today(), st: "Pending" }); save(); renderRewards(); renderQuests(); }
+function rwSet(id, st) { const c = G().claims.find(x => x.id === id); if (c) { c.st = st; save(); renderRewards(); renderQuests(); } }
+function renderRewards() {
+    const el = $("rwBox"); if (!el) return; if (el.contains(document.activeElement) && document.activeElement.tagName === "INPUT") return; const g = G(), av = xpEarned() - xpSpent();
+    el.innerHTML = `<p><b>${av} XP</b> available <span class="muted">(${xpEarned()} earned, ${xpSpent()} spent)</span></p><p class="muted" style="font-size:12.5px;text-transform:none">Choose rewards with a parent. Spending XP never lowers your level.</p>
+<div class="hbgrid">${g.rewards.map(r => `<div class="hbcard"><b>${esc(r.n)}</b><div class="muted">${num(r.c)} XP</div><div class="hbact"><button class="action" ${av >= r.c ? "" : "disabled"} onclick="rwClaim('${esc(r.id)}')">Claim</button><button class="danger" onclick="rwDel('${esc(r.id)}')">×</button></div></div>`).join("") || '<div class="empty">No rewards yet.</div>'}</div>
+<div class="formgrid" style="margin-top:10px"><div><input id="rwN" placeholder="Reward, e.g. Ice-cream trip"></div><div style="display:flex;gap:6px"><input id="rwC" type="number" min="10" placeholder="XP cost"><button class="action" onclick="rwAdd()">Add</button></div></div><p><button class="secondary" onclick="rwSuggest()">+ Add suggested rewards</button></p>
+${g.claims.length ? `<h3 style="font-size:14px;margin:12px 0 4px">Claims</h3>${g.claims.slice(0, 10).map(c => `<div class="row" style="padding:4px 0"><span>${esc(c.n)} <span class="muted">· ${esc(c.date)} · ${num(c.c)} XP · <b>${esc(c.st)}</b></span></span><span>${c.st === "Pending" ? `<button class="secondary" onclick="rwSet('${esc(c.id)}','Approved')">Parent approves</button> <button class="secondary" onclick="rwSet('${esc(c.id)}','Refunded')">Refund</button>` : ""}</span></div>`).join("")}` : ""}`;
+}
+/* ---- 9. Word of the day ---- */
+function wotd() { const L = []; const seen = new Set(); wordList().forEach(o => { const w = wordTxt(o.h).toLowerCase(); if (o.h.m && !seen.has(w)) { seen.add(w); L.push(o); } }); if (!L.length) return null; L.sort((a, b) => wordTxt(a.h).localeCompare(wordTxt(b.h))); const t = new Date(), doy = Math.floor((t - new Date(t.getFullYear(), 0, 0)) / 864e5); return L[doy % L.length]; }
+let wdShow = false;
+function wdAns(ok) { G().wd[today()] = ok ? "ok" : "no"; save(); wdShow = false; renderWotd(); renderQuests(); }
+function renderWotd() {
+    const el = $("wotdBox"); if (!el) return; const w = wotd(), done = G().wd[today()];
+    if (!w) { el.innerHTML = '<div class="muted">Save words with the blue 📘 tool in the reader and one will appear here each day to test yourself.</div>'; return; }
+    el.innerHTML = `<div style="font-size:26px;font-weight:800">${esc(wordTxt(w.h))}</div><div class="muted" style="font-size:12.5px">from ${esc(w.b.t)}</div>${wdShow || done ? `<div class="insight" style="margin:8px 0">${esc(w.h.m)}</div>` : `<button class="secondary" style="margin-top:8px" onclick="wdShow=true;renderWotd()">Reveal the meaning</button>`}${done ? `<div class="muted">Today: ${done === "ok" ? "✅ you knew it" : "📌 keep practising it"}</div>` : wdShow ? `<div><button class="action" onclick="wdAns(1)">I knew it</button> <button class="secondary" onclick="wdAns(0)">Not yet</button></div>` : '<div class="muted" style="font-size:12.5px;margin-top:6px">Try to recall it first.</div>'}`;
+}
+/* ---- 10. Reading goal (pages today) ---- */
+function trackPages(R, p) { if (R.dd !== today()) { R.dd = today(); R.d0 = R.mx || 0; } R.mx = Math.max(R.mx || 0, p); }
+const pagesToday = R => R && R.dd === today() ? Math.max(0, (R.mx || 0) - (R.d0 || 0)) : 0;
+function setPd(id, v) { rd(id).pd = Math.max(0, Math.round(num(v))); save(); renderLibHero(); }
+/* ---- 11. Commonplace book ---- */
+let cpQ = "";
+function cqAdd() { const t = $("cqT").value.trim(); if (!t) return; G().cq.unshift({ id: uid2(), t, src: $("cqS").value.trim(), date: today() }); save(); $("cqT").value = ""; $("cqS").value = ""; renderCommon(); }
+function cqDel(id) { G().cq = G().cq.filter(x => x.id !== id); save(); renderCommon(); }
+function renderCommon() {
+    const el = $("cpList"); if (!el) return; const q = cpQ.toLowerCase(), items = [];
+    state.library.forEach(b => { const R = state.reader[b.id]; if (R && Array.isArray(R.hl)) R.hl.filter(h => !isWordHl(h) && (h.t || h.n)).forEach(h => items.push({ t: h.t, n: h.n, src: b.t + ", p." + num(h.p), c: h.c, id: null })); });
+    G().cq.forEach(x => items.push({ t: x.t, n: "", src: x.src || "My quote", c: "#f59e0b", id: x.id }));
+    const rows = items.filter(i => !q || (i.t + " " + i.n + " " + i.src).toLowerCase().includes(q)).slice(0, 80);
+    el.innerHTML = rows.length ? rows.map(i => `<div class="insight" style="border-left-color:${i.c}">“${esc(i.t)}”${i.n ? `<div class="muted">📝 ${esc(i.n)}</div>` : ""}<div class="muted" style="font-size:12px">${esc(i.src)}${i.id ? ` · <a href="#" onclick="cqDel('${esc(i.id)}');return false">remove</a>` : ""}</div></div>`).join("") : '<div class="empty">Highlights and quotes you collect will gather here.</div>';
+}
+/* ---- 12. Karate self-study goals (no instructor) ---- */
+const KG_SEED = ["Warm-up and stretching routine", "Stances: front stance and horse stance (slowly, with good balance)", "Straight punch: form only, in the air", "Basic blocks: form only", "Low front kick: slow, controlled, low height", "Breathing and focus", "Learn the order of the first beginner kata from the book", "Practise that kata slowly, then at a steady pace"];
+const KG_ST = ["Reading about it", "Practising slowly", "Comfortable"];
+function kgSeed() { const g = G(); if (!g.kgSeeded) { g.kg = KG_SEED.map(t => ({ id: uid2(), t, st: 0 })); g.kgSeeded = true; save(); } }
+function kgCycle(id) { const k = G().kg.find(x => x.id === id); if (k) { k.st = (num(k.st) + 1) % 3; save(); renderKGoals(); } }
+function kgAdd() { const t = $("kgT").value.trim(); if (!t) return; G().kg.push({ id: uid2(), t, st: 0 }); save(); $("kgT").value = ""; renderKGoals(); }
+function kgDel(id) { G().kg = G().kg.filter(x => x.id !== id); save(); renderKGoals(); }
+function renderKGoals() {
+    const el = $("kaGoals"); if (!el) return; if (el.contains(document.activeElement) && document.activeElement.tagName === "INPUT") return; kgSeed(); const K = G().kg, n = K.filter(k => k.st === 2).length;
+    el.innerHTML = `<h2>📘 Self-study goals (from your book)</h2><p class="muted" style="text-transform:none;font-size:13px">You are learning from a book, so these goals track <b>what you have practised</b>, rated by you. They are not belts or ranks. A book cannot check your form: film yourself and compare with the pictures, keep every move controlled, and no partner techniques, sparring or hitting hard objects. If a club or instructor becomes available, that is the best way to improve safely.</p><div class="progress" style="margin:8px 0"><div class="fill" style="width:${K.length ? Math.round(n / K.length * 100) : 0}%"></div></div><div class="muted" style="font-size:12.5px">${n}/${K.length} comfortable</div>
+${K.map(k => `<div class="row" style="padding:5px 0"><span>${esc(k.t)}</span><span style="white-space:nowrap"><button class="secondary" onclick="kgCycle('${esc(k.id)}')">${["📖", "🥋", "✅"][k.st]} ${KG_ST[k.st]}</button> <button class="danger" onclick="kgDel('${esc(k.id)}')">×</button></span></div>`).join("")}<div style="margin-top:8px"><input id="kgT" placeholder="Add a goal from your book" style="width:70%"> <button class="action" onclick="kgAdd()">Add</button></div>`;
+}
+/* ---- 13. Challenges ---- */
+const CH_TPL = [["🎨 Draw every day for 14 days", "draw", 14, 10], ["🌍 Language practice for 14 days", "lang", 14, 10], ["🥋 Karate basics, 10 days in 14", "karate", 14, 10], ["🏃 Run in place, 10 days", "runs", 10, 5], ["📖 Study 30 min for 7 days", "study", 7, 30]];
+function srcMins(src, k) { return src === "study" ? sumF(state.study.filter(x => x.date === k), "mins") : src === "karate" ? sumF(state.karate.filter(x => x.date === k), "mins") : src === "runs" ? sumF(state.runs.filter(x => x.date === k), "mins") : sumF(state.hobbyLog.filter(x => x.sec === src && x.date === k), "mins"); }
+function chAdd(i) { const t = CH_TPL[i]; G().ch.push({ id: uid2(), n: t[0], src: t[1], days: t[2], per: t[3], start: today() }); save(); renderChallenges(); }
+function chAddCustom() { const src = $("chSrc").value, days = Math.round(num($("chDays").value)), per = Math.round(num($("chPer").value)); if (days < 3 || days > 60 || per < 1) return alert("Use 3 to 60 days and at least 1 minute a day."); const s = $("chSrc").selectedOptions[0].textContent; G().ch.push({ id: uid2(), n: `${s}: ${days} days`, src, days, per, start: today() }); save(); renderChallenges(); }
+function chDel(id) { G().ch = G().ch.filter(c => c.id !== id); save(); renderChallenges(); }
+function chStat(c) { let done = 0; for (let i = 0; i < c.days; i++) { const k = dkey(addDays(parseDateOnly(c.start), i)); if (k <= today() && srcMins(c.src, k) >= c.per) done++; } const endK = dkey(addDays(parseDateOnly(c.start), c.days - 1)), over = today() > endK; return { done, over, win: done >= c.days || (c.need ? done >= c.need : false) }; }
+function renderChallenges() {
+    const el = $("chBox"); if (!el) return; if (el.contains(document.activeElement) && document.activeElement.tagName === "INPUT") return; const g = G(); let bonus = false;
+    g.ch.forEach(c => { if (!c.won && chStat(c).done >= c.days) { c.won = today(); g.bonus += 50; bonus = true; } }); if (bonus) save();
+    const srcs = [["study", "Study"], ["karate", "Karate"], ["runs", "Run in place"], ...state.hobbySec.map(s => [s.id, s.n])];
+    el.innerHTML = `<div class="hbgrid">${g.ch.map(c => { const s = chStat(c), p = Math.round(s.done / c.days * 100); return `<div class="hbcard"><div style="display:flex;gap:12px;align-items:center"><div class="ring" style="background:conic-gradient(${c.won ? "var(--green)" : "var(--accent)"} ${p}%,rgba(127,127,127,.2) 0)"><span>${s.done}/${c.days}</span></div><div><b>${esc(c.n)}</b><div class="muted" style="font-size:12.5px">${c.per}+ min a day · from ${esc(c.start)}</div><div style="font-size:13px">${c.won ? "🏆 Completed! +50 XP" : s.over ? "Ended. Start again any time." : "In progress"}</div></div></div><div class="hbact"><button class="danger" onclick="chDel('${esc(c.id)}')">Remove</button></div></div>`; }).join("") || '<div class="empty">No challenges yet. Pick one below.</div>'}</div>
+<div style="margin:10px 0">${CH_TPL.map((t, i) => `<button class="secondary" style="margin:0 6px 6px 0" onclick="chAdd(${i})">+ ${esc(t[0])}</button>`).join("")}</div>
+<div class="formgrid"><div><label>Custom: activity</label><select id="chSrc">${srcs.map(([v, l]) => `<option value="${esc(v)}">${esc(l)}</option>`).join("")}</select></div><div><label>Days</label><input id="chDays" type="number" value="14"></div><div><label>Minutes a day</label><input id="chPer" type="number" value="15"></div><div style="align-self:end"><button class="action" onclick="chAddCustom()">Start challenge</button></div></div>`;
+}
+/* ---- 14. Health check-ins ---- */
+function hcRec() { return dayRec(today()); }
+function hcWater(d) { const o = hcRec(); o.water = Math.max(0, Math.min(20, num(o.water) + d)); save(); renderHealth(); renderHealthAn(); }
+function hcMeal(k) { const o = hcRec(); o.meals = o.meals || {}; o.meals[k] = !o.meals[k]; save(); renderHealth(); renderHealthAn(); }
+function hcScreen(m) { m = num(m); if (m <= 0 || m > 600) return alert("Enter minutes between 1 and 600."); const o = hcRec(); o.screen = num(o.screen) + Math.round(m); save(); if ($("scM")) $("scM").value = ""; renderHealth(); renderHealthAn(); }
+function hcScreenUndo() { const o = hcRec(); o.screen = 0; save(); renderHealth(); renderHealthAn(); }
+function renderHealth() {
+    const el = $("healthBox"); if (!el) return; if (el.contains(document.activeElement) && document.activeElement.tagName === "INPUT") return; const o = (state.dayLog || {})[today()] || {}, w = num(o.water), m = o.meals || {};
+    el.innerHTML = `<div class="row" style="padding:2px 0"><b>💧 Water</b><span><button class="secondary" onclick="hcWater(-1)">−</button> <b>${w}</b> / 8 glasses <button class="action" onclick="hcWater(1)">+</button></span></div><div class="progress" style="margin:4px 0 10px"><div class="fill" style="width:${Math.min(100, w / 8 * 100)}%"></div></div>
+<div style="margin:8px 0"><b>🍽 Meals</b> ${[["b", "Breakfast"], ["l", "Lunch"], ["d", "Dinner"]].map(([k, l]) => `<button class="chip ${m[k] ? "on" : ""}" onclick="hcMeal('${k}')">${l}</button>`).join("")}</div>
+<div><b>📱 Screen time for fun</b> <span class="muted">(not study)</span>: <b>${hm(num(o.screen))}</b><div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:6px">${[15, 30, 60].map(n => `<button class="secondary" onclick="hcScreen(${n})">+${n}m</button>`).join("")}<input id="scM" type="number" min="1" placeholder="min" style="width:80px"><button class="action" onclick="hcScreen($('scM').value)">Add</button><button class="secondary" onclick="hcScreenUndo()">Reset today</button></div></div>`;
+}
+function healthStats() { const D = []; for (let i = 6; i >= 0; i--) { const k = dkey(addDays(new Date(), -i)), o = (state.dayLog || {})[k]; if (o && (o.water != null || o.meals || o.screen != null)) D.push({ k, w: num(o.water), meals: Object.values(o.meals || {}).filter(Boolean).length, b: !!(o.meals || {}).b, s: num(o.screen) }); } return D; }
+function renderHealthAn() {
+    const el = $("healthAn"); if (!el) return; const H = healthStats(); if (!H.length) { el.innerHTML = '<div class="muted">Log water, meals and screen time on the Today page to see them here.</div>'; return; }
+    const a = f => H.reduce((n, x) => n + f(x), 0) / H.length;
+    el.innerHTML = `<div class="statline"><div class="stat"><strong>${a(x => x.w).toFixed(1)}</strong><span class="muted">glasses of water/day</span></div><div class="stat"><strong>${a(x => x.meals).toFixed(1)}/3</strong><span class="muted">main meals/day</span></div><div class="stat"><strong>${hm(a(x => x.s))}</strong><span class="muted">fun screen time/day</span></div></div><p class="muted" style="font-size:12.5px;text-transform:none">Based on ${H.length} day${H.length === 1 ? "" : "s"} you logged.</p>`;
+}
+function healthInsights(out) {
+    const H = healthStats(); if (H.length >= 2) {
+        const aw = H.reduce((n, x) => n + x.w, 0) / H.length, sk = H.filter(x => !x.b).length, as = H.reduce((n, x) => n + x.s, 0) / H.length;
+        if (aw < 6) out.push({ ic: "💧", t: `You averaged <b>${aw.toFixed(1)}</b> glasses of water. Keep a bottle at your desk and aim for 8 tomorrow.` });
+        if (sk >= 2) out.push({ ic: "🍳", t: `Breakfast was skipped on <b>${sk}</b> of ${H.length} logged days. A proper breakfast helps focus in the morning study slot.` });
+        if (as > 180) out.push({ ic: "📱", t: `Fun screen time averaged <b>${hm(as)}</b> a day. Try capping it at 2 hours and using the freed time for a hobby block.` });
+    }
+}
+function paperInsights(out) { const w = paperWeak()[0]; if (w) out.push({ ic: "📄", t: `Past papers show most lost marks in <b>${esc(w.c)}</b> (${esc(String(w.s).split(" – ")[0])}, −${w.lost}). Make it tomorrow's first revision block.` }); const R = revDays(); if (R && R.over > 0) out.push({ ic: "📆", t: `Revision is about <b>${R.over}</b> chapters behind the plan. Add one extra chapter to each study block until you catch up.` }); }
+/* ---- 7. skill badges ---- */
+function skillBadges(add) {
+    const S = state, kd = new Set(S.karate.map(x => x.date)).size, words = wordList().length, books = S.library.filter(b => b.st === "Done").length, g = S.hobbySec.reduce((n, s) => n + S.hobbyLog.filter(l => l.sec === s.id).length, 0), G2 = G();
+    const nights = Object.values(S.dayLog || {}).filter(o => sleepMins(o) >= dayCfg().sleepGoal * 60 - 30).length, runs = S.runs.length, steps = sumF(S.runs, "steps");
+    [5, 20, 50].forEach(n => add("🥋", n + " Karate Days", "Practise karate on " + n + " different days", kd, n));
+    [10, 50, 100].forEach(n => add("📘", n + " Words Learned", "Save " + n + " words with meanings", words, n));
+    [1, 3, 5].forEach(n => add("📚", n === 1 ? "Book Finished" : n + " Books Finished", "Mark " + n + " books as Done", books, n));
+    [5, 20].forEach(n => add("😴", n + " Good Sleeps", "Meet your sleep goal on " + n + " nights", nights, n));
+    [10, 30].forEach(n => add("🏃", n + " Indoor Runs", "Log " + n + " running-in-place sessions", runs, n));
+    add("👟", "50,000 Steps", "Count 50,000 steps running in place", steps, 50000);
+    [20, 60].forEach(n => add("🎨", n + " Skill Sessions", "Log " + n + " sessions in drawing, languages, chemistry, acting or your own sections", g, n));
+    [1, 3].forEach(n => add("🏁", n === 1 ? "Challenge Won" : n + " Challenges Won", "Complete " + n + (n === 1 ? " challenge" : " challenges"), G2.ch.filter(c => c.won).length, n));
+    [1, 4, 12].forEach(n => add("🗓", n === 1 ? "First Weekly Review" : n + " Weekly Reviews", "Complete " + n + " weekly reviews", S.reviews.length, n));
+    [1, 5].forEach(n => add("📄", n === 1 ? "First Past Paper" : n + " Past Papers", "Log " + n + " past papers", S.papers.length, n));
+}
+function pgGoal(b, r) { if (!b.file || !b.id) return ""; return `<div class="muted" style="font-size:13px;margin-top:6px">📅 Today: <b>${pagesToday(r)}</b> page${pagesToday(r) === 1 ? "" : "s"}${r.pd ? ` of <b>${r.pd}</b>${pagesToday(r) >= r.pd ? " ✅" : ""}` : ""} · daily goal <input type="number" min="0" value="${num(r.pd) || ""}" placeholder="pages" style="width:70px;padding:4px" onchange="setPd('${esc(b.id)}',this.value)"></div>`; }
+const bkDays = () => num(G().bk) || 30;
+function bkSet(v) { G().bk = num(v) || 30; save(); renderSync(); }
+function renderBk() { const s = $("bkInt"); if (s && document.activeElement !== s) s.value = String(bkDays()); }
+
+function mergeGam(a, b) { a = a || {}; b = b || {}; const L = k => Array.isArray(a[k]) || Array.isArray(b[k]), m = (k) => mergeById(Array.isArray(a[k]) ? a[k] : [], Array.isArray(b[k]) ? b[k] : []); return Object.assign({}, b, a, { rest: [...new Set([...(a.rest || []), ...(b.rest || [])])], rewards: m("rewards"), claims: m("claims"), cq: m("cq"), kg: m("kg"), ch: m("ch"), wd: Object.assign({}, b.wd, a.wd), bonus: Math.max(num(a.bonus), num(b.bonus)), kgSeeded: a.kgSeeded || b.kgSeeded }); }
 /* ===== v8: planner, exam targets, flashcards, mistakes, weekly report ===== */
 const numDays = v => {
     const d = parseDateOnly(v);
@@ -3327,7 +3695,7 @@ function addMistake() {
         return alert("Marks lost must be 0 or more.");
     if (!$("mQ").value.trim() && !$("mFix").value.trim())
         return alert("Write what went wrong or how you'll fix it.");
-    state.mistakes.unshift({ date: $("mDate").value || today(), subject: $("mSubject").value, chapter: $("mChapter").value, reason: $("mReason").value, lost, q: $("mQ").value.trim(), fix: $("mFix").value.trim(), fixed: false });
+    { const mm = { id: uid2(), date: $("mDate").value || today(), subject: $("mSubject").value, chapter: $("mChapter").value, reason: $("mReason").value, lost, q: $("mQ").value.trim(), fix: $("mFix").value.trim(), fixed: false }; state.mistakes.unshift(mm); if ($("mFc") && $("mFc").checked) mistakeCard(mm); }
     save();
     $("mQ").value = "";
     $("mFix").value = "";
@@ -3466,7 +3834,7 @@ function mergeState(a, b) {
         });
         return o;
     };
-    return { progress: Object.assign(Object.assign({}, a.progress), b.progress), study: u(a.study, b.study), tasks: u(a.tasks, b.tasks), extra: u(a.extra, b.extra), exams: mergeById(a.exams, b.exams), marks: u(a.marks, b.marks), questions: u(a.questions, b.questions), feynman: u(a.feynman, b.feynman), workouts: u(a.workouts, b.workouts), extraLog: u(a.extraLog, b.extraLog), flashcards: u(a.flashcards, b.flashcards), mistakes: u(a.mistakes, b.mistakes), quotes: u(a.quotes, b.quotes), homework: u(a.homework, b.homework), plan: Object.assign(Object.assign({}, b.plan), a.plan), meta: Object.assign(Object.assign({}, b.meta), a.meta), dream: Object.assign(Object.assign({}, b.dream), a.dream), lifts: u(a.lifts, b.lifts), quran: u(a.quran, b.quran), library: u(a.library, b.library), biz: u(a.biz, b.biz), bizLog: u(a.bizLog, b.bizLog), movies: mergeById(a.movies, b.movies), research: mergeById(a.research, b.research), hof: mergeById(a.hof, b.hof), runs: mergeById(a.runs, b.runs), karate: mergeById(a.karate, b.karate), karateNotes: mergeById(a.karateNotes, b.karateNotes), hobbyCat: mergeById(a.hobbyCat, b.hobbyCat), hobbySec: mergeById(a.hobbySec, b.hobbySec), hobbyLog: mergeById(a.hobbyLog, b.hobbyLog), hobbyCfg: Object.assign({}, b.hobbyCfg, a.hobbyCfg), goal10: Object.assign(Object.assign({}, b.goal10), a.goal10), reader: Object.assign(Object.assign({}, b.reader), a.reader), prayers: Object.assign(Object.assign({}, b.prayers), a.prayers), batches: [...new Set([...a.batches, ...b.batches])], settings: Object.assign(Object.assign({}, b.settings), Object.fromEntries(Object.entries(a.settings).filter(([, v]) => v))) };
+    return { progress: Object.assign(Object.assign({}, a.progress), b.progress), study: u(a.study, b.study), tasks: u(a.tasks, b.tasks), extra: u(a.extra, b.extra), exams: mergeById(a.exams, b.exams), marks: u(a.marks, b.marks), questions: u(a.questions, b.questions), feynman: u(a.feynman, b.feynman), workouts: u(a.workouts, b.workouts), extraLog: u(a.extraLog, b.extraLog), flashcards: u(a.flashcards, b.flashcards), mistakes: u(a.mistakes, b.mistakes), quotes: u(a.quotes, b.quotes), homework: u(a.homework, b.homework), plan: Object.assign(Object.assign({}, b.plan), a.plan), meta: Object.assign(Object.assign({}, b.meta), a.meta), dream: Object.assign(Object.assign({}, b.dream), a.dream), lifts: u(a.lifts, b.lifts), quran: u(a.quran, b.quran), library: u(a.library, b.library), biz: u(a.biz, b.biz), bizLog: u(a.bizLog, b.bizLog), movies: mergeById(a.movies, b.movies), research: mergeById(a.research, b.research), hof: mergeById(a.hof, b.hof), runs: mergeById(a.runs, b.runs), karate: mergeById(a.karate, b.karate), karateNotes: mergeById(a.karateNotes, b.karateNotes), hobbyCat: mergeById(a.hobbyCat, b.hobbyCat), hobbySec: mergeById(a.hobbySec, b.hobbySec), hobbyLog: mergeById(a.hobbyLog, b.hobbyLog), dayLog: Object.assign({}, b.dayLog, a.dayLog), dayCfg: Object.assign({}, b.dayCfg, a.dayCfg), gam: mergeGam(a.gam, b.gam), papers: mergeById(a.papers, b.papers), reviews: mergeById(a.reviews, b.reviews), hobbyCfg: Object.assign({}, b.hobbyCfg, a.hobbyCfg), goal10: Object.assign(Object.assign({}, b.goal10), a.goal10), reader: Object.assign(Object.assign({}, b.reader), a.reader), prayers: Object.assign(Object.assign({}, b.prayers), a.prayers), batches: [...new Set([...a.batches, ...b.batches])], settings: Object.assign(Object.assign({}, b.settings), Object.fromEntries(Object.entries(a.settings).filter(([, v]) => v))) };
 }
 function importData(e) {
     var _a;
@@ -3676,7 +4044,7 @@ async function showPg() {
     rdMode();
     rd(cur).page = pg;
     rd(cur).n = pd.numPages;
-    rd(cur).mx = Math.max(rd(cur).mx || 0, pg);
+    trackPages(rd(cur), pg);
     save(true);
     $("rdS").scrollTop = 0;
     const P = await pd.getPage(pg), v = P.getViewport({ scale: zoom });
@@ -3827,7 +4195,7 @@ function renderRdStats() {
 let ep = null, pen = false, qz = null;
 function qzStart() {
     const t = today(), it = [];
-    state.mistakes.filter(m => !m.fixed && m.q).slice(0, 5).forEach(r => it.push({ k: "m", r }));
+    state.mistakes.filter(m => !m.fixed && m.q && !m.card).slice(0, 5).forEach(r => it.push({ k: "m", r }));
     state.flashcards.filter(c => (c.due || "") <= t).slice(0, 5).forEach(r => it.push({ k: "f", r }));
     qz = { it, i: 0, show: 0, ok: 0 };
     renderQuiz();
@@ -3843,7 +4211,7 @@ function qzAns(ok) {
 function renderQuiz() {
     const el = $("quizBox"); if (!el) return;
     if (!qz) {
-        const n = state.mistakes.filter(m => !m.fixed && m.q).length + state.flashcards.filter(c => (c.due || "") <= today()).length;
+        const n = state.mistakes.filter(m => !m.fixed && m.q && !m.card).length + state.flashcards.filter(c => (c.due || "") <= today()).length;
         el.innerHTML = n ? `<p>${n} item(s) waiting: open mistakes and due flashcards. Each quiz takes up to 10.</p><button type="button" class="action" onclick="qzStart()">Start review</button>` : '<div class="muted">Nothing to review. Log mistakes or flashcards and they appear here.</div>';
         return;
     }
@@ -3909,7 +4277,7 @@ async function openEpub(blob) {
 }
 function showEp(keep) {
     $("rdI").textContent = `${pg}/${ep.ch.length}`; rdMode();
-    const R = rd(cur); R.page = pg; R.n = ep.ch.length; R.mx = Math.max(R.mx || 0, pg); save(true);
+    const R = rd(cur); R.page = pg; R.n = ep.ch.length; trackPages(R, pg); save(true);
     $("rdP").innerHTML = '<div id="rdW" class="ep">' + ep.ch[pg - 1] + "</div>";
     $("rdW").style.fontSize = 15 * zoom + "px";
     if (!keep) $("rdS").scrollTop = 0;
@@ -3922,7 +4290,7 @@ function remSet(k, v) { state.goal10 = state.goal10 || {}; state.goal10.rem = Ob
 async function remAsk() { if (!("Notification" in window)) return alert("This browser doesn't support notifications."); await Notification.requestPermission(); renderRem(); }
 function remMsg() {
     const c = remCfg(), t = today(), done = state.study.filter(x => x.date === t).reduce((n, x) => n + Number(x.mins || 0), 0), p = [];
-    const q = state.mistakes.filter(m => !m.fixed && m.q).length + state.flashcards.filter(f => (f.due || "") <= t).length;
+    const q = state.mistakes.filter(m => !m.fixed && m.q && !m.card).length + state.flashcards.filter(f => (f.due || "") <= t).length;
     if (done < c.g) p.push(`${c.g - done} min left of today's ${c.g}-min study goal`);
     const sr = srList().filter(x => x.late).length;
     if (sr) p.push(`${sr} chapter${sr > 1 ? "s" : ""} due for revision`);
@@ -4165,10 +4533,10 @@ function storyTab(r) {
 const LAB_LOCKED = true; // The Virtual Lab is locked. To open it again: set this to false here AND in chemlab.html, and add chemlab.html + chemcore.js back to ASSETS in sw.js.
 const HUBS = [
     { id: "home", ic: "🏠", l: "Home", k: "1", pages: [["dashboard", "Dashboard"], ["today", "Today"], ["calendar", "Calendar & Trends"]] },
-    { id: "study", ic: "📖", l: "Study", k: "2", pages: [["study", "Study Log"], ["syllabus", "Syllabus"], ["exams", "Exams"], ["homework", "Homework"], ["practice", "Practice"]] },
+    { id: "study", ic: "📖", l: "Study", k: "2", pages: [["study", "Study Log"], ["syllabus", "Syllabus"], ["exams", "Exams"], ["homework", "Homework"], ["practice", "Practice"], ["paper", "Past Papers"]] },
     { id: "revise", ic: "🧠", l: "Revise", k: "3", pages: [["flash", "Flashcards"], ["mistakes", "Mistakes"], ["feynman", "Feynman Lab"]] },
     { id: "create", ic: "🛠️", l: "Create", k: "4", pages: [["research", "Projects"], ["library", "Library"], ["movies", "Movies"], ["biz", "Business"]] },
-    { id: "progress", ic: "📊", l: "Progress", k: "5", pages: [["analytics", "Analytics"], ["report", "Weekly Report"], ["tasks", "Goals"], ["hof", "Hall of Fame"]] },
+    { id: "progress", ic: "📊", l: "Progress", k: "5", pages: [["analytics", "Analytics"], ["report", "Weekly Report"], ["tasks", "Goals"], ["review", "Weekly Review"], ["hof", "Hall of Fame"]] },
     { id: "life", ic: "💪", l: "Life", k: "6", pages: [["workout", "Workout"], ["lift", "Strength Lab"], ["deen", "Deen Corner"], ["extra", "Extra-Curriculars"]] },
     { id: "lab", ic: "🧪", l: "Virtual Lab", k: "7", lock: LAB_LOCKED, pages: [["vlab", "Virtual Lab"]] },
     { id: "set", ic: "⚙️", l: "Settings", k: "8", pages: [["settings", "Settings"]] }
@@ -4285,7 +4653,7 @@ main{width:auto;max-width:1600px;margin:16px 24px 36px}footer{width:auto;margin-
 }
 setTimeout(navInit, 0);
 /* ===== Version label ===== */
-const APP_VERSION = "v82"; // keep in step with CACHE in sw.js
+const APP_VERSION = "v84"; // keep in step with CACHE in sw.js
 function paintVer() { ["appVer", "appVer2"].forEach(id => { const el = $(id); if (el)
     el.textContent = APP_VERSION + (navigator.onLine ? "" : " · offline"); }); }
 window.addEventListener("online", paintVer);
@@ -4364,6 +4732,7 @@ function hofBadges() {
     const ex = S.exams.filter(e => e.done), top = Math.max(0, ...ex.map(e => e.out > 0 && e.got != null ? e.got / e.out * 100 : 0));
     [1, 5, 10].forEach(n => add("📝", n === 1 ? "First Exam Done" : n + " Exams Done", "Complete " + n + (n === 1 ? " exam" : " exams"), ex.length, n));
     add("🎯", "90+ Club", "Score 90% or more in an exam (add your marks on a completed exam)", Math.floor(top), 90);
+    safeRun(() => skillBadges(add));
     const hw = S.homework.filter(h => h.status === "Done").length;
     [10, 50].forEach(n => add("✅", n + " Homework Done", "Finish " + n + " homework items", hw, n));
     const bk = S.library.filter(b => b.st === "Done").length;
@@ -4526,7 +4895,7 @@ ${cbseBlock(avg)}
 <p class="muted" style="font-size:12px;margin-bottom:0">Figures are first-list cut-offs for the general category from news reports; only Ravenshaw and BJB are from the latest (2026-27) list, the rest are older and may have moved. Reserved categories, later lists and spot rounds differ. Your test average is only a guide to your Board percentage. Check the official SAMS notice (<a href="https://samsodisha.gov.in" target="_blank" rel="noopener noreferrer">samsodisha.gov.in</a>) for how Class 10 marks are counted, usually after results in May–June, with the first list in July. <a href="https://odishatv.in/odisha/ravenshaw-higher-secondary-school-tops-odisha-2-cut-off-list-again-429-lakh-students-selected-in-first-phase-12146413" target="_blank" rel="noopener noreferrer">Source: OdishaTV, 2026-27 list ↗</a></p>`;
 }
 function renderAll() {
-    [renderBatches, updateCountdowns, renderSummary, renderSyllabus, renderStudy, renderTasks, renderExtra, renderExams, renderExamSummary, renderTracking, renderInsights, renderAnalytics, renderSettings, renderToday, renderMarks, renderQuestions, renderFeynman, renderWorkout, renderDash, renderDream, renderLift, renderDeen, renderLib, renderBiz, renderFlash, renderMistakes, renderReport, renderHomework, renderHof, renderTmrw, renderGoal10, renderReadTimer, renderTrend, renderSubjTrend, renderMarkTrend, renderRdStats, renderHeat, renderPlan, renderQuiz, renderRem, renderSR, renderMovies, renderResearch, renderRuns, renderKarate, renderHobbyCat, renderWkSummary, renderBalance, hbRender, renderQuests].forEach(safeRun);
+    [renderBatches, updateCountdowns, renderSummary, renderSyllabus, renderStudy, renderTasks, renderExtra, renderExams, renderExamSummary, renderTracking, renderInsights, renderAnalytics, renderSettings, renderToday, renderMarks, renderQuestions, renderFeynman, renderWorkout, renderDash, renderDream, renderLift, renderDeen, renderLib, renderBiz, renderFlash, renderMistakes, renderReport, renderHomework, renderHof, renderTmrw, renderGoal10, renderReadTimer, renderTrend, renderSubjTrend, renderMarkTrend, renderRdStats, renderHeat, renderPlan, renderQuiz, renderRem, renderSR, renderMovies, renderResearch, renderRuns, renderKarate, renderHobbyCat, renderWkSummary, renderBalance, hbRender, renderQuests, renderDayCover, renderSleep, renderDayCfg, renderDayAnalytics, renderAi, renderRevSched, renderPapers, renderReview, renderGoals, renderRewards, renderWotd, renderCommon, renderKGoals, renderChallenges, renderHealth, renderHealthAn, renderBk].forEach(safeRun);
 }
 safeRun(initNav);
 safeRun(applyTheme);
