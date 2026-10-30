@@ -466,24 +466,23 @@ const syllabus = {
     "Economics": ["Development", "Sectors of the Indian Economy", "Money and Credit", "Globalisation and the Indian Economy", "Consumer Rights"],
     "Hindi B – स्पर्श": ["बड़े भाई साहब", "डायरी का एक पन्ना", "तताँरा-वामीरो कथा", "तीसरी कसम के शिल्पकार शैलेंद्र", "गिरगिट", "अब कहाँ दूसरे के दुख से दुखी होने वाले", "कारतूस", "कबीर – साखी", "मीरा – पद", "बिहारी – दोहे", "मनुष्यता", "पर्वत प्रदेश में पावस", "मधुर-मधुर मेरे दीपक जल", "टोप", "कर चले हम फ़िदा", "संगतकार"],
     "Hindi B – संचयन": ["हरिहर काका", "सपनों के-से दिन", "टोपी शुक्ला"],
-    "Hindi B – व्याकरण": ["पद परिचय", "वाक्य भेद (रचना के आधार पर)", "वाच्य", "अलंकार"],
+    "Hindi B – व्याकरण": ["पदबंध", "वाक्य रूपांतरण (रचना के आधार पर)", "समास", "मुहावरे"],
     "Information Technology 402": ["Communication Skills-II", "Self-Management Skills-II", "ICT Skills-II", "Entrepreneurial Skills-II", "Green Skills-II", "Digital Documentation (Advanced)", "Electronic Spreadsheet (Advanced)", "Database Management System (DBMS)", "Web Applications and Security"],
     "English – Language & Literature": ["Reading Skills", "Grammar", "Grammar – Tenses", "Grammar – Modals", "Grammar – Subject-Verb Concord", "Grammar – Determiners", "Grammar – Reported Speech", "Formal Letter / Analytical Writing", "First Flight – Prose", "First Flight – Poetry", "Footprints Without Feet – Supplementary Reader"]
 };
-const HINDI_GUIDE = `<div class="card" style="margin-top:14px"><h3>✍️ हिंदी व्याकरण (व्यावहारिक व्याकरण) · 16 अंक</h3>
-<div class="muted" style="font-size:13px;margin-bottom:8px">चार विषय, हर एक 4 अंक का। Course B (कोड 085) में ये बहुविकल्पीय प्रश्नों से पूछे जाते हैं।</div>
-<div class="insight"><b>पद परिचय (4)</b> · वाक्य में शब्दों का विश्लेषण: संज्ञा, सर्वनाम, विशेषण, क्रिया-विशेषण।</div>
-<div class="insight"><b>वाक्य भेद (4)</b> · रचना के आधार पर सरल, संयुक्त और मिश्र वाक्य की पहचान और रूपांतरण।</div>
-<div class="insight"><b>वाच्य (4)</b> · कर्तृवाच्य, कर्मवाच्य और भाववाच्य की पहचान और परिवर्तन।</div>
-<div class="insight"><b>अलंकार (4)</b> · शब्दालंकार: अनुप्रास, यमक, श्लेष। अर्थालंकार: उपमा, रूपक, उत्प्रेक्षा, अतिशयोक्ति, मानवीकरण।</div>
+const HINDI_GUIDE = `<div class="card" style="margin-top:14px"><h3>✍️ हिंदी व्याकरण (Hindi B) · 16 अंक</h3>
+<div class="muted" style="font-size:13px;margin-bottom:8px">कुल 20 बहुविकल्पीय/लघु-उत्तरीय प्रश्न, जिनमें से 16 करने हैं (हर प्रश्न 1 अंक)। चार विषय हैं, हर विषय से 5 प्रश्न, जिनमें से कोई 4 करने हैं (1 × 4 = 4 अंक)।</div>
+<div class="insight"><b>पदबंध (4)</b> · कई पदों का समूह जो वाक्य में एक पद का काम करता है: संज्ञा, सर्वनाम, विशेषण, क्रिया और क्रियाविशेषण पदबंध की पहचान।</div>
+<div class="insight"><b>रचना के आधार पर वाक्य रूपांतरण (4)</b> · सरल, संयुक्त और मिश्र वाक्य की पहचान और एक भेद से दूसरे में बदलना।</div>
+<div class="insight"><b>समास (4)</b> · प्रमुख समासों की पहचान और समास-विग्रह: अव्ययीभाव, तत्पुरुष, कर्मधारय, द्विगु, द्वंद्व, बहुव्रीहि।</div>
+<div class="insight"><b>मुहावरे (4)</b> · प्रयोग, संदर्भ के अनुसार अर्थ और वाक्य में मुहावरे की पूर्ति।</div>
 <div class="small" style="margin:14px 0 6px">आज की योजना में जोड़ें</div>
 <div class="tabs" style="margin-top:0">
-<button type="button" onclick="addPlan('हिंदी व्याकरण: पद परिचय अभ्यास')">पद परिचय</button>
-<button type="button" onclick="addPlan('हिंदी व्याकरण: वाक्य भेद अभ्यास')">वाक्य भेद</button>
-<button type="button" onclick="addPlan('हिंदी व्याकरण: वाच्य अभ्यास')">वाच्य</button>
-<button type="button" onclick="addPlan('हिंदी व्याकरण: अलंकार पहचान अभ्यास')">अलंकार</button>
-</div>
-<div class="muted" style="font-size:13px">Course A (कोड 002) में भी यही चार विषय हैं, पर प्रश्न प्रयोग-आधारित होते हैं और अलंकार में अर्थालंकार के तीन भेद (उपमा, रूपक, उत्प्रेक्षा) पूछे जाते हैं। अपने स्कूल से पक्का कर लें कि आप कौन-सा कोर्स ले रहे हैं।</div></div>`;
+<button type="button" onclick="addPlan('हिंदी व्याकरण: पदबंध अभ्यास')">पदबंध</button>
+<button type="button" onclick="addPlan('हिंदी व्याकरण: वाक्य रूपांतरण अभ्यास')">वाक्य रूपांतरण</button>
+<button type="button" onclick="addPlan('हिंदी व्याकरण: समास अभ्यास')">समास</button>
+<button type="button" onclick="addPlan('हिंदी व्याकरण: मुहावरे अभ्यास')">मुहावरे</button>
+</div></div>`;
 const GRAMMAR_GUIDE = `<div class="card" style="margin-top:14px"><h3>✍️ English Grammar · 10 marks in the board exam</h3>
 <div class="insight"><b>Tenses</b> · present, past and future in simple, continuous, perfect and perfect continuous forms. Used in gap filling and editing.</div>
 <div class="insight"><b>Modals</b> · permission, obligation, necessity, ability and probability (can, could, may, might, must, shall, should, will, would).</div>
@@ -4653,7 +4652,7 @@ main{width:auto;max-width:1600px;margin:16px 24px 36px}footer{width:auto;margin-
 }
 setTimeout(navInit, 0);
 /* ===== Version label ===== */
-const APP_VERSION = "v84"; // keep in step with CACHE in sw.js
+const APP_VERSION = "v85"; // keep in step with CACHE in sw.js
 function paintVer() { ["appVer", "appVer2"].forEach(id => { const el = $(id); if (el)
     el.textContent = APP_VERSION + (navigator.onLine ? "" : " · offline"); }); }
 window.addEventListener("online", paintVer);
