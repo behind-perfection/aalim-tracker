@@ -1,7 +1,7 @@
 /* Service worker for Aalim's Class 10 Command Centre.
    Keep CACHE in step with APP_VERSION in index.html: bump both together
    whenever you publish a new version, so phones pick up the update. */
-const CACHE = "aalim-tracker-v89";
+const CACHE = "aalim-tracker-v90";
 const LIBS = "aalim-libs"; // PDF reader engine, kept across app updates
 const ASSETS = [
   "./",
@@ -26,6 +26,10 @@ self.addEventListener("activate", (event) => {
     caches.keys()
       .then((keys) => Promise.all(keys.filter((k) => k !== CACHE && k !== LIBS).map((k) => caches.delete(k))))
       .then(() => self.clients.claim())
+      // Tell every open tab a new version just took over, so it can offer
+      // (or apply) a reload instead of silently running the old code.
+      .then(() => self.clients.matchAll({ type: "window" }).then((cs) =>
+        cs.forEach((c) => c.postMessage({ type: "aalim-sw-activated", cache: CACHE }))))
   );
 });
 
@@ -41,7 +45,7 @@ self.addEventListener("fetch", (event) => {
 
   // Always try the latest public Supabase configuration first; use the cached copy offline.
   if (url.pathname.endsWith("/cloud-config.js")) {
-    event.respondWith(fetch(req).then((res) => {
+    event.respondWith(fetch(new Request(req, { cache: "no-cache" })).then((res) => {
       if (res && res.ok) caches.open(CACHE).then((c) => c.put(req, res.clone())).catch(() => {});
       return res;
     }).catch(() => caches.match(req)));
@@ -53,7 +57,9 @@ self.addEventListener("fetch", (event) => {
   if (req.mode === "navigate") {
     const key = url.pathname.endsWith("chemlab.html") ? "chemlab.html" : "index.html";
     event.respondWith(
-      fetch(req)
+      // no-cache: revalidate with the server so a stale hosting/CDN HTTP cache
+      // can never hand out an old index.html and re-poison the app cache.
+      fetch(new Request(req, { cache: "no-cache" }))
         .then((res) => {
           const copy = res.clone();
           caches.open(CACHE).then((c) => c.put(key, copy)).catch(() => {});

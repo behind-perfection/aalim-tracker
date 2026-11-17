@@ -85,6 +85,10 @@ JSDOM.fromFile(path.resolve(ROOT, "index.html"), {
         ok("hall of fame plays the trophy sequence", !!doc.querySelector(".stinger.seq .fx-shine"));
         w.hbOpen("read");
         ok("reading hobby tab plays page-turn", !!doc.querySelector(".stinger.seq .fxSeq svg"));
+        w.swUpdateNotice("v90");
+        const ub = doc.getElementById("swUpBar");
+        ok("self-update banner appears", !!ub && (ub.textContent || "").includes("v90"));
+
         setTimeout(() => {
             ok("stingers clean themselves up", doc.querySelectorAll(".stinger").length === 0);
             console.log("=== SMOKE RESULT ===");

@@ -433,6 +433,7 @@ body.fs-open{overflow:hidden}
 </section>
 
 <section id="settings" class="page">
+<div class="card"><h2>🔄 App updates</h2><p class="muted">Updates install themselves in the background: when a new version is ready you get an "Update now" banner, and it auto-applies while the app is closed or in the background. This button forces a check right now.</p><div class="row" style="justify-content:flex-start"><button type="button" class="action" onclick="checkAppUpdate()">Check for updates</button> <span id="updStatus" class="muted" role="status"></span></div></div>
 <div class="card"><h2>⚙ Exam Dates & Settings</h2><p class="muted">Countdowns tick every second and show days, hours, minutes and seconds. Enter the actual date/time once your school/CBSE schedule is known.</p>
 <div class="formgrid"><div><label>Mid-Term date & time</label><input id="midInput" type="datetime-local"></div><div><label>Board exam date & time</label><input id="boardInput" type="datetime-local"></div><div><button class="action" onclick="saveSettings()">Save Dates</button></div></div></div>
 <div class="card"><h2>😴 Daily Schedule</h2><p class="muted">Your waking day drives the "My Day" timer on the Dashboard and Today page.</p><div class="formgrid"><div><label>Wake up</label><input id="wakeInput" type="time" onchange="saveDay()"></div><div><label>Sleep</label><input id="sleepInput" type="time" onchange="saveDay()"></div></div><div id="dayCfgBox"></div></div>
@@ -1878,8 +1879,48 @@ cloudInit();
             syncRun(false);
     }, 60000);
 })();
-if ("serviceWorker" in navigator && /^https?:$/.test(location.protocol))
+if ("serviceWorker" in navigator && /^https?:$/.test(location.protocol)) {
     navigator.serviceWorker.register("sw.js").catch(() => { });
+    /* v90 self-update: when a newer service worker takes over, it tells this
+       tab. Offer an "Update now" banner, and auto-apply while the app is in
+       the background (every change is already saved, so reloading is safe). */
+    navigator.serviceWorker.addEventListener("message", (e) => {
+        const d = e.data || {};
+        if (d.type !== "aalim-sw-activated" || typeof d.cache !== "string") return;
+        const v = d.cache.replace("aalim-tracker-", "");
+        if (v === APP_VERSION) return;
+        if (swAutoReload || document.hidden) location.reload();
+        else swUpdateNotice(v);
+    });
+}
+let swAutoReload = false, swUpdatePending = null;
+function swUpdateNotice(v) {
+    swUpdatePending = v;
+    let b = $("swUpBar");
+    if (!b) {
+        b = document.createElement("div"); b.id = "swUpBar";
+        b.style.cssText = "position:fixed;left:10px;right:10px;bottom:12px;z-index:3000;background:#1f2937;color:#fff;border-radius:14px;padding:12px 14px;box-shadow:0 10px 30px #0007;display:flex;gap:10px;align-items:center;font-weight:600";
+        document.body.appendChild(b);
+    }
+    b.innerHTML = `<span style="flex:1">⚡ New version ${esc(v)} is ready on this device.</span><button type="button" class="action" onclick="location.reload()">Update now</button>`;
+}
+document.addEventListener("visibilitychange", () => { if (document.hidden && swUpdatePending) location.reload(); });
+async function checkAppUpdate() {
+    const st = $("updStatus"), say = (m) => { if (st) st.textContent = m; };
+    if (!("serviceWorker" in navigator) || !/^https?:$/.test(location.protocol)) return say("Needs http/https (not available in this view).");
+    say("Checking…");
+    try {
+        const t = await (await fetch("sw.js", { cache: "no-store" })).text();
+        const m = t.match(/aalim-tracker-(v\d+)/);
+        if (!m) return say("Could not read the server's version.");
+        if (m[1] === APP_VERSION) return say("Up to date (" + APP_VERSION + ").");
+        say("Found " + m[1] + " — installing…");
+        swAutoReload = true;
+        const r = await navigator.serviceWorker.getRegistration();
+        if (r) await r.update();
+        setTimeout(() => location.reload(), 3000); // fallback if the activated-message never arrives
+    } catch (e) { say("Check failed: " + (e.message || e)); }
+}
 function renderDash() {
     renderExamLinks();
     const map = dayMap(), st = streakInfo(), goal = Number(state.settings.weeklyGoal) || 0, wk = rangeMins(map, weekStart(new Date()), 7), gp = goal ? Math.round(wk / 60 / goal * 100) : 0, now = new Date();
@@ -4979,7 +5020,7 @@ main{width:auto;max-width:1600px;margin:16px 24px 36px}footer{width:auto;margin-
 }
 setTimeout(navInit, 0);
 /* ===== Version label ===== */
-const APP_VERSION = "v89"; // keep in step with CACHE in sw.js
+const APP_VERSION = "v90"; // keep in step with CACHE in sw.js
 function paintVer() { ["appVer", "appVer2"].forEach(id => { const el = $(id); if (el)
     el.textContent = APP_VERSION + (navigator.onLine ? "" : " · offline"); }); }
 window.addEventListener("online", paintVer);
