@@ -1,11 +1,12 @@
 /* Service worker for Aalim's Class 10 Command Centre.
    Keep CACHE in step with APP_VERSION in index.html: bump both together
    whenever you publish a new version, so phones pick up the update. */
-const CACHE = "aalim-tracker-v85";
+const CACHE = "aalim-tracker-v86";
 const LIBS = "aalim-libs"; // PDF reader engine, kept across app updates
 const ASSETS = [
   "./",
   "index.html",
+  "cloud-config.js",
   "manifest.webmanifest",
   "icon-192.png",
   "icon-512.png"
@@ -36,6 +37,15 @@ self.addEventListener("fetch", (event) => {
     return;
   }
   if (url.origin !== self.location.origin) return; // leave other sites alone
+
+  // Always try the latest public Supabase configuration first; use the cached copy offline.
+  if (url.pathname.endsWith("/cloud-config.js")) {
+    event.respondWith(fetch(req).then((res) => {
+      if (res && res.ok) caches.open(CACHE).then((c) => c.put(req, res.clone())).catch(() => {});
+      return res;
+    }).catch(() => caches.match(req)));
+    return;
+  }
 
   // Pages: try the network first so updates show up, fall back to the cached copy when offline.
   // chemlab.html is also a "navigate" request (it loads inside an iframe), so it gets its own cache key.

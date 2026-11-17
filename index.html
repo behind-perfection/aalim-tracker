@@ -439,6 +439,22 @@ body.fs-open{overflow:hidden}
 <div class="card"><h2>🤖 Automation & Focus</h2><div class="formgrid" id="autoOpts"></div></div>
 <div class="card"><h2>🏷 Batches & Study Types</h2><p class="muted">Add coaching batches or programmes (like Udaan, Udaan Advanced…). They appear in the Study Log and Pomodoro timer.</p><div id="batchList" class="tabs"></div><div class="row" style="flex-wrap:nowrap"><input id="batchName" placeholder="e.g. Test Series"><button class="action" onclick="addBatch()">+ Add</button></div></div>
 <div class="card"><h2>☁️ Sync & Backup</h2>
+<h3 style="margin:6px 0">🌐 Account cloud sync (computer + phone)</h3>
+<p class="muted">Sign in with your private tracker account to synchronise your study data through Supabase. Your data remains available offline on this device. First-time setup always asks before replacing or uploading data.</p>
+<div id="cloudStatus" class="muted" role="status" aria-live="polite" style="margin:10px 0">Cloud sync is not configured yet.</div>
+<div id="cloudAuthBox" class="card" style="padding:12px;margin:10px 0;box-shadow:none">
+  <div id="cloudLoginFields"><div class="formgrid"><div><label for="cloudEmail">Account email</label><input id="cloudEmail" type="email" autocomplete="username" placeholder="Your Supabase account email"></div><div><label for="cloudPassword">Password</label><input id="cloudPassword" type="password" autocomplete="current-password" placeholder="Your account password"></div></div>
+  <div class="row" style="justify-content:flex-start;margin-top:10px"><button type="button" class="action" id="cloudLoginBtn" onclick="cloudSignIn()">Sign in to cloud</button></div></div>
+  <button type="button" class="secondary" id="cloudLogoutBtn" onclick="cloudSignOut()" style="display:none">Sign out</button>
+</div>
+<div id="cloudActions" class="row" style="justify-content:flex-start;display:none;flex-wrap:wrap">
+  <button type="button" class="action" id="cloudUploadBtn" onclick="cloudUploadLocal(true)">Upload this computer's data</button>
+  <button type="button" class="action secondary" id="cloudDownloadBtn" onclick="cloudDownloadRemote()">Download cloud data to this device</button>
+  <button type="button" class="secondary" id="cloudMergeBtn" onclick="cloudMergeRemote()">Merge cloud + this device</button>
+  <button type="button" class="secondary" id="cloudSyncBtn" onclick="cloudCheckRemote(true)">↻ Check / sync now</button>
+</div>
+<p class="muted" style="font-size:12px;margin-top:8px">Security: only your signed-in account can access its row (database RLS). Never put a database password or service-role secret in this website. The publishable key is public by design. PDF file contents stored in this browser are not included in this first cloud-data sync.</p>
+<hr style="border:0;border-top:1px solid var(--border);margin:16px 0">
 <h3 style="margin:6px 0">🖥 Cloud-folder sync (desktop Chrome / Edge)</h3>
 <p class="muted">Create a sync file <b>inside your Google Drive, OneDrive or iCloud folder</b>. The page keeps it up to date automatically and checks it again when you return to the tab. Link the same file on your other computer.</p>
 <div id="syncStatus" style="margin:8px 0"></div>
@@ -455,6 +471,8 @@ body.fs-open{overflow:hidden}
 </main>
 <footer>Aalim's Class 10 Command Centre • Offline-first • Udaan</footer>
 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="cloud-config.js"></script>
 <script>
 "use strict";
 const syllabus = {
@@ -571,8 +589,10 @@ const today = () => { const d = new Date(); return `${d.getFullYear()}-${String(
 function save(ns) {
     try {
         localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
-        if (!ns)
+        if (!ns) {
             syncMark();
+            if (typeof cloudMarkLocalDirty === "function") cloudMarkLocalDirty();
+        }
         return true;
     }
     catch (e) {
@@ -1531,6 +1551,238 @@ function pasteImport() {
     importText(t);
     $("pasteBox").value = "";
 }
+
+/* ===== Supabase cloud sync: local-first, explicit first-device setup ===== */
+let cloudClient = null, cloudUser = null, cloudExpectedUpdatedAt = null, cloudReady = false;
+let cloudBusy = false, cloudPending = false, cloudConflictRow = null, cloudPollTimer = null;
+const CLOUD_META_KEY = "aalimSupabaseSyncMeta";
+function cloudMetaRead() {
+    try { return JSON.parse(localStorage.getItem(CLOUD_META_KEY) || "{}"); }
+    catch (_) { return {}; }
+}
+function cloudHasLocalData() {
+    return KEYS.some(k => {
+        const v = state[k];
+        if (Array.isArray(v)) return v.length > 0;
+        if (v && typeof v === "object") return Object.keys(v).length > 0;
+        return v !== undefined && v !== null && v !== "";
+    });
+}
+function cloudStartPolling() {
+    if (cloudPollTimer) clearInterval(cloudPollTimer);
+    cloudPollTimer = setInterval(() => { if (cloudUser && !document.hidden) cloudCheckRemote(false); }, 45000);
+}
+function cloudMetaWrite(x) {
+    try { localStorage.setItem(CLOUD_META_KEY, JSON.stringify(x)); } catch (_) {}
+}
+function cloudStatus(message, isError) {
+    const el = $("cloudStatus");
+    if (el) { el.textContent = message; el.style.color = isError ? "var(--red)" : "var(--muted)"; }
+}
+function cloudButtons(mode) {
+    const loginFields = $("cloudLoginFields"), actions = $("cloudActions");
+    if (loginFields) loginFields.style.display = cloudUser ? "none" : "block";
+    if (actions) actions.style.display = cloudUser ? "flex" : "none";
+    if ($("cloudLogoutBtn")) $("cloudLogoutBtn").style.display = cloudUser ? "inline-flex" : "none";
+    if ($("cloudUploadBtn")) $("cloudUploadBtn").style.display = mode === "setup" || mode === "choice" || mode === "conflict" ? "inline-flex" : "none";
+    if ($("cloudDownloadBtn")) $("cloudDownloadBtn").style.display = mode === "choice" || mode === "conflict" ? "inline-flex" : "none";
+    if ($("cloudMergeBtn")) $("cloudMergeBtn").style.display = mode === "choice" || mode === "conflict" ? "inline-flex" : "none";
+    if ($("cloudSyncBtn")) $("cloudSyncBtn").style.display = mode === "ready" ? "inline-flex" : "none";
+}
+function cloudConfigured() {
+    const c = window.AALIM_SUPABASE_CONFIG || {};
+    return typeof c.url === "string" && /^https:\/\/[a-z0-9-]+\.supabase\.co$/i.test(c.url) &&
+        typeof c.publishableKey === "string" && c.publishableKey.length > 20 && !c.publishableKey.includes("PASTE_");
+}
+function cloudMarkLocalDirty() {
+    const m = cloudMetaRead();
+    m.dirty = true;
+    m.localChangedAt = Date.now();
+    cloudMetaWrite(m);
+    if (cloudUser && cloudReady && cloudExpectedUpdatedAt && !cloudBusy) {
+        cloudPending = true;
+        clearTimeout(window.__aalimCloudSaveTimer);
+        window.__aalimCloudSaveTimer = setTimeout(() => cloudUploadLocal(false), 1800);
+    }
+}
+async function cloudSignIn() {
+    if (!cloudClient) return cloudStatus("Cloud configuration is missing. Set the Project URL and publishable key in cloud-config.js first.", true);
+    const email = $("cloudEmail").value.trim(), password = $("cloudPassword").value;
+    if (!email || !password) return cloudStatus("Enter your account email and password.", true);
+    const btn = $("cloudLoginBtn"); btn.disabled = true;
+    cloudStatus("Signing in securely…");
+    try {
+        const { data, error } = await cloudClient.auth.signInWithPassword({ email, password });
+        if (error) throw error;
+        if (!cloudUser || cloudUser.id !== data.user.id) { cloudUser = data.user; await cloudAfterLogin(); }
+        $("cloudPassword").value = "";
+    } catch (e) { cloudStatus("Sign-in failed: " + (e.message || "Please check your credentials."), true); }
+    finally { btn.disabled = false; }
+}
+async function cloudSignOut() {
+    if (!cloudClient) return;
+    try { await cloudClient.auth.signOut(); } catch (_) {}
+    cloudUser = null; cloudExpectedUpdatedAt = null; cloudConflictRow = null; cloudPending = false; cloudReady = false;
+    if (cloudPollTimer) clearInterval(cloudPollTimer);
+    cloudButtons("signedout"); cloudStatus("Signed out. This device's local tracker data remains available.");
+}
+async function cloudFetchRow() {
+    const { data, error } = await cloudClient.from("tracker_data").select("data,updated_at").eq("user_id", cloudUser.id).maybeSingle();
+    if (error) throw error;
+    return data;
+}
+async function cloudAfterLogin() {
+    cloudReady = false;
+    cloudButtons("ready");
+    cloudStatus("Signed in as " + cloudUser.email + ". Checking your private cloud record…");
+    try {
+        const row = await cloudFetchRow(), meta = cloudMetaRead();
+        if (!row) {
+            cloudExpectedUpdatedAt = null;
+            cloudButtons("setup");
+            cloudStatus("No cloud copy exists yet. Your computer's current data is still local. Download a full backup first, then choose Upload this computer's data.");
+            return;
+        }
+        cloudExpectedUpdatedAt = row.updated_at;
+        if (meta.userId === cloudUser.id && meta.updatedAt) {
+            if (meta.dirty) {
+                if (meta.updatedAt === row.updated_at) {
+                    cloudReady = true;
+                    cloudPending = true;
+                    cloudButtons("ready");
+                    cloudStatus("Local changes are waiting to upload…");
+                    await cloudUploadLocal(false);
+                } else {
+                    cloudConflictRow = row; cloudButtons("conflict");
+                    cloudStatus("Both this device and the cloud may have changed. Choose which copy to keep, or merge them.");
+                }
+            } else if (meta.updatedAt !== row.updated_at) {
+                if (cloudHasLocalData()) {
+                    cloudConflictRow = row; cloudButtons("conflict");
+                    cloudStatus("A different device has updated the cloud copy. Review the choices before replacing local data.");
+                } else {
+                    cloudApplyRow(row);
+                }
+            } else {
+                cloudReady = true;
+                cloudButtons("ready"); cloudStatus("Cloud sync connected. This device is up to date.");
+            }
+        } else if (!cloudHasLocalData()) {
+            cloudApplyRow(row);
+        } else {
+            cloudConflictRow = row; cloudButtons("choice");
+            cloudStatus("A cloud copy already exists and this device also has data. Choose Download, Upload, or Merge. Nothing has been overwritten.");
+        }
+        cloudStartPolling();
+    } catch (e) { cloudStatus("Cloud check failed: " + (e.message || e), true); }
+}
+function cloudApplyRow(row) {
+    state = normalize(row.data);
+    save(true);
+    cloudExpectedUpdatedAt = row.updated_at;
+    cloudPending = false; cloudConflictRow = null; cloudReady = true;
+    cloudMetaWrite({ userId: cloudUser.id, updatedAt: row.updated_at, dirty: false });
+    renderAll(); applyTheme();
+    cloudButtons("ready"); cloudStartPolling();
+    cloudStatus("Cloud data loaded on this device. Last cloud update: " + new Date(row.updated_at).toLocaleString());
+}
+async function cloudUploadLocal(explicit) {
+    if (!cloudClient || !cloudUser || cloudBusy) return;
+    if (explicit && !confirm("Upload this device's current tracker data to your cloud account? If a cloud copy already exists, this will replace it. Download a full backup first. Continue?")) return;
+    cloudBusy = true; cloudPending = false;
+    cloudStatus("Uploading this device's tracker data…");
+    try {
+        const current = await cloudFetchRow();
+        if (!explicit && ((cloudExpectedUpdatedAt && (!current || current.updated_at !== cloudExpectedUpdatedAt)) || (!cloudExpectedUpdatedAt && current))) {
+            cloudConflictRow = current; cloudBusy = false; cloudReady = false; cloudButtons("conflict");
+            cloudStatus("Upload paused: the cloud changed on another device. Choose Merge, Download, or explicitly keep this device.", true);
+            return;
+        }
+        const snapshot = JSON.stringify(state);
+        const stamp = new Date().toISOString();
+        const { error } = await cloudClient.from("tracker_data").upsert({ user_id: cloudUser.id, data: JSON.parse(snapshot), updated_at: stamp }, { onConflict: "user_id" });
+        if (error) throw error;
+        const saved = await cloudFetchRow();
+        cloudExpectedUpdatedAt = saved.updated_at;
+        const changedDuringUpload = JSON.stringify(state) !== snapshot;
+        cloudPending = changedDuringUpload;
+        cloudMetaWrite({ userId: cloudUser.id, updatedAt: saved.updated_at, dirty: changedDuringUpload });
+        cloudConflictRow = null; cloudReady = true; cloudButtons("ready"); cloudStartPolling();
+        cloudStatus(changedDuringUpload ? "One update synced; newer local changes are queued…" : "Synced successfully at " + new Date(saved.updated_at).toLocaleTimeString() + ".");
+    } catch (e) { cloudPending = true; cloudStatus("Cloud upload failed; your local data is safe. " + (e.message || e), true); }
+    finally {
+        cloudBusy = false;
+        if (cloudPending && cloudReady) {
+            clearTimeout(window.__aalimCloudSaveTimer);
+            window.__aalimCloudSaveTimer = setTimeout(() => cloudUploadLocal(false), 1300);
+        }
+    }
+}
+async function cloudDownloadRemote() {
+    if (!cloudUser || !confirm("Replace this device's current tracker data with the cloud copy? Download a backup first if you need both versions.")) return;
+    try { const row = cloudConflictRow || await cloudFetchRow(); if (!row) throw new Error("No cloud copy exists yet."); cloudApplyRow(row); }
+    catch (e) { cloudStatus("Download failed: " + (e.message || e), true); }
+}
+async function cloudMergeRemote() {
+    if (!cloudUser) return;
+    try {
+        const row = cloudConflictRow || await cloudFetchRow();
+        if (!row) return cloudUploadLocal(true);
+        state = normalize(mergeState(state, normalize(row.data)));
+        save(true); renderAll(); applyTheme();
+        cloudExpectedUpdatedAt = row.updated_at;
+        await cloudUploadLocal(false);
+    } catch (e) { cloudStatus("Merge failed: " + (e.message || e), true); }
+}
+async function cloudCheckRemote(manual) {
+    if (!cloudUser || cloudBusy) return;
+    try {
+        const row = await cloudFetchRow();
+        if (!row) { cloudButtons("setup"); cloudStatus("No cloud copy exists yet. Upload this computer's data after making a backup."); return; }
+        if (!cloudExpectedUpdatedAt) {
+            cloudExpectedUpdatedAt = row.updated_at;
+            if (!cloudHasLocalData()) cloudApplyRow(row);
+            else { cloudReady = false; cloudConflictRow = row; cloudButtons("choice"); cloudStatus("Cloud data exists. Choose Download, Upload, or Merge; nothing has been overwritten."); }
+            return;
+        }
+        if (row.updated_at !== cloudExpectedUpdatedAt) {
+            const meta = cloudMetaRead();
+            if (meta.dirty || cloudPending) {
+                cloudConflictRow = row; cloudButtons("conflict");
+                cloudStatus("Conflict detected: local and cloud data may both have changed. Choose how to resolve it.");
+            } else {
+                cloudApplyRow(row);
+                if (manual) cloudStatus("Downloaded the latest changes from your other device.");
+            }
+        } else if (manual) cloudStatus("Already up to date.");
+    } catch (e) { if (manual) cloudStatus("Sync check failed; local data remains safe. " + (e.message || e), true); }
+}
+async function cloudInit() {
+    if (!cloudConfigured()) {
+        cloudStatus("Not configured yet. Add your Supabase Project URL and publishable key to cloud-config.js, then redeploy.");
+        cloudButtons("signedout"); return;
+    }
+    if (!window.supabase || !window.supabase.createClient) {
+        cloudStatus("Supabase library did not load. Connect to the internet and refresh this page.", true); return;
+    }
+    const c = window.AALIM_SUPABASE_CONFIG;
+    cloudClient = window.supabase.createClient(c.url, c.publishableKey, { auth: { persistSession: true, autoRefreshToken: true, detectSessionInUrl: true } });
+    const { data, error } = await cloudClient.auth.getSession();
+    if (error) { cloudStatus("Could not check login session: " + error.message, true); return; }
+    if (data.session) { cloudUser = data.session.user; await cloudAfterLogin(); }
+    else { cloudButtons("signedout"); cloudStatus("Cloud sync is configured. Sign in to synchronise this device."); }
+    cloudClient.auth.onAuthStateChange((_event, session) => {
+        if (session && (!cloudUser || cloudUser.id !== session.user.id)) {
+            cloudUser = session.user;
+            setTimeout(() => cloudAfterLogin(), 0);
+        } else if (!session && cloudUser) {
+            cloudUser = null; cloudExpectedUpdatedAt = null; cloudReady = false;
+            cloudButtons("signedout"); cloudStatus("Signed out. Local data remains available.");
+        }
+    });
+    document.addEventListener("visibilitychange", () => { if (!document.hidden && cloudUser) cloudCheckRemote(false); });
+}
+cloudInit();
 (async function syncInit() {
     renderSync();
     if (canFS()) {
@@ -4652,7 +4904,7 @@ main{width:auto;max-width:1600px;margin:16px 24px 36px}footer{width:auto;margin-
 }
 setTimeout(navInit, 0);
 /* ===== Version label ===== */
-const APP_VERSION = "v85"; // keep in step with CACHE in sw.js
+const APP_VERSION = "v86"; // keep in step with CACHE in sw.js
 function paintVer() { ["appVer", "appVer2"].forEach(id => { const el = $(id); if (el)
     el.textContent = APP_VERSION + (navigator.onLine ? "" : " · offline"); }); }
 window.addEventListener("online", paintVer);
