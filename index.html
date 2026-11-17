@@ -86,7 +86,7 @@ table{width:100%;border-collapse:collapse}th,td{padding:9px;border-bottom:1px so
 nav button{transition:background .15s}nav button:hover{background:#ffffff38}nav{scrollbar-width:thin}
 .musc{cursor:pointer;transition:fill-opacity .15s;stroke:var(--card);stroke-width:1.5}.musc:hover{stroke:var(--accent2)}.musc.sel{stroke:var(--accent2);stroke-width:3}
 @media(prefers-reduced-motion:reduce){.page.active{animation:none}}
-@media print{header,nav,footer,.noprint,button{display:none!important}.page{display:none!important}#report.page{display:block!important}body{background:#fff!important;color:#000}main{width:100%;margin:0}.card{box-shadow:none;break-inside:avoid;border:1px solid #ccc}:root,[data-theme=dark]{--bg:#fff;--card:#fff;--text:#000;--muted:#444;--border:#ccc;--ringbg:#eee}input,select,textarea{background:#fff!important;color:#000!important}.bar{opacity:1}}
+@media print{.stinger{display:none!important}header,nav,footer,.noprint,button{display:none!important}.page{display:none!important}#report.page{display:block!important}body{background:#fff!important;color:#000}main{width:100%;margin:0}.card{box-shadow:none;break-inside:avoid;border:1px solid #ccc}:root,[data-theme=dark]{--bg:#fff;--card:#fff;--text:#000;--muted:#444;--border:#ccc;--ringbg:#eee}input,select,textarea{background:#fff!important;color:#000!important}.bar{opacity:1}}
 .hbgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(310px,1fr));gap:12px}.hbcard{border:1px solid var(--border);border-radius:14px;padding:13px;background:var(--card)}.hbcard.arch{opacity:.7}.hbhead{display:flex;gap:8px;align-items:center}.hbname{font-weight:800;font-size:16px;flex:1;min-width:0}.hbst{width:auto;flex:none}.hbprog{margin:8px 0;font-size:13px;color:var(--muted)}.hbfields{display:grid;grid-template-columns:1fr 1fr;gap:8px}.hbfields label{font-size:11px;color:var(--muted);font-weight:700}.hbfields input,.hbfields select{margin-top:2px}.hbms{display:flex;flex-wrap:wrap;gap:6px 12px;margin-top:10px;font-size:13px;align-items:center}.hbms input[type=checkbox]{width:auto}.hbms span input{width:130px}.hbact{margin-top:10px;display:flex;gap:6px;flex-wrap:wrap}
 @media(min-width:900px){#extra .formgrid{grid-template-columns:repeat(3,1fr)}#extra .formgrid .full{grid-column:1/-1}}
 .hbtabs{display:flex;gap:6px;overflow-x:auto;padding:2px 0 12px;margin:0 0 4px;position:sticky;top:0;z-index:5;background:var(--bg)}.hbtabs button{flex:none;border:1px solid var(--border);background:var(--card);color:var(--text);border-radius:999px;padding:8px 14px;font-weight:700;font-size:14px;box-shadow:none}.hbtabs button.on{background:var(--accent);color:#fff;border-color:var(--accent)}.hbpanel{display:none}.hbpanel.on{display:block}
@@ -609,7 +609,41 @@ function showPage(id) {
     document.querySelectorAll("nav button").forEach(x => x.classList.toggle("active", x.dataset.page === id));
     renderAll();
     window.scrollTo({ top: 0, behavior: "smooth" });
+    fxPage(id);
 }
+/* ===== v88: tab-open animations. Every tab gets a themed entrance; the
+   Karate tab gets a full punch-kick-"HIYAA!" sequence. Pure CSS/SVG, no
+   assets, and fully switched off for prefers-reduced-motion. ===== */
+const KARATE_SVG = `<div class="kbox"><svg viewBox="0 0 240 190" aria-hidden="true">
+<g class="k-zoom" stroke="var(--muted)" stroke-width="5" stroke-linecap="round"><line x1="6" y1="70" x2="52" y2="70"/><line x1="0" y1="95" x2="40" y2="95"/><line x1="8" y1="120" x2="48" y2="120"/></g>
+<g class="k-fig" stroke="var(--text)" stroke-linecap="round" fill="none">
+<g class="k-lean"><circle cx="110" cy="44" r="13" fill="var(--text)" stroke="none"/><line x1="110" y1="57" x2="110" y2="112" stroke-width="15"/><line x1="98" y1="97" x2="122" y2="97" stroke="var(--red)" stroke-width="7"/>
+<g class="k-armB"><line x1="110" y1="70" x2="86" y2="92" stroke-width="10"/></g><g class="k-armF"><line x1="110" y1="70" x2="140" y2="86" stroke-width="10"/></g></g>
+<g class="k-legB"><line x1="110" y1="112" x2="95" y2="164" stroke-width="11"/></g><g class="k-legF"><line x1="110" y1="112" x2="125" y2="164" stroke-width="11"/></g></g>
+<text class="k-hit1" x="146" y="72" font-size="30">💥</text><text class="k-hit2" x="176" y="104" font-size="40">💥</text>
+<text class="k-shout" x="126" y="30" font-size="26" font-weight="800" fill="var(--red)">HIYAA!</text></svg></div>`;
+const FX_RM = window.matchMedia ? window.matchMedia("(prefers-reduced-motion: reduce)") : { matches: false };
+let fxLast = {}, fxSuppress = false;
+function fxAllow(key) { if (FX_RM.matches) return false; const n = Date.now(); if (fxLast[key] && n - fxLast[key] < 700) return false; fxLast[key] = n; return true; }
+function fxShow(cls, html, ttl) { const el = document.createElement("div"); el.className = "stinger " + cls; el.setAttribute("aria-hidden", "true"); el.innerHTML = html; document.body.appendChild(el); setTimeout(() => el.remove(), ttl); return el; }
+function fxPage(id) {
+    if (fxSuppress) { fxSuppress = false; return; }
+    const h = typeof hubOf === "function" ? hubOf(id) : null;
+    if (!h || !fxAllow("p" + id)) return;
+    fxShow("", `<div class="fxPop"><span class="e">${h.ic}</span><span class="l">${esc(h.l)}</span></div>`, 780);
+}
+function fxHobby(t) {
+    const sec = state.hobbySec.find(s => s.id === t);
+    if (t === "karate") { if (fxAllow("h" + t)) fxShow("karate", KARATE_SVG, 1250); return; }
+    if (t === "runs") {
+        if (!fxAllow("h" + t)) return;
+        fxShow("", `<div class="fxRun"><span class="e">🏃</span><i style="left:16%;top:66px;animation-delay:.18s"></i><i style="left:32%;top:74px;animation-delay:.32s"></i><i style="left:48%;top:66px;animation-delay:.46s"></i></div>`, 980);
+        return;
+    }
+    if (!fxAllow("h" + t)) return;
+    fxShow("", `<div class="fxPop"><span class="e">${esc((sec && sec.ic) || "✨")}</span></div>`, 780);
+}
+function fxStaggerInit() { document.querySelectorAll(".page").forEach(p => { p.querySelectorAll(".card").forEach((c, i) => { c.style.animationDelay = Math.min(i * 45, 360) + "ms"; }); }); }
 function initNav() {
     const items = [["dashboard", "Dashboard"], ["today", "Today"], ["homework", "Homework"], ["syllabus", "Syllabus"], ["study", "Study Log"], ["calendar", "Calendar & Trends"], ["exams", "Exam Syllabus"], ["practice", "Practice"], ["feynman", "Feynman Lab"], ["vlab", "🧪 Virtual Lab"], ["flash", "Flashcards"], ["mistakes", "Mistakes"], ["workout", "Workout"], ["lift", "Strength Lab"], ["deen", "Deen Corner"], ["library", "Library"], ["movies", "🎬 Movies"], ["research", "🛠️ Projects"], ["biz", "Business"], ["report", "Weekly Report"], ["tasks", "Goals"], ["extra", "Extra-Curriculars"], ["hof", "Hall of Fame"], ["analytics", "Analytics"], ["settings", "Settings"]];
     $("nav").innerHTML = items.map(([id, label]) => `<button type="button" data-page="${id}" onclick="showPage('${id}')">${label}</button>`).join("");
@@ -2937,7 +2971,7 @@ function reportExtra(hl, inR) {
 }
 /* ===== v82: hobby sections, reading link, word bank, quests ===== */
 let hbTab = (() => { try { return localStorage.getItem("aalimHbTab") || "over"; } catch (e) { return "over"; } })();
-function hbOpen(t) { hbTab = t; try { localStorage.setItem("aalimHbTab", t); } catch (e) { } if (curPage !== "extra") showPage("extra"); else { hbRender(); window.scrollTo({ top: 0 }); } }
+function hbOpen(t) { hbTab = t; try { localStorage.setItem("aalimHbTab", t); } catch (e) { } if (curPage !== "extra") { fxSuppress = true; showPage("extra"); } else { hbRender(); window.scrollTo({ top: 0 }); } fxHobby(t); }
 const SEC_DEFAULT = [
     { id: "draw", n: "Drawing & Sketching", ic: "🎨", foc: ["Gesture / quick sketch", "Shading & tone", "Proportion", "Perspective", "Colour", "Still life", "Portrait", "Imagination", "Digital"], tl: "Subject / piece", vl: "Pieces finished", ms: ["Basic shapes to forms", "Light and shadow", "Proportions of a face", "One-point perspective", "Colour wheel and mixing", "Finish one complete piece"], tip: "Short daily sketches beat rare long sessions. Draw from real objects when you can." },
     { id: "lang", n: "Languages", ic: "🌍", foc: ["Vocabulary", "Reading", "Listening", "Speaking", "Writing", "Grammar", "Quran understanding"], tl: "Language", vl: "New words learned", ms: [], tip: "Add a language by typing it in the Language box, e.g. Arabic, Urdu, French. Each gets its own totals." },
@@ -4905,7 +4939,7 @@ main{width:auto;max-width:1600px;margin:16px 24px 36px}footer{width:auto;margin-
 }
 setTimeout(navInit, 0);
 /* ===== Version label ===== */
-const APP_VERSION = "v87"; // keep in step with CACHE in sw.js
+const APP_VERSION = "v88"; // keep in step with CACHE in sw.js
 function paintVer() { ["appVer", "appVer2"].forEach(id => { const el = $(id); if (el)
     el.textContent = APP_VERSION + (navigator.onLine ? "" : " · offline"); }); }
 window.addEventListener("online", paintVer);
@@ -5257,6 +5291,7 @@ new MutationObserver(() => {
     requestAnimationFrame(() => { fsBusy = false; fsDecorate(); });
 }).observe(document.querySelector("main"), { childList: true, subtree: true });
 fsDecorate();
+fxStaggerInit();
 safeRun(function seedReading() {
     if (!state.meta._readSeed)
         importReading();
@@ -5270,7 +5305,43 @@ window.__appBooted = true;
 .aiGo>.insight{animation:aiIn .55s cubic-bezier(.2,.8,.2,1) both;animation-delay:calc(var(--i,0)*110ms)}
 .aiGo>.insight:first-child{animation-name:aiIn,aiGlow;animation-duration:.55s,1.6s;animation-delay:0s,.5s;animation-iteration-count:1,2}
 @keyframes aiIn{from{opacity:0;transform:translateX(-14px) scale(.98)}}@keyframes aiGlow{50%{box-shadow:0 0 0 3px #7c3aed55,0 0 22px #7c3aed44}}
-@media(prefers-reduced-motion:reduce){.vb,.vfl.on,.vsm i,.aiThink,.aiThink i,.aiGo>.insight{animation:none!important}}
+/* ===== v88: tab-open animations ===== */
+.page.active .card{animation:pgCard .34s cubic-bezier(.22,.7,.3,1) both}
+@keyframes pgCard{from{opacity:0;transform:translateY(10px) scale(.985)}}
+.stinger{position:fixed;inset:0;display:grid;place-items:center;pointer-events:none;z-index:1400}
+.fxPop{display:flex;flex-direction:column;align-items:center;gap:8px;animation:fxPop .72s cubic-bezier(.2,.8,.25,1) both}
+.fxPop .e{font-size:clamp(52px,12vw,92px);line-height:1;filter:drop-shadow(0 6px 18px #0004);animation:fxSpin .72s cubic-bezier(.2,.8,.25,1) both}
+.fxPop .l{font-weight:800;letter-spacing:.08em;text-transform:uppercase;font-size:12px;color:var(--muted);background:var(--card);border:1px solid var(--border);padding:4px 12px;border-radius:999px;box-shadow:var(--shadow)}
+@keyframes fxPop{0%{opacity:0;transform:scale(.6) translateY(14px)}18%{opacity:1}60%{transform:scale(1.04) translateY(0)}100%{opacity:0;transform:scale(1) translateY(-12px)}}
+@keyframes fxSpin{0%{transform:rotate(-16deg) scale(.4)}55%{transform:rotate(6deg) scale(1.12)}100%{transform:rotate(0) scale(1)}}
+.fxRun{position:relative;width:min(560px,90vw);height:130px}
+.fxRun .e{position:absolute;left:0;top:16px;font-size:64px;line-height:1;animation:fxDash .88s cubic-bezier(.3,.7,.4,1) both}
+.fxRun i{position:absolute;width:14px;height:14px;border-radius:50%;background:var(--muted);opacity:0;animation:fxPuff .6s ease-out both}
+@keyframes fxDash{0%{transform:translateX(-42vw) rotate(5deg);opacity:0}12%{opacity:1}88%{opacity:1}100%{transform:translateX(46vw) rotate(-3deg);opacity:0}}
+@keyframes fxPuff{0%{opacity:.45;transform:scale(.4)}100%{opacity:0;transform:scale(2.4) translateY(-10px)}}
+.kbox{width:min(430px,86vw);animation:kShake 1.15s linear both}
+.kbox svg{width:100%;display:block;overflow:visible}
+.k-fig{animation:kFig 1.15s cubic-bezier(.3,.7,.3,1) both}
+.k-lean,.k-armF,.k-armB,.k-legF{transform-box:view-box}
+.k-lean{transform-origin:110px 112px;animation:kLean 1.15s linear both}
+.k-armF{transform-origin:110px 70px;animation:kArmF 1.15s linear both}
+.k-armB{transform-origin:110px 70px;animation:kArmB 1.15s linear both}
+.k-legF{transform-origin:110px 112px;animation:kLegF 1.15s linear both}
+.k-hit1,.k-hit2{opacity:0;transform-box:fill-box;transform-origin:50% 50%}
+.k-hit1{animation:kHit .34s ease-out .38s both}
+.k-hit2{animation:kHit .4s ease-out .66s both}
+.k-shout{opacity:0;transform-box:fill-box;transform-origin:50% 100%;animation:kShout .5s cubic-bezier(.2,1.4,.4,1) .62s both;font-family:inherit}
+.k-zoom{animation:kZoom .5s ease-out both}
+@keyframes kFig{0%{transform:translateX(-150px);opacity:0}10%{opacity:1}26%{transform:translateX(0)}90%{opacity:1}100%{transform:translateX(0);opacity:0}}
+@keyframes kArmF{0%,26%{transform:rotate(0)}34%,46%{transform:rotate(-32deg)}60%,100%{transform:rotate(-8deg)}}
+@keyframes kArmB{0%,26%{transform:rotate(0)}34%,46%{transform:rotate(16deg)}60%,100%{transform:rotate(4deg)}}
+@keyframes kLegF{0%,48%{transform:rotate(0)}58%,74%{transform:rotate(-97deg)}86%,100%{transform:rotate(-80deg)}}
+@keyframes kLean{0%,48%{transform:rotate(0)}60%,78%{transform:rotate(-12deg)}90%,100%{transform:rotate(-6deg)}}
+@keyframes kHit{0%{opacity:0;transform:scale(.3)}30%{opacity:1;transform:scale(1.25)}70%{opacity:1;transform:scale(1)}100%{opacity:0;transform:scale(1.05)}}
+@keyframes kShout{0%{opacity:0;transform:scale(.2) rotate(-14deg)}55%{opacity:1;transform:scale(1.18) rotate(-6deg)}100%{opacity:1;transform:scale(1) rotate(-8deg)}}
+@keyframes kZoom{0%{opacity:.85;transform:translateX(0)}100%{opacity:0;transform:translateX(-60px)}}
+@keyframes kShake{0%,55%{transform:translate(0,0)}60%{transform:translate(3px,-2px)}66%{transform:translate(-3px,2px)}72%{transform:translate(2px,1px)}78%,100%{transform:translate(0,0)}}
+@media(prefers-reduced-motion:reduce){.vb,.vfl.on,.vsm i,.aiThink,.aiThink i,.aiGo>.insight{animation:none!important}.page.active .card{animation:none!important}.stinger{display:none!important}}
 </style>
 <script>
 (function(){

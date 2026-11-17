@@ -72,9 +72,19 @@ JSDOM.fromFile(path.resolve(ROOT, "index.html"), {
         const b = blocks[blocks.length - 1];
         ok("blockAdd reads its own fields", b && b.n === "Karate" && b.start === "17:30" && b.mins === 30, JSON.stringify(b));
 
-        console.log("=== SMOKE RESULT ===");
-        results.forEach((l) => console.log(l));
-        console.log("page problems:", problems.length ? problems : "none");
-        process.exit(results.some((l) => l.startsWith("FAIL")) || problems.length ? 1 : 0);
+        /* --- v88 tab-open animations --- */
+        ok("cards carry stagger delays", !!doc.querySelector("#dashboard .card[style*='animation-delay']"));
+        w.hbOpen("karate");
+        const k = doc.querySelector(".stinger.karate");
+        ok("karate tab plays the karate sequence", !!k && !!k.querySelector(".k-legF") && (k.textContent || "").includes("HIYAA!"));
+        w.showPage("study");
+        ok("other tabs play a themed pop", !!doc.querySelector(".stinger .fxPop .e"));
+        setTimeout(() => {
+            ok("stingers clean themselves up", doc.querySelectorAll(".stinger").length === 0);
+            console.log("=== SMOKE RESULT ===");
+            results.forEach((l) => console.log(l));
+            console.log("page problems:", problems.length ? problems : "none");
+            process.exit(results.some((l) => l.startsWith("FAIL")) || problems.length ? 1 : 0);
+        }, 1600);
     }, 6000);
 }).catch((e) => { console.log("FATAL", e); process.exit(1); });
