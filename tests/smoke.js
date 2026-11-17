@@ -34,6 +34,41 @@ vc.on("error", (...a) => problems.push("console.error: " + a.join(" ")));
 const results = [];
 const ok = (name, cond, extra) => results.push((cond ? "PASS" : "FAIL") + " | " + name + (extra ? " | " + extra : ""));
 
+/* ---- v91 engine unit checks (pure modules, no DOM needed) ---- */
+const PhysCore = require(path.resolve(__dirname, "..", "physcore.js"));
+const BioCore = require(path.resolve(__dirname, "..", "biocore.js"));
+const near = (a, b, e = 1e-6) => Math.abs(a - b) < e;
+{
+    const m = PhysCore.solve({ u: 0, a: 2, t: 3 }, ["Motion"]).vals;
+    ok("solver: suvat chain (v=6, s=9)", near(m.v, 6) && near(m.s, 9), JSON.stringify(m));
+    const e = PhysCore.solve({ V: 6, R: 2 }, ["Electricity"]).vals;
+    ok("solver: Ohm+Joule chain (I=3, P=18)", near(e.I, 3) && near(e.P, 18));
+    const p = PhysCore.projectile({ v0: 20, angle: 90, h0: 0, g: 10 });
+    ok("projectile: T≈4s, H≈20m", near(p.T, 4, 0.05) && near(p.H, 20, 0.1), `T=${p.T} H=${p.H}`);
+    const c = PhysCore.circuit({ V: 6, mode: "series", rs: [2, 4] });
+    ok("circuit: series Req=6, I=1", near(c.Req, 6) && near(c.I, 1));
+    const cp = PhysCore.circuit({ V: 6, mode: "parallel", rs: [2, 4] });
+    ok("circuit: parallel Req=4/3", near(cp.Req, 4 / 3));
+    const o = PhysCore.optics({ kind: "lens", f: 10, u: 30 });
+    ok("optics: convex f10 u30 → v15, M−0.5, real", near(o.v, 15) && near(o.M, -0.5) && o.real);
+    const om = PhysCore.optics({ kind: "mirror", f: -10, u: 30 });
+    ok("optics: concave mirror u30 f−10 → v−15 real", near(om.v, -15) && om.real);
+    const ph = BioCore.photo({ light: 0, co2: 400, temp: 25 });
+    ok("photo: darkness → net negative (respiration)", ph.net < 0 && ph.gross === 0);
+    const ph2 = BioCore.photo({ light: 90, co2: 400, temp: 25 });
+    ok("photo: bright light → net positive", ph2.net > 0);
+    ok("photo: limiting factor at 5% light is light", BioCore.photo({ light: 5, co2: 800, temp: 30 }).limiting === "light");
+    ok("enzyme: pepsin prefers pH 2 over 7", BioCore.enzyme({ id: "pepsin", temp: 37, ph: 2, S: 50 }).activity > BioCore.enzyme({ id: "pepsin", temp: 37, ph: 7, S: 50 }).activity);
+    ok("enzyme: boiling denatures", BioCore.enzyme({ id: "amylase", temp: 75, ph: 6.8, S: 50 }).activity < 5);
+    const g1 = BioCore.cross({ traits: [{ dom: "T", rec: "t", p1: "Tt", p2: "Tt" }] });
+    ok("genetics: Tt×Tt → 3:1", (g1.pheno["dominant"] || 0) === 3 && (g1.pheno["recessive"] || 0) === 1, JSON.stringify(g1.pheno));
+    const g2 = BioCore.cross({ traits: [{ dom: "T", rec: "t", p1: "Tt", p2: "Tt" }, { dom: "Y", rec: "y", p1: "Yy", p2: "Yy" }] });
+    const pv = Object.values(g2.pheno).sort((a, b) => b - a).join(":");
+    ok("genetics: dihybrid → 9:3:3:1", pv === "9:3:3:1", pv);
+    const ch = BioCore.chain({ producerkJ: 10000, levels: 4, eff: 10 });
+    ok("ecology: 10% law → top level 10 kJ", near(ch.levels[3].kJ, 10));
+}
+
 JSDOM.fromFile(path.resolve(ROOT, "index.html"), {
     runScripts: "dangerously", resources: "usable", pretendToBeVisual: true,
     beforeParse: memoryStorage, virtualConsole: vc,
@@ -74,6 +109,7 @@ JSDOM.fromFile(path.resolve(ROOT, "index.html"), {
 
         /* --- v88 tab-open animations --- */
         ok("cards carry stagger delays", !!doc.querySelector("#dashboard .card[style*='animation-delay']"));
+        ok("virtual lab unlocked (v91)", w.eval("LAB_LOCKED") === false);
         w.hbOpen("karate");
         const k = doc.querySelector(".stinger.karate");
         ok("karate tab plays the karate sequence", !!k && !!k.querySelector(".k-legF") && (k.textContent || "").includes("HIYAA!"));
