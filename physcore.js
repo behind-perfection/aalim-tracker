@@ -89,7 +89,7 @@ function optics(o) {
     const u = -Math.abs(o.u || 10);
     const f = o.f || 10;
     const inv = o.kind === "lens" ? 1 / f + 1 / u : 1 / f - 1 / u;
-    if (inv === 0) return { u, v: Infinity, M: Infinity };
+    if (inv === 0) return { u, v: Infinity, M: Infinity, atF: true, real: false, inverted: false };
     const v = 1 / inv;
     const M = o.kind === "lens" ? v / u : -v / u;
     const real = o.kind === "lens" ? v > 0 : v < 0;

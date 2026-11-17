@@ -53,6 +53,10 @@ const near = (a, b, e = 1e-6) => Math.abs(a - b) < e;
     ok("optics: convex f10 u30 → v15, M−0.5, real", near(o.v, 15) && near(o.M, -0.5) && o.real);
     const om = PhysCore.optics({ kind: "mirror", f: -10, u: 30 });
     ok("optics: concave mirror u30 f−10 → v−15 real", near(om.v, -15) && om.real);
+    const of = PhysCore.optics({ kind: "lens", f: 10, u: 10 });
+    ok("optics: object at focus → v=∞, atF flagged", of.atF === true && of.v === Infinity);
+    const ox = PhysCore.optics({ kind: "mirror", f: 15, u: 30 });
+    ok("optics: convex mirror → virtual erect behind mirror", ox.v > 0 && !ox.real && !ox.inverted);
     const ph = BioCore.photo({ light: 0, co2: 400, temp: 25 });
     ok("photo: darkness → net negative (respiration)", ph.net < 0 && ph.gross === 0);
     const ph2 = BioCore.photo({ light: 90, co2: 400, temp: 25 });
@@ -67,6 +71,17 @@ const near = (a, b, e = 1e-6) => Math.abs(a - b) < e;
     ok("genetics: dihybrid → 9:3:3:1", pv === "9:3:3:1", pv);
     const ch = BioCore.chain({ producerkJ: 10000, levels: 4, eff: 10 });
     ok("ecology: 10% law → top level 10 kJ", near(ch.levels[3].kJ, 10));
+}
+
+/* ---- v93: static integrity checks on the lab page ---- */
+{
+    const fs = require("fs");
+    const lab = fs.readFileSync(path.resolve(__dirname, "..", "chemlab.html"), "utf8");
+    ok("lab: --orange is defined in both themes", (lab.match(/--orange:#[0-9a-f]{6}/g) || []).length === 2);
+    ok("lab: notebook UI wired (css + render + clear)", lab.includes(".nbe{") && lab.includes("nbRender") && lab.includes("LABX.nbClear"));
+    ok("lab: slider readouts update live (data-rv + rvUp)", lab.includes('data-rv=') && lab.includes("function rvUp"));
+    ok("lab: optics handles object-at-focus (atF)", lab.includes("o.atF") && require(path.resolve(__dirname, "..", "physcore.js")).optics({ kind: "lens", f: 10, u: 10 }).atF === true);
+    ok("lab: separate photo/enzyme temperature states", lab.includes("ptemp") && lab.includes("etemp"));
 }
 
 JSDOM.fromFile(path.resolve(ROOT, "index.html"), {

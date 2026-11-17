@@ -5,8 +5,8 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>Virtual Chemistry Lab</title>
 <style>
-:root{--bg:#eef2fb;--pan:#ffffff;--tx:#18203a;--mut:#667191;--bd:#d6ddf0;--acc:#3b5bdb;--acc2:#7c3aed;--ok:#16a34a;--bad:#dc2626;--chip:#eef1fb;--ws1:#f7faff;--ws2:#dfe9fb;--wall1:#e6edf8;--wall2:#c9d6ec;--bench1:#b98a5a;--bench2:#8a5a33;--glass:rgba(255,255,255,.35);--glassb:#7e8fb5}
-[data-theme=dark]{--bg:#0e1320;--pan:#161c2d;--tx:#e6eaf3;--mut:#9aa6bd;--bd:#2a3349;--acc:#6b8bff;--acc2:#a78bfa;--chip:#222b42;--ws1:#1a2340;--ws2:#0f1630;--wall1:#232c48;--wall2:#161d36;--bench1:#7a5530;--bench2:#4d3219;--glass:rgba(255,255,255,.1);--glassb:#8ea0c9}
+:root{--bg:#eef2fb;--pan:#ffffff;--tx:#18203a;--mut:#667191;--bd:#d6ddf0;--acc:#3b5bdb;--acc2:#7c3aed;--ok:#16a34a;--bad:#dc2626;--chip:#eef1fb;--ws1:#f7faff;--ws2:#dfe9fb;--wall1:#e6edf8;--wall2:#c9d6ec;--bench1:#b98a5a;--bench2:#8a5a33;--glass:rgba(255,255,255,.35);--glassb:#7e8fb5;--orange:#f97316}
+[data-theme=dark]{--bg:#0e1320;--pan:#161c2d;--tx:#e6eaf3;--mut:#9aa6bd;--bd:#2a3349;--acc:#6b8bff;--acc2:#a78bfa;--chip:#222b42;--ws1:#1a2340;--ws2:#0f1630;--wall1:#232c48;--wall2:#161d36;--bench1:#7a5530;--bench2:#4d3219;--glass:rgba(255,255,255,.1);--glassb:#8ea0c9;--orange:#fb923c}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html,body{-webkit-user-select:none;user-select:none;-webkit-touch-callout:none;margin:0;height:100%;background:var(--bg);color:var(--tx);font:14px/1.4 system-ui,-apple-system,Segoe UI,Roboto,sans-serif}
 button{font:inherit;color:inherit;cursor:pointer}
@@ -174,7 +174,7 @@ textarea,input.t{width:100%;padding:7px 9px;border:1px solid var(--bd);border-ra
 .it.bottle .vessel{overflow:visible}.it.bottle .capoff{display:none;position:absolute;left:-18px;bottom:2px;width:20px;height:13px;border-radius:3px;background:#15181f;box-shadow:0 2px 3px rgba(0,0,0,.35);transform:rotate(-8deg)}.it.bottle.open .capoff{display:block}
 .it.burette .tapk{cursor:ew-resize;pointer-events:auto}.it.burette .vessel,.it.bottle .vessel{pointer-events:auto}
 @media(max-width:820px) and (orientation:landscape),(max-height:520px){.lab{grid-template-columns:150px 1fr 210px;grid-template-rows:auto 1fr;grid-template-areas:"top top top" "tool ws pan"}.tool{max-height:none;border-right:1px solid var(--bd);border-bottom:0}.cards{display:grid;grid-template-columns:1fr;overflow-x:visible}.card{min-width:0}.pan{border-left:1px solid var(--bd);border-top:0}.status{display:none}}
-@media(prefers-reduced-motion:reduce){.bub,.flame,.sbub,.steam,.vortex,.ripple,.it.inflame .vessel{animation:none}}
+@media(prefers-reduced-motion:reduce){.bub,.flame,.sbub,.steam,.vortex,.ripple,.it.inflame .vessel{animation:none}.xsec svg *{animation:none}}
 /* ---- v91: Physics & Biology sections ---- */
 .xsec{grid-column:1/4;grid-row:2;display:grid;grid-template-columns:262px 1fr 320px;min-height:0}
 .xsec>div{overflow:auto;padding:10px 12px;min-height:0}
@@ -195,6 +195,12 @@ textarea,input.t{width:100%;padding:7px 9px;border:1px solid var(--bd);border-ra
 .xsec .why{font-size:12.5px;color:var(--mut);line-height:1.5;background:var(--chip);border-left:3px solid var(--acc);padding:8px 10px;border-radius:6px;margin:8px 0}
 .ptable{width:100%;border-collapse:collapse;font-size:13px}.ptable td,.ptable th{padding:4px 6px;border-bottom:1px solid var(--bd);text-align:left}.ptable th{color:var(--mut);font-size:11px;text-transform:uppercase;letter-spacing:.04em}
 .pgrid{border-collapse:collapse;margin:6px 0}.pgrid td,.pgrid th{border:1px solid var(--bd);padding:6px 9px;font-weight:700;font-size:13px;text-align:center}.pgrid th{background:var(--chip);color:var(--acc)}
+.nb{border-top:1px dashed var(--bd);margin-top:12px;padding-top:8px;font-size:12px;color:var(--mut)}
+.nb>div:first-child{display:flex;justify-content:space-between;align-items:center;font-weight:800;color:var(--tx);margin-bottom:5px}
+.nb button{border:1px solid var(--bd);background:var(--chip);border-radius:7px;padding:2px 8px;font:inherit;font-size:11px;font-weight:700;color:var(--mut);cursor:pointer}
+.nbe{display:flex;gap:7px;padding:3px 0;border-bottom:1px dotted var(--bd);line-height:1.4}
+.nbe time{flex:0 0 34px;font-variant-numeric:tabular-nums;opacity:.75}
+.nbe b{color:var(--tx);flex:0 0 auto}
 @media(max-width:820px){.xsec{grid-column:1;grid-row:2/5;grid-template-columns:1fr;grid-template-rows:auto minmax(180px,1fr) auto}.xctl{max-height:190px;border-right:0;border-bottom:1px solid var(--bd)}.xnote{border-left:0;border-top:1px solid var(--bd);max-height:34%}}
 </style>
 </head>
@@ -923,7 +929,7 @@ function renderPanel(full){
    <div class="grp" style="margin-top:6px">Contents</div><div id="ico"></div>`;
   }
   const sc=solnColour(c),ph=phOf(c);let mass=c.vol;for(const k in c.sol)mass+=c.sol[k];
-  $("iv").textContent=c.vol.toFixed(1)+" mL";$("it").textContent=c.T.toFixed(c.T>200?0:1)+" °C";$("ip").textContent=ph==null?"—":ph.toFixed(2);$("im").textContent=mass.toFixed(1)+" g";
+  $("iv").textContent=c.vol.toFixed(1)+" mL";$("it").textContent=c.T.toFixed(c.T>200?0:1)+" °C"+((c.soot||0)>.08?" · sooty glass":"")+(c.boil?" (boiling)":"");$("ip").textContent=ph==null?"—":ph.toFixed(2);$("im").textContent=mass.toFixed(1)+" g";
   $("ic").innerHTML=`<span class="sw2" style="background:${hex(sc.rgb)}"></span>${c.vol>.2?cname(sc.rgb):"empty"}`;
   $("ico").innerHTML=listContents(c);
  }else if(state.pan==="obs"){
@@ -1576,8 +1582,8 @@ if (!window.LAB_LOCKED && window.PhysCore && window.BioCore) (function () {
     const fmt = (x, d = 2) => !isFinite(x) ? "∞" : String(Math.abs(x) >= 1000 ? +x.toFixed(0) : +x.toFixed(d));
     const ro = (k, v) => '<div class="ro"><span>' + k + '</span><b>' + v + '</b></div>';
     const why = t => '<div class="why">' + t + '</div>';
-    const phy = { rig: "proj", v0: 20, ang: 45, h0: 0, g: 9.8, drag: false, V: 6, mode: "series", r1: 2, r2: 4, r3: 0, kind: "lens", f: 10, u: 30, topic: "Motion", known: {} };
-    const bio = { tab: "photo", light: 60, co2: 400, temp: 25, enz: "amylase", ph: 7, S: 20, trait: 0, p1: "Tt", p2: "Tt", di: false, p1b: "Yy", p2b: "Yy", prod: 10000, lv: 4, eff: 10 };
+    const phy = { rig: "proj", v0: 20, ang: 45, h0: 0, g: 9.8, drag: false, k: 0.02, V: 6, mode: "series", r1: 2, r2: 4, r3: 0, kind: "lens", f: 10, u: 30, topic: "Motion", known: {} };
+    const bio = { tab: "photo", light: 60, co2: 400, ptemp: 25, etemp: 37, enz: "amylase", ph: 7, S: 20, trait: 0, p1: "Tt", p2: "Tt", di: false, p1b: "Yy", p2b: "Yy", prod: 10000, lv: 4, eff: 10 };
     const GRAV = [["Earth", 9.8], ["Moon", 1.62], ["Mars", 3.71], ["Jupiter", 24.8]];
     const TRAITS = [["Pea height", "T", "t", "Tall", "Dwarf"], ["Seed colour", "Y", "y", "Yellow", "Green"], ["Flower colour", "P", "p", "Purple", "White"]];
 
@@ -1595,21 +1601,22 @@ if (!window.LAB_LOCKED && window.PhysCore && window.BioCore) (function () {
         const rb = (id, l) => '<button type="button" class="' + (R === id ? "on" : "") + '" onclick="LABX.phyRig(\'' + id + '\')">' + l + '</button>';
         let h = '<h3>⚡ Physics bench</h3><div class="rig">' + rb("proj", "🎯 Projectile") + rb("circ", "🔌 Circuit") + rb("opt", "🔭 Optics") + rb("solve", "🧮 Law solver") + '</div>';
         if (R === "proj") h +=
-            '<label>Speed v₀ <span class="rv">' + phy.v0 + ' m/s</span></label><input type="range" min="1" max="60" value="' + phy.v0 + '" oninput="LABX.phySet(\'v0\',+this.value)">' +
-            '<label>Angle <span class="rv">' + phy.ang + '°</span></label><input type="range" min="0" max="90" value="' + phy.ang + '" oninput="LABX.phySet(\'ang\',+this.value)">' +
-            '<label>Launch height <span class="rv">' + phy.h0 + ' m</span></label><input type="range" min="0" max="50" value="' + phy.h0 + '" oninput="LABX.phySet(\'h0\',+this.value)">' +
+            '<label>Speed v₀ <span class="rv" data-rv="v0">' + phy.v0 + ' m/s</span></label><input type="range" min="1" max="60" value="' + phy.v0 + '" oninput=\"LABX.phySet(\'v0\',+this.value,1)" onchange=\"LABX.phySet(\'v0\',+this.value,3)">' +
+            '<label>Angle <span class="rv" data-rv="ang">' + phy.ang + '°</span></label><input type="range" min="0" max="90" value="' + phy.ang + '" oninput=\"LABX.phySet(\'ang\',+this.value,1)" onchange=\"LABX.phySet(\'ang\',+this.value,3)">' +
+            '<label>Launch height <span class="rv" data-rv="h0">' + phy.h0 + ' m</span></label><input type="range" min="0" max="50" value="' + phy.h0 + '" oninput=\"LABX.phySet(\'h0\',+this.value,1)" onchange=\"LABX.phySet(\'h0\',+this.value,3)">' +
             '<label>Gravity</label><select onchange="LABX.phySet(\'g\',+this.value)">' + GRAV.map(gr => '<option value="' + gr[1] + '"' + (phy.g === gr[1] ? ' selected' : '') + '>' + gr[0] + ' (' + gr[1] + ' m/s²)</option>').join("") + '</select>' +
-            '<label style="margin-top:10px"><input type="checkbox" style="width:auto"' + (phy.drag ? ' checked' : '') + ' onchange="LABX.phySet(\'drag\',this.checked)"> Air drag (quadratic)</label>';
+            '<label style="margin-top:10px"><input type="checkbox" style="width:auto"' + (phy.drag ? ' checked' : '') + ' onchange="LABX.phySet(\'drag\',this.checked,3)"> Air drag (quadratic)</label>' +
+            (phy.drag ? '<label>Drag coefficient k <span class="rv" data-rv="k">' + phy.k + '</span></label><input type="range" min="0.005" max="0.06" step="0.005" value="' + phy.k + '" oninput=\"LABX.phySet(\'k\',+this.value,1)" onchange=\"LABX.phySet(\'k\',+this.value,3)">' : '');
         if (R === "circ") h +=
             '<label>Connection</label><select onchange="LABX.phySet(\'mode\',this.value)"><option value="series"' + (phy.mode === "series" ? ' selected' : '') + '>Series</option><option value="parallel"' + (phy.mode === "parallel" ? ' selected' : '') + '>Parallel</option></select>' +
-            '<label>Battery <span class="rv">' + phy.V + ' V</span></label><input type="range" min="1" max="24" value="' + phy.V + '" oninput="LABX.phySet(\'V\',+this.value)">' +
-            [1, 2, 3].map(i => '<label>R' + i + ' (0 = remove) <span class="rv">' + phy["r" + i] + ' Ω</span></label><input type="range" min="0" max="50" value="' + phy["r" + i] + '" oninput="LABX.phySet(\'r' + i + '\',+this.value)">').join("");
+            '<label>Battery <span class="rv" data-rv="V">' + phy.V + ' V</span></label><input type="range" min="1" max="24" value="' + phy.V + '" oninput=\"LABX.phySet(\'V\',+this.value,1)" onchange=\"LABX.phySet(\'V\',+this.value,3)">' +
+            [1, 2, 3].map(i => '<label>R' + i + ' (0 = remove) <span class="rv" data-rv="r' + i + '">' + phy["r" + i] + ' Ω</span></label><input type="range" min="0" max="50" value="' + phy["r" + i] + '" oninput=\"LABX.phySet(\'r' + i + '\',+this.value,1)" onchange=\"LABX.phySet(\'r' + i + '\',+this.value,3)">').join("");
         if (R === "opt") h +=
             '<label>Device</label><select onchange="LABX.phySet(\'kind\',this.value)"><option value="lens"' + (phy.kind === "lens" ? ' selected' : '') + '>Convex lens (f +)</option><option value="lensn"' + (phy.kind === "lensn" ? ' selected' : '') + '>Concave lens (f −)</option><option value="mirror"' + (phy.kind === "mirror" ? ' selected' : '') + '>Concave mirror (f −)</option><option value="mirrorx"' + (phy.kind === "mirrorx" ? ' selected' : '') + '>Convex mirror (f +)</option></select>' +
-            '<label>|f| <span class="rv">' + phy.f + ' cm</span></label><input type="range" min="4" max="30" value="' + phy.f + '" oninput="LABX.phySet(\'f\',+this.value)">' +
-            '<label>Object distance |u| <span class="rv">' + phy.u + ' cm</span></label><input type="range" min="5" max="90" value="' + phy.u + '" oninput="LABX.phySet(\'u\',+this.value)">';
+            '<label>|f| <span class="rv" data-rv="f">' + phy.f + ' cm</span></label><input type="range" min="4" max="30" value="' + phy.f + '" oninput=\"LABX.phySet(\'f\',+this.value,1)" onchange=\"LABX.phySet(\'f\',+this.value,3)">' +
+            '<label>Object distance |u| <span class="rv" data-rv="u">' + phy.u + ' cm</span></label><input type="range" min="5" max="90" value="' + phy.u + '" oninput=\"LABX.phySet(\'u\',+this.value,1)" onchange=\"LABX.phySet(\'u\',+this.value,3)">';
         if (R === "solve") {
-            h += '<label>Topic</label><select onchange="LABX.phySet(\'topic\',this.value)">' + PhysCore.TOPICS.map(t => '<option' + (phy.topic === t ? ' selected' : '') + '>' + t + '</option>').join("") + '</select>' +
+            h += '<label>Topic</label><select onchange="LABX.phySet(\'topic\',this.value,2)">' + PhysCore.TOPICS.map(t => '<option' + (phy.topic === t ? ' selected' : '') + '>' + t + '</option>').join("") + '</select>' +
                 '<p style="font-size:12px;color:var(--mut);line-height:1.4">Fill in any quantities you know — the solver applies every law of the topic until nothing new can be derived.</p>';
             const keys = topicKeys();
             h += keys.map(k => '<label>' + k + ' <span style="opacity:.6">(' + (PhysCore.UNITS[k] || "") + ')</span></label><input type="number" step="any" value="' + (phy.known[k] !== undefined ? phy.known[k] : "") + '" oninput="LABX.phyKnown(\'' + k + '\',this.value)">').join("");
@@ -1627,7 +1634,9 @@ if (!window.LAB_LOCKED && window.PhysCore && window.BioCore) (function () {
             const X = x => pad + x / mX * (W - 2 * pad), Y = y => H - pad - Math.min(y, mY) / mY * (H - 2 * pad);
             const pts = p.pts.map(q => X(q.x).toFixed(1) + "," + Y(q.y).toFixed(1)).join(" ");
             const mp = "M " + p.pts.map(q => X(q.x).toFixed(1) + " " + Y(q.y).toFixed(1)).join(" L ");
-            st = '<svg viewBox="0 0 ' + W + ' ' + H + '"><line x1="' + (pad - 8) + '" y1="' + Y(0) + '" x2="' + (W - pad + 8) + '" y2="' + Y(0) + '" stroke="var(--mut)" stroke-width="2"/><polyline points="' + pts + '" fill="none" stroke="var(--acc)" stroke-width="3" stroke-linecap="round"/><circle r="6" fill="var(--acc2)"><animateMotion dur="2.4s" repeatCount="indefinite" path="' + mp + '"/></circle><text x="' + X(p.R) + '" y="' + (Y(0) + 18) + '" font-size="12" fill="var(--mut)" text-anchor="middle">' + fmt(p.R, 1) + ' m</text><text x="' + X(0) + '" y="' + (Y(mY) - 8) + '" font-size="12" fill="var(--mut)">' + fmt(p.H, 1) + ' m</text></svg>';
+            st = '<svg viewBox="0 0 ' + W + ' ' + H + '"><line x1="' + (pad - 8) + '" y1="' + Y(0) + '" x2="' + (W - pad + 8) + '" y2="' + Y(0) + '" stroke="var(--mut)" stroke-width="2"/><polyline points="' + pts + '" fill="none" stroke="var(--acc)" stroke-width="3" stroke-linecap="round"/>' + (reduceMotion ? '<circle cx="' + X(0).toFixed(1) + '" cy="' + Y(0).toFixed(1) + '" r="6" fill="var(--acc2)">' : '<circle r="6" fill="var(--acc2)"><animateMotion dur="2.4s" repeatCount="indefinite" path="' + mp + '"/></circle>') + '<text x="' + X(p.R) + '" y="' + (Y(0) + 18) + '" font-size="12" fill="var(--mut)" text-anchor="middle">' + fmt(p.R, 1) + ' m</text><text x="' + X(0) + '" y="' + (Y(mY) - 8) + '" font-size="12" fill="var(--mut)">' + fmt(p.H, 1) + ' m</text>' +
+                [0.25, 0.5, 0.75, 1].map(fr => '<line x1="' + X(mX * fr).toFixed(1) + '" y1="' + (Y(0) + 4) + '" x2="' + X(mX * fr).toFixed(1) + '" y2="' + (Y(0) - 4) + '" stroke="var(--mut)" stroke-width="1.4"/><text x="' + X(mX * fr).toFixed(1) + '" y="' + (Y(0) + 17) + '" font-size="10" fill="var(--mut)" text-anchor="middle">' + fmt(mX * fr, 0) + '</text>').join("") +
+                [0.5, 1].map(fr => '<line x1="' + (pad - 6) + '" y1="' + Y(mY * fr).toFixed(1) + '" x2="' + (W - pad + 6) + '" y2="' + Y(mY * fr).toFixed(1) + '" stroke="var(--bd)" stroke-width="1" stroke-dasharray="4 4"/><text x="' + (pad - 9) + '" y="' + (Y(mY * fr) + 3).toFixed(1) + '" font-size="10" fill="var(--mut)" text-anchor="end">' + fmt(mY * fr, 0) + '</text>').join("") + '</svg>';
             nt = ro("Time of flight", fmt(p.T) + " s") + ro("Range", fmt(p.R, 1) + " m") + ro("Max height", fmt(p.H, 1) + " m") + ro("Impact speed", fmt(p.vImpact, 1) + " m/s") +
                 why(phy.drag ? "Integrated step by step: v += (g + drag·v·|v|)·dt, x += v·dt — with quadratic drag the path is no longer a parabola, and the sim shows exactly that." : "Integrated from a = g alone (v += g·dt, x += v·dt). The parabola emerges from the law; it is not drawn in. Try the Moon: same laws, smaller g.");
         } else if (phy.rig === "circ") {
@@ -1644,19 +1653,21 @@ if (!window.LAB_LOCKED && window.PhysCore && window.BioCore) (function () {
                     c.parts.map((p, i) => '<line x1="60" y1="' + rows[i] + '" x2="' + (W - 60) + '" y2="' + rows[i] + '" stroke="var(--mut)" stroke-width="2"/><rect x="' + (W / 2 - 40) + '" y="' + (rows[i] - 14) + '" width="80" height="28" fill="var(--chip)" stroke="var(--acc)" stroke-width="2"/><text x="' + W / 2 + '" y="' + (rows[i] - 20) + '" font-size="12" fill="var(--tx)" text-anchor="middle">R' + (p.i + 1) + ' ' + p.r + 'Ω · ' + fmt(p.I, 2) + 'A</text>').join("") + '</svg>';
             }
             if (c) nt = ro("R equivalent", fmt(c.Req, 2) + " Ω") + ro("Battery current", fmt(c.I, 3) + " A") + ro("Total power", fmt(c.P, 2) + " W") +
-                '<table class="ptable"><tr><th>R</th><th>V</th><th>I</th><th>P</th></tr>' + c.parts.map(p => '<tr><td>R' + (p.i + 1) + '</td><td>' + fmt(p.V, 2) + ' V</td><td>' + fmt(p.I, 3) + ' A</td><td>' + fmt(p.P, 2) + ' W</td></tr>').join("") + '</table>' +
+                '<div id="nb"></div><table class="ptable"><tr><th>R</th><th>V</th><th>I</th><th>P</th></tr>' + c.parts.map(p => '<tr><td>R' + (p.i + 1) + '</td><td>' + fmt(p.V, 2) + ' V</td><td>' + fmt(p.I, 3) + ' A</td><td>' + fmt(p.P, 2) + ' W</td></tr>').join("") + '</table>' +
                 why(phy.mode === "series" ? "Series: one path, so the same current flows everywhere (charge conservation) and voltages add up to the battery's (Kirchhoff). Req = ΣR." : "Parallel: every branch sees the full battery voltage; branch currents add at the junction (Kirchhoff). 1/Req = Σ 1/R — which is why Req is smaller than the smallest branch.");
         } else if (phy.rig === "opt") {
             const f = (phy.kind === "lensn" || phy.kind === "mirror") ? -phy.f : phy.f;
             const kind = phy.kind.indexOf("lens") === 0 ? "lens" : "mirror";
             const o = PhysCore.optics({ kind: kind, f: f, u: phy.u });
             const W = 560, H = 260, cy = H / 2;
-            const xs = [o.u, isFinite(o.v) ? o.v : 0, 0, 2 * f];
+            const vf = isFinite(o.v) ? o.v : 0;
+            const xs = [o.u, vf, 0, 2 * f];
             const xmin = Math.min.apply(null, xs) - 12, xmax = Math.max.apply(null, xs) + 12;
             const X = x => (x - xmin) / (xmax - xmin) * W;
-            const oh = 34, ih = Math.max(-110, Math.min(110, oh * o.M));
-            const ix = X(o.v), iy = cy - ih;
+            const oh = 34, ih = isFinite(o.M) ? Math.max(-110, Math.min(110, oh * o.M)) : 0;
+            const ix = isFinite(o.v) ? X(o.v) : X(vf), iy = cy - ih;
             const ray = py => {
+                if (o.atF) return '<line x1="' + X(o.u) + '" y1="' + (cy - oh) + '" x2="' + X(0) + '" y2="' + py + '" stroke="var(--acc2)" stroke-width="1.6"/><line x1="' + X(0) + '" y1="' + py + '" x2="' + W + '" y2="' + py + '" stroke="var(--acc2)" stroke-width="1.6"/>';
                 const out = o.real
                     ? '<line x1="' + X(0) + '" y1="' + py + '" x2="' + ix + '" y2="' + iy + '" stroke="var(--acc2)" stroke-width="1.6"/>'
                     : '<line x1="' + X(0) + '" y1="' + py + '" x2="' + (X(0) + (X(0) - ix) * .8) + '" y2="' + (py + (py - iy) * .8) + '" stroke="var(--acc2)" stroke-width="1.6"/><line x1="' + X(0) + '" y1="' + py + '" x2="' + ix + '" y2="' + iy + '" stroke="var(--acc2)" stroke-width="1.4" stroke-dasharray="4 4"/>';
@@ -1665,11 +1676,11 @@ if (!window.LAB_LOCKED && window.PhysCore && window.BioCore) (function () {
             st = '<svg viewBox="0 0 ' + W + ' ' + H + '"><line x1="0" y1="' + cy + '" x2="' + W + '" y2="' + cy + '" stroke="var(--mut)" stroke-width="1.4"/>' +
                 (kind === "lens"
                     ? '<ellipse cx="' + X(0) + '" cy="' + cy + '" rx="7" ry="70" fill="var(--acc)" opacity=".35" stroke="var(--acc)" stroke-width="2"/>'
-                    : '<path d="M ' + X(0) + ' ' + (cy - 70) + ' Q ' + (X(0) + (f > 0 ? 16 : -16)) + ' ' + cy + ' ' + X(0) + ' ' + (cy + 70) + '" fill="none" stroke="var(--acc)" stroke-width="4"/>') +
+                    : '<path d="M ' + X(0) + ' ' + (cy - 70) + ' Q ' + (X(0) + (f < 0 ? 16 : -16)) + ' ' + cy + ' ' + X(0) + ' ' + (cy + 70) + '" fill="none" stroke="var(--acc)" stroke-width="4"/>') +
                 '<line x1="' + X(o.u) + '" y1="' + cy + '" x2="' + X(o.u) + '" y2="' + (cy - oh) + '" stroke="var(--tx)" stroke-width="3"/><polygon points="' + (X(o.u) - 4) + ',' + (cy - oh + 8) + ' ' + (X(o.u) + 4) + ',' + (cy - oh + 8) + ' ' + X(o.u) + ',' + (cy - oh) + '" fill="var(--tx)"/>' +
                 ray(cy - oh) + ray(cy - oh * .45) +
                 '<line x1="' + ix + '" y1="' + cy + '" x2="' + ix + '" y2="' + iy + '" stroke="var(--ok)" stroke-width="3"' + (o.real ? '' : ' stroke-dasharray="5 4"') + '/><text x="' + ix + '" y="' + (cy + 18) + '" font-size="12" fill="var(--mut)" text-anchor="middle">image</text><text x="' + X(o.u) + '" y="' + (cy + 18) + '" font-size="12" fill="var(--mut)" text-anchor="middle">object</text></svg>';
-            nt = ro("v (image distance)", fmt(o.v, 1) + " cm") + ro("Magnification", fmt(o.M, 2) + "×") + ro("Nature", (o.real ? "Real" : "Virtual") + ", " + (o.inverted ? "inverted" : "erect") + ", " + (Math.abs(o.M) > 1 ? "enlarged" : Math.abs(o.M) < 1 ? "diminished" : "same size")) +
+            nt = ro("v (image distance)", fmt(o.v, 1) + " cm") + ro("Magnification", fmt(o.M, 2) + "×") + ro("Nature", o.atF ? "Object at focus — refracted rays emerge parallel: no image forms" : (o.real ? "Real" : "Virtual") + ", " + (o.inverted ? "inverted" : "erect") + ", " + (Math.abs(o.M) > 1 ? "enlarged" : Math.abs(o.M) < 1 ? "diminished" : "same size")) +
                 why(kind === "lens" ? "Cartesian sign convention, lens formula 1/v − 1/u = 1/f with u = −|u|. A dashed image arrow means virtual: the rays only appear to meet." : "Mirror formula 1/v + 1/u = 1/f with u = −|u|. For mirrors a negative v is a real image in front of the mirror.");
         } else {
             const r = PhysCore.solve(phy.known, [phy.topic]);
@@ -1678,7 +1689,8 @@ if (!window.LAB_LOCKED && window.PhysCore && window.BioCore) (function () {
             nt = why("Chain of laws applied:<br>" + (r.trace.length ? r.trace.map(t => "• " + t.law + " → " + t.got).join("<br>") : "• none — give me more knowns.")) +
                 '<p style="font-size:12px;color:var(--mut)">Every value above came from propagating your inputs through the law graph — the same engine powers the other rigs.</p>';
         }
-        $("phyStage").innerHTML = st; $("phyNote").innerHTML = "<h3>Readings</h3>" + nt;
+        $("phyStage").innerHTML = st; $("phyNote").innerHTML = "<h3>Readings</h3>" + nt + '<div id="nb"></div>';
+        nbRender();
     }
 
     /* ---------------- BIOLOGY ---------------- */
@@ -1687,14 +1699,14 @@ if (!window.LAB_LOCKED && window.PhysCore && window.BioCore) (function () {
         const rb = (id, l) => '<button type="button" class="' + (T === id ? "on" : "") + '" onclick="LABX.bioTab(\'' + id + '\')">' + l + '</button>';
         let h = '<h3>🧬 Biology bench</h3><div class="rig">' + rb("photo", "🌿 Photosynthesis") + rb("enz", "🧫 Enzymes") + rb("gen", "🧬 Genetics") + rb("chain", "🕸 Food chain") + '</div>';
         if (T === "photo") h +=
-            '<label>Light intensity <span class="rv">' + bio.light + '%</span></label><input type="range" min="0" max="100" value="' + bio.light + '" oninput="LABX.bioSet(\'light\',+this.value)">' +
-            '<label>CO₂ concentration <span class="rv">' + bio.co2 + ' ppm</span></label><input type="range" min="0" max="1500" step="10" value="' + bio.co2 + '" oninput="LABX.bioSet(\'co2\',+this.value)">' +
-            '<label>Temperature <span class="rv">' + bio.temp + '°C</span></label><input type="range" min="0" max="55" value="' + bio.temp + '" oninput="LABX.bioSet(\'temp\',+this.value)">';
+            '<label>Light intensity <span class="rv" data-rv="light">' + bio.light + '%</span></label><input type="range" min="0" max="100" value="' + bio.light + '" oninput=\"LABX.bioSet(\'light\',+this.value,1)" onchange=\"LABX.bioSet(\'light\',+this.value,3)">' +
+            '<label>CO₂ concentration <span class="rv" data-rv="co2">' + bio.co2 + ' ppm</span></label><input type="range" min="0" max="1500" step="10" value="' + bio.co2 + '" oninput=\"LABX.bioSet(\'co2\',+this.value,1)" onchange=\"LABX.bioSet(\'co2\',+this.value,3)">' +
+            '<label>Temperature <span class="rv" data-rv="ptemp">' + bio.ptemp + '°C</span></label><input type="range" min="0" max="55" value="' + bio.ptemp + '" oninput=\"LABX.bioSet(\'temp\',+this.value,1)" onchange=\"LABX.bioSet(\'temp\',+this.value,3)">';
         if (T === "enz") h +=
             '<label>Enzyme</label><select onchange="LABX.bioSet(\'enz\',this.value)">' + Object.keys(BioCore.ENZYMES).map(k => '<option value="' + k + '"' + (bio.enz === k ? ' selected' : '') + '>' + BioCore.ENZYMES[k].n + '</option>').join("") + '</select>' +
-            '<label>Temperature <span class="rv">' + bio.temp + '°C</span></label><input type="range" min="0" max="80" value="' + bio.temp + '" oninput="LABX.bioSet(\'temp\',+this.value)">' +
-            '<label>pH <span class="rv">' + bio.ph + '</span></label><input type="range" min="0" max="14" step="0.5" value="' + bio.ph + '" oninput="LABX.bioSet(\'ph\',+this.value)">' +
-            '<label>Substrate [S] <span class="rv">' + bio.S + ' mM</span></label><input type="range" min="0" max="100" value="' + bio.S + '" oninput="LABX.bioSet(\'S\',+this.value)">';
+            '<label>Temperature <span class="rv" data-rv="etemp">' + bio.etemp + '°C</span></label><input type="range" min="0" max="80" value="' + bio.etemp + '" oninput=\"LABX.bioSet(\'temp\',+this.value,1)" onchange=\"LABX.bioSet(\'temp\',+this.value,3)">' +
+            '<label>pH <span class="rv" data-rv="ph">' + bio.ph + '</span></label><input type="range" min="0" max="14" step="0.5" value="' + bio.ph + '" oninput=\"LABX.bioSet(\'ph\',+this.value,1)" onchange=\"LABX.bioSet(\'ph\',+this.value,3)">' +
+            '<label>Substrate [S] <span class="rv" data-rv="S">' + bio.S + ' mM</span></label><input type="range" min="0" max="100" value="' + bio.S + '" oninput=\"LABX.bioSet(\'S\',+this.value,1)" onchange=\"LABX.bioSet(\'S\',+this.value,3)">';
         if (T === "gen") {
             const gOpts = (v, d, r) => [d + d, d + r, r + r].map(g => '<option' + (v === g ? ' selected' : '') + '>' + g + '</option>').join("");
             const t = TRAITS[bio.trait];
@@ -1705,32 +1717,36 @@ if (!window.LAB_LOCKED && window.PhysCore && window.BioCore) (function () {
             if (bio.di) { const t2 = TRAITS[(bio.trait + 1) % 3]; h += '<label>Parent 1 (trait 2)</label><select onchange="LABX.bioSet(\'p1b\',this.value)">' + gOpts(bio.p1b, t2[1], t2[2]) + '</select><label>Parent 2 (trait 2)</label><select onchange="LABX.bioSet(\'p2b\',this.value)">' + gOpts(bio.p2b, t2[1], t2[2]) + '</select>'; }
         }
         if (T === "chain") h +=
-            '<label>Producer energy <span class="rv">' + bio.prod + ' kJ</span></label><input type="range" min="1000" max="100000" step="500" value="' + bio.prod + '" oninput="LABX.bioSet(\'prod\',+this.value)">' +
-            '<label>Trophic levels <span class="rv">' + bio.lv + '</span></label><input type="range" min="2" max="5" value="' + bio.lv + '" oninput="LABX.bioSet(\'lv\',+this.value)">' +
-            '<label>Transfer efficiency <span class="rv">' + bio.eff + '%</span></label><input type="range" min="2" max="25" value="' + bio.eff + '" oninput="LABX.bioSet(\'eff\',+this.value)">';
+            '<label>Producer energy <span class="rv" data-rv="prod">' + bio.prod + ' kJ</span></label><input type="range" min="1000" max="100000" step="500" value="' + bio.prod + '" oninput=\"LABX.bioSet(\'prod\',+this.value,1)" onchange=\"LABX.bioSet(\'prod\',+this.value,3)">' +
+            '<label>Trophic levels <span class="rv" data-rv="lv">' + bio.lv + '</span></label><input type="range" min="2" max="5" value="' + bio.lv + '" oninput=\"LABX.bioSet(\'lv\',+this.value,1)" onchange=\"LABX.bioSet(\'lv\',+this.value,3)">' +
+            '<label>Transfer efficiency <span class="rv" data-rv="eff">' + bio.eff + '%</span></label><input type="range" min="2" max="25" value="' + bio.eff + '" oninput=\"LABX.bioSet(\'eff\',+this.value,1)" onchange=\"LABX.bioSet(\'eff\',+this.value,3)">';
         $("bioCtl").innerHTML = h; bioUp();
     }
     function bioUp() {
         let st = "", nt = "";
         if (bio.tab === "photo") {
-            const r = BioCore.photo(bio);
+            const r = BioCore.photo({ light: bio.light, co2: bio.co2, temp: bio.ptemp });
             const W = 520, H = 240, pad = 30, curve = [];
-            for (let L = 0; L <= 100; L += 2) curve.push(BioCore.photo({ light: L, co2: bio.co2, temp: bio.temp }).net);
+            for (let L = 0; L <= 100; L += 2) curve.push(BioCore.photo({ light: L, co2: bio.co2, temp: bio.ptemp }).net);
             const mn = Math.min.apply(null, curve.concat([0])), mx = Math.max.apply(null, curve.concat([1]));
             const X = i => pad + i / 100 * (W - 2 * pad), Y = v => H - pad - (v - mn) / (mx - mn) * (H - 2 * pad);
             const comp = curve.findIndex(v => v >= 0);
             st = '<svg viewBox="0 0 ' + W + ' ' + H + '"><line x1="' + pad + '" y1="' + Y(0) + '" x2="' + (W - pad) + '" y2="' + Y(0) + '" stroke="var(--mut)" stroke-width="1.5"/><polyline points="' + curve.map((v, i) => X(i * 2) + ',' + Y(v)).join(" ") + '" fill="none" stroke="var(--ok)" stroke-width="3"/><circle cx="' + X(bio.light) + '" cy="' + Y(r.net) + '" r="6" fill="var(--acc2)"/>' +
                 (comp > 0 ? '<circle cx="' + X(comp * 2) + '" cy="' + Y(0) + '" r="5" fill="var(--bad)"/><text x="' + X(comp * 2) + '" y="' + (Y(0) - 10) + '" font-size="11" fill="var(--bad)" text-anchor="middle">compensation point</text>' : '') +
-                '<text x="' + (W - pad) + '" y="' + (H - 8) + '" font-size="11" fill="var(--mut)" text-anchor="end">light →</text></svg>' +
+                '<text x="' + (W - pad) + '" y="' + (H - 8) + '" font-size="11" fill="var(--mut)" text-anchor="end">light →</text>' +
+                [25, 50, 75, 100].map(L => '<text x="' + X(L).toFixed(1) + '" y="' + (H - pad + 14) + '" font-size="10" fill="var(--mut)" text-anchor="middle">' + L + '</text>').join("") +
+                [0.25, 0.5, 0.75, 1].map(fr => '<text x="' + (pad - 5) + '" y="' + (Y(mn + (mx - mn) * fr) + 3).toFixed(1) + '" font-size="10" fill="var(--mut)" text-anchor="end">' + fmt(mn + (mx - mn) * fr, 0) + '</text>').join("") + '</svg>' +
                 '<div style="display:flex;gap:6px;margin-top:8px">' + [["light", r.L, "var(--orange)"], ["CO₂", r.C, "var(--acc)"], ["temp", r.tF, "var(--ok)"]].map(fc => '<div style="flex:1;background:var(--chip);border-radius:8px;padding:6px;text-align:center"><div style="height:8px;border-radius:99px;background:var(--bd);overflow:hidden"><div style="height:100%;width:' + Math.round(fc[1] * 100) + '%;background:' + fc[2] + '"></div></div><div style="font-size:11px;color:var(--mut);margin-top:4px">' + fc[0] + ' factor ' + Math.round(fc[1] * 100) + '%</div></div>').join("") + '</div>';
             nt = ro("Gross photosynthesis", fmt(r.gross, 1)) + ro("Respiration", fmt(r.resp, 1)) + ro("Net O₂ output", fmt(r.net, 1)) + ro("Limiting factor", r.limiting) +
                 why("Rate = light-saturation × CO₂-saturation × enzyme-temperature curve; respiration runs its own Q10 curve, so the compensation point (red dot, net = 0) emerges from the model. Raise the limiting factor to raise the rate — raising the others won't.");
         } else if (bio.tab === "enz") {
-            const r = BioCore.enzyme(bio);
+            const r = BioCore.enzyme({ id: bio.enz, temp: bio.etemp, ph: bio.ph, S: bio.S });
             const W = 520, H = 220, pad = 30, curve = [];
             for (let T = 0; T <= 80; T += 1) curve.push(BioCore.enzyme({ id: bio.enz, temp: T, ph: bio.ph, S: bio.S }).activity);
             const X = i => pad + i / 80 * (W - 2 * pad), Y = v => H - pad - v / 100 * (H - 2 * pad);
-            st = '<svg viewBox="0 0 ' + W + ' ' + H + '"><line x1="' + pad + '" y1="' + Y(0) + '" x2="' + (W - pad) + '" y2="' + Y(0) + '" stroke="var(--mut)" stroke-width="1.5"/><polyline points="' + curve.map((v, i) => X(i) + ',' + Y(v)).join(" ") + '" fill="none" stroke="var(--acc)" stroke-width="3"/><circle cx="' + X(bio.temp) + '" cy="' + Y(r.activity) + '" r="6" fill="var(--acc2)"/><text x="' + (W - pad) + '" y="' + (H - 8) + '" font-size="11" fill="var(--mut)" text-anchor="end">temperature →</text></svg>';
+            st = '<svg viewBox="0 0 ' + W + ' ' + H + '"><line x1="' + pad + '" y1="' + Y(0) + '" x2="' + (W - pad) + '" y2="' + Y(0) + '" stroke="var(--mut)" stroke-width="1.5"/><polyline points="' + curve.map((v, i) => X(i) + ',' + Y(v)).join(" ") + '" fill="none" stroke="var(--acc)" stroke-width="3"/><circle cx="' + X(bio.etemp) + '" cy="' + Y(r.activity) + '" r="6" fill="var(--acc2)"/><text x="' + (W - pad) + '" y="' + (H - 8) + '" font-size="11" fill="var(--mut)" text-anchor="end">temperature →</text>' +
+                [0, 20, 37, 60, 80].map(T => '<text x="' + X(T).toFixed(1) + '" y="' + (H - pad + 14) + '" font-size="10" fill="var(--mut)" text-anchor="middle">' + T + '°</text>').join("") +
+                [0, 25, 50, 75, 100].map(a => '<text x="' + (pad - 5) + '" y="' + (Y(a) + 3).toFixed(1) + '" font-size="10" fill="var(--mut)" text-anchor="end">' + a + '</text>').join("") + '</svg>';
             nt = ro("Activity", fmt(r.activity, 1) + "%") + ro("Temperature factor", fmt(r.tC * 100, 0) + "%") + ro("pH factor", fmt(r.pC * 100, 0) + "%") + ro("Substrate (Michaelis–Menten)", fmt(r.mm * 100, 0) + "%") + ro("Holding you back", r.worst) +
                 why(r.e.n + ": " + r.e.where + ". Activity = temperature curve (Q10 rise, sharp denaturation past " + r.e.tOpt + "°C) × pH curve (optimum " + r.e.phOpt + ") × S/(S+Km). The cliff after the optimum is denaturation — irreversible, unlike a simple slow-down.");
         } else if (bio.tab === "gen") {
@@ -1739,9 +1755,10 @@ if (!window.LAB_LOCKED && window.PhysCore && window.BioCore) (function () {
             if (bio.di) traits.push({ dom: t2[1], rec: t2[2], p1: bio.p1b, p2: bio.p2b, domName: t2[3], rName: t2[4] });
             const r = BioCore.cross({ traits: traits });
             const half = r.grid[0][0].length / 2;
+            r.lastPheno = Object.entries(r.pheno).sort((a, b) => b[1] - a[1]).map(e2 => e2[1]).join(":");
             st = '<table class="pgrid"><tr><th></th>' + r.grid[0].map((_, j) => '<th>' + r.grid[0][j].slice(half) + '</th>').join("") + '</tr>' +
                 r.grid.map((row, i) => '<tr><th>' + row[0].slice(0, half) + '</th>' + row.map(g => '<td>' + g + '</td>').join("") + '</tr>').join("") + '</table>';
-            nt = "<b>Phenotype ratio</b> " + Object.entries(r.pheno).sort((a, b) => b[1] - a[1]).map(([k, v]) => k + ": " + v).join(" : ") + "<br><br><b>Genotypes</b><br>" + Object.entries(r.geno).map(([k, v]) => k + " ×" + v).join(", ") +
+            nt = '<div id="nb"></div><b>Phenotype ratio</b> ' + Object.entries(r.pheno).sort((a, b) => b[1] - a[1]).map(([k, v]) => k + ": " + v).join(" : ") + "<br><br><b>Genotypes</b><br>" + Object.entries(r.geno).map(([k, v]) => k + " ×" + v).join(", ") +
                 why("Gametes form by Mendel's law of segregation (one allele per trait each)" + (bio.di ? " and independent assortment (the two traits shuffle freely)" : "") + "; the square lists every fertilisation combination. Change any parent and the ratios follow.");
         } else {
             const r = BioCore.chain(bio), mx = r.levels[0].kJ;
@@ -1749,17 +1766,58 @@ if (!window.LAB_LOCKED && window.PhysCore && window.BioCore) (function () {
             nt = ro("Efficiency", (r.eff * 100).toFixed(0) + "%") + ro("Top level energy", fmt(r.levels[r.levels.length - 1].kJ, 1) + " kJ") +
                 why("Each level keeps only the transferred fraction (the 10% law: respiration, heat and waste take the rest). That is why food chains rarely exceed four or five levels — slide efficiency to 20% and watch a fifth level become possible.");
         }
-        $("bioStage").innerHTML = st; $("bioNote").innerHTML = "<h3>Readings</h3>" + nt;
+        $("bioStage").innerHTML = st; $("bioNote").innerHTML = "<h3>Readings</h3>" + nt + '<div id="nb"></div>';
+        nbRender();
+    }
+    function rvUp(which) {
+        const U = { v0: " m/s", ang: "°", h0: " m", V: " V", f: " cm", u: " cm", light: "%", co2: " ppm", ptemp: "°C", etemp: "°C", prod: " kJ", eff: "%", k: "" };
+        const src = which === "phy" ? phy : bio;
+        document.querySelectorAll("#" + (which === "phy" ? "phyCtl" : "bioCtl") + " [data-rv]").forEach(sp => { const k = sp.dataset.rv; if (src[k] !== undefined) sp.textContent = src[k] + (U[k] !== undefined ? U[k] : which === "phy" ? " Ω" : ""); });
+    }
+    /* v93: lab notebook — commit a reading when a control is released */
+    let nb = [];
+    function nbAdd(title, detail) {
+        const d = new Date();
+        nb.unshift({ t: String(d.getMinutes()).padStart(2, "0") + ":" + String(d.getSeconds()).padStart(2, "0"), title: title, d: detail });
+        if (nb.length > 30) nb.pop();
+        nbRender();
+    }
+    function nbRender() {
+        const el = $("nb"); if (!el) return;
+        el.innerHTML = '<div class="nb"><div><span>📓 Lab notebook · ' + nb.length + '</span><button type="button" onclick="LABX.nbClear()">Clear</button></div>' +
+            (nb.length ? nb.map(e => '<div class="nbe"><time>' + e.t + '</time><b>' + e.title + '</b><span>' + e.d + '</span></div>').join("") : '<div style="opacity:.7">Release a slider or change a setting to record a reading here — like writing results in a practical file.</div>') + '</div>';
+    }
+    function nbNow(sec) {
+        try {
+            if (sec === "phy") {
+                if (phy.rig === "proj") { const p = PhysCore.projectile(phy); nbAdd("🎯 Projectile", "v₀=" + phy.v0 + " m/s, θ=" + phy.ang + "°, h₀=" + phy.h0 + " m" + (phy.drag ? ", drag k=" + phy.k : "") + " → R=" + fmt(p.R, 1) + " m, T=" + fmt(p.T) + " s, H=" + fmt(p.H, 1) + " m"); }
+                else if (phy.rig === "circ") { const rs = [phy.r1, phy.r2, phy.r3].filter(r => r > 0); const c = PhysCore.circuit({ V: phy.V, mode: phy.mode, rs: rs }); if (c) nbAdd("🔌 Circuit", phy.mode + ", " + phy.V + " V, R=[" + rs.join(", ") + "] Ω → Req=" + fmt(c.Req, 2) + " Ω, I=" + fmt(c.I, 3) + " A, P=" + fmt(c.P, 2) + " W"); }
+                else if (phy.rig === "opt") { const f = (phy.kind === "lensn" || phy.kind === "mirror") ? -phy.f : phy.f; const kind = phy.kind.indexOf("lens") === 0 ? "lens" : "mirror"; const o = PhysCore.optics({ kind: kind, f: f, u: phy.u }); nbAdd("🔭 Optics", phy.kind + ", f=" + f + " cm, u=−" + phy.u + " cm → v=" + fmt(o.v, 1) + " cm, M=" + fmt(o.M, 2) + (o.atF ? " (at focus)" : o.real ? " (real)" : " (virtual)")); }
+                else { const r = PhysCore.solve(phy.known, [phy.topic]); const got = r.trace.length ? r.trace.map(t => t.got + "=" + fmt(r.vals[t.got], 3)).join(", ") : "nothing new"; nbAdd("🧮 Solver", phy.topic + ": " + (Object.keys(phy.known).length ? Object.keys(phy.known).map(k => k + "=" + phy.known[k]).join(", ") : "no knowns") + " → " + got); }
+            } else {
+                if (bio.tab === "photo") { const r = BioCore.photo({ light: bio.light, co2: bio.co2, temp: bio.ptemp }); nbAdd("🌿 Photosynthesis", "light=" + bio.light + "%, CO₂=" + bio.co2 + " ppm, T=" + bio.ptemp + "°C → net=" + fmt(r.net, 1) + ", limiting: " + r.limiting); }
+                else if (bio.tab === "enz") { const r = BioCore.enzyme({ id: bio.enz, temp: bio.etemp, ph: bio.ph, S: bio.S }); nbAdd("🧫 Enzyme", r.e.n + " at " + bio.etemp + "°C, pH " + bio.ph + ", S=" + bio.S + " mM → activity " + fmt(r.activity, 1) + "%"); }
+                else if (bio.tab === "gen") { const t1 = TRAITS[bio.trait]; const t2 = TRAITS[(bio.trait + 1) % 3]; const traits = [{ dom: t1[1], rec: t1[2], p1: bio.p1, p2: bio.p2, domName: t1[3], rName: t1[4] }]; if (bio.di) traits.push({ dom: t2[1], rec: t2[2], p1: bio.p1b, p2: bio.p2b, domName: t2[3], rName: t2[4] }); const r = BioCore.cross({ traits: traits }); const ratio = Object.entries(r.pheno).sort((a, b) => b[1] - a[1]).map(e2 => e2[0] + "×" + e2[1]).join(" : "); nbAdd("🧬 Cross", bio.p1 + "×" + bio.p2 + (bio.di ? " ; " + bio.p1b + "×" + bio.p2b : "") + " → " + ratio); }
+                else { const r = BioCore.chain(bio); nbAdd("🕸 Food chain", bio.prod + " kJ, " + bio.lv + " levels, " + bio.eff + "% → top " + fmt(r.levels[r.levels.length - 1].kJ, 1) + " kJ"); }
+            }
+        } catch (err) { /* a failed reading must never break the bench */ }
     }
     window.LABX = {
         setSec: setSec,
-        phyRig: r => { phy.rig = r; phyCtl(); },
-        phySet: (k, v) => { phy[k] = v; phyUp(); },
+        phyRig: r => { phy.rig = r; phyCtl(); nbRender(); },
+        phySet: (k, v, cm) => {
+            if (k === "topic" && v !== phy.topic) phy.known = {};
+            phy[k] = v;
+            if (cm === 2) { phyCtl(); nbNow("phy"); return; }
+            rvUp("phy"); phyUp();
+            if (cm === 3) nbNow("phy");
+        },
         phyKnown: (k, v) => { const n = parseFloat(v); if (v === "" || isNaN(n)) delete phy.known[k]; else phy.known[k] = n; phyUp(); },
         phyUp: phyUp,
-        bioTab: t => { bio.tab = t; bioCtl(); },
-        bioSet: (k, v) => { bio[k] = v; if (k === "trait" || k === "di") bioCtl(); else bioUp(); },
-        bioUp: bioUp
+        bioTab: t => { bio.tab = t; bioCtl(); nbRender(); },
+        bioSet: (k, v, cm) => { bio[k] = v; if (k === "trait" || k === "di") { bioCtl(); nbNow("bio"); } else { rvUp("bio"); bioUp(); if (cm === 3) nbNow("bio"); } },
+        bioUp: bioUp,
+        nbClear: () => { nb = []; nbRender(); }
     };
 })();
 </script>
