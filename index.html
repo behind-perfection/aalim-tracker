@@ -4897,7 +4897,7 @@ function storyTab(r) {
         + (r.chars.map(c => `<div class="insight"><div class="row" style="padding:0"><b>${esc(c.n)}</b><span><span class="pill">${esc(c.role)}</span> <button type="button" class="danger" onclick="resRm('chars','${c.id}')">✕</button></span></div>${c.d ? `<div style="margin-top:4px">${esc(c.d)}</div>` : ""}</div>`).join("") || '<div class="muted">No characters yet.</div>');
 }
 /* ===== Navigation v79: 7 grouped tabs with sub-tabs, laptop sidebar + keyboard shortcuts, phone bottom bar ===== */
-const LAB_LOCKED = true; // The Virtual Lab is locked. To open it again: set this to false here AND in chemlab.html, and add chemlab.html + chemcore.js back to ASSETS in sw.js.
+const LAB_LOCKED = false; // The Virtual Lab is OPEN (v91: Chemistry + Physics + Biology sections). To lock it: set true here AND in chemlab.html.
 const HUBS = [
     { id: "home", ic: "🏠", l: "Home", k: "1", pages: [["dashboard", "Dashboard"], ["today", "Today"], ["calendar", "Calendar & Trends"]] },
     { id: "study", ic: "📖", l: "Study", k: "2", pages: [["study", "Study Log"], ["syllabus", "Syllabus"], ["exams", "Exams"], ["homework", "Homework"], ["practice", "Practice"], ["paper", "Past Papers"]] },
@@ -5020,7 +5020,7 @@ main{width:auto;max-width:1600px;margin:16px 24px 36px}footer{width:auto;margin-
 }
 setTimeout(navInit, 0);
 /* ===== Version label ===== */
-const APP_VERSION = "v90"; // keep in step with CACHE in sw.js
+const APP_VERSION = "v91"; // keep in step with CACHE in sw.js
 function paintVer() { ["appVer", "appVer2"].forEach(id => { const el = $(id); if (el)
     el.textContent = APP_VERSION + (navigator.onLine ? "" : " · offline"); }); }
 window.addEventListener("online", paintVer);
