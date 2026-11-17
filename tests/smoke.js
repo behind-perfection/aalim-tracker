@@ -78,7 +78,13 @@ JSDOM.fromFile(path.resolve(ROOT, "index.html"), {
         const k = doc.querySelector(".stinger.karate");
         ok("karate tab plays the karate sequence", !!k && !!k.querySelector(".k-legF") && (k.textContent || "").includes("HIYAA!"));
         w.showPage("study");
-        ok("other tabs play a themed pop", !!doc.querySelector(".stinger .fxPop .e"));
+        ok("study tab plays the book sequence", !!doc.querySelector(".stinger.seq .fxSeq svg .fx-open"));
+        w.showPage("practice");
+        ok("practice tab plays the target sequence", !!doc.querySelector(".stinger.seq .fx-dart"));
+        w.showPage("hof");
+        ok("hall of fame plays the trophy sequence", !!doc.querySelector(".stinger.seq .fx-shine"));
+        w.hbOpen("read");
+        ok("reading hobby tab plays page-turn", !!doc.querySelector(".stinger.seq .fxSeq svg"));
         setTimeout(() => {
             ok("stingers clean themselves up", doc.querySelectorAll(".stinger").length === 0);
             console.log("=== SMOKE RESULT ===");
