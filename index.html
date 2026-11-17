@@ -41,7 +41,7 @@
 <link rel="manifest" href="manifest.webmanifest"><meta name="theme-color" content="#263b8f"><link rel="icon" type="image/png" sizes="192x192" href="icon-192.png"><link rel="icon" type="image/png" sizes="512x512" href="icon-512.png"><link rel="shortcut icon" type="image/png" href="icon-192.png"><link rel="apple-touch-icon" sizes="192x192" href="icon-192.png"><meta name="apple-mobile-web-app-capable" content="yes">
 <title>Aalim's Class 10 Command Centre — Udaan</title>
 <style>
-:root{--ringbg:#edf0f5;--bg:#f4f6fb;--card:#fff;--text:#18202a;--muted:#687386;--accent:#315efb;--accent2:#7c3aed;--green:#15803d;--orange:#c2410c;--red:#b42318;--border:#e2e7ef;--shadow:0 8px 28px #1725540d}
+:root{color-scheme:light;--ringbg:#edf0f5;--bg:#f4f6fb;--card:#fff;--text:#18202a;--muted:#687386;--accent:#315efb;--accent2:#7c3aed;--green:#15803d;--orange:#c2410c;--red:#b42318;--border:#e2e7ef;--shadow:0 8px 28px #1725540d}
 *{box-sizing:border-box}body{margin:0;font-family:Inter,Segoe UI,Arial,sans-serif;background:var(--bg);color:var(--text)}
 header{padding:16px 5vw 10px;background:linear-gradient(135deg,#111827,#263b8f);color:#fff;position:sticky;top:0;z-index:10;box-shadow:0 3px 18px #0002}
 .header{max-width:1250px;margin:auto}.brand{display:flex;justify-content:space-between;gap:15px;align-items:center}header h1{margin:0 0 6px;font-size:clamp(25px,4vw,38px)}header p{margin:0;color:#dbe3ff}
@@ -72,7 +72,7 @@ table{width:100%;border-collapse:collapse}th,td{padding:9px;border-bottom:1px so
 .bar{width:100%;background:linear-gradient(180deg,var(--accent),var(--accent2));border-radius:6px 6px 0 0;opacity:.5}.hl .bar{opacity:1}.barval{font-size:11px;color:var(--muted);margin-bottom:3px;white-space:nowrap}.barlab{font-size:11px;color:var(--muted);margin-top:5px;white-space:nowrap}.hl .barlab{color:var(--text);font-weight:700}
 .navrow{display:flex;gap:8px;align-items:center;justify-content:space-between;flex-wrap:wrap;margin-bottom:12px}.navrow h3{margin:0}.navrow button{padding:7px 12px}
 .sess{padding:8px 0;border-bottom:1px solid #edf0f4}.sess:last-child{border:0}
-[data-theme=dark]{--bg:#0e1320;--card:#161c2d;--text:#e6eaf3;--muted:#9aa6bd;--accent:#6b8bff;--accent2:#a78bfa;--green:#4ade80;--orange:#fb923c;--red:#f87171;--border:#2a3349;--shadow:0 8px 28px #0006;--ringbg:#2a3349}
+[data-theme=dark]{color-scheme:dark;--bg:#0e1320;--card:#161c2d;--text:#e6eaf3;--muted:#9aa6bd;--accent:#6b8bff;--accent2:#a78bfa;--green:#4ade80;--orange:#fb923c;--red:#f87171;--border:#2a3349;--shadow:0 8px 28px #0006;--ringbg:#2a3349}
 [data-theme=dark] .subject,[data-theme=dark] .calday{background:var(--card)}[data-theme=dark] .calday.blank{background:none}
 [data-theme=dark] input,[data-theme=dark] select,[data-theme=dark] textarea{background:#0f1525;color:var(--text)}
 [data-theme=dark] .stat,[data-theme=dark] .insight{background:#1c2438}[data-theme=dark] .progress{background:#2a3349}[data-theme=dark] .chapter,[data-theme=dark] .sess{border-color:var(--border)}
@@ -86,7 +86,7 @@ table{width:100%;border-collapse:collapse}th,td{padding:9px;border-bottom:1px so
 nav button{transition:background .15s}nav button:hover{background:#ffffff38}nav{scrollbar-width:thin}
 .musc{cursor:pointer;transition:fill-opacity .15s;stroke:var(--card);stroke-width:1.5}.musc:hover{stroke:var(--accent2)}.musc.sel{stroke:var(--accent2);stroke-width:3}
 @media(prefers-reduced-motion:reduce){.page.active{animation:none}}
-@media print{header,nav,footer,.noprint,button{display:none!important}.page{display:none!important}#report.page{display:block!important}body{background:#fff!important;color:#000}main{width:100%;margin:0}.card{box-shadow:none;break-inside:avoid;border:1px solid #ccc}:root,[data-theme=dark]{--bg:#fff;--card:#fff;--text:#000;--muted:#444;--border:#ccc;--ringbg:#eee}input,select,textarea{background:#fff!important;color:#000!important}.bar{opacity:1}}
+@media print{.stinger{display:none!important}header,nav,footer,.noprint,button{display:none!important}.page{display:none!important}#report.page{display:block!important}body{background:#fff!important;color:#000}main{width:100%;margin:0}.card{box-shadow:none;break-inside:avoid;border:1px solid #ccc}:root,[data-theme=dark]{--bg:#fff;--card:#fff;--text:#000;--muted:#444;--border:#ccc;--ringbg:#eee}input,select,textarea{background:#fff!important;color:#000!important}.bar{opacity:1}}
 .hbgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(310px,1fr));gap:12px}.hbcard{border:1px solid var(--border);border-radius:14px;padding:13px;background:var(--card)}.hbcard.arch{opacity:.7}.hbhead{display:flex;gap:8px;align-items:center}.hbname{font-weight:800;font-size:16px;flex:1;min-width:0}.hbst{width:auto;flex:none}.hbprog{margin:8px 0;font-size:13px;color:var(--muted)}.hbfields{display:grid;grid-template-columns:1fr 1fr;gap:8px}.hbfields label{font-size:11px;color:var(--muted);font-weight:700}.hbfields input,.hbfields select{margin-top:2px}.hbms{display:flex;flex-wrap:wrap;gap:6px 12px;margin-top:10px;font-size:13px;align-items:center}.hbms input[type=checkbox]{width:auto}.hbms span input{width:130px}.hbact{margin-top:10px;display:flex;gap:6px;flex-wrap:wrap}
 @media(min-width:900px){#extra .formgrid{grid-template-columns:repeat(3,1fr)}#extra .formgrid .full{grid-column:1/-1}}
 .hbtabs{display:flex;gap:6px;overflow-x:auto;padding:2px 0 12px;margin:0 0 4px;position:sticky;top:0;z-index:5;background:var(--bg)}.hbtabs button{flex:none;border:1px solid var(--border);background:var(--card);color:var(--text);border-radius:999px;padding:8px 14px;font-weight:700;font-size:14px;box-shadow:none}.hbtabs button.on{background:var(--accent);color:#fff;border-color:var(--accent)}.hbpanel{display:none}.hbpanel.on{display:block}
@@ -433,6 +433,7 @@ body.fs-open{overflow:hidden}
 </section>
 
 <section id="settings" class="page">
+<div class="card"><h2>🔄 App updates</h2><p class="muted">Updates install themselves in the background: when a new version is ready you get an "Update now" banner, and it auto-applies while the app is closed or in the background. This button forces a check right now.</p><div class="row" style="justify-content:flex-start"><button type="button" class="action" onclick="checkAppUpdate()">Check for updates</button> <span id="updStatus" class="muted" role="status"></span></div></div>
 <div class="card"><h2>⚙ Exam Dates & Settings</h2><p class="muted">Countdowns tick every second and show days, hours, minutes and seconds. Enter the actual date/time once your school/CBSE schedule is known.</p>
 <div class="formgrid"><div><label>Mid-Term date & time</label><input id="midInput" type="datetime-local"></div><div><label>Board exam date & time</label><input id="boardInput" type="datetime-local"></div><div><button class="action" onclick="saveSettings()">Save Dates</button></div></div></div>
 <div class="card"><h2>😴 Daily Schedule</h2><p class="muted">Your waking day drives the "My Day" timer on the Dashboard and Today page.</p><div class="formgrid"><div><label>Wake up</label><input id="wakeInput" type="time" onchange="saveDay()"></div><div><label>Sleep</label><input id="sleepInput" type="time" onchange="saveDay()"></div></div><div id="dayCfgBox"></div></div>
@@ -471,7 +472,8 @@ body.fs-open{overflow:hidden}
 </main>
 <footer>Aalim's Class 10 Command Centre • Offline-first • Udaan</footer>
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="supabase-2.119.0.js"></script>
+<script>window.supabase||document.write('<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.119.0"><\/script>')</script>
 <script src="cloud-config.js"></script>
 <script>
 "use strict";
@@ -608,7 +610,81 @@ function showPage(id) {
     document.querySelectorAll("nav button").forEach(x => x.classList.toggle("active", x.dataset.page === id));
     renderAll();
     window.scrollTo({ top: 0, behavior: "smooth" });
+    fxPage(id);
 }
+/* ===== v88: tab-open animations. Every tab gets a themed entrance; the
+   Karate tab gets a full punch-kick-"HIYAA!" sequence. Pure CSS/SVG, no
+   assets, and fully switched off for prefers-reduced-motion. ===== */
+const KARATE_SVG = `<div class="kbox"><svg viewBox="0 0 240 190" aria-hidden="true">
+<g class="k-zoom" stroke="var(--muted)" stroke-width="5" stroke-linecap="round"><line x1="6" y1="70" x2="52" y2="70"/><line x1="0" y1="95" x2="40" y2="95"/><line x1="8" y1="120" x2="48" y2="120"/></g>
+<g class="k-fig" stroke="var(--text)" stroke-linecap="round" fill="none">
+<g class="k-lean"><circle cx="110" cy="44" r="13" fill="var(--text)" stroke="none"/><line x1="110" y1="57" x2="110" y2="112" stroke-width="15"/><line x1="98" y1="97" x2="122" y2="97" stroke="var(--red)" stroke-width="7"/>
+<g class="k-armB"><line x1="110" y1="70" x2="86" y2="92" stroke-width="10"/></g><g class="k-armF"><line x1="110" y1="70" x2="140" y2="86" stroke-width="10"/></g></g>
+<g class="k-legB"><line x1="110" y1="112" x2="95" y2="164" stroke-width="11"/></g><g class="k-legF"><line x1="110" y1="112" x2="125" y2="164" stroke-width="11"/></g></g>
+<text class="k-hit1" x="146" y="72" font-size="30">💥</text><text class="k-hit2" x="176" y="104" font-size="40">💥</text>
+<text class="k-shout" x="126" y="30" font-size="26" font-weight="800" fill="var(--red)">HIYAA!</text></svg></div>`;
+/* v88b: one fitting little sequence per tab, drawn as line-art SVG. */
+const FX_SVG = {
+    sun: `<div class="fxSeq"><svg viewBox="0 0 200 120"><g stroke="currentColor" stroke-width="6" stroke-linecap="round" fill="none"><line class="fx-d" pathLength="1" x1="18" y1="96" x2="182" y2="96"/><g class="fx-rise"><circle cx="100" cy="96" r="27" fill="var(--orange)" stroke="none"/><g stroke="var(--orange)"><line x1="100" y1="52" x2="100" y2="40"/><line x1="66" y1="62" x2="58" y2="52"/><line x1="134" y1="62" x2="142" y2="52"/><line x1="52" y1="86" x2="40" y2="82"/><line x1="148" y1="86" x2="160" y2="82"/></g></g></g></svg></div>`,
+    checks: `<div class="fxSeq"><svg viewBox="0 0 200 120"><g stroke="currentColor" stroke-width="6" stroke-linecap="round" fill="none"><rect x="42" y="20" width="24" height="24" rx="5"/><path class="fx-d" pathLength="1" style="--dl:.15s" d="M48 32 l6 7 l12 -14" stroke="var(--green)"/><line class="fx-d" pathLength="1" style="--dl:.1s" x1="80" y1="32" x2="158" y2="32"/><rect x="42" y="48" width="24" height="24" rx="5"/><path class="fx-d" pathLength="1" style="--dl:.35s" d="M48 60 l6 7 l12 -14" stroke="var(--green)"/><line class="fx-d" pathLength="1" style="--dl:.3s" x1="80" y1="60" x2="150" y2="60"/><rect x="42" y="76" width="24" height="24" rx="5"/><path class="fx-d" pathLength="1" style="--dl:.55s" d="M48 88 l6 7 l12 -14" stroke="var(--green)"/><line class="fx-d" pathLength="1" style="--dl:.5s" x1="80" y1="88" x2="142" y2="88"/></g></svg></div>`,
+    calflip: `<div class="fxSeq"><svg viewBox="0 0 200 120"><g stroke="currentColor" stroke-width="6" stroke-linecap="round" fill="none"><rect x="58" y="26" width="84" height="16" rx="4"/><line x1="76" y1="20" x2="76" y2="30"/><line x1="124" y1="20" x2="124" y2="30"/><g class="fx-tear" style="--dl:.3s"><rect x="58" y="42" width="84" height="62" rx="6" fill="var(--card)"/><g stroke="var(--accent)" stroke-width="5"><line x1="72" y1="60" x2="84" y2="60"/><line x1="94" y1="60" x2="106" y2="60"/><line x1="116" y1="60" x2="128" y2="60"/><line x1="72" y1="78" x2="84" y2="78"/><line x1="94" y1="78" x2="106" y2="78"/></g></g></g></svg></div>`,
+    book: `<div class="fxSeq"><svg viewBox="0 0 200 120"><g stroke="currentColor" stroke-width="6" stroke-linecap="round" fill="none"><line x1="100" y1="28" x2="100" y2="96"/><g class="fx-open" style="transform-origin:100px 60px;--from:70deg"><path d="M100 28 C82 22 62 22 46 28 L46 96 C62 90 82 90 100 96"/></g><g class="fx-open" style="transform-origin:100px 60px;--from:-70deg"><path d="M100 28 C118 22 138 22 154 28 L154 96 C138 90 118 90 100 96"/></g><path class="fx-open" style="transform-origin:100px 60px;--from:40deg;--dl:.18s" stroke-width="4" d="M100 34 C88 30 76 30 66 33"/></g></svg></div>`,
+    pipe: `<div class="fxSeq"><svg viewBox="0 0 200 120"><g stroke="currentColor" stroke-width="6" stroke-linecap="round" fill="none"><line class="fx-d" pathLength="1" x1="16" y1="60" x2="172" y2="60"/><path class="fx-p" style="--dl:.68s" d="M172 48 l14 12 l-14 12"/></g><g stroke="none"><circle class="fx-p" cx="24" cy="60" r="6" fill="var(--accent)"/><circle class="fx-p" style="--dl:.08s" cx="44" cy="60" r="6" fill="var(--accent)"/><circle class="fx-p" style="--dl:.16s" cx="64" cy="60" r="6" fill="var(--accent)"/><circle class="fx-p" style="--dl:.24s" cx="84" cy="60" r="6" fill="var(--accent)"/><circle class="fx-p" style="--dl:.32s" cx="104" cy="60" r="6" fill="var(--accent)"/><circle class="fx-p" style="--dl:.4s" cx="124" cy="60" r="6" fill="var(--accent)"/><circle class="fx-p" style="--dl:.48s" cx="144" cy="60" r="6" fill="var(--accent)"/><circle class="fx-p" style="--dl:.56s" cx="164" cy="60" r="6" fill="var(--green)"/></g></svg></div>`,
+    clock: `<div class="fxSeq"><svg viewBox="0 0 200 120"><g stroke="currentColor" stroke-width="6" stroke-linecap="round" fill="none"><circle class="fx-d" pathLength="1" cx="100" cy="60" r="38"/><line class="fx-tick" style="transform-origin:100px 60px" x1="100" y1="60" x2="100" y2="34"/><line class="fx-sp" style="transform-origin:100px 60px;--deg:60deg;--dur:1s" x1="100" y1="60" x2="116" y2="70"/><path class="fx-p" style="--dl:.75s" d="M52 18 l-10 -8"/><path class="fx-p" style="--dl:.75s" d="M148 18 l10 -8"/></g></svg></div>`,
+    pencil: `<div class="fxSeq"><svg viewBox="0 0 200 120"><g stroke="currentColor" stroke-width="6" stroke-linecap="round" fill="none"><line class="fx-d" pathLength="1" style="--dl:.1s" x1="30" y1="90" x2="150" y2="90"/><g class="fx-write" style="--dl:.1s"><line x1="12" y1="72" x2="28" y2="88" stroke-width="10"/><path d="M28 88 l8 8 l-12 3 z" fill="currentColor" stroke="none"/></g></g></svg></div>`,
+    target: `<div class="fxSeq"><svg viewBox="0 0 200 120"><g class="fx-shake" style="--dl:.55s"><g stroke="currentColor" stroke-width="6" fill="none"><circle class="fx-p" cx="100" cy="62" r="38"/><circle class="fx-p" style="--dl:.08s" cx="100" cy="62" r="25" stroke="var(--red)"/><circle class="fx-p" style="--dl:.16s" cx="100" cy="62" r="12" stroke="var(--red)"/></g></g><g class="fx-dart" stroke-linecap="round" fill="none"><line x1="150" y1="12" x2="112" y2="50" stroke="currentColor" stroke-width="6"/><path d="M112 50 l-6 6" stroke="var(--red)" stroke-width="8"/><path d="M150 12 l-12 2 M150 12 l-2 12" stroke="currentColor" stroke-width="5"/></g><text class="fx-p" style="--dl:.55s" x="116" y="42" font-size="26">💥</text></svg></div>`,
+    fan: `<div class="fxSeq"><svg viewBox="0 0 200 120"><g stroke="currentColor" stroke-width="5" fill="var(--card)"><rect class="fx-fan" style="--deg:-16deg" x="70" y="24" width="60" height="82" rx="5"/><rect class="fx-fan" style="--deg:16deg;--dl:.08s" x="70" y="24" width="60" height="82" rx="5"/><rect class="fx-fan" style="--deg:0deg;--dl:.16s" x="70" y="24" width="60" height="82" rx="5"/></g></svg></div>`,
+    card: `<div class="fxSeq"><svg viewBox="0 0 200 120"><g class="fx-flip"><rect x="64" y="18" width="72" height="88" rx="9" fill="var(--card)" stroke="currentColor" stroke-width="6"/><text class="fx-fout" x="100" y="76" font-size="44" text-anchor="middle" fill="currentColor" stroke="none" font-weight="800">?</text><g class="fx-fin" style="transform:scaleX(-1);transform-box:fill-box;transform-origin:50% 50%"><path d="M86 62 l10 12 l20 -24" stroke="var(--green)" stroke-width="8" fill="none" stroke-linecap="round"/></g></g></svg></div>`,
+    fix: `<div class="fxSeq"><svg viewBox="0 0 200 120"><g stroke="currentColor" stroke-width="5" stroke-linecap="round" fill="none"><line class="fx-d" pathLength="1" x1="40" y1="40" x2="160" y2="40"/><line class="fx-d" pathLength="1" style="--dl:.12s" x1="40" y1="76" x2="160" y2="76"/><g class="fx-xout" stroke="var(--red)" stroke-width="7"><line x1="52" y1="28" x2="72" y2="52"/><line x1="72" y1="28" x2="52" y2="52"/></g><path class="fx-d" pathLength="1" style="--dl:.6s" d="M50 78 l8 8 l16 -18" stroke="var(--green)" stroke-width="7"/></g></svg></div>`,
+    bulb: `<div class="fxSeq"><svg viewBox="0 0 200 120"><g stroke="currentColor" stroke-width="6" stroke-linecap="round" fill="none"><circle class="fx-p" cx="100" cy="52" r="24"/><path class="fx-p" style="--dl:.1s" d="M92 76 h16 M94 86 h12"/><path class="fx-d" pathLength="1" style="--dl:.25s" stroke-width="4" d="M92 52 q4 -10 8 0 q4 10 8 0"/><g class="fx-p" style="--dl:.4s" stroke="var(--orange)"><line x1="100" y1="16" x2="100" y2="6"/><line x1="66" y1="26" x2="58" y2="18"/><line x1="134" y1="26" x2="142" y2="18"/><line x1="58" y1="52" x2="46" y2="52"/><line x1="142" y1="52" x2="154" y2="52"/></g></g></svg></div>`,
+    tools: `<div class="fxSeq"><svg viewBox="0 0 200 120"><g stroke="currentColor" stroke-width="6" stroke-linecap="round" fill="none"><line x1="70" y1="96" x2="130" y2="96"/><line class="fx-d" pathLength="1" style="--dl:.5s" x1="100" y1="66" x2="100" y2="96"/><g class="fx-tap" style="transform-origin:70px 84px"><line x1="70" y1="84" x2="104" y2="50"/><rect x="98" y="34" width="26" height="18" rx="4" fill="currentColor" stroke="none" transform="rotate(45 111 43)"/></g><g class="fx-p" style="--dl:.45s" stroke="var(--orange)"><line x1="112" y1="60" x2="122" y2="52"/><line x1="118" y1="70" x2="130" y2="66"/><line x1="106" y1="52" x2="110" y2="40"/></g></g></svg></div>`,
+    shelf: `<div class="fxSeq"><svg viewBox="0 0 200 120"><g stroke="currentColor" stroke-width="6" stroke-linecap="round" fill="none"><line class="fx-d" pathLength="1" x1="26" y1="98" x2="174" y2="98"/><rect class="fx-rise" style="--dl:.15s" x="52" y="46" width="18" height="52" rx="3" fill="var(--accent)" stroke="none"/><rect class="fx-rise" style="--dl:.25s" x="74" y="40" width="18" height="58" rx="3" fill="var(--accent2)" stroke="none"/><rect class="fx-slide" style="--dl:.35s" x="96" y="44" width="18" height="54" rx="3" fill="var(--green)" stroke="none"/><line class="fx-fan" style="--deg:14deg;--dl:.55s" x1="120" y1="98" x2="138" y2="46" stroke-width="14"/></g></svg></div>`,
+    clapper: `<div class="fxSeq"><svg viewBox="0 0 200 120"><g stroke="currentColor" stroke-width="6" stroke-linecap="round" fill="none"><rect class="fx-p" x="52" y="56" width="96" height="44" rx="6"/><g class="fx-fan" style="--from:-32deg;--deg:0deg;--dl:.3s;transform-box:view-box;transform-origin:56px 56px"><rect x="52" y="38" width="96" height="18" rx="5"/><line x1="70" y1="38" x2="62" y2="56" stroke-width="4"/><line x1="94" y1="38" x2="86" y2="56" stroke-width="4"/><line x1="118" y1="38" x2="110" y2="56" stroke-width="4"/></g><text class="fx-p" style="--dl:.42s" x="28" y="46" font-size="24" stroke="none">✦</text></g></svg></div>`,
+    grow: `<div class="fxSeq"><svg viewBox="0 0 200 120"><g stroke="currentColor" stroke-width="6" stroke-linecap="round" fill="none"><line x1="30" y1="100" x2="170" y2="100"/><rect class="fx-g" style="--dl:.1s" x="48" y="70" width="20" height="30" rx="4" fill="var(--accent)" stroke="none"/><rect class="fx-g" style="--dl:.25s" x="84" y="52" width="20" height="48" rx="4" fill="var(--accent)" stroke="none"/><rect class="fx-g" style="--dl:.4s" x="120" y="32" width="20" height="68" rx="4" fill="var(--green)" stroke="none"/><path class="fx-d" pathLength="1" style="--dl:.55s" d="M50 60 L94 42 L130 24 L156 14"/><path class="fx-p" style="--dl:.85s" d="M156 14 l-12 0 M156 14 l-4 12"/></g></svg></div>`,
+    chart: `<div class="fxSeq"><svg viewBox="0 0 200 120"><g stroke="currentColor" stroke-width="6" stroke-linecap="round" fill="none"><path class="fx-d" pathLength="1" d="M32 16 L32 100 L176 100"/><polyline class="fx-d" pathLength="1" style="--dl:.25s" stroke="var(--accent)" points="48,84 76,64 104,72 132,40 160,28"/><g fill="var(--accent2)" stroke="none"><circle class="fx-p" style="--dl:.5s" cx="76" cy="64" r="5"/><circle class="fx-p" style="--dl:.6s" cx="104" cy="72" r="5"/><circle class="fx-p" style="--dl:.7s" cx="132" cy="40" r="5"/><circle class="fx-p" style="--dl:.8s" cx="160" cy="28" r="5"/></g></g></svg></div>`,
+    stamp: `<div class="fxSeq"><svg viewBox="0 0 200 120"><g stroke="currentColor" stroke-width="6" stroke-linecap="round" fill="none"><rect class="fx-p" x="58" y="34" width="84" height="72" rx="6" fill="var(--card)"/><line class="fx-d" pathLength="1" style="--dl:.2s" stroke-width="4" x1="72" y1="56" x2="128" y2="56"/><line class="fx-d" pathLength="1" style="--dl:.3s" stroke-width="4" x1="72" y1="72" x2="118" y2="72"/><g class="fx-fall" style="--dl:.5s"><line x1="100" y1="10" x2="100" y2="26"/><rect x="82" y="26" width="36" height="14" rx="5" fill="var(--red)" stroke="none"/></g><circle class="fx-ring" style="--dl:.82s" cx="100" cy="44" r="26" stroke="var(--red)"/></g></svg></div>`,
+    flag: `<div class="fxSeq"><svg viewBox="0 0 200 120"><g stroke="currentColor" stroke-width="6" stroke-linecap="round" fill="none"><path class="fx-d" pathLength="1" d="M16 102 L64 52 L92 78 L128 38 L184 102"/><line class="fx-d" pathLength="1" style="--dl:.5s" x1="128" y1="38" x2="128" y2="10"/><path class="fx-wave" style="--dl:.7s" d="M128 12 L158 18 L128 26 z" fill="var(--green)" stroke="var(--green)"/></g></svg></div>`,
+    loop: `<div class="fxSeq"><svg viewBox="0 0 200 120"><g stroke="currentColor" stroke-width="7" stroke-linecap="round" fill="none"><path class="fx-d" pathLength="1" d="M138 34 A44 44 0 1 0 144 74"/><path class="fx-p" style="--dl:.55s" d="M144 74 l14 -6 M144 74 l2 15"/></g></svg></div>`,
+    trophy: `<div class="fxSeq"><svg viewBox="0 0 200 120"><defs><clipPath id="fxCupClip"><path d="M76 18 h48 v22 a24 24 0 0 1 -48 0 z"/></clipPath></defs><g stroke="currentColor" stroke-width="6" stroke-linecap="round" fill="none"><path class="fx-p" d="M76 18 h48 v22 a24 24 0 0 1 -48 0 z" fill="var(--orange)"/><path class="fx-p" style="--dl:.1s" d="M76 24 h-14 a14 14 0 0 0 14 16 M124 24 h14 a14 14 0 0 1 -14 16"/><line class="fx-p" style="--dl:.18s" x1="100" y1="64" x2="100" y2="80"/><line class="fx-p" style="--dl:.24s" x1="82" y1="88" x2="118" y2="88" stroke-width="8"/><g clip-path="url(#fxCupClip)" stroke="none"><path class="fx-shine" d="M84 14 l12 0 l-10 48 l-12 0 z" fill="#fff" opacity=".8"/></g><g stroke="none" fill="var(--accent2)"><rect class="fx-p" style="--dl:.4s;rotate:20deg" x="46" y="30" width="8" height="8" rx="2"/><rect class="fx-p" style="--dl:.5s;rotate:-15deg" x="146" y="26" width="8" height="8" rx="2"/><rect class="fx-p" style="--dl:.6s;rotate:30deg" x="60" y="70" width="7" height="7" rx="2"/><rect class="fx-p" style="--dl:.68s;rotate:-25deg" x="136" y="66" width="7" height="7" rx="2"/></g></g></svg></div>`,
+    curl: `<div class="fxSeq"><svg viewBox="0 0 200 120"><g stroke="currentColor" stroke-width="8" stroke-linecap="round" fill="none"><line x1="64" y1="86" x2="98" y2="86"/><g class="fx-curl" style="transform-origin:98px 86px"><line x1="98" y1="86" x2="134" y2="86"/><line x1="128" y1="70" x2="128" y2="102" stroke-width="10"/><line x1="142" y1="74" x2="142" y2="98" stroke-width="8"/></g><path class="fx-p" style="--dl:.55s" stroke-width="5" d="M84 62 l-8 -10 M96 58 l0 -12 M108 62 l8 -10"/></g></svg></div>`,
+    barbell: `<div class="fxSeq"><svg viewBox="0 0 200 120"><g stroke="currentColor" stroke-width="6" stroke-linecap="round" fill="none"><line class="fx-d" pathLength="1" x1="24" y1="104" x2="176" y2="104"/><g class="fx-lift"><line x1="52" y1="52" x2="148" y2="52" stroke-width="7"/><rect x="40" y="34" width="12" height="36" rx="4" fill="currentColor" stroke="none"/><rect x="148" y="34" width="12" height="36" rx="4" fill="currentColor" stroke="none"/><rect x="28" y="40" width="10" height="24" rx="4" fill="currentColor" stroke="none"/><rect x="162" y="40" width="10" height="24" rx="4" fill="currentColor" stroke="none"/></g><g class="fx-p" style="--dl:.12s" stroke="var(--muted)" stroke-width="5"><line x1="44" y1="98" x2="34" y2="90"/><line x1="156" y1="98" x2="166" y2="90"/></g></g></svg></div>`,
+    crescent: `<div class="fxSeq"><svg viewBox="0 0 200 120"><g stroke="none"><path class="fx-p" d="M112 18 a44 44 0 1 0 0 84 a36 36 0 1 1 0 -84 z" fill="var(--orange)"/><path class="fx-tw" style="--dl:.35s" d="M140 34 l4 10 l10 4 l-10 4 l-4 10 l-4 -10 l-10 -4 l10 -4 z" fill="var(--accent2)"/><path class="fx-tw" style="--dl:.55s" d="M158 66 l3 7 l7 3 l-7 3 l-3 7 l-3 -7 l-7 -3 l7 -3 z" fill="var(--accent2)"/><path class="fx-tw" style="--dl:.75s" d="M132 84 l2 6 l6 2 l-6 2 l-2 6 l-2 -6 l-6 -2 l6 -2 z" fill="var(--accent2)"/></g></svg></div>`,
+    brush: `<div class="fxSeq"><svg viewBox="0 0 200 120"><g stroke-linecap="round" fill="none"><path class="fx-d" pathLength="1" style="--dur:.6s" d="M30 82 C60 58 120 96 168 62" stroke="var(--accent2)" stroke-width="12"/><g class="fx-brush"><line x1="150" y1="70" x2="176" y2="40" stroke="currentColor" stroke-width="8"/><rect x="142" y="66" width="14" height="12" rx="3" fill="var(--muted)" stroke="none" transform="rotate(-45 149 72)"/><path d="M146 78 q-8 8 -14 10 q2 -8 8 -14 z" fill="var(--accent2)" stroke="none"/></g></g></svg></div>`,
+    flask: `<div class="fxSeq"><svg viewBox="0 0 200 120"><g stroke="currentColor" stroke-width="6" stroke-linecap="round" fill="none"><path class="fx-d" pathLength="1" d="M88 14 h24 M94 14 v26 L64 92 a10 10 0 0 0 9 14 h54 a10 10 0 0 0 9 -14 L106 40 V14"/><path class="fx-rise" style="--dl:.3s" d="M76 74 h48 l10 20 a8 8 0 0 1 -7 10 H73 a8 8 0 0 1 -7 -10 z" fill="var(--accent)" stroke="none" opacity=".85"/><g fill="var(--card)" stroke="none"><circle class="fx-bb" style="--dl:.45s" cx="90" cy="88" r="5"/><circle class="fx-bb" style="--dl:.6s" cx="106" cy="92" r="4"/><circle class="fx-bb" style="--dl:.75s" cx="98" cy="84" r="3"/></g></g></svg></div>`,
+    gears: `<div class="fxSeq"><svg viewBox="0 0 200 120"><g stroke="currentColor" stroke-width="6" stroke-linecap="round" fill="none"><g class="fx-sp" style="transform-origin:80px 60px;--dur:.9s"><circle cx="80" cy="60" r="24"/><g stroke-width="7"><line x1="80" y1="30" x2="80" y2="22"/><line x1="80" y1="90" x2="80" y2="98"/><line x1="50" y1="60" x2="42" y2="60"/><line x1="110" y1="60" x2="118" y2="60"/><line x1="59" y1="39" x2="53" y2="33"/><line x1="101" y1="81" x2="107" y2="87"/><line x1="59" y1="81" x2="53" y2="87"/><line x1="101" y1="39" x2="107" y2="33"/></g></g><g class="fx-sp" style="transform-origin:132px 84px;--deg:-360deg;--dur:.9s"><circle cx="132" cy="84" r="15"/><g stroke-width="6"><line x1="132" y1="64" x2="132" y2="58"/><line x1="132" y1="104" x2="132" y2="110"/><line x1="112" y1="84" x2="106" y2="84"/><line x1="152" y1="84" x2="158" y2="84"/></g></g></g></svg></div>`,
+    grid: `<div class="fxSeq"><svg viewBox="0 0 200 120"><g stroke="none"><rect class="fx-p" x="52" y="20" width="44" height="36" rx="8" fill="var(--accent)"/><rect class="fx-p" style="--dl:.1s" x="104" y="20" width="44" height="36" rx="8" fill="var(--accent2)"/><rect class="fx-p" style="--dl:.2s" x="52" y="64" width="44" height="36" rx="8" fill="var(--green)"/><rect class="fx-p" style="--dl:.3s" x="104" y="64" width="44" height="36" rx="8" fill="var(--orange)"/></g></svg></div>`,
+    pageturn: `<div class="fxSeq"><svg viewBox="0 0 200 120"><g stroke="currentColor" stroke-width="6" stroke-linecap="round" fill="none"><path d="M100 28 C82 22 62 22 46 28 L46 96 C62 90 82 90 100 96"/><path d="M100 28 C118 22 138 22 154 28 L154 96 C138 90 118 90 100 96"/><path class="fx-open" style="transform-origin:100px 60px;--from:-160deg;--dl:.15s" stroke-width="4" d="M100 30 C116 25 134 25 150 30 L150 92 C134 87 116 87 100 92"/></g></svg></div>`,
+    plus: `<div class="fxSeq"><svg viewBox="0 0 200 120"><g stroke="currentColor" stroke-width="9" stroke-linecap="round" fill="none"><g class="fx-sp" style="transform-origin:100px 60px;--deg:180deg;--dur:.6s"><line x1="100" y1="32" x2="100" y2="88"/><line x1="72" y1="60" x2="128" y2="60"/></g><circle class="fx-ring" style="--dl:.35s" cx="100" cy="60" r="40" stroke="var(--accent)" stroke-width="5"/></g></svg></div>`
+};
+const FX_PAGE = { dashboard: "sun", today: "checks", calendar: "calflip", study: "book", syllabus: "pipe", exams: "clock", homework: "pencil", practice: "target", paper: "fan", flash: "card", mistakes: "fix", feynman: "bulb", research: "tools", library: "shelf", movies: "clapper", biz: "grow", analytics: "chart", report: "stamp", tasks: "flag", review: "loop", hof: "trophy", workout: "curl", lift: "barbell", deen: "crescent", extra: "brush", vlab: "flask", settings: "gears" };
+const FX_HOB = { over: "grid", read: "pageturn", new: "plus" };
+const FX_RM = window.matchMedia ? window.matchMedia("(prefers-reduced-motion: reduce)") : { matches: false };
+let fxLast = {}, fxSuppress = false;
+function fxAllow(key) { if (FX_RM.matches) return false; const n = Date.now(); if (fxLast[key] && n - fxLast[key] < 700) return false; fxLast[key] = n; return true; }
+function fxShow(cls, html, ttl) { const el = document.createElement("div"); el.className = "stinger " + cls; el.setAttribute("aria-hidden", "true"); el.innerHTML = html; document.body.appendChild(el); setTimeout(() => el.remove(), ttl); return el; }
+function fxPage(id) {
+    if (fxSuppress) { fxSuppress = false; return; }
+    if (!fxAllow("p" + id)) return;
+    const key = FX_PAGE[id];
+    if (key && FX_SVG[key]) { fxShow("seq", FX_SVG[key], 1150); return; }
+    const h = typeof hubOf === "function" ? hubOf(id) : null;
+    if (!h) return;
+    fxShow("", `<div class="fxPop"><span class="e">${h.ic}</span><span class="l">${esc(h.l)}</span></div>`, 780);
+}
+function fxHobby(t) {
+    const sec = state.hobbySec.find(s => s.id === t);
+    if (t === "karate") { if (fxAllow("h" + t)) fxShow("karate", KARATE_SVG, 1250); return; }
+    if (t === "runs") {
+        if (!fxAllow("h" + t)) return;
+        fxShow("", `<div class="fxRun"><span class="e">🏃</span><i style="left:16%;top:66px;animation-delay:.18s"></i><i style="left:32%;top:74px;animation-delay:.32s"></i><i style="left:48%;top:66px;animation-delay:.46s"></i></div>`, 980);
+        return;
+    }
+    if (!fxAllow("h" + t)) return;
+    const key = FX_HOB[t];
+    if (key && FX_SVG[key]) { fxShow("seq", FX_SVG[key], 1150); return; }
+    fxShow("", `<div class="fxPop"><span class="e">${esc((sec && sec.ic) || "✨")}</span></div>`, 780);
+}
+function fxStaggerInit() { document.querySelectorAll(".page").forEach(p => { p.querySelectorAll(".card").forEach((c, i) => { c.style.animationDelay = Math.min(i * 45, 360) + "ms"; }); }); }
 function initNav() {
     const items = [["dashboard", "Dashboard"], ["today", "Today"], ["homework", "Homework"], ["syllabus", "Syllabus"], ["study", "Study Log"], ["calendar", "Calendar & Trends"], ["exams", "Exam Syllabus"], ["practice", "Practice"], ["feynman", "Feynman Lab"], ["vlab", "🧪 Virtual Lab"], ["flash", "Flashcards"], ["mistakes", "Mistakes"], ["workout", "Workout"], ["lift", "Strength Lab"], ["deen", "Deen Corner"], ["library", "Library"], ["movies", "🎬 Movies"], ["research", "🛠️ Projects"], ["biz", "Business"], ["report", "Weekly Report"], ["tasks", "Goals"], ["extra", "Extra-Curriculars"], ["hof", "Hall of Fame"], ["analytics", "Analytics"], ["settings", "Settings"]];
     $("nav").innerHTML = items.map(([id, label]) => `<button type="button" data-page="${id}" onclick="showPage('${id}')">${label}</button>`).join("");
@@ -1107,7 +1183,7 @@ const BASE_TITLE = document.title;
 const QUOTES = ["Small steps every day beat big bursts once a week.", "You don't have to be perfect today. You just have to show up.", "Mistakes are just practice questions in disguise.", "Discipline is choosing what you want most over what you want now.", "If you can explain it simply, you truly understand it.", "Progress, not perfection.", "Future you is watching. Make them proud.", "Hard things get easier when you do them daily.", "One more chapter. One more page. One more question.", "Consistency turns average days into great results.", "The goal isn't to study more. It's to learn better.", "Confidence comes from preparation.", "Rest is part of the plan, not a break from it.", "Today's effort is tomorrow's easy exam."];
 let quoteShift = 0, practiceIdx = -1, showAns = false, planInit = false, attnItems = [];
 function touch(k) { state.meta[k] = Object.assign(Object.assign({}, (state.meta[k] || {})), { touched: today() }); }
-function applyTheme() { document.documentElement.dataset.theme = state.settings.theme === "dark" ? "dark" : "light"; $("themeBtn").textContent = state.settings.theme === "dark" ? "☀️" : "🌙"; }
+function applyTheme() { document.documentElement.dataset.theme = state.settings.theme === "dark" ? "dark" : "light"; $("themeBtn").textContent = state.settings.theme === "dark" ? "☀️" : "🌙"; const m = document.querySelector("meta[name=theme-color]"); if (m) m.content = state.settings.theme === "dark" ? "#0e1320" : "#263b8f"; }
 function toggleTheme() { state.settings.theme = state.settings.theme === "dark" ? "light" : "dark"; save(); applyTheme(); }
 /* batches */
 function renderBatches() {
@@ -1803,8 +1879,48 @@ cloudInit();
             syncRun(false);
     }, 60000);
 })();
-if ("serviceWorker" in navigator && /^https?:$/.test(location.protocol))
+if ("serviceWorker" in navigator && /^https?:$/.test(location.protocol)) {
     navigator.serviceWorker.register("sw.js").catch(() => { });
+    /* v90 self-update: when a newer service worker takes over, it tells this
+       tab. Offer an "Update now" banner, and auto-apply while the app is in
+       the background (every change is already saved, so reloading is safe). */
+    navigator.serviceWorker.addEventListener("message", (e) => {
+        const d = e.data || {};
+        if (d.type !== "aalim-sw-activated" || typeof d.cache !== "string") return;
+        const v = d.cache.replace("aalim-tracker-", "");
+        if (v === APP_VERSION) return;
+        if (swAutoReload || document.hidden) location.reload();
+        else swUpdateNotice(v);
+    });
+}
+let swAutoReload = false, swUpdatePending = null;
+function swUpdateNotice(v) {
+    swUpdatePending = v;
+    let b = $("swUpBar");
+    if (!b) {
+        b = document.createElement("div"); b.id = "swUpBar";
+        b.style.cssText = "position:fixed;left:10px;right:10px;bottom:12px;z-index:3000;background:#1f2937;color:#fff;border-radius:14px;padding:12px 14px;box-shadow:0 10px 30px #0007;display:flex;gap:10px;align-items:center;font-weight:600";
+        document.body.appendChild(b);
+    }
+    b.innerHTML = `<span style="flex:1">⚡ New version ${esc(v)} is ready on this device.</span><button type="button" class="action" onclick="location.reload()">Update now</button>`;
+}
+document.addEventListener("visibilitychange", () => { if (document.hidden && swUpdatePending) location.reload(); });
+async function checkAppUpdate() {
+    const st = $("updStatus"), say = (m) => { if (st) st.textContent = m; };
+    if (!("serviceWorker" in navigator) || !/^https?:$/.test(location.protocol)) return say("Needs http/https (not available in this view).");
+    say("Checking…");
+    try {
+        const t = await (await fetch("sw.js", { cache: "no-store" })).text();
+        const m = t.match(/aalim-tracker-(v\d+)/);
+        if (!m) return say("Could not read the server's version.");
+        if (m[1] === APP_VERSION) return say("Up to date (" + APP_VERSION + ").");
+        say("Found " + m[1] + " — installing…");
+        swAutoReload = true;
+        const r = await navigator.serviceWorker.getRegistration();
+        if (r) await r.update();
+        setTimeout(() => location.reload(), 3000); // fallback if the activated-message never arrives
+    } catch (e) { say("Check failed: " + (e.message || e)); }
+}
 function renderDash() {
     renderExamLinks();
     const map = dayMap(), st = streakInfo(), goal = Number(state.settings.weeklyGoal) || 0, wk = rangeMins(map, weekStart(new Date()), 7), gp = goal ? Math.round(wk / 60 / goal * 100) : 0, now = new Date();
@@ -2871,8 +2987,8 @@ function hbActivate(id, studyOnly) {
 function hbEdit(id) { editHb = id; renderHobbyCat(); }
 function hbSave(id) {
     const h = state.hobbyCat.find(x => x.id === id); if (!h) return;
-    const n = $("hbN").value.trim(); if (!n) return alert("Give the idea a name.");
-    h.n = n; h.c = $("hbC").value.trim(); h.d = $("hbD").value.trim(); h.m = $("hbM").value; editHb = null; save(); renderHobbyCat();
+    const n = $("hbEN").value.trim(); if (!n) return alert("Give the idea a name.");
+    h.n = n; h.c = $("hbEC").value.trim(); h.d = $("hbED").value.trim(); h.m = $("hbEM").value; editHb = null; save(); renderHobbyCat();
 }
 function hbNew() { const id = "c" + uid2(); state.hobbyCat.push({ id, n: "New idea", c: "", d: "", m: "sessions" }); editHb = id; save(); renderHobbyCat(); }
 function hbDel(id) { if (!confirm("Remove this idea from the catalogue? Hobbies you already added stay.")) return; state.hobbyCat = state.hobbyCat.filter(x => x.id !== id); save(); renderHobbyCat(); }
@@ -2883,7 +2999,7 @@ function renderHobbyCat() {
     seedHobbyCat();
     $("hbCat").innerHTML = state.hobbyCat.filter(h => h && h.id).map(h => {
         const ex = state.extra.find(x => x.catId === h.id || String(x.name).toLowerCase() === String(h.n).toLowerCase()), on = ex && ex.status !== "Archived";
-        if (editHb === h.id) return `<div class="stat"><input id="hbN" value="${esc(h.n)}" placeholder="Name"><input id="hbC" value="${esc(h.c || "")}" placeholder="Category" style="margin-top:6px"><input id="hbD" value="${esc(h.d || "")}" placeholder="What it builds" style="margin-top:6px"><select id="hbM" style="margin-top:6px">${MEASURES.map(([v, l]) => `<option value="${v}" ${v === h.m ? "selected" : ""}>Progress by: ${l}</option>`).join("")}</select><div style="margin-top:8px"><button type="button" class="action" onclick="hbSave('${esc(h.id)}')">Save</button> <button type="button" class="secondary" onclick="editHb=null;renderHobbyCat()">Cancel</button></div></div>`;
+        if (editHb === h.id) return `<div class="stat"><input id="hbEN" value="${esc(h.n)}" placeholder="Name"><input id="hbEC" value="${esc(h.c || "")}" placeholder="Category" style="margin-top:6px"><input id="hbED" value="${esc(h.d || "")}" placeholder="What it builds" style="margin-top:6px"><select id="hbEM" style="margin-top:6px">${MEASURES.map(([v, l]) => `<option value="${v}" ${v === h.m ? "selected" : ""}>Progress by: ${l}</option>`).join("")}</select><div style="margin-top:8px"><button type="button" class="action" onclick="hbSave('${esc(h.id)}')">Save</button> <button type="button" class="secondary" onclick="editHb=null;renderHobbyCat()">Cancel</button></div></div>`;
         return `<div class="stat"><b>${esc(h.n)}</b> ${h.so ? '<span class="pill">study-only</span>' : ""}<div class="muted" style="font-size:12.5px;text-transform:none">${esc(h.c || "")}</div><div style="font-size:13px;margin:4px 0">${esc(h.d || "")}</div>${h.s ? `<div class="muted" style="font-size:12.5px;text-transform:none">🛡 ${esc(h.s)}</div>` : ""}<div style="margin-top:8px">${HB_SEC[h.id] ? `<button type="button" class="action" onclick="hbOpen('${HB_SEC[h.id]}')">Open section</button> ` : ""}${HB_SEC[h.id] && !h.k ? "" : on ? `<span class="pill ok">In your list · ${esc(ex.status)}</span>` : `<button type="button" class="action" onclick="hbActivate('${esc(h.id)}',false)">${h.so ? "Add (study-only)" : "Add"}</button>${h.so ? "" : ` <button type="button" class="secondary" onclick="hbActivate('${esc(h.id)}',true)">Study-only</button>`}`} <button type="button" class="secondary" onclick="hbEdit('${esc(h.id)}')">Edit</button> <button type="button" class="danger" onclick="hbDel('${esc(h.id)}')">×</button></div></div>`;
     }).join("") || '<div class="empty">Catalogue is empty. Use Restore defaults.</div>';
 }
@@ -2936,7 +3052,7 @@ function reportExtra(hl, inR) {
 }
 /* ===== v82: hobby sections, reading link, word bank, quests ===== */
 let hbTab = (() => { try { return localStorage.getItem("aalimHbTab") || "over"; } catch (e) { return "over"; } })();
-function hbOpen(t) { hbTab = t; try { localStorage.setItem("aalimHbTab", t); } catch (e) { } if (curPage !== "extra") showPage("extra"); else { hbRender(); window.scrollTo({ top: 0 }); } }
+function hbOpen(t) { hbTab = t; try { localStorage.setItem("aalimHbTab", t); } catch (e) { } if (curPage !== "extra") { fxSuppress = true; showPage("extra"); } else { hbRender(); window.scrollTo({ top: 0 }); } fxHobby(t); }
 const SEC_DEFAULT = [
     { id: "draw", n: "Drawing & Sketching", ic: "🎨", foc: ["Gesture / quick sketch", "Shading & tone", "Proportion", "Perspective", "Colour", "Still life", "Portrait", "Imagination", "Digital"], tl: "Subject / piece", vl: "Pieces finished", ms: ["Basic shapes to forms", "Light and shadow", "Proportions of a face", "One-point perspective", "Colour wheel and mixing", "Finish one complete piece"], tip: "Short daily sketches beat rare long sessions. Draw from real objects when you can." },
     { id: "lang", n: "Languages", ic: "🌍", foc: ["Vocabulary", "Reading", "Listening", "Speaking", "Writing", "Grammar", "Quran understanding"], tl: "Language", vl: "New words learned", ms: [], tip: "Add a language by typing it in the Language box, e.g. Arabic, Urdu, French. Each gets its own totals." },
@@ -4904,7 +5020,7 @@ main{width:auto;max-width:1600px;margin:16px 24px 36px}footer{width:auto;margin-
 }
 setTimeout(navInit, 0);
 /* ===== Version label ===== */
-const APP_VERSION = "v86"; // keep in step with CACHE in sw.js
+const APP_VERSION = "v90"; // keep in step with CACHE in sw.js
 function paintVer() { ["appVer", "appVer2"].forEach(id => { const el = $(id); if (el)
     el.textContent = APP_VERSION + (navigator.onLine ? "" : " · offline"); }); }
 window.addEventListener("online", paintVer);
@@ -5256,6 +5372,7 @@ new MutationObserver(() => {
     requestAnimationFrame(() => { fsBusy = false; fsDecorate(); });
 }).observe(document.querySelector("main"), { childList: true, subtree: true });
 fsDecorate();
+fxStaggerInit();
 safeRun(function seedReading() {
     if (!state.meta._readSeed)
         importReading();
@@ -5269,7 +5386,100 @@ window.__appBooted = true;
 .aiGo>.insight{animation:aiIn .55s cubic-bezier(.2,.8,.2,1) both;animation-delay:calc(var(--i,0)*110ms)}
 .aiGo>.insight:first-child{animation-name:aiIn,aiGlow;animation-duration:.55s,1.6s;animation-delay:0s,.5s;animation-iteration-count:1,2}
 @keyframes aiIn{from{opacity:0;transform:translateX(-14px) scale(.98)}}@keyframes aiGlow{50%{box-shadow:0 0 0 3px #7c3aed55,0 0 22px #7c3aed44}}
-@media(prefers-reduced-motion:reduce){.vb,.vfl.on,.vsm i,.aiThink,.aiThink i,.aiGo>.insight{animation:none!important}}
+/* ===== v88: tab-open animations ===== */
+.page.active .card{animation:pgCard .34s cubic-bezier(.22,.7,.3,1) both}
+@keyframes pgCard{from{opacity:0;transform:translateY(10px) scale(.985)}}
+.stinger{position:fixed;inset:0;display:grid;place-items:center;pointer-events:none;z-index:1400}
+.fxPop{display:flex;flex-direction:column;align-items:center;gap:8px;animation:fxPop .72s cubic-bezier(.2,.8,.25,1) both}
+.fxPop .e{font-size:clamp(52px,12vw,92px);line-height:1;filter:drop-shadow(0 6px 18px #0004);animation:fxSpin .72s cubic-bezier(.2,.8,.25,1) both}
+.fxPop .l{font-weight:800;letter-spacing:.08em;text-transform:uppercase;font-size:12px;color:var(--muted);background:var(--card);border:1px solid var(--border);padding:4px 12px;border-radius:999px;box-shadow:var(--shadow)}
+@keyframes fxPop{0%{opacity:0;transform:scale(.6) translateY(14px)}18%{opacity:1}60%{transform:scale(1.04) translateY(0)}100%{opacity:0;transform:scale(1) translateY(-12px)}}
+@keyframes fxSpin{0%{transform:rotate(-16deg) scale(.4)}55%{transform:rotate(6deg) scale(1.12)}100%{transform:rotate(0) scale(1)}}
+.fxRun{position:relative;width:min(560px,90vw);height:130px}
+.fxRun .e{position:absolute;left:0;top:16px;font-size:64px;line-height:1;animation:fxDash .88s cubic-bezier(.3,.7,.4,1) both}
+.fxRun i{position:absolute;width:14px;height:14px;border-radius:50%;background:var(--muted);opacity:0;animation:fxPuff .6s ease-out both}
+@keyframes fxDash{0%{transform:translateX(-42vw) rotate(5deg);opacity:0}12%{opacity:1}88%{opacity:1}100%{transform:translateX(46vw) rotate(-3deg);opacity:0}}
+@keyframes fxPuff{0%{opacity:.45;transform:scale(.4)}100%{opacity:0;transform:scale(2.4) translateY(-10px)}}
+.kbox{width:min(430px,86vw);animation:kShake 1.15s linear both}
+.kbox svg{width:100%;display:block;overflow:visible}
+.k-fig{animation:kFig 1.15s cubic-bezier(.3,.7,.3,1) both}
+.k-lean,.k-armF,.k-armB,.k-legF{transform-box:view-box}
+.k-lean{transform-origin:110px 112px;animation:kLean 1.15s linear both}
+.k-armF{transform-origin:110px 70px;animation:kArmF 1.15s linear both}
+.k-armB{transform-origin:110px 70px;animation:kArmB 1.15s linear both}
+.k-legF{transform-origin:110px 112px;animation:kLegF 1.15s linear both}
+.k-hit1,.k-hit2{opacity:0;transform-box:fill-box;transform-origin:50% 50%}
+.k-hit1{animation:kHit .34s ease-out .38s both}
+.k-hit2{animation:kHit .4s ease-out .66s both}
+.k-shout{opacity:0;transform-box:fill-box;transform-origin:50% 100%;animation:kShout .5s cubic-bezier(.2,1.4,.4,1) .62s both;font-family:inherit}
+.k-zoom{animation:kZoom .5s ease-out both}
+@keyframes kFig{0%{transform:translateX(-150px);opacity:0}10%{opacity:1}26%{transform:translateX(0)}90%{opacity:1}100%{transform:translateX(0);opacity:0}}
+@keyframes kArmF{0%,26%{transform:rotate(0)}34%,46%{transform:rotate(-32deg)}60%,100%{transform:rotate(-8deg)}}
+@keyframes kArmB{0%,26%{transform:rotate(0)}34%,46%{transform:rotate(16deg)}60%,100%{transform:rotate(4deg)}}
+@keyframes kLegF{0%,48%{transform:rotate(0)}58%,74%{transform:rotate(-97deg)}86%,100%{transform:rotate(-80deg)}}
+@keyframes kLean{0%,48%{transform:rotate(0)}60%,78%{transform:rotate(-12deg)}90%,100%{transform:rotate(-6deg)}}
+@keyframes kHit{0%{opacity:0;transform:scale(.3)}30%{opacity:1;transform:scale(1.25)}70%{opacity:1;transform:scale(1)}100%{opacity:0;transform:scale(1.05)}}
+@keyframes kShout{0%{opacity:0;transform:scale(.2) rotate(-14deg)}55%{opacity:1;transform:scale(1.18) rotate(-6deg)}100%{opacity:1;transform:scale(1) rotate(-8deg)}}
+@keyframes kZoom{0%{opacity:.85;transform:translateX(0)}100%{opacity:0;transform:translateX(-60px)}}
+@keyframes kShake{0%,55%{transform:translate(0,0)}60%{transform:translate(3px,-2px)}66%{transform:translate(-3px,2px)}72%{transform:translate(2px,1px)}78%,100%{transform:translate(0,0)}}
+/* v88b: per-tab sequence kit. Shared motion utilities; each stinger SVG
+   tags its parts with fx-* classes and --dl delays. */
+.stinger .fxSeq svg{width:min(320px,70vw);display:block;overflow:visible}
+.stinger .fx-d{stroke-dasharray:1;stroke-dashoffset:1;animation:fxDraw .55s ease-out both;animation-delay:var(--dl,0s)}
+.stinger .fx-g{transform-box:fill-box;transform-origin:50% 100%;animation:fxGrow .45s cubic-bezier(.2,1.2,.4,1) both;animation-delay:var(--dl,0s)}
+.stinger .fx-p{transform-box:fill-box;transform-origin:50% 50%;animation:fxPopI .4s cubic-bezier(.2,1.4,.4,1) both;animation-delay:var(--dl,0s)}
+.stinger .fx-sp{transform-box:view-box;animation:fxSpinI var(--dur,.8s) cubic-bezier(.3,.8,.3,1) both;animation-delay:var(--dl,0s)}
+.stinger .fx-rise{animation:fxRise .5s cubic-bezier(.2,.8,.3,1) both;animation-delay:var(--dl,0s)}
+.stinger .fx-tw{transform-box:fill-box;transform-origin:50% 50%;animation:fxTw .9s ease-in-out both;animation-delay:var(--dl,0s)}
+.stinger .fx-bb{animation:fxBub .95s ease-in both;animation-delay:var(--dl,0s)}
+.stinger .fx-fall{animation:fxFallI .5s cubic-bezier(.3,.7,.3,1) both;animation-delay:var(--dl,0s)}
+.stinger .fx-wave{transform-box:fill-box;transform-origin:0% 50%;animation:fxWave .4s ease-in-out both;animation-delay:var(--dl,0s);animation-iteration-count:2}
+.stinger .fx-shake{animation:fxShakeI .38s linear both;animation-delay:var(--dl,0s)}
+.stinger .fx-fan{transform-box:fill-box;transform-origin:50% 100%;animation:fxFanI .5s cubic-bezier(.2,1.3,.4,1) both;animation-delay:var(--dl,0s)}
+.stinger .fx-shine{animation:fxShineI .55s ease-in .4s both}
+.stinger .fx-flip{transform-box:fill-box;transform-origin:50% 50%;animation:fxFlipI .7s cubic-bezier(.3,.7,.2,1) both}
+.stinger .fx-open{transform-box:view-box;animation:fxOpenY .55s cubic-bezier(.2,.9,.3,1) both;animation-delay:var(--dl,0s)}
+.stinger .fx-tear{transform-box:fill-box;transform-origin:50% 0%;animation:fxTear .6s cubic-bezier(.4,.1,.7,.4) both;animation-delay:var(--dl,0s)}
+.stinger .fx-ring{transform-box:fill-box;transform-origin:50% 50%;animation:fxRing .5s ease-out both;animation-delay:var(--dl,0s)}
+.stinger .fx-xout{animation:fxXout .9s linear both}
+.stinger .fx-fout{animation:fxFout .7s linear both}
+.stinger .fx-fin{animation:fxFin .7s linear both}
+.stinger .fx-dart{animation:fxDart .5s cubic-bezier(.3,.7,.3,1) both}
+.stinger .fx-write{animation:fxWrite .55s linear both;animation-delay:var(--dl,0s)}
+.stinger .fx-slide{animation:fxSlide .55s cubic-bezier(.2,.9,.3,1) both;animation-delay:var(--dl,0s)}
+.stinger .fx-lift{animation:fxLift .7s cubic-bezier(.3,.8,.3,1) both}
+.stinger .fx-brush{animation:fxBrush .8s cubic-bezier(.3,.7,.3,1) both}
+.stinger .fx-tick{transform-box:view-box;animation:fxTick .9s cubic-bezier(.2,.8,.2,1) both}
+.stinger .fx-tap{transform-box:view-box;animation:fxTap .5s cubic-bezier(.3,1.4,.4,1) .15s both}
+.stinger .fx-curl{transform-box:view-box;animation:fxCurl .6s cubic-bezier(.3,1.3,.4,1) .1s both}
+@keyframes fxDraw{to{stroke-dashoffset:0}}
+@keyframes fxGrow{from{transform:scaleY(0)}to{transform:scaleY(1)}}
+@keyframes fxPopI{0%{opacity:0;transform:scale(.2)}60%{opacity:1;transform:scale(1.18)}100%{opacity:1;transform:scale(1)}}
+@keyframes fxSpinI{from{transform:rotate(0)}to{transform:rotate(var(--deg,360deg))}}
+@keyframes fxRise{from{opacity:0;transform:translateY(26px)}to{opacity:1;transform:translateY(0)}}
+@keyframes fxTw{0%{opacity:0;transform:scale(.4)}45%{opacity:1;transform:scale(1.2)}75%{opacity:.85;transform:scale(.95)}100%{opacity:1;transform:scale(1)}}
+@keyframes fxBub{0%{transform:translateY(0);opacity:0}25%{opacity:.9}100%{transform:translateY(-34px);opacity:0}}
+@keyframes fxFallI{0%{transform:translateY(-46px) scale(1.12);opacity:0}30%{opacity:1}70%{transform:translateY(0) scale(.94)}85%{transform:translateY(0) scale(1.05)}100%{transform:translateY(0) scale(1)}}
+@keyframes fxWave{0%,100%{transform:skewY(0)}30%{transform:skewY(7deg)}65%{transform:skewY(-5deg)}}
+@keyframes fxShakeI{0%,100%{transform:translate(0,0)}25%{transform:translate(2px,-1px)}50%{transform:translate(-2px,1px)}75%{transform:translate(1px,1px)}}
+@keyframes fxFanI{from{transform:rotate(var(--from,0deg))}to{transform:rotate(var(--deg,0deg))}}
+@keyframes fxShineI{0%{transform:translateX(-30px);opacity:0}25%{opacity:.9}100%{transform:translateX(70px);opacity:0}}
+@keyframes fxFlipI{from{transform:rotateY(0)}to{transform:rotateY(180deg)}}
+@keyframes fxOpenY{from{transform:rotateY(var(--from,75deg))}to{transform:rotateY(0)}}
+@keyframes fxTear{0%{transform:rotateX(0);opacity:1}75%{opacity:1}100%{transform:rotateX(-150deg);opacity:0}}
+@keyframes fxRing{0%{opacity:.9;transform:scale(.4)}100%{opacity:0;transform:scale(1.5)}}
+@keyframes fxXout{0%,45%{opacity:1}65%,100%{opacity:0}}
+@keyframes fxFout{0%,45%{opacity:1}55%,100%{opacity:0}}
+@keyframes fxFin{0%,45%{opacity:0}55%,100%{opacity:1}}
+@keyframes fxDart{0%{transform:translate(80px,-50px);opacity:0}20%{opacity:1}60%,100%{transform:translate(0,0);opacity:1}}
+@keyframes fxWrite{0%{transform:translate(0,0)}25%{transform:translate(30px,-1px)}50%{transform:translate(60px,1px)}75%{transform:translate(90px,-1px)}100%{transform:translate(120px,0)}}
+@keyframes fxSlide{0%{transform:translateX(-90px);opacity:0}30%{opacity:1}70%{transform:translateX(6px)}100%{transform:translateX(0)}}
+@keyframes fxLift{0%{transform:translateY(46px)}55%{transform:translateY(-7px)}75%{transform:translateY(2px)}100%{transform:translateY(0)}}
+@keyframes fxBrush{0%{transform:translate(-120px,26px);opacity:0}15%{opacity:1}60%{transform:translate(0,0)}100%{transform:translate(14px,-18px)}}
+@keyframes fxTick{from{transform:rotate(0)}to{transform:rotate(720deg)}}
+@keyframes fxTap{0%{transform:rotate(-28deg)}60%{transform:rotate(4deg)}100%{transform:rotate(0)}}
+@keyframes fxCurl{0%{transform:rotate(0)}60%{transform:rotate(-78deg)}80%{transform:rotate(-66deg)}100%{transform:rotate(-72deg)}}
+@media(prefers-reduced-motion:reduce){.vb,.vfl.on,.vsm i,.aiThink,.aiThink i,.aiGo>.insight{animation:none!important}.page.active .card{animation:none!important}.stinger{display:none!important}}
 </style>
 <script>
 (function(){
