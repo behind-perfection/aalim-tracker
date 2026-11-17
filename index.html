@@ -41,7 +41,7 @@
 <link rel="manifest" href="manifest.webmanifest"><meta name="theme-color" content="#263b8f"><link rel="icon" type="image/png" sizes="192x192" href="icon-192.png"><link rel="icon" type="image/png" sizes="512x512" href="icon-512.png"><link rel="shortcut icon" type="image/png" href="icon-192.png"><link rel="apple-touch-icon" sizes="192x192" href="icon-192.png"><meta name="apple-mobile-web-app-capable" content="yes">
 <title>Aalim's Class 10 Command Centre — Udaan</title>
 <style>
-:root{--ringbg:#edf0f5;--bg:#f4f6fb;--card:#fff;--text:#18202a;--muted:#687386;--accent:#315efb;--accent2:#7c3aed;--green:#15803d;--orange:#c2410c;--red:#b42318;--border:#e2e7ef;--shadow:0 8px 28px #1725540d}
+:root{color-scheme:light;--ringbg:#edf0f5;--bg:#f4f6fb;--card:#fff;--text:#18202a;--muted:#687386;--accent:#315efb;--accent2:#7c3aed;--green:#15803d;--orange:#c2410c;--red:#b42318;--border:#e2e7ef;--shadow:0 8px 28px #1725540d}
 *{box-sizing:border-box}body{margin:0;font-family:Inter,Segoe UI,Arial,sans-serif;background:var(--bg);color:var(--text)}
 header{padding:16px 5vw 10px;background:linear-gradient(135deg,#111827,#263b8f);color:#fff;position:sticky;top:0;z-index:10;box-shadow:0 3px 18px #0002}
 .header{max-width:1250px;margin:auto}.brand{display:flex;justify-content:space-between;gap:15px;align-items:center}header h1{margin:0 0 6px;font-size:clamp(25px,4vw,38px)}header p{margin:0;color:#dbe3ff}
@@ -72,7 +72,7 @@ table{width:100%;border-collapse:collapse}th,td{padding:9px;border-bottom:1px so
 .bar{width:100%;background:linear-gradient(180deg,var(--accent),var(--accent2));border-radius:6px 6px 0 0;opacity:.5}.hl .bar{opacity:1}.barval{font-size:11px;color:var(--muted);margin-bottom:3px;white-space:nowrap}.barlab{font-size:11px;color:var(--muted);margin-top:5px;white-space:nowrap}.hl .barlab{color:var(--text);font-weight:700}
 .navrow{display:flex;gap:8px;align-items:center;justify-content:space-between;flex-wrap:wrap;margin-bottom:12px}.navrow h3{margin:0}.navrow button{padding:7px 12px}
 .sess{padding:8px 0;border-bottom:1px solid #edf0f4}.sess:last-child{border:0}
-[data-theme=dark]{--bg:#0e1320;--card:#161c2d;--text:#e6eaf3;--muted:#9aa6bd;--accent:#6b8bff;--accent2:#a78bfa;--green:#4ade80;--orange:#fb923c;--red:#f87171;--border:#2a3349;--shadow:0 8px 28px #0006;--ringbg:#2a3349}
+[data-theme=dark]{color-scheme:dark;--bg:#0e1320;--card:#161c2d;--text:#e6eaf3;--muted:#9aa6bd;--accent:#6b8bff;--accent2:#a78bfa;--green:#4ade80;--orange:#fb923c;--red:#f87171;--border:#2a3349;--shadow:0 8px 28px #0006;--ringbg:#2a3349}
 [data-theme=dark] .subject,[data-theme=dark] .calday{background:var(--card)}[data-theme=dark] .calday.blank{background:none}
 [data-theme=dark] input,[data-theme=dark] select,[data-theme=dark] textarea{background:#0f1525;color:var(--text)}
 [data-theme=dark] .stat,[data-theme=dark] .insight{background:#1c2438}[data-theme=dark] .progress{background:#2a3349}[data-theme=dark] .chapter,[data-theme=dark] .sess{border-color:var(--border)}
@@ -471,7 +471,8 @@ body.fs-open{overflow:hidden}
 </main>
 <footer>Aalim's Class 10 Command Centre • Offline-first • Udaan</footer>
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="supabase-2.119.0.js"></script>
+<script>window.supabase||document.write('<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.119.0"><\/script>')</script>
 <script src="cloud-config.js"></script>
 <script>
 "use strict";
@@ -1107,7 +1108,7 @@ const BASE_TITLE = document.title;
 const QUOTES = ["Small steps every day beat big bursts once a week.", "You don't have to be perfect today. You just have to show up.", "Mistakes are just practice questions in disguise.", "Discipline is choosing what you want most over what you want now.", "If you can explain it simply, you truly understand it.", "Progress, not perfection.", "Future you is watching. Make them proud.", "Hard things get easier when you do them daily.", "One more chapter. One more page. One more question.", "Consistency turns average days into great results.", "The goal isn't to study more. It's to learn better.", "Confidence comes from preparation.", "Rest is part of the plan, not a break from it.", "Today's effort is tomorrow's easy exam."];
 let quoteShift = 0, practiceIdx = -1, showAns = false, planInit = false, attnItems = [];
 function touch(k) { state.meta[k] = Object.assign(Object.assign({}, (state.meta[k] || {})), { touched: today() }); }
-function applyTheme() { document.documentElement.dataset.theme = state.settings.theme === "dark" ? "dark" : "light"; $("themeBtn").textContent = state.settings.theme === "dark" ? "☀️" : "🌙"; }
+function applyTheme() { document.documentElement.dataset.theme = state.settings.theme === "dark" ? "dark" : "light"; $("themeBtn").textContent = state.settings.theme === "dark" ? "☀️" : "🌙"; const m = document.querySelector("meta[name=theme-color]"); if (m) m.content = state.settings.theme === "dark" ? "#0e1320" : "#263b8f"; }
 function toggleTheme() { state.settings.theme = state.settings.theme === "dark" ? "light" : "dark"; save(); applyTheme(); }
 /* batches */
 function renderBatches() {
@@ -2871,8 +2872,8 @@ function hbActivate(id, studyOnly) {
 function hbEdit(id) { editHb = id; renderHobbyCat(); }
 function hbSave(id) {
     const h = state.hobbyCat.find(x => x.id === id); if (!h) return;
-    const n = $("hbN").value.trim(); if (!n) return alert("Give the idea a name.");
-    h.n = n; h.c = $("hbC").value.trim(); h.d = $("hbD").value.trim(); h.m = $("hbM").value; editHb = null; save(); renderHobbyCat();
+    const n = $("hbEN").value.trim(); if (!n) return alert("Give the idea a name.");
+    h.n = n; h.c = $("hbEC").value.trim(); h.d = $("hbED").value.trim(); h.m = $("hbEM").value; editHb = null; save(); renderHobbyCat();
 }
 function hbNew() { const id = "c" + uid2(); state.hobbyCat.push({ id, n: "New idea", c: "", d: "", m: "sessions" }); editHb = id; save(); renderHobbyCat(); }
 function hbDel(id) { if (!confirm("Remove this idea from the catalogue? Hobbies you already added stay.")) return; state.hobbyCat = state.hobbyCat.filter(x => x.id !== id); save(); renderHobbyCat(); }
@@ -2883,7 +2884,7 @@ function renderHobbyCat() {
     seedHobbyCat();
     $("hbCat").innerHTML = state.hobbyCat.filter(h => h && h.id).map(h => {
         const ex = state.extra.find(x => x.catId === h.id || String(x.name).toLowerCase() === String(h.n).toLowerCase()), on = ex && ex.status !== "Archived";
-        if (editHb === h.id) return `<div class="stat"><input id="hbN" value="${esc(h.n)}" placeholder="Name"><input id="hbC" value="${esc(h.c || "")}" placeholder="Category" style="margin-top:6px"><input id="hbD" value="${esc(h.d || "")}" placeholder="What it builds" style="margin-top:6px"><select id="hbM" style="margin-top:6px">${MEASURES.map(([v, l]) => `<option value="${v}" ${v === h.m ? "selected" : ""}>Progress by: ${l}</option>`).join("")}</select><div style="margin-top:8px"><button type="button" class="action" onclick="hbSave('${esc(h.id)}')">Save</button> <button type="button" class="secondary" onclick="editHb=null;renderHobbyCat()">Cancel</button></div></div>`;
+        if (editHb === h.id) return `<div class="stat"><input id="hbEN" value="${esc(h.n)}" placeholder="Name"><input id="hbEC" value="${esc(h.c || "")}" placeholder="Category" style="margin-top:6px"><input id="hbED" value="${esc(h.d || "")}" placeholder="What it builds" style="margin-top:6px"><select id="hbEM" style="margin-top:6px">${MEASURES.map(([v, l]) => `<option value="${v}" ${v === h.m ? "selected" : ""}>Progress by: ${l}</option>`).join("")}</select><div style="margin-top:8px"><button type="button" class="action" onclick="hbSave('${esc(h.id)}')">Save</button> <button type="button" class="secondary" onclick="editHb=null;renderHobbyCat()">Cancel</button></div></div>`;
         return `<div class="stat"><b>${esc(h.n)}</b> ${h.so ? '<span class="pill">study-only</span>' : ""}<div class="muted" style="font-size:12.5px;text-transform:none">${esc(h.c || "")}</div><div style="font-size:13px;margin:4px 0">${esc(h.d || "")}</div>${h.s ? `<div class="muted" style="font-size:12.5px;text-transform:none">🛡 ${esc(h.s)}</div>` : ""}<div style="margin-top:8px">${HB_SEC[h.id] ? `<button type="button" class="action" onclick="hbOpen('${HB_SEC[h.id]}')">Open section</button> ` : ""}${HB_SEC[h.id] && !h.k ? "" : on ? `<span class="pill ok">In your list · ${esc(ex.status)}</span>` : `<button type="button" class="action" onclick="hbActivate('${esc(h.id)}',false)">${h.so ? "Add (study-only)" : "Add"}</button>${h.so ? "" : ` <button type="button" class="secondary" onclick="hbActivate('${esc(h.id)}',true)">Study-only</button>`}`} <button type="button" class="secondary" onclick="hbEdit('${esc(h.id)}')">Edit</button> <button type="button" class="danger" onclick="hbDel('${esc(h.id)}')">×</button></div></div>`;
     }).join("") || '<div class="empty">Catalogue is empty. Use Restore defaults.</div>';
 }
@@ -4904,7 +4905,7 @@ main{width:auto;max-width:1600px;margin:16px 24px 36px}footer{width:auto;margin-
 }
 setTimeout(navInit, 0);
 /* ===== Version label ===== */
-const APP_VERSION = "v86"; // keep in step with CACHE in sw.js
+const APP_VERSION = "v87"; // keep in step with CACHE in sw.js
 function paintVer() { ["appVer", "appVer2"].forEach(id => { const el = $(id); if (el)
     el.textContent = APP_VERSION + (navigator.onLine ? "" : " · offline"); }); }
 window.addEventListener("online", paintVer);
