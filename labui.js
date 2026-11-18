@@ -195,8 +195,10 @@ function toast(msg) {
 /* buildView(ses, {controls, stage, note}) — left controls, centre stage,
    right readings + explanation, with a record bar under the controls.    */
 function buildView(ses, spec) {
-    const root = document.createElement("div");
-    root.className = "xview";
+    /* v95 fix: build INTO ses.el (the element mount() appends to the host),
+       not a detached div — otherwise the whole viewport renders blank. */
+    const root = ses.el || (ses.el = document.createElement("div"));
+    root.className = "xview-inner xview";
     root.innerHTML = '<div class="xctl2"></div><div class="xstage2"></div><div class="xnote2"></div>';
     ses.dom = { root, ctl: root.querySelector(".xctl2"), stage: root.querySelector(".xstage2"), note: root.querySelector(".xnote2") };
     const h3 = document.createElement("h3");
