@@ -3,15 +3,15 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>Virtual Chemistry Lab</title>
+<title>Aalim's Virtual Laboratory</title>
+<meta name="theme-color" content="#0e1320">
+<style>
 <style>
 :root{--bg:#eef2fb;--pan:#ffffff;--tx:#18203a;--mut:#667191;--bd:#d6ddf0;--acc:#3b5bdb;--acc2:#7c3aed;--ok:#16a34a;--bad:#dc2626;--chip:#eef1fb;--ws1:#f7faff;--ws2:#dfe9fb;--wall1:#e6edf8;--wall2:#c9d6ec;--bench1:#b98a5a;--bench2:#8a5a33;--glass:rgba(255,255,255,.35);--glassb:#7e8fb5;--orange:#f97316}
 [data-theme=dark]{--bg:#0e1320;--pan:#161c2d;--tx:#e6eaf3;--mut:#9aa6bd;--bd:#2a3349;--acc:#6b8bff;--acc2:#a78bfa;--chip:#222b42;--ws1:#1a2340;--ws2:#0f1630;--wall1:#232c48;--wall2:#161d36;--bench1:#7a5530;--bench2:#4d3219;--glass:rgba(255,255,255,.1);--glassb:#8ea0c9;--orange:#fb923c}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html,body{-webkit-user-select:none;user-select:none;-webkit-touch-callout:none;margin:0;height:100%;background:var(--bg);color:var(--tx);font:14px/1.4 system-ui,-apple-system,Segoe UI,Roboto,sans-serif}
 button{font:inherit;color:inherit;cursor:pointer}
-.lab{display:grid;height:100vh;height:100dvh;grid-template-columns:240px 1fr 320px;grid-template-rows:auto 1fr;grid-template-areas:"top top top" "tool ws pan"}
-.top{grid-area:top;display:flex;gap:8px;align-items:center;flex-wrap:wrap;padding:8px 10px;background:var(--pan);border-bottom:1px solid var(--bd)}
 .top h1{font-size:15px;margin:0 auto 0 0}
 .btn{border:1px solid var(--bd);background:var(--chip);border-radius:10px;padding:6px 10px;font-weight:600;box-shadow:0 3px 0 rgba(0,0,0,.14),0 5px 8px rgba(0,0,0,.08);transition:transform .08s,box-shadow .08s}
 .btn:active{transform:translateY(2px);box-shadow:0 1px 0 rgba(0,0,0,.14)}
@@ -161,19 +161,16 @@ button{font:inherit;color:inherit;cursor:pointer}
 textarea,input.t,.search{-webkit-user-select:text;user-select:text}
 textarea,input.t{width:100%;padding:7px 9px;border:1px solid var(--bd);border-radius:8px;background:var(--bg);color:var(--tx);font:inherit}
 @media(max-width:820px){
- .lab{grid-template-columns:1fr;grid-template-rows:auto auto minmax(250px,1fr) 38%;grid-template-areas:"top" "tool" "ws" "pan"}
+ #main.chem-on{grid-template-columns:1fr;grid-template-rows:auto auto minmax(250px,1fr) 38%;grid-template-areas:"top" "tool" "ws" "pan"}
  .tool{border-right:0;border-bottom:1px solid var(--bd);max-height:205px}
  .tbody{padding:4px 6px}
  .cards{display:flex;gap:6px;overflow-x:auto;flex-wrap:nowrap;padding-bottom:4px}.card{min-width:92px;flex:none;touch-action:pan-x;min-height:56px}
  .grp{margin:4px 0 2px}.amt{margin:2px 0 4px}
- .top .long,.warp span{display:none}.top{gap:5px;padding:6px;flex-wrap:nowrap;overflow-x:auto}.top .btn,.warp{flex:none}.top h1{margin-right:0}.btn{padding:5px 8px;font-size:12px}
  .pan{border-left:0;border-top:1px solid var(--bd)}
- .top h1{font-size:14px}
  .status{display:none}
 }
 .it.bottle .vessel{overflow:visible}.it.bottle .capoff{display:none;position:absolute;left:-18px;bottom:2px;width:20px;height:13px;border-radius:3px;background:#15181f;box-shadow:0 2px 3px rgba(0,0,0,.35);transform:rotate(-8deg)}.it.bottle.open .capoff{display:block}
 .it.burette .tapk{cursor:ew-resize;pointer-events:auto}.it.burette .vessel,.it.bottle .vessel{pointer-events:auto}
-@media(max-width:820px) and (orientation:landscape),(max-height:520px){.lab{grid-template-columns:150px 1fr 210px;grid-template-rows:auto 1fr;grid-template-areas:"top top top" "tool ws pan"}.tool{max-height:none;border-right:1px solid var(--bd);border-bottom:0}.cards{display:grid;grid-template-columns:1fr;overflow-x:visible}.card{min-width:0}.pan{border-left:1px solid var(--bd);border-top:0}.status{display:none}}
 @media(prefers-reduced-motion:reduce){.bub,.flame,.sbub,.steam,.vortex,.ripple,.it.inflame .vessel{animation:none}.xsec svg *{animation:none}}
 /* ---- v91: Physics & Biology sections ---- */
 .xsec{grid-column:1/4;grid-row:2;display:grid;grid-template-columns:262px 1fr 320px;min-height:0}
@@ -203,17 +200,186 @@ textarea,input.t{width:100%;padding:7px 9px;border:1px solid var(--bd);border-ra
 .nbe b{color:var(--tx);flex:0 0 auto}
 @media(max-width:820px){.xsec{grid-column:1;grid-row:2/5;grid-template-columns:1fr;grid-template-rows:auto minmax(180px,1fr) auto}.xctl{max-height:190px;border-right:0;border-bottom:1px solid var(--bd)}.xnote{border-left:0;border-top:1px solid var(--bd);max-height:34%}}
 </style>
+/* ===================== v94 LABORATORY SHELL ===================== */
+#lab2{display:grid;grid-template-columns:264px 1fr;height:100vh;height:100dvh;overflow:hidden}
+#lab2.sb-collapsed{grid-template-columns:54px 1fr}
+#sb{grid-row:1;background:var(--pan);border-right:1px solid var(--bd);display:flex;flex-direction:column;min-height:0;z-index:30}
+#sb .sbbrand{display:flex;gap:8px;align-items:center;padding:12px;font-weight:800;border-bottom:1px solid var(--bd);font-size:15px}
+#sb .sbbrand i{font-style:normal;font-size:20px}
+#sbNav{overflow:auto;padding:6px;flex:1;min-height:0}
+.sbgrp{margin:2px 0}
+.sbhead{display:flex;align-items:center;gap:7px;width:100%;text-align:left;background:none;border:0;color:var(--tx);font:inherit;font-weight:800;font-size:13.5px;padding:8px 9px;border-radius:9px;cursor:pointer}
+.sbhead:hover{background:var(--chip)}
+.sbitems{padding:1px 0 4px 6px}
+.sbtopic{font-size:10.5px;text-transform:uppercase;letter-spacing:.07em;color:var(--mut);font-weight:800;padding:8px 9px 3px}
+.sbitem{display:flex;align-items:center;gap:7px;width:100%;text-align:left;background:none;border:0;color:var(--tx);font:inherit;font-size:12.8px;padding:6px 9px;border-radius:8px;cursor:pointer}
+.sbitem:hover{background:var(--chip)}
+.sbitem.on{background:var(--acc);color:#fff}
+.sbitem.planned{opacity:.72}
+.plbadge{font-style:normal;font-size:9.5px;background:var(--orange);color:#fff;border-radius:99px;padding:1px 6px;margin-left:auto}
+.sbfoot{border-top:1px solid var(--bd);padding:8px}
+.sbfoot a{display:block;text-align:center;font-size:12.5px;color:var(--mut);text-decoration:none;padding:6px;border-radius:8px}
+.sbfoot a:hover{background:var(--chip);color:var(--tx)}
+#sbToggle{position:absolute;left:6px;top:50%;transform:translateY(-50%);border:1px solid var(--bd);background:var(--chip);border-radius:7px;padding:2px 7px;font-size:11px;cursor:pointer;color:var(--tx)}
+#lab2.sb-collapsed #sb .sbbrand span,#lab2.sb-collapsed #sbNav,#lab2.sb-collapsed .sbfoot{display:none}
+#main{display:grid;grid-template-rows:auto auto minmax(0,1fr);min-width:0;min-height:0}
+#topbar{display:flex;gap:8px;align-items:center;padding:7px 10px 7px 36px;background:var(--pan);border-bottom:1px solid var(--bd);position:relative;min-height:44px}
+#crumb{font-weight:800;font-size:13.5px;color:var(--tx);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;flex:1}
+#topbar .btn,#chemTop .btn{border:1px solid var(--bd);background:var(--chip);color:var(--tx);border-radius:9px;padding:6px 10px;font:inherit;font-size:12.5px;font-weight:700;cursor:pointer}
+#topbar .btn:hover,#chemTop .btn:hover{border-color:var(--acc)}
+#topbar .btn.danger,#chemTop .btn.danger{color:var(--bad)}
+#chemTop{display:flex;gap:8px;align-items:center;flex-wrap:wrap;padding:7px 10px;background:var(--pan);border-bottom:1px solid var(--bd)}
+#main.chem-on #content{display:grid;grid-template-columns:240px minmax(0,1fr) 320px;min-height:0}
+#main:not(.chem-on) #content{display:block;overflow:auto}
+#viewHost{height:100%;min-height:0}
+#viewHost .xview-inner{height:100%}
+.xview{display:grid;grid-template-columns:minmax(220px,280px) minmax(0,1fr) minmax(240px,320px);height:100%;min-height:0}
+.xview>div{overflow:auto;padding:12px 14px;min-height:0}
+.xctl2{border-right:1px solid var(--bd);background:var(--pan)}
+.xstage2{background:linear-gradient(var(--ws1),var(--ws2))}
+.xnote2{border-left:1px solid var(--bd);background:var(--pan)}
+.xview h3{margin:2px 0 10px;font-size:14.5px}
+.xlevel{font-weight:600;color:var(--mut);font-size:11px}
+.xu-ctl{display:block;font-size:12px;font-weight:700;color:var(--mut);margin:11px 0 4px}
+.xu-ctl>span{display:flex;justify-content:space-between;gap:6px;margin-bottom:3px}
+.xu-rv{color:var(--tx);font-weight:800;font-variant-numeric:tabular-nums}
+.xu-u{font-style:normal;opacity:.7;font-weight:600}
+.xu-ctl input[type=range]{width:100%;accent-color:var(--acc)}
+.xu-ctl select,.xu-ctl input[type=number]{width:100%;padding:6px 8px;border:1px solid var(--bd);border-radius:8px;background:var(--bg);color:var(--tx);font:inherit}
+.xu-check{display:flex;gap:8px;align-items:center}
+.xu-rec{display:flex;flex-wrap:wrap;gap:6px;margin:14px 0 6px;border-top:1px dashed var(--bd);padding-top:10px}
+.xu-rec .btn.sm{border:1px solid var(--bd);background:var(--chip);color:var(--tx);border-radius:8px;padding:5px 9px;font:inherit;font-size:11.5px;font-weight:700;cursor:pointer}
+.xu-rec select{flex:1;min-width:120px;padding:5px 7px;border:1px solid var(--bd);border-radius:8px;background:var(--bg);color:var(--tx);font:inherit;font-size:11.5px}
+.xuchart{width:100%;height:auto;display:block;background:var(--pan);border:1px solid var(--bd);border-radius:12px;margin:4px 0}
+.xsmall{font-size:12px;color:var(--mut);line-height:1.5;margin:6px 0}
+.ro{display:flex;justify-content:space-between;gap:8px;padding:6px 9px;background:var(--chip);border-radius:8px;margin:4px 0;font-size:13px}
+.ro b{font-variant-numeric:tabular-nums}
+.why{font-size:12.5px;color:var(--mut);line-height:1.5;background:var(--chip);border-left:3px solid var(--acc);padding:8px 10px;border-radius:6px;margin:8px 0}
+.explain .xsec2{margin:10px 0;padding:8px 10px;background:var(--chip);border-radius:9px;font-size:12.5px;line-height:1.55}
+.explain .xsec2 h4{margin:0 0 4px;font-size:12px;color:var(--tx)}
+.explain code,.calc code,.runres{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:11.5px;background:var(--bg);border:1px solid var(--bd);border-radius:6px;padding:2px 6px;display:inline-block;margin:2px 0}
+.calc code{display:block;margin:4px 0}
+.xv{display:inline-block;background:var(--bg);border:1px solid var(--bd);border-radius:99px;padding:2px 8px;margin:2px;font-size:11.5px}
+.lawchip{display:inline-block;background:var(--acc);color:#fff;border-radius:99px;padding:2px 9px;margin:2px;font-size:11px;font-weight:700}
+.planned{max-width:560px;margin:40px auto;text-align:center;background:var(--pan);border:1px dashed var(--bd);border-radius:16px;padding:28px}
+.plico{font-size:40px}
+.planned h3{margin:8px 0}
+.planned p{color:var(--mut);font-size:13px;line-height:1.55}
+.pllaws,.plmeta{font-size:12px}
+.plmeta code{background:var(--chip);border-radius:5px;padding:1px 6px}
+.ewire{animation:ewireflow var(--spd,2s) linear infinite}
+@keyframes ewireflow{to{stroke-dashoffset:-32}}
+.xtoast{position:fixed;left:50%;bottom:26px;transform:translate(-50%,16px);background:var(--tx);color:var(--pan);padding:9px 16px;border-radius:11px;font-size:13px;font-weight:700;opacity:0;pointer-events:none;transition:.25s;z-index:99;max-width:86vw}
+.xtoast.show{opacity:.96;transform:translate(-50%,0)}
+.factors{display:flex;gap:8px;margin:10px 0}
+.fbar{flex:1;background:var(--pan);border:1px solid var(--bd);border-radius:9px;padding:7px;text-align:center;font-size:11px;color:var(--mut)}
+.ftrack{height:8px;border-radius:99px;background:var(--bd);overflow:hidden;margin-bottom:5px}
+.ftrack>div{height:100%;border-radius:99px}
+.ratio{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0}
+.rc{background:var(--pan);border:1px solid var(--bd);border-radius:9px;padding:7px 12px;text-align:center;font-size:12.5px;color:var(--mut)}
+.rc b{display:block;font-size:19px;color:var(--tx)}
+.pyr{margin:8px 0 14px}
+.pyrl{margin:4px auto;color:#fff;font-weight:700;font-size:13px;border-radius:9px;padding:8px 12px;text-align:center;min-width:120px}
+.pyrl small{font-weight:600;opacity:.85}
+.cellinfo{background:var(--pan);border:1px solid var(--bd);border-radius:10px;padding:10px 12px;margin-top:8px;font-size:13px;line-height:1.5}
+.cellpart:hover{opacity:1!important}
+.rxvessel{display:flex;gap:16px;align-items:center;background:var(--pan);border:1px solid var(--bd);border-radius:12px;padding:12px;margin:6px 0}
+.rxstate{display:flex;flex-direction:column;gap:4px;font-size:13px;color:var(--mut)}
+.rxstate b{color:var(--tx);font-size:14px}
+.rxeqs .rx{background:var(--pan);border:1px solid var(--bd);border-radius:10px;padding:9px 12px;margin:6px 0}
+.rxeqs .rx b{display:block;font-size:14px;margin:3px 0}
+.rxeqs .rx small{color:var(--mut);font-size:11.5px}
+.inds{display:flex;gap:8px;flex-wrap:wrap;margin:8px 0}
+.indchip{background:var(--pan);border:1px solid var(--bd);border-radius:99px;padding:4px 10px;font-size:11.5px;color:var(--mut)}
+.flaskviz{display:flex;gap:18px;align-items:center;background:var(--pan);border:1px solid var(--bd);border-radius:12px;padding:14px;margin:6px 0;flex-wrap:wrap}
+.calc{flex:1;min-width:240px}
+.calc b{font-size:12px;text-transform:uppercase;letter-spacing:.05em;color:var(--mut)}
+.wview{padding:16px 20px;max-width:1060px}
+.wview h2{margin:4px 0 8px}
+.wcols{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.wcol h3{margin:10px 0 6px}
+.wcard{background:var(--pan);border:1px solid var(--bd);border-radius:11px;padding:10px 12px;margin:8px 0}
+.wchead{display:flex;justify-content:space-between;gap:8px;align-items:center}
+.wchead time,.nbhead time{color:var(--mut);font-size:11px}
+.wsmall{color:var(--mut);font-size:12px;margin:5px 0;line-height:1.45}
+.wacts{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
+.btn.sm{border:1px solid var(--bd);background:var(--chip);color:var(--tx);border-radius:8px;padding:5px 10px;font:inherit;font-size:11.5px;font-weight:700;cursor:pointer}
+.btn.sm.on{background:var(--acc);border-color:var(--acc);color:#fff}
+.btn.sm.danger{color:var(--bad)}
+.pchip{font-size:10.5px;background:var(--chip);border:1px solid var(--bd);color:var(--mut);border-radius:99px;padding:2px 8px;white-space:nowrap}
+.pchip.free{border-style:dashed}
+.nbbar{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0}
+.nbbar input[type=search]{flex:1;min-width:180px;padding:7px 10px;border:1px solid var(--bd);border-radius:9px;background:var(--bg);color:var(--tx);font:inherit}
+.nbbar select{padding:7px 9px;border:1px solid var(--bd);border-radius:9px;background:var(--bg);color:var(--tx);font:inherit}
+.nbentry{background:var(--pan);border:1px solid var(--bd);border-radius:11px;padding:10px 12px;margin:8px 0}
+.nbhead{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.nbhead .pin{margin-left:auto}
+.nbdet{font-size:13px;margin:6px 0;line-height:1.5}
+.nbnote{width:100%;padding:7px 9px;border:1px solid var(--bd);border-radius:8px;background:var(--bg);color:var(--tx);font:inherit;font-size:12.5px;margin-top:6px;box-sizing:border-box}
+.nbentry details{margin:4px 0}
+.nbentry summary{cursor:pointer;font-size:11.5px;color:var(--mut)}
+.cmpsel{margin:8px 0}
+.cmpsel select{padding:7px 9px;border:1px solid var(--bd);border-radius:9px;background:var(--bg);color:var(--tx);font:inherit}
+.cmpcols{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:10px 0}
+.cmpcol{background:var(--pan);border:1px solid var(--bd);border-radius:12px;padding:12px;min-width:0}
+.cmpcol h3{margin:0 0 8px}
+.cmpnums{margin-top:8px}
+tr.diff td{background:rgba(249,115,22,.12)}
+.hypoform{background:var(--pan);border:1px solid var(--bd);border-radius:12px;padding:14px;margin:10px 0}
+.hypoform label{display:block;font-size:12px;font-weight:700;color:var(--mut);margin:10px 0 3px}
+.hypoform input,.hypoform textarea,.hypoform select{width:100%;padding:7px 9px;border:1px solid var(--bd);border-radius:8px;background:var(--bg);color:var(--tx);font:inherit;box-sizing:border-box}
+.hrow3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
+.predcard{background:var(--chip);border-left:3px solid var(--orange);border-radius:7px;padding:9px 12px;margin:8px 0;font-size:13px;line-height:1.5}
+.runres{white-space:pre-wrap;word-break:break-word;max-height:120px;overflow:auto}
+.pracbar{display:flex;gap:10px;align-items:center;background:var(--pan);border:1px solid var(--bd);border-radius:11px;padding:10px 12px;margin:10px 0;flex-wrap:wrap}
+.pracbar span{color:var(--mut);font-size:12.5px}
+.pracbar .ftrack{flex:1;min-width:140px;margin:0}
+.prac{background:var(--pan);border:1px solid var(--bd);border-radius:11px;padding:11px 13px;margin:9px 0}
+.prac.done{border-color:var(--ok)}
+.prachead{display:flex;gap:8px;align-items:center;justify-content:space-between}
+.prac p{color:var(--mut);font-size:12.5px;line-height:1.5;margin:6px 0}
+.prachecks{margin:6px 0}
+.ck{font-size:12px;padding:2px 0;color:var(--mut)}
+.ck.on{color:var(--ok);font-weight:700}
+.knowns{display:grid;grid-template-columns:1fr 1fr;gap:0 10px}
+@media(max-width:980px){.xview{grid-template-columns:minmax(180px,230px) minmax(0,1fr)}.xnote2{display:none}.wcols,.cmpcols,.hrow3{grid-template-columns:1fr}.knowns{grid-template-columns:1fr}}
+@media(max-width:820px){
+ #lab2,#lab2.sb-collapsed{grid-template-columns:1fr}
+ #sb{position:fixed;top:0;bottom:0;left:0;width:270px;transform:translateX(-101%);transition:transform .22s;box-shadow:0 0 40px rgba(0,0,0,.2)}
+ #lab2:not(.sb-collapsed) #sb{transform:none}
+ #lab2.sb-collapsed #sb .sbbrand span,#lab2.sb-collapsed #sbNav,#lab2.sb-collapsed .sbfoot{display:block}
+ #main.chem-on #content{grid-template-columns:1fr;grid-template-rows:auto minmax(230px,1fr) auto}
+ .xview{grid-template-columns:1fr;grid-template-rows:auto minmax(160px,1fr)}
+ .xnote2{display:none}
+ .tool{max-height:190px;border-right:0;border-bottom:1px solid var(--bd)}
+ .pan{border-left:0;border-top:1px solid var(--bd);max-height:36%}
+}
+@media(prefers-reduced-motion:reduce){.ewire{animation:none}#sb{transition:none}.xtoast{transition:none}}
+@media print{#sb,#topbar,#chemTop,.xu-rec,.nbbar,.wacts{display:none!important}}
+</style>
 </head>
 <body>
-<div class="lab" id="lab">
- <div class="top">
-  <h1>🧪 <span class="long">Virtual Lab</span></h1>
-  <div class="warp secs"><span>Section</span><button class="btn on" data-sec="chem">🧪 Chem</button><button class="btn" data-sec="phy">⚡ Phy</button><button class="btn" data-sec="bio">🧬 Bio</button></div>
-  <button class="btn" id="sndBtn" aria-label="Sound">🔊</button>
-  <button class="btn" id="gogBtn">🥽 Goggles: OFF</button>
-  <div class="warp"><span>Time</span><button class="btn on" data-w="1">×1</button><button class="btn" data-w="2">×2</button><button class="btn" data-w="5">×5</button><button class="btn" data-w="10">×10</button></div>
-  <button class="btn danger" id="resetBtn">🧹 Clear table</button>
- </div>
+<div id="lab2" class="sb-open">
+ <aside id="sb">
+  <div class="sbbrand"><i>🔬</i><span>Aalim's Laboratory</span></div>
+  <nav id="sbNav" aria-label="Laboratory navigation"></nav>
+  <div class="sbfoot"><a href="index.html">← Command Centre</a></div>
+ </aside>
+ <div id="main" class="chem-on">
+  <div id="topbar">
+   <button type="button" id="sbToggle" aria-label="Toggle sidebar (Ctrl+B)" title="Toggle sidebar (Ctrl+B)">◧</button>
+   <div id="crumb">Chemistry · Experiment Bench</div>
+   <button type="button" class="btn" id="chemSaveBtn" title="Save the whole bench table as a restorable session">💾 Save bench</button>
+   <button type="button" class="btn" id="fsBtn" title="Fullscreen">⛶ Fullscreen</button>
+  </div>
+  <div id="chemTop">
+   <h1 style="font-size:15px;margin:0 6px 0 0">🧪 <span class="long">Chemistry Bench</span></h1>
+   <button type="button" class="btn" id="sndBtn" aria-label="Sound">🔊</button>
+   <button type="button" class="btn" id="gogBtn">🥽 Goggles: OFF</button>
+   <div class="warp"><span>Time</span><button type="button" class="btn on" data-w="1">×1</button><button type="button" class="btn" data-w="2">×2</button><button type="button" class="btn" data-w="5">×5</button><button type="button" class="btn" data-w="10">×10</button></div>
+   <button type="button" class="btn danger" id="resetBtn">🧹 Clear table</button>
+  </div>
+  <div id="content">
  <div class="tool">
   <div class="tabs"><button class="on" data-tt="app">Apparatus</button><button data-tt="chem">Chemicals</button></div>
   <div class="tbody" id="tbody"></div>
@@ -229,8 +395,9 @@ textarea,input.t{width:100%;padding:7px 9px;border:1px solid var(--bd);border-ra
   <div class="tabs" id="ptabs"><button class="on" data-pt="insp">Inspect</button><button data-pt="obs">Observations</button><button data-pt="rx">Reactions</button><button data-pt="exp">Activities</button><button data-pt="nb">Notebook</button></div>
   <div class="pbody" id="pbody"></div>
  </div>
- <div class="xsec" id="xPhy" hidden><div class="xctl" id="phyCtl"></div><div class="xstage" id="phyStage"></div><div class="xnote" id="phyNote"></div></div>
- <div class="xsec" id="xBio" hidden><div class="xctl" id="bioCtl"></div><div class="xstage" id="bioStage"></div><div class="xnote" id="bioNote"></div></div>
+   <div id="viewHost" hidden></div>
+  </div>
+ </div>
 </div>
 
 <script>
@@ -238,7 +405,16 @@ textarea,input.t{width:100%;padding:7px 9px;border:1px solid var(--bd);border-ra
 var LAB_LOCKED=false;
 if(LAB_LOCKED){document.body.innerHTML='<div style="position:fixed;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;background:#111827;color:#fff;font-family:system-ui,sans-serif;text-align:center;padding:20px"><div style="font-size:64px">🔒</div><h2 style="margin:0">The Virtual Lab is locked</h2><p style="opacity:.7;margin:0">This part of the app is switched off for now.</p></div>'}
 </script>
-<script>if(!window.LAB_LOCKED)document.write('<script src="chemcore.js"><\/script><script src="physcore.js"><\/script><script src="biocore.js"><\/script>')</script>
+<script src="chemcore.js"></script>
+<script src="physcore.js"></script>
+<script src="biocore.js"></script>
+<script src="labstore.js"></script>
+<script src="labreg.js"></script>
+<script src="labui.js"></script>
+<script src="labphysx.js"></script>
+<script src="labiox.js"></script>
+<script src="labchemx.js"></script>
+<script src="labviews.js"></script>
 <script>
 if(window.LAB_LOCKED)throw new Error("Virtual Lab locked");
 /* ================= CHEMISTRY ENGINE: provided by chemcore.js (principle-based). Bridge to the names the UI uses ================= */
@@ -1572,254 +1748,25 @@ setInterval(()=>{
 renderTool();renderPanel(true);
 window.LAB={spawnBottle,spawnBurette,toggleBottle,tickBottlePour,tickBurettes,LIBC,libFill,libMix,XCONC,state,frees,dtubes,spawnFree,spawnSand,spawnDtube,toggleHand,toggleSwitch,trySlot,tickHeating,burnerView,moveCtl,mouthWs,vrect,matches,spawnMatchbox,spawnMatch,toggleGas,spawn,spawnBurner,addChem,addNow,startPour,CHEM,tickContainer,view,select,byId,pours};
 
+
+/* ===== v94: expose the bench to the laboratory shell (registry, sessions, practicals) ===== */
+window.ChemLab={state:state,spawn:spawn,spawnTool:spawnTool,removeItem:removeItem,place:place,view:view,renderPanel:renderPanel,burnerView:typeof burnerView!=="undefined"?burnerView:null,ACTS:ACTS,doneGet:doneGet,CHEMS:CHEM,toast:toast};
 </script>
 <script>
-/* ===== v91: Physics & Biology sections — thin UI over PhysCore / BioCore.
-   Everything on screen is computed by the engines from laws & parameters;
-   nothing is a canned demonstration. ===== */
-if (!window.LAB_LOCKED && window.PhysCore && window.BioCore) (function () {
-    const $ = id => document.getElementById(id);
-    const fmt = (x, d = 2) => !isFinite(x) ? "∞" : String(Math.abs(x) >= 1000 ? +x.toFixed(0) : +x.toFixed(d));
-    const ro = (k, v) => '<div class="ro"><span>' + k + '</span><b>' + v + '</b></div>';
-    const why = t => '<div class="why">' + t + '</div>';
-    const phy = { rig: "proj", v0: 20, ang: 45, h0: 0, g: 9.8, drag: false, k: 0.02, V: 6, mode: "series", r1: 2, r2: 4, r3: 0, kind: "lens", f: 10, u: 30, topic: "Motion", known: {} };
-    const bio = { tab: "photo", light: 60, co2: 400, ptemp: 25, etemp: 37, enz: "amylase", ph: 7, S: 20, trait: 0, p1: "Tt", p2: "Tt", di: false, p1b: "Yy", p2b: "Yy", prod: 10000, lv: 4, eff: 10 };
-    const GRAV = [["Earth", 9.8], ["Moon", 1.62], ["Mars", 3.71], ["Jupiter", 24.8]];
-    const TRAITS = [["Pea height", "T", "t", "Tall", "Dwarf"], ["Seed colour", "Y", "y", "Yellow", "Green"], ["Flower colour", "P", "p", "Purple", "White"]];
-
-    function setSec(s) {
-        document.querySelectorAll("[data-sec]").forEach(b => b.classList.toggle("on", b.dataset.sec === s));
-        $("xPhy").hidden = s !== "phy"; $("xBio").hidden = s !== "bio";
-        [".tool", ".ws", ".pan"].forEach(sel => { const e = document.querySelector(sel); if (e) e.style.display = s === "chem" ? "" : "none"; });
-        if (s === "phy") phyCtl(); if (s === "bio") bioCtl();
-    }
-    document.querySelectorAll("[data-sec]").forEach(b => b.onclick = () => setSec(b.dataset.sec));
-
-    /* ---------------- PHYSICS ---------------- */
-    function phyCtl() {
-        const R = phy.rig;
-        const rb = (id, l) => '<button type="button" class="' + (R === id ? "on" : "") + '" onclick="LABX.phyRig(\'' + id + '\')">' + l + '</button>';
-        let h = '<h3>⚡ Physics bench</h3><div class="rig">' + rb("proj", "🎯 Projectile") + rb("circ", "🔌 Circuit") + rb("opt", "🔭 Optics") + rb("solve", "🧮 Law solver") + '</div>';
-        if (R === "proj") h +=
-            '<label>Speed v₀ <span class="rv" data-rv="v0">' + phy.v0 + ' m/s</span></label><input type="range" min="1" max="60" value="' + phy.v0 + '" oninput=\"LABX.phySet(\'v0\',+this.value,1)" onchange=\"LABX.phySet(\'v0\',+this.value,3)">' +
-            '<label>Angle <span class="rv" data-rv="ang">' + phy.ang + '°</span></label><input type="range" min="0" max="90" value="' + phy.ang + '" oninput=\"LABX.phySet(\'ang\',+this.value,1)" onchange=\"LABX.phySet(\'ang\',+this.value,3)">' +
-            '<label>Launch height <span class="rv" data-rv="h0">' + phy.h0 + ' m</span></label><input type="range" min="0" max="50" value="' + phy.h0 + '" oninput=\"LABX.phySet(\'h0\',+this.value,1)" onchange=\"LABX.phySet(\'h0\',+this.value,3)">' +
-            '<label>Gravity</label><select onchange="LABX.phySet(\'g\',+this.value)">' + GRAV.map(gr => '<option value="' + gr[1] + '"' + (phy.g === gr[1] ? ' selected' : '') + '>' + gr[0] + ' (' + gr[1] + ' m/s²)</option>').join("") + '</select>' +
-            '<label style="margin-top:10px"><input type="checkbox" style="width:auto"' + (phy.drag ? ' checked' : '') + ' onchange="LABX.phySet(\'drag\',this.checked,3)"> Air drag (quadratic)</label>' +
-            (phy.drag ? '<label>Drag coefficient k <span class="rv" data-rv="k">' + phy.k + '</span></label><input type="range" min="0.005" max="0.06" step="0.005" value="' + phy.k + '" oninput=\"LABX.phySet(\'k\',+this.value,1)" onchange=\"LABX.phySet(\'k\',+this.value,3)">' : '');
-        if (R === "circ") h +=
-            '<label>Connection</label><select onchange="LABX.phySet(\'mode\',this.value)"><option value="series"' + (phy.mode === "series" ? ' selected' : '') + '>Series</option><option value="parallel"' + (phy.mode === "parallel" ? ' selected' : '') + '>Parallel</option></select>' +
-            '<label>Battery <span class="rv" data-rv="V">' + phy.V + ' V</span></label><input type="range" min="1" max="24" value="' + phy.V + '" oninput=\"LABX.phySet(\'V\',+this.value,1)" onchange=\"LABX.phySet(\'V\',+this.value,3)">' +
-            [1, 2, 3].map(i => '<label>R' + i + ' (0 = remove) <span class="rv" data-rv="r' + i + '">' + phy["r" + i] + ' Ω</span></label><input type="range" min="0" max="50" value="' + phy["r" + i] + '" oninput=\"LABX.phySet(\'r' + i + '\',+this.value,1)" onchange=\"LABX.phySet(\'r' + i + '\',+this.value,3)">').join("");
-        if (R === "opt") h +=
-            '<label>Device</label><select onchange="LABX.phySet(\'kind\',this.value)"><option value="lens"' + (phy.kind === "lens" ? ' selected' : '') + '>Convex lens (f +)</option><option value="lensn"' + (phy.kind === "lensn" ? ' selected' : '') + '>Concave lens (f −)</option><option value="mirror"' + (phy.kind === "mirror" ? ' selected' : '') + '>Concave mirror (f −)</option><option value="mirrorx"' + (phy.kind === "mirrorx" ? ' selected' : '') + '>Convex mirror (f +)</option></select>' +
-            '<label>|f| <span class="rv" data-rv="f">' + phy.f + ' cm</span></label><input type="range" min="4" max="30" value="' + phy.f + '" oninput=\"LABX.phySet(\'f\',+this.value,1)" onchange=\"LABX.phySet(\'f\',+this.value,3)">' +
-            '<label>Object distance |u| <span class="rv" data-rv="u">' + phy.u + ' cm</span></label><input type="range" min="5" max="90" value="' + phy.u + '" oninput=\"LABX.phySet(\'u\',+this.value,1)" onchange=\"LABX.phySet(\'u\',+this.value,3)">';
-        if (R === "solve") {
-            h += '<label>Topic</label><select onchange="LABX.phySet(\'topic\',this.value,2)">' + PhysCore.TOPICS.map(t => '<option' + (phy.topic === t ? ' selected' : '') + '>' + t + '</option>').join("") + '</select>' +
-                '<p style="font-size:12px;color:var(--mut);line-height:1.4">Fill in any quantities you know — the solver applies every law of the topic until nothing new can be derived.</p>';
-            const keys = topicKeys();
-            h += keys.map(k => '<label>' + k + ' <span style="opacity:.6">(' + (PhysCore.UNITS[k] || "") + ')</span></label><input type="number" step="any" value="' + (phy.known[k] !== undefined ? phy.known[k] : "") + '" oninput="LABX.phyKnown(\'' + k + '\',this.value)">').join("");
-        }
-        $("phyCtl").innerHTML = h; phyUp();
-    }
-    function topicKeys() {
-        return [...new Set(PhysCore.LAWS.filter(l => l.topic === phy.topic).flatMap(l => Object.keys(l.rules).concat(...Object.values(l.rules).map(r => r.needs))))];
-    }
-    function phyUp() {
-        let st = "", nt = "";
-        if (phy.rig === "proj") {
-            const p = PhysCore.projectile(phy);
-            const W = 560, H = 300, pad = 34, mX = Math.max(p.R, 1), mY = Math.max(p.H, 1);
-            const X = x => pad + x / mX * (W - 2 * pad), Y = y => H - pad - Math.min(y, mY) / mY * (H - 2 * pad);
-            const pts = p.pts.map(q => X(q.x).toFixed(1) + "," + Y(q.y).toFixed(1)).join(" ");
-            const mp = "M " + p.pts.map(q => X(q.x).toFixed(1) + " " + Y(q.y).toFixed(1)).join(" L ");
-            st = '<svg viewBox="0 0 ' + W + ' ' + H + '"><line x1="' + (pad - 8) + '" y1="' + Y(0) + '" x2="' + (W - pad + 8) + '" y2="' + Y(0) + '" stroke="var(--mut)" stroke-width="2"/><polyline points="' + pts + '" fill="none" stroke="var(--acc)" stroke-width="3" stroke-linecap="round"/>' + (reduceMotion ? '<circle cx="' + X(0).toFixed(1) + '" cy="' + Y(0).toFixed(1) + '" r="6" fill="var(--acc2)">' : '<circle r="6" fill="var(--acc2)"><animateMotion dur="2.4s" repeatCount="indefinite" path="' + mp + '"/></circle>') + '<text x="' + X(p.R) + '" y="' + (Y(0) + 18) + '" font-size="12" fill="var(--mut)" text-anchor="middle">' + fmt(p.R, 1) + ' m</text><text x="' + X(0) + '" y="' + (Y(mY) - 8) + '" font-size="12" fill="var(--mut)">' + fmt(p.H, 1) + ' m</text>' +
-                [0.25, 0.5, 0.75, 1].map(fr => '<line x1="' + X(mX * fr).toFixed(1) + '" y1="' + (Y(0) + 4) + '" x2="' + X(mX * fr).toFixed(1) + '" y2="' + (Y(0) - 4) + '" stroke="var(--mut)" stroke-width="1.4"/><text x="' + X(mX * fr).toFixed(1) + '" y="' + (Y(0) + 17) + '" font-size="10" fill="var(--mut)" text-anchor="middle">' + fmt(mX * fr, 0) + '</text>').join("") +
-                [0.5, 1].map(fr => '<line x1="' + (pad - 6) + '" y1="' + Y(mY * fr).toFixed(1) + '" x2="' + (W - pad + 6) + '" y2="' + Y(mY * fr).toFixed(1) + '" stroke="var(--bd)" stroke-width="1" stroke-dasharray="4 4"/><text x="' + (pad - 9) + '" y="' + (Y(mY * fr) + 3).toFixed(1) + '" font-size="10" fill="var(--mut)" text-anchor="end">' + fmt(mY * fr, 0) + '</text>').join("") + '</svg>';
-            nt = ro("Time of flight", fmt(p.T) + " s") + ro("Range", fmt(p.R, 1) + " m") + ro("Max height", fmt(p.H, 1) + " m") + ro("Impact speed", fmt(p.vImpact, 1) + " m/s") +
-                why(phy.drag ? "Integrated step by step: v += (g + drag·v·|v|)·dt, x += v·dt — with quadratic drag the path is no longer a parabola, and the sim shows exactly that." : "Integrated from a = g alone (v += g·dt, x += v·dt). The parabola emerges from the law; it is not drawn in. Try the Moon: same laws, smaller g.");
-        } else if (phy.rig === "circ") {
-            const c = PhysCore.circuit({ V: phy.V, mode: phy.mode, rs: [phy.r1, phy.r2, phy.r3] });
-            if (!c) { st = '<p style="color:var(--mut);padding:20px">Add at least one resistor.</p>'; }
-            else if (phy.mode === "series") {
-                const W = 560, n = c.parts.length, w = (W - 140) / n;
-                st = '<svg viewBox="0 0 ' + W + ' 160"><rect x="30" y="30" width="' + (W - 60) + '" height="100" fill="none" stroke="var(--mut)" stroke-width="2"/><line x1="14" y1="66" x2="14" y2="94" stroke="var(--mut)" stroke-width="3"/><line x1="22" y1="72" x2="22" y2="88" stroke="var(--mut)" stroke-width="3"/><text x="34" y="22" font-size="13" fill="var(--tx)">' + phy.V + ' V</text>' +
-                    c.parts.map((p, i) => '<rect x="' + (70 + i * w) + '" y="66" width="' + Math.min(70, w - 20) + '" height="28" fill="var(--chip)" stroke="var(--acc)" stroke-width="2"/><text x="' + (70 + i * w + Math.min(70, w - 20) / 2) + '" y="58" font-size="12" fill="var(--tx)" text-anchor="middle">R' + (p.i + 1) + ' ' + p.r + 'Ω · ' + fmt(p.V, 1) + 'V</text>').join("") +
-                    '<text x="' + W / 2 + '" y="152" font-size="13" fill="var(--acc2)" text-anchor="middle">I = ' + fmt(c.I, 3) + ' A everywhere (series)</text></svg>';
-            } else {
-                const W = 560, rows = c.parts.map((p, i) => 60 + i * 56), Hh = rows[rows.length - 1] + 50;
-                st = '<svg viewBox="0 0 ' + W + ' ' + Hh + '"><line x1="60" y1="30" x2="' + (W - 60) + '" y2="30" stroke="var(--mut)" stroke-width="2"/><line x1="60" y1="' + (rows[rows.length - 1]) + '" x2="' + (W - 60) + '" y2="' + (rows[rows.length - 1]) + '" stroke="var(--mut)" stroke-width="2"/><line x1="60" y1="30" x2="60" y2="' + rows[rows.length - 1] + '" stroke="var(--mut)" stroke-width="2"/><line x1="' + (W - 60) + '" y1="30" x2="' + (W - 60) + '" y2="' + rows[rows.length - 1] + '" stroke="var(--mut)" stroke-width="2"/><line x1="20" y1="30" x2="60" y2="30" stroke="var(--mut)" stroke-width="2"/><line x1="12" y1="18" x2="12" y2="42" stroke="var(--mut)" stroke-width="3"/><line x1="20" y1="24" x2="20" y2="36" stroke="var(--mut)" stroke-width="3"/>' +
-                    c.parts.map((p, i) => '<line x1="60" y1="' + rows[i] + '" x2="' + (W - 60) + '" y2="' + rows[i] + '" stroke="var(--mut)" stroke-width="2"/><rect x="' + (W / 2 - 40) + '" y="' + (rows[i] - 14) + '" width="80" height="28" fill="var(--chip)" stroke="var(--acc)" stroke-width="2"/><text x="' + W / 2 + '" y="' + (rows[i] - 20) + '" font-size="12" fill="var(--tx)" text-anchor="middle">R' + (p.i + 1) + ' ' + p.r + 'Ω · ' + fmt(p.I, 2) + 'A</text>').join("") + '</svg>';
-            }
-            if (c) nt = ro("R equivalent", fmt(c.Req, 2) + " Ω") + ro("Battery current", fmt(c.I, 3) + " A") + ro("Total power", fmt(c.P, 2) + " W") +
-                '<div id="nb"></div><table class="ptable"><tr><th>R</th><th>V</th><th>I</th><th>P</th></tr>' + c.parts.map(p => '<tr><td>R' + (p.i + 1) + '</td><td>' + fmt(p.V, 2) + ' V</td><td>' + fmt(p.I, 3) + ' A</td><td>' + fmt(p.P, 2) + ' W</td></tr>').join("") + '</table>' +
-                why(phy.mode === "series" ? "Series: one path, so the same current flows everywhere (charge conservation) and voltages add up to the battery's (Kirchhoff). Req = ΣR." : "Parallel: every branch sees the full battery voltage; branch currents add at the junction (Kirchhoff). 1/Req = Σ 1/R — which is why Req is smaller than the smallest branch.");
-        } else if (phy.rig === "opt") {
-            const f = (phy.kind === "lensn" || phy.kind === "mirror") ? -phy.f : phy.f;
-            const kind = phy.kind.indexOf("lens") === 0 ? "lens" : "mirror";
-            const o = PhysCore.optics({ kind: kind, f: f, u: phy.u });
-            const W = 560, H = 260, cy = H / 2;
-            const vf = isFinite(o.v) ? o.v : 0;
-            const xs = [o.u, vf, 0, 2 * f];
-            const xmin = Math.min.apply(null, xs) - 12, xmax = Math.max.apply(null, xs) + 12;
-            const X = x => (x - xmin) / (xmax - xmin) * W;
-            const oh = 34, ih = isFinite(o.M) ? Math.max(-110, Math.min(110, oh * o.M)) : 0;
-            const ix = isFinite(o.v) ? X(o.v) : X(vf), iy = cy - ih;
-            const ray = py => {
-                if (o.atF) return '<line x1="' + X(o.u) + '" y1="' + (cy - oh) + '" x2="' + X(0) + '" y2="' + py + '" stroke="var(--acc2)" stroke-width="1.6"/><line x1="' + X(0) + '" y1="' + py + '" x2="' + W + '" y2="' + py + '" stroke="var(--acc2)" stroke-width="1.6"/>';
-                const out = o.real
-                    ? '<line x1="' + X(0) + '" y1="' + py + '" x2="' + ix + '" y2="' + iy + '" stroke="var(--acc2)" stroke-width="1.6"/>'
-                    : '<line x1="' + X(0) + '" y1="' + py + '" x2="' + (X(0) + (X(0) - ix) * .8) + '" y2="' + (py + (py - iy) * .8) + '" stroke="var(--acc2)" stroke-width="1.6"/><line x1="' + X(0) + '" y1="' + py + '" x2="' + ix + '" y2="' + iy + '" stroke="var(--acc2)" stroke-width="1.4" stroke-dasharray="4 4"/>';
-                return '<line x1="' + X(o.u) + '" y1="' + (cy - oh) + '" x2="' + X(0) + '" y2="' + py + '" stroke="var(--acc2)" stroke-width="1.6"/>' + out;
-            };
-            st = '<svg viewBox="0 0 ' + W + ' ' + H + '"><line x1="0" y1="' + cy + '" x2="' + W + '" y2="' + cy + '" stroke="var(--mut)" stroke-width="1.4"/>' +
-                (kind === "lens"
-                    ? '<ellipse cx="' + X(0) + '" cy="' + cy + '" rx="7" ry="70" fill="var(--acc)" opacity=".35" stroke="var(--acc)" stroke-width="2"/>'
-                    : '<path d="M ' + X(0) + ' ' + (cy - 70) + ' Q ' + (X(0) + (f < 0 ? 16 : -16)) + ' ' + cy + ' ' + X(0) + ' ' + (cy + 70) + '" fill="none" stroke="var(--acc)" stroke-width="4"/>') +
-                '<line x1="' + X(o.u) + '" y1="' + cy + '" x2="' + X(o.u) + '" y2="' + (cy - oh) + '" stroke="var(--tx)" stroke-width="3"/><polygon points="' + (X(o.u) - 4) + ',' + (cy - oh + 8) + ' ' + (X(o.u) + 4) + ',' + (cy - oh + 8) + ' ' + X(o.u) + ',' + (cy - oh) + '" fill="var(--tx)"/>' +
-                ray(cy - oh) + ray(cy - oh * .45) +
-                '<line x1="' + ix + '" y1="' + cy + '" x2="' + ix + '" y2="' + iy + '" stroke="var(--ok)" stroke-width="3"' + (o.real ? '' : ' stroke-dasharray="5 4"') + '/><text x="' + ix + '" y="' + (cy + 18) + '" font-size="12" fill="var(--mut)" text-anchor="middle">image</text><text x="' + X(o.u) + '" y="' + (cy + 18) + '" font-size="12" fill="var(--mut)" text-anchor="middle">object</text></svg>';
-            nt = ro("v (image distance)", fmt(o.v, 1) + " cm") + ro("Magnification", fmt(o.M, 2) + "×") + ro("Nature", o.atF ? "Object at focus — refracted rays emerge parallel: no image forms" : (o.real ? "Real" : "Virtual") + ", " + (o.inverted ? "inverted" : "erect") + ", " + (Math.abs(o.M) > 1 ? "enlarged" : Math.abs(o.M) < 1 ? "diminished" : "same size")) +
-                why(kind === "lens" ? "Cartesian sign convention, lens formula 1/v − 1/u = 1/f with u = −|u|. A dashed image arrow means virtual: the rays only appear to meet." : "Mirror formula 1/v + 1/u = 1/f with u = −|u|. For mirrors a negative v is a real image in front of the mirror.");
-        } else {
-            const r = PhysCore.solve(phy.known, [phy.topic]);
-            const keys = topicKeys();
-            st = '<table class="ptable"><tr><th>Quantity</th><th>Value</th><th></th></tr>' + keys.map(k => '<tr><td>' + k + ' (' + (PhysCore.UNITS[k] || "") + ')</td><td><b>' + (r.vals[k] !== undefined ? fmt(r.vals[k], 3) : "—") + '</b></td><td style="color:var(--mut)">' + (phy.known[k] !== undefined ? "given" : r.vals[k] !== undefined ? "derived" : "unknown") + '</td></tr>').join("") + '</table>';
-            nt = why("Chain of laws applied:<br>" + (r.trace.length ? r.trace.map(t => "• " + t.law + " → " + t.got).join("<br>") : "• none — give me more knowns.")) +
-                '<p style="font-size:12px;color:var(--mut)">Every value above came from propagating your inputs through the law graph — the same engine powers the other rigs.</p>';
-        }
-        $("phyStage").innerHTML = st; $("phyNote").innerHTML = "<h3>Readings</h3>" + nt + '<div id="nb"></div>';
-        nbRender();
-    }
-
-    /* ---------------- BIOLOGY ---------------- */
-    function bioCtl() {
-        const T = bio.tab;
-        const rb = (id, l) => '<button type="button" class="' + (T === id ? "on" : "") + '" onclick="LABX.bioTab(\'' + id + '\')">' + l + '</button>';
-        let h = '<h3>🧬 Biology bench</h3><div class="rig">' + rb("photo", "🌿 Photosynthesis") + rb("enz", "🧫 Enzymes") + rb("gen", "🧬 Genetics") + rb("chain", "🕸 Food chain") + '</div>';
-        if (T === "photo") h +=
-            '<label>Light intensity <span class="rv" data-rv="light">' + bio.light + '%</span></label><input type="range" min="0" max="100" value="' + bio.light + '" oninput=\"LABX.bioSet(\'light\',+this.value,1)" onchange=\"LABX.bioSet(\'light\',+this.value,3)">' +
-            '<label>CO₂ concentration <span class="rv" data-rv="co2">' + bio.co2 + ' ppm</span></label><input type="range" min="0" max="1500" step="10" value="' + bio.co2 + '" oninput=\"LABX.bioSet(\'co2\',+this.value,1)" onchange=\"LABX.bioSet(\'co2\',+this.value,3)">' +
-            '<label>Temperature <span class="rv" data-rv="ptemp">' + bio.ptemp + '°C</span></label><input type="range" min="0" max="55" value="' + bio.ptemp + '" oninput=\"LABX.bioSet(\'temp\',+this.value,1)" onchange=\"LABX.bioSet(\'temp\',+this.value,3)">';
-        if (T === "enz") h +=
-            '<label>Enzyme</label><select onchange="LABX.bioSet(\'enz\',this.value)">' + Object.keys(BioCore.ENZYMES).map(k => '<option value="' + k + '"' + (bio.enz === k ? ' selected' : '') + '>' + BioCore.ENZYMES[k].n + '</option>').join("") + '</select>' +
-            '<label>Temperature <span class="rv" data-rv="etemp">' + bio.etemp + '°C</span></label><input type="range" min="0" max="80" value="' + bio.etemp + '" oninput=\"LABX.bioSet(\'temp\',+this.value,1)" onchange=\"LABX.bioSet(\'temp\',+this.value,3)">' +
-            '<label>pH <span class="rv" data-rv="ph">' + bio.ph + '</span></label><input type="range" min="0" max="14" step="0.5" value="' + bio.ph + '" oninput=\"LABX.bioSet(\'ph\',+this.value,1)" onchange=\"LABX.bioSet(\'ph\',+this.value,3)">' +
-            '<label>Substrate [S] <span class="rv" data-rv="S">' + bio.S + ' mM</span></label><input type="range" min="0" max="100" value="' + bio.S + '" oninput=\"LABX.bioSet(\'S\',+this.value,1)" onchange=\"LABX.bioSet(\'S\',+this.value,3)">';
-        if (T === "gen") {
-            const gOpts = (v, d, r) => [d + d, d + r, r + r].map(g => '<option' + (v === g ? ' selected' : '') + '>' + g + '</option>').join("");
-            const t = TRAITS[bio.trait];
-            h += '<label>Trait</label><select onchange="LABX.bioSet(\'trait\',+this.value)">' + TRAITS.map((x, i) => '<option value="' + i + '"' + (bio.trait === i ? ' selected' : '') + '>' + x[0] + ' (' + x[1] + ' dom / ' + x[2] + ' rec)</option>').join("") + '</select>' +
-                '<label>Parent 1</label><select onchange="LABX.bioSet(\'p1\',this.value)">' + gOpts(bio.p1, t[1], t[2]) + '</select>' +
-                '<label>Parent 2</label><select onchange="LABX.bioSet(\'p2\',this.value)">' + gOpts(bio.p2, t[1], t[2]) + '</select>' +
-                '<label style="margin-top:10px"><input type="checkbox" style="width:auto"' + (bio.di ? ' checked' : '') + ' onchange="LABX.bioSet(\'di\',this.checked)"> Dihybrid cross (adds ' + TRAITS[(bio.trait + 1) % 3][0] + ')</label>';
-            if (bio.di) { const t2 = TRAITS[(bio.trait + 1) % 3]; h += '<label>Parent 1 (trait 2)</label><select onchange="LABX.bioSet(\'p1b\',this.value)">' + gOpts(bio.p1b, t2[1], t2[2]) + '</select><label>Parent 2 (trait 2)</label><select onchange="LABX.bioSet(\'p2b\',this.value)">' + gOpts(bio.p2b, t2[1], t2[2]) + '</select>'; }
-        }
-        if (T === "chain") h +=
-            '<label>Producer energy <span class="rv" data-rv="prod">' + bio.prod + ' kJ</span></label><input type="range" min="1000" max="100000" step="500" value="' + bio.prod + '" oninput=\"LABX.bioSet(\'prod\',+this.value,1)" onchange=\"LABX.bioSet(\'prod\',+this.value,3)">' +
-            '<label>Trophic levels <span class="rv" data-rv="lv">' + bio.lv + '</span></label><input type="range" min="2" max="5" value="' + bio.lv + '" oninput=\"LABX.bioSet(\'lv\',+this.value,1)" onchange=\"LABX.bioSet(\'lv\',+this.value,3)">' +
-            '<label>Transfer efficiency <span class="rv" data-rv="eff">' + bio.eff + '%</span></label><input type="range" min="2" max="25" value="' + bio.eff + '" oninput=\"LABX.bioSet(\'eff\',+this.value,1)" onchange=\"LABX.bioSet(\'eff\',+this.value,3)">';
-        $("bioCtl").innerHTML = h; bioUp();
-    }
-    function bioUp() {
-        let st = "", nt = "";
-        if (bio.tab === "photo") {
-            const r = BioCore.photo({ light: bio.light, co2: bio.co2, temp: bio.ptemp });
-            const W = 520, H = 240, pad = 30, curve = [];
-            for (let L = 0; L <= 100; L += 2) curve.push(BioCore.photo({ light: L, co2: bio.co2, temp: bio.ptemp }).net);
-            const mn = Math.min.apply(null, curve.concat([0])), mx = Math.max.apply(null, curve.concat([1]));
-            const X = i => pad + i / 100 * (W - 2 * pad), Y = v => H - pad - (v - mn) / (mx - mn) * (H - 2 * pad);
-            const comp = curve.findIndex(v => v >= 0);
-            st = '<svg viewBox="0 0 ' + W + ' ' + H + '"><line x1="' + pad + '" y1="' + Y(0) + '" x2="' + (W - pad) + '" y2="' + Y(0) + '" stroke="var(--mut)" stroke-width="1.5"/><polyline points="' + curve.map((v, i) => X(i * 2) + ',' + Y(v)).join(" ") + '" fill="none" stroke="var(--ok)" stroke-width="3"/><circle cx="' + X(bio.light) + '" cy="' + Y(r.net) + '" r="6" fill="var(--acc2)"/>' +
-                (comp > 0 ? '<circle cx="' + X(comp * 2) + '" cy="' + Y(0) + '" r="5" fill="var(--bad)"/><text x="' + X(comp * 2) + '" y="' + (Y(0) - 10) + '" font-size="11" fill="var(--bad)" text-anchor="middle">compensation point</text>' : '') +
-                '<text x="' + (W - pad) + '" y="' + (H - 8) + '" font-size="11" fill="var(--mut)" text-anchor="end">light →</text>' +
-                [25, 50, 75, 100].map(L => '<text x="' + X(L).toFixed(1) + '" y="' + (H - pad + 14) + '" font-size="10" fill="var(--mut)" text-anchor="middle">' + L + '</text>').join("") +
-                [0.25, 0.5, 0.75, 1].map(fr => '<text x="' + (pad - 5) + '" y="' + (Y(mn + (mx - mn) * fr) + 3).toFixed(1) + '" font-size="10" fill="var(--mut)" text-anchor="end">' + fmt(mn + (mx - mn) * fr, 0) + '</text>').join("") + '</svg>' +
-                '<div style="display:flex;gap:6px;margin-top:8px">' + [["light", r.L, "var(--orange)"], ["CO₂", r.C, "var(--acc)"], ["temp", r.tF, "var(--ok)"]].map(fc => '<div style="flex:1;background:var(--chip);border-radius:8px;padding:6px;text-align:center"><div style="height:8px;border-radius:99px;background:var(--bd);overflow:hidden"><div style="height:100%;width:' + Math.round(fc[1] * 100) + '%;background:' + fc[2] + '"></div></div><div style="font-size:11px;color:var(--mut);margin-top:4px">' + fc[0] + ' factor ' + Math.round(fc[1] * 100) + '%</div></div>').join("") + '</div>';
-            nt = ro("Gross photosynthesis", fmt(r.gross, 1)) + ro("Respiration", fmt(r.resp, 1)) + ro("Net O₂ output", fmt(r.net, 1)) + ro("Limiting factor", r.limiting) +
-                why("Rate = light-saturation × CO₂-saturation × enzyme-temperature curve; respiration runs its own Q10 curve, so the compensation point (red dot, net = 0) emerges from the model. Raise the limiting factor to raise the rate — raising the others won't.");
-        } else if (bio.tab === "enz") {
-            const r = BioCore.enzyme({ id: bio.enz, temp: bio.etemp, ph: bio.ph, S: bio.S });
-            const W = 520, H = 220, pad = 30, curve = [];
-            for (let T = 0; T <= 80; T += 1) curve.push(BioCore.enzyme({ id: bio.enz, temp: T, ph: bio.ph, S: bio.S }).activity);
-            const X = i => pad + i / 80 * (W - 2 * pad), Y = v => H - pad - v / 100 * (H - 2 * pad);
-            st = '<svg viewBox="0 0 ' + W + ' ' + H + '"><line x1="' + pad + '" y1="' + Y(0) + '" x2="' + (W - pad) + '" y2="' + Y(0) + '" stroke="var(--mut)" stroke-width="1.5"/><polyline points="' + curve.map((v, i) => X(i) + ',' + Y(v)).join(" ") + '" fill="none" stroke="var(--acc)" stroke-width="3"/><circle cx="' + X(bio.etemp) + '" cy="' + Y(r.activity) + '" r="6" fill="var(--acc2)"/><text x="' + (W - pad) + '" y="' + (H - 8) + '" font-size="11" fill="var(--mut)" text-anchor="end">temperature →</text>' +
-                [0, 20, 37, 60, 80].map(T => '<text x="' + X(T).toFixed(1) + '" y="' + (H - pad + 14) + '" font-size="10" fill="var(--mut)" text-anchor="middle">' + T + '°</text>').join("") +
-                [0, 25, 50, 75, 100].map(a => '<text x="' + (pad - 5) + '" y="' + (Y(a) + 3).toFixed(1) + '" font-size="10" fill="var(--mut)" text-anchor="end">' + a + '</text>').join("") + '</svg>';
-            nt = ro("Activity", fmt(r.activity, 1) + "%") + ro("Temperature factor", fmt(r.tC * 100, 0) + "%") + ro("pH factor", fmt(r.pC * 100, 0) + "%") + ro("Substrate (Michaelis–Menten)", fmt(r.mm * 100, 0) + "%") + ro("Holding you back", r.worst) +
-                why(r.e.n + ": " + r.e.where + ". Activity = temperature curve (Q10 rise, sharp denaturation past " + r.e.tOpt + "°C) × pH curve (optimum " + r.e.phOpt + ") × S/(S+Km). The cliff after the optimum is denaturation — irreversible, unlike a simple slow-down.");
-        } else if (bio.tab === "gen") {
-            const t1 = TRAITS[bio.trait], t2 = TRAITS[(bio.trait + 1) % 3];
-            const traits = [{ dom: t1[1], rec: t1[2], p1: bio.p1, p2: bio.p2, domName: t1[3], rName: t1[4] }];
-            if (bio.di) traits.push({ dom: t2[1], rec: t2[2], p1: bio.p1b, p2: bio.p2b, domName: t2[3], rName: t2[4] });
-            const r = BioCore.cross({ traits: traits });
-            const half = r.grid[0][0].length / 2;
-            r.lastPheno = Object.entries(r.pheno).sort((a, b) => b[1] - a[1]).map(e2 => e2[1]).join(":");
-            st = '<table class="pgrid"><tr><th></th>' + r.grid[0].map((_, j) => '<th>' + r.grid[0][j].slice(half) + '</th>').join("") + '</tr>' +
-                r.grid.map((row, i) => '<tr><th>' + row[0].slice(0, half) + '</th>' + row.map(g => '<td>' + g + '</td>').join("") + '</tr>').join("") + '</table>';
-            nt = '<div id="nb"></div><b>Phenotype ratio</b> ' + Object.entries(r.pheno).sort((a, b) => b[1] - a[1]).map(([k, v]) => k + ": " + v).join(" : ") + "<br><br><b>Genotypes</b><br>" + Object.entries(r.geno).map(([k, v]) => k + " ×" + v).join(", ") +
-                why("Gametes form by Mendel's law of segregation (one allele per trait each)" + (bio.di ? " and independent assortment (the two traits shuffle freely)" : "") + "; the square lists every fertilisation combination. Change any parent and the ratios follow.");
-        } else {
-            const r = BioCore.chain(bio), mx = r.levels[0].kJ;
-            st = r.levels.map((l, i) => '<div style="margin:' + (i ? "4px" : "0") + ' auto;width:' + Math.max(6, l.kJ / mx * 100) + '%;background:' + ["var(--ok)", "var(--acc)", "var(--orange)", "var(--bad)", "var(--acc2)"][i] + ';border-radius:8px;padding:7px 10px;color:#fff;font-weight:700;font-size:13px">' + l.name + ' · ' + fmt(l.kJ, 0) + ' kJ</div>').join("");
-            nt = ro("Efficiency", (r.eff * 100).toFixed(0) + "%") + ro("Top level energy", fmt(r.levels[r.levels.length - 1].kJ, 1) + " kJ") +
-                why("Each level keeps only the transferred fraction (the 10% law: respiration, heat and waste take the rest). That is why food chains rarely exceed four or five levels — slide efficiency to 20% and watch a fifth level become possible.");
-        }
-        $("bioStage").innerHTML = st; $("bioNote").innerHTML = "<h3>Readings</h3>" + nt + '<div id="nb"></div>';
-        nbRender();
-    }
-    function rvUp(which) {
-        const U = { v0: " m/s", ang: "°", h0: " m", V: " V", f: " cm", u: " cm", light: "%", co2: " ppm", ptemp: "°C", etemp: "°C", prod: " kJ", eff: "%", k: "" };
-        const src = which === "phy" ? phy : bio;
-        document.querySelectorAll("#" + (which === "phy" ? "phyCtl" : "bioCtl") + " [data-rv]").forEach(sp => { const k = sp.dataset.rv; if (src[k] !== undefined) sp.textContent = src[k] + (U[k] !== undefined ? U[k] : which === "phy" ? " Ω" : ""); });
-    }
-    /* v93: lab notebook — commit a reading when a control is released */
-    let nb = [];
-    function nbAdd(title, detail) {
-        const d = new Date();
-        nb.unshift({ t: String(d.getMinutes()).padStart(2, "0") + ":" + String(d.getSeconds()).padStart(2, "0"), title: title, d: detail });
-        if (nb.length > 30) nb.pop();
-        nbRender();
-    }
-    function nbRender() {
-        const el = $("nb"); if (!el) return;
-        el.innerHTML = '<div class="nb"><div><span>📓 Lab notebook · ' + nb.length + '</span><button type="button" onclick="LABX.nbClear()">Clear</button></div>' +
-            (nb.length ? nb.map(e => '<div class="nbe"><time>' + e.t + '</time><b>' + e.title + '</b><span>' + e.d + '</span></div>').join("") : '<div style="opacity:.7">Release a slider or change a setting to record a reading here — like writing results in a practical file.</div>') + '</div>';
-    }
-    function nbNow(sec) {
-        try {
-            if (sec === "phy") {
-                if (phy.rig === "proj") { const p = PhysCore.projectile(phy); nbAdd("🎯 Projectile", "v₀=" + phy.v0 + " m/s, θ=" + phy.ang + "°, h₀=" + phy.h0 + " m" + (phy.drag ? ", drag k=" + phy.k : "") + " → R=" + fmt(p.R, 1) + " m, T=" + fmt(p.T) + " s, H=" + fmt(p.H, 1) + " m"); }
-                else if (phy.rig === "circ") { const rs = [phy.r1, phy.r2, phy.r3].filter(r => r > 0); const c = PhysCore.circuit({ V: phy.V, mode: phy.mode, rs: rs }); if (c) nbAdd("🔌 Circuit", phy.mode + ", " + phy.V + " V, R=[" + rs.join(", ") + "] Ω → Req=" + fmt(c.Req, 2) + " Ω, I=" + fmt(c.I, 3) + " A, P=" + fmt(c.P, 2) + " W"); }
-                else if (phy.rig === "opt") { const f = (phy.kind === "lensn" || phy.kind === "mirror") ? -phy.f : phy.f; const kind = phy.kind.indexOf("lens") === 0 ? "lens" : "mirror"; const o = PhysCore.optics({ kind: kind, f: f, u: phy.u }); nbAdd("🔭 Optics", phy.kind + ", f=" + f + " cm, u=−" + phy.u + " cm → v=" + fmt(o.v, 1) + " cm, M=" + fmt(o.M, 2) + (o.atF ? " (at focus)" : o.real ? " (real)" : " (virtual)")); }
-                else { const r = PhysCore.solve(phy.known, [phy.topic]); const got = r.trace.length ? r.trace.map(t => t.got + "=" + fmt(r.vals[t.got], 3)).join(", ") : "nothing new"; nbAdd("🧮 Solver", phy.topic + ": " + (Object.keys(phy.known).length ? Object.keys(phy.known).map(k => k + "=" + phy.known[k]).join(", ") : "no knowns") + " → " + got); }
-            } else {
-                if (bio.tab === "photo") { const r = BioCore.photo({ light: bio.light, co2: bio.co2, temp: bio.ptemp }); nbAdd("🌿 Photosynthesis", "light=" + bio.light + "%, CO₂=" + bio.co2 + " ppm, T=" + bio.ptemp + "°C → net=" + fmt(r.net, 1) + ", limiting: " + r.limiting); }
-                else if (bio.tab === "enz") { const r = BioCore.enzyme({ id: bio.enz, temp: bio.etemp, ph: bio.ph, S: bio.S }); nbAdd("🧫 Enzyme", r.e.n + " at " + bio.etemp + "°C, pH " + bio.ph + ", S=" + bio.S + " mM → activity " + fmt(r.activity, 1) + "%"); }
-                else if (bio.tab === "gen") { const t1 = TRAITS[bio.trait]; const t2 = TRAITS[(bio.trait + 1) % 3]; const traits = [{ dom: t1[1], rec: t1[2], p1: bio.p1, p2: bio.p2, domName: t1[3], rName: t1[4] }]; if (bio.di) traits.push({ dom: t2[1], rec: t2[2], p1: bio.p1b, p2: bio.p2b, domName: t2[3], rName: t2[4] }); const r = BioCore.cross({ traits: traits }); const ratio = Object.entries(r.pheno).sort((a, b) => b[1] - a[1]).map(e2 => e2[0] + "×" + e2[1]).join(" : "); nbAdd("🧬 Cross", bio.p1 + "×" + bio.p2 + (bio.di ? " ; " + bio.p1b + "×" + bio.p2b : "") + " → " + ratio); }
-                else { const r = BioCore.chain(bio); nbAdd("🕸 Food chain", bio.prod + " kJ, " + bio.lv + " levels, " + bio.eff + "% → top " + fmt(r.levels[r.levels.length - 1].kJ, 1) + " kJ"); }
-            }
-        } catch (err) { /* a failed reading must never break the bench */ }
-    }
-    window.LABX = {
-        setSec: setSec,
-        phyRig: r => { phy.rig = r; phyCtl(); nbRender(); },
-        phySet: (k, v, cm) => {
-            if (k === "topic" && v !== phy.topic) phy.known = {};
-            phy[k] = v;
-            if (cm === 2) { phyCtl(); nbNow("phy"); return; }
-            rvUp("phy"); phyUp();
-            if (cm === 3) nbNow("phy");
-        },
-        phyKnown: (k, v) => { const n = parseFloat(v); if (v === "" || isNaN(n)) delete phy.known[k]; else phy.known[k] = n; phyUp(); },
-        phyUp: phyUp,
-        bioTab: t => { bio.tab = t; bioCtl(); nbRender(); },
-        bioSet: (k, v, cm) => { bio[k] = v; if (k === "trait" || k === "di") { bioCtl(); nbNow("bio"); } else { rvUp("bio"); bioUp(); if (cm === 3) nbNow("bio"); } },
-        bioUp: bioUp,
-        nbClear: () => { nb = []; nbRender(); }
-    };
-})();
+/* ===== v94 shell bootstrap ===== */
+if(!window.LAB_LOCKED&&window.LabUI){
+ LabUI.Shell.init();
+ var csb=document.getElementById("chemSaveBtn");
+ if(csb)csb.onclick=function(){
+  if(!window.ChemLab)return LabUI.toast("Bench not ready yet");
+  var snap=LabReg.chemSnapshot();
+  if(!snap)return LabUI.toast("Nothing to save yet");
+  var nm=prompt("Save the bench table as:","Chem bench session");
+  if(nm===null)return;
+  LabStore.sessionAdd({name:nm||"Chem bench session",expId:"chem.bench",subject:"chem",snap:{params:{},extra:snap}});
+  LabUI.toast("Bench saved - restore it from Research Workspace");
+ };
+}
 </script>
 </body>
 </html>

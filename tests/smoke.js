@@ -73,15 +73,18 @@ const near = (a, b, e = 1e-6) => Math.abs(a - b) < e;
     ok("ecology: 10% law → top level 10 kJ", near(ch.levels[3].kJ, 10));
 }
 
-/* ---- v93: static integrity checks on the lab page ---- */
+/* ---- v94: static integrity checks on the laboratory shell ---- */
 {
     const fs = require("fs");
-    const lab = fs.readFileSync(path.resolve(__dirname, "..", "chemlab.html"), "utf8");
+    const rd = f => fs.readFileSync(path.resolve(__dirname, "..", f), "utf8");
+    const lab = rd("chemlab.html"), ui = rd("labui.js"), phy = rd("labphysx.js"), bio = rd("labiox.js");
     ok("lab: --orange is defined in both themes", (lab.match(/--orange:#[0-9a-f]{6}/g) || []).length === 2);
-    ok("lab: notebook UI wired (css + render + clear)", lab.includes(".nbe{") && lab.includes("nbRender") && lab.includes("LABX.nbClear"));
-    ok("lab: slider readouts update live (data-rv + rvUp)", lab.includes('data-rv=') && lab.includes("function rvUp"));
-    ok("lab: optics handles object-at-focus (atF)", lab.includes("o.atF") && require(path.resolve(__dirname, "..", "physcore.js")).optics({ kind: "lens", f: 10, u: 10 }).atF === true);
-    ok("lab: separate photo/enzyme temperature states", lab.includes("ptemp") && lab.includes("etemp"));
+    ok("lab: legacy chem bench preserved (ws/tool/pan + ACTS + spawn)", lab.includes('id="ws"') && lab.includes("const ACTS=") && lab.includes("function spawn(") && lab.includes("window.ChemLab="));
+    ok("lab: shell loads all v94 modules", ["labstore.js", "labreg.js", "labui.js", "labphysx.js", "labiox.js", "labchemx.js", "labviews.js"].every(f => lab.includes('<script src="' + f + '">')));
+    ok("lab: slider readouts update live (xu-rv in labui)", ui.includes("xu-rv") && ui.includes("rv.textContent"));
+    ok("lab: optics handles object-at-focus (atF)", phy.includes("o.atF") && require(path.resolve(__dirname, "..", "physcore.js")).optics({ kind: "lens", f: 10, u: 10 }).atF === true);
+    ok("lab: separate photo/enzyme temperature states", bio.includes("ptemp") && bio.includes("etemp"));
+    ok("lab: notebook persistence via LabStore", rd("labstore.js").includes("noteAdd") && rd("labviews.js").includes("ws.notebook"));
 }
 
 JSDOM.fromFile(path.resolve(ROOT, "index.html"), {
