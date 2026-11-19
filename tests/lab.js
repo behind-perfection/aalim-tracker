@@ -66,6 +66,11 @@ vc.on("error", (...a) => problems.push("console.error: " + a.join(" ")));
     ok("shell: sidebar navigation rendered", $("sbNav").querySelectorAll("[data-v]").length >= 20);
     U.Shell.applyView("phy.proj");
     ok("nav: physics view mounts and hides chem workspace", $("main").classList.contains("chem-on") === false && $("viewHost").hidden === false && $("viewHost").querySelector(".xview") !== null);
+    /* v95 regression guard: the mounted viewport must contain REAL content, not just an empty .xview wrapper */
+    ok("nav: physics viewport renders non-empty stage + controls (v95 blank-viewport fix)", (() => {
+        const st = $("viewHost").querySelector(".xstage2"), ct = $("viewHost").querySelector(".xctl2");
+        return !!st && !!ct && st.innerHTML.length > 20 && ct.querySelectorAll("input,select,.xu-rec").length >= 2 && st.querySelector("svg") !== null;
+    })());
     ok("nav: chem elements hidden but preserved in DOM", w.document.querySelector(".ws").style.display === "none" && $("ws") !== null);
     U.Shell.applyView("bio.enz");
     const enzMounted = $("viewHost").innerHTML.includes("Enzyme Bench");
@@ -158,12 +163,51 @@ vc.on("error", (...a) => problems.push("console.error: " + a.join(" ")));
     /* ---------- 10. workspace views render ---------- */
     ["ws.research", "ws.notebook", "ws.hypo", "ws.results", "ws.practicals"].forEach(v => {
         U.Shell.applyView(v);
-        ok("view renders: " + v, $("viewHost").textContent.length > 40);
+        ok("view renders real content: " + v, $("viewHost").textContent.trim().length > 40 && $("viewHost").querySelector("button,select,input,.wcard,.nbentry,.prac,table,.ptable,.predcard,.runres,.hypoform,.cmpcol") !== null);
     });
 
     /* ---------- 11. planned module honesty ---------- */
     U.Shell.applyView("bio.exps");
     ok("planned module shows an honest 'planned' card, not a fake UI", $("viewHost").innerHTML.includes("planned") && $("viewHost").querySelector("input[type=range]") === null);
+
+    /* ---------- 11b. EVERY experiment viewport actually renders (v95 blank-viewport regression sweep) ----------
+       Asserts real DOM content in the mounted element — not merely that a wrapper exists.
+       buildView experiments must have a populated .xctl2 (controls) AND .xstage2 (visual/readings);
+       practicals renders .prac cards; chem.bench is the static legacy workspace; planned shows its card. */
+    const blank = [];
+    R.allExps().forEach(e => {
+        U.Shell.applyView(e.id);
+        const vh = $("viewHost");
+        if (e.id === "chem.bench") {
+            /* static bench: viewHost hidden, legacy workspace shown */
+            if (!($("main").classList.contains("chem-on") && vh.hidden && $("ws"))) blank.push(e.id + " (bench workspace missing)");
+            return;
+        }
+        if (e.planned) {
+            if (!vh.querySelector(".planned")) blank.push(e.id + " (planned card missing)");
+            return;
+        }
+        if (e.id === "ws.practicals") {
+            if (vh.querySelectorAll(".prac").length < 5) blank.push(e.id + " (practical cards missing)");
+            return;
+        }
+        const st = vh.querySelector(".xstage2"), ct = vh.querySelector(".xctl2"), nt = vh.querySelector(".xnote2");
+        const ctlOK = ct && ct.querySelectorAll("input,select").length >= 1;
+        const stageOK = st && st.innerHTML.trim().length > 20;
+        const noteOK = nt && nt.textContent.trim().length > 10;
+        /* a real visual: svg chart, table, or diagram must be present in the stage for model experiments */
+        const visualOK = st && (st.querySelector("svg,table,.pyr,.ratio,.rxvessel,.flaskviz,.cellinfo") !== null);
+        if (!(ctlOK && stageOK && noteOK && visualOK)) blank.push(e.id + " (ctl=" + ctlOK + " stage=" + stageOK + " note=" + noteOK + " visual=" + visualOK + ")");
+    });
+    ok("render sweep: all 23 experiment viewports mount real content (controls + stage + readings + visual)", blank.length === 0, blank.join(" | "));
+
+    /* named modules from the bug report get explicit stage assertions */
+    [["phy.proj", "polyline"], ["phy.pend", "svg"], ["phy.incline", "polygon"], ["phy.circ", "svg"], ["phy.opt", "svg"]].forEach(([id, tag]) => {
+        U.Shell.applyView(id);
+        const st = $("viewHost").querySelector(".xstage2");
+        ok("bug-report module renders: " + id, !!st && st.querySelector(tag) !== null && st.innerHTML.length > 100);
+    });
+    U.Shell.applyView("chem.bench");
 
     /* ---------- 12. legacy chem features intact ---------- */
     ok("legacy: practicals data reachable (ACTS)", w.ChemLab.ACTS.length >= 10);
