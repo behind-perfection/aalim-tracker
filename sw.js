@@ -1,7 +1,7 @@
 /* Service worker for Aalim's Class 10 Command Centre.
    Keep CACHE in step with APP_VERSION in index.html: bump both together
    whenever you publish a new version, so phones pick up the update. */
-const CACHE = "aalim-tracker-v96";
+const CACHE = "aalim-tracker-v97";
 const LIBS = "aalim-libs"; // PDF reader engine, kept across app updates
 const ASSETS = [
   "./",
@@ -21,7 +21,16 @@ const ASSETS = [
   "labviews.js",
   "chemcore.js",
   "physcore.js",
-  "biocore.js"
+  "biocore.js",
+  "lifequest.css",
+  "lq-store.js",
+  "lq-adapter.js",
+  "lq-mapper.js",
+  "lq-character.js",
+  "lq-world.js",
+  "lq-render.js",
+  "lq-ui.js",
+  "lifequest.js"
 ];
 
 self.addEventListener("install", (event) => {

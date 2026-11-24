@@ -120,6 +120,7 @@ body.fs-open{overflow:hidden}
 [data-theme=dark] .frame{background:linear-gradient(#2c2711,#211d0b);color:#f5e6a8;border-color:#a8861f;box-shadow:inset 0 0 0 3px #17140a,0 2px 8px rgba(0,0,0,.4)}[data-theme=dark] .frame .muted{color:#cdb96a}
 .hofToast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);z-index:1200;background:#1f2937;color:#fff;padding:10px 16px;border-radius:12px;box-shadow:0 6px 24px rgba(0,0,0,.3);max-width:90vw;font-size:14px}
 </style>
+<link rel="stylesheet" href="lifequest.css">
 </head>
 <body>
 <header><div class="header">
@@ -552,14 +553,14 @@ function planAdvance(x, on) {
 }
 const STORAGE_KEY = "aalimTrackerV2";
 const defaultState = () => normalize({});
-const KEYS = ["progress", "study", "tasks", "extra", "exams", "marks", "questions", "feynman", "workouts", "plan", "extraLog", "flashcards", "mistakes", "homework", "lifts", "library", "quran", "prayers", "dream", "biz", "bizLog", "hof", "goal10", "movies", "research", "runs", "karate", "karateNotes", "hobbyCat", "hobbyCfg", "hobbySec", "hobbyLog", "dayLog", "dayCfg", "gam", "papers", "reviews"];
+const KEYS = ["progress", "study", "tasks", "extra", "exams", "marks", "questions", "feynman", "workouts", "plan", "extraLog", "flashcards", "mistakes", "homework", "lifts", "library", "quran", "prayers", "dream", "biz", "bizLog", "hof", "goal10", "movies", "research", "runs", "karate", "karateNotes", "hobbyCat", "hobbyCfg", "hobbySec", "hobbyLog", "dayLog", "dayCfg", "gam", "papers", "reviews", "lq"];
 const DEFAULT_BATCHES = ["Udaan", "Udaan Advanced", "Business/AI", "Extra-curricular", "Other"];
 function normalize(x) {
     var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l;
     x = x && typeof x === "object" ? x : {};
     const A = v => Array.isArray(v) ? v : [], O = v => v && typeof v === "object" && !Array.isArray(v) ? v : {};
     return { progress: Object.fromEntries(Object.entries(O(x.progress)).map(([k, v]) => [k, mig(v)])), study: A(x.study), tasks: A(x.tasks), extra: A(x.extra), exams: A(x.exams).filter(e => e && Array.isArray(e.topics)).map(e => (Object.assign(Object.assign({}, e), { topics: e.topics.map(t => (Object.assign(Object.assign({}, t), { status: mig(t.status) }))), papers: Array.isArray(e.papers) ? e.papers.filter(p => p && p.subject) : [] }))),
-        marks: A(x.marks), questions: A(x.questions), feynman: A(x.feynman), workouts: A(x.workouts), extraLog: A(x.extraLog), flashcards: A(x.flashcards), mistakes: A(x.mistakes), quotes: A(x.quotes), homework: A(x.homework), plan: O(x.plan), meta: O(x.meta), dream: O(x.dream), lifts: A(x.lifts), prayers: O(x.prayers), quran: A(x.quran), library: A(x.library), biz: A(x.biz), bizLog: A(x.bizLog), hof: A(x.hof), goal10: O(x.goal10), reader: O(x.reader), movies: A(x.movies), research: A(x.research), runs: A(x.runs).filter(r => r && typeof r === "object"), karate: A(x.karate).filter(r => r && typeof r === "object"), karateNotes: A(x.karateNotes).filter(r => r && typeof r === "object"), hobbyCat: A(x.hobbyCat).filter(r => r && typeof r === "object"), hobbyCfg: Object.assign({ stepLen: 0.7 }, O(x.hobbyCfg)), hobbySec: A(x.hobbySec).filter(r => r && typeof r === "object" && r.id), hobbyLog: A(x.hobbyLog).filter(r => r && typeof r === "object"), dayLog: O(x.dayLog), dayCfg: O(x.dayCfg), gam: O(x.gam), papers: A(x.papers).filter(r => r && typeof r === "object"), reviews: A(x.reviews).filter(r => r && typeof r === "object" && Array.isArray(r.goals)),
+        marks: A(x.marks), questions: A(x.questions), feynman: A(x.feynman), workouts: A(x.workouts), extraLog: A(x.extraLog), flashcards: A(x.flashcards), mistakes: A(x.mistakes), quotes: A(x.quotes), homework: A(x.homework), plan: O(x.plan), meta: O(x.meta), dream: O(x.dream), lifts: A(x.lifts), prayers: O(x.prayers), quran: A(x.quran), library: A(x.library), biz: A(x.biz), bizLog: A(x.bizLog), hof: A(x.hof), goal10: O(x.goal10), reader: O(x.reader), movies: A(x.movies), research: A(x.research), runs: A(x.runs).filter(r => r && typeof r === "object"), karate: A(x.karate).filter(r => r && typeof r === "object"), karateNotes: A(x.karateNotes).filter(r => r && typeof r === "object"), hobbyCat: A(x.hobbyCat).filter(r => r && typeof r === "object"), hobbyCfg: Object.assign({ stepLen: 0.7 }, O(x.hobbyCfg)), hobbySec: A(x.hobbySec).filter(r => r && typeof r === "object" && r.id), hobbyLog: A(x.hobbyLog).filter(r => r && typeof r === "object"), dayLog: O(x.dayLog), dayCfg: O(x.dayCfg), gam: O(x.gam), papers: A(x.papers).filter(r => r && typeof r === "object"), reviews: A(x.reviews).filter(r => r && typeof r === "object" && Array.isArray(r.goals)), lq: O(x.lq),
         batches: A(x.batches).length ? A(x.batches) : [...DEFAULT_BATCHES],
         settings: { mid: ((_a = x.settings) === null || _a === void 0 ? void 0 : _a.mid) || "", board: ((_b = x.settings) === null || _b === void 0 ? void 0 : _b.board) || "", weeklyGoal: Math.max(0, Number((_c = x.settings) === null || _c === void 0 ? void 0 : _c.weeklyGoal) || 0), theme: ((_d = x.settings) === null || _d === void 0 ? void 0 : _d.theme) === "dark" ? "dark" : "light", autoPlan: ((_e = x.settings) === null || _e === void 0 ? void 0 : _e.autoPlan) !== false, autoBreak: ((_f = x.settings) === null || _f === void 0 ? void 0 : _f.autoBreak) !== false, autoNext: !!((_g = x.settings) === null || _g === void 0 ? void 0 : _g.autoNext), sound: ((_h = x.settings) === null || _h === void 0 ? void 0 : _h.sound) !== false, notify: !!((_j = x.settings) === null || _j === void 0 ? void 0 : _j.notify), wake: okTime((_k = x.settings) === null || _k === void 0 ? void 0 : _k.wake, "06:00"), sleep: okTime((_l = x.settings) === null || _l === void 0 ? void 0 : _l.sleep, "22:00") } };
 }
@@ -4201,7 +4202,7 @@ function mergeState(a, b) {
         });
         return o;
     };
-    return { progress: Object.assign(Object.assign({}, a.progress), b.progress), study: u(a.study, b.study), tasks: u(a.tasks, b.tasks), extra: u(a.extra, b.extra), exams: mergeById(a.exams, b.exams), marks: u(a.marks, b.marks), questions: u(a.questions, b.questions), feynman: u(a.feynman, b.feynman), workouts: u(a.workouts, b.workouts), extraLog: u(a.extraLog, b.extraLog), flashcards: u(a.flashcards, b.flashcards), mistakes: u(a.mistakes, b.mistakes), quotes: u(a.quotes, b.quotes), homework: u(a.homework, b.homework), plan: Object.assign(Object.assign({}, b.plan), a.plan), meta: Object.assign(Object.assign({}, b.meta), a.meta), dream: Object.assign(Object.assign({}, b.dream), a.dream), lifts: u(a.lifts, b.lifts), quran: u(a.quran, b.quran), library: u(a.library, b.library), biz: u(a.biz, b.biz), bizLog: u(a.bizLog, b.bizLog), movies: mergeById(a.movies, b.movies), research: mergeById(a.research, b.research), hof: mergeById(a.hof, b.hof), runs: mergeById(a.runs, b.runs), karate: mergeById(a.karate, b.karate), karateNotes: mergeById(a.karateNotes, b.karateNotes), hobbyCat: mergeById(a.hobbyCat, b.hobbyCat), hobbySec: mergeById(a.hobbySec, b.hobbySec), hobbyLog: mergeById(a.hobbyLog, b.hobbyLog), dayLog: Object.assign({}, b.dayLog, a.dayLog), dayCfg: Object.assign({}, b.dayCfg, a.dayCfg), gam: mergeGam(a.gam, b.gam), papers: mergeById(a.papers, b.papers), reviews: mergeById(a.reviews, b.reviews), hobbyCfg: Object.assign({}, b.hobbyCfg, a.hobbyCfg), goal10: Object.assign(Object.assign({}, b.goal10), a.goal10), reader: Object.assign(Object.assign({}, b.reader), a.reader), prayers: Object.assign(Object.assign({}, b.prayers), a.prayers), batches: [...new Set([...a.batches, ...b.batches])], settings: Object.assign(Object.assign({}, b.settings), Object.fromEntries(Object.entries(a.settings).filter(([, v]) => v))) };
+    return { progress: Object.assign(Object.assign({}, a.progress), b.progress), study: u(a.study, b.study), tasks: u(a.tasks, b.tasks), extra: u(a.extra, b.extra), exams: mergeById(a.exams, b.exams), marks: u(a.marks, b.marks), questions: u(a.questions, b.questions), feynman: u(a.feynman, b.feynman), workouts: u(a.workouts, b.workouts), extraLog: u(a.extraLog, b.extraLog), flashcards: u(a.flashcards, b.flashcards), mistakes: u(a.mistakes, b.mistakes), quotes: u(a.quotes, b.quotes), homework: u(a.homework, b.homework), plan: Object.assign(Object.assign({}, b.plan), a.plan), meta: Object.assign(Object.assign({}, b.meta), a.meta), dream: Object.assign(Object.assign({}, b.dream), a.dream), lifts: u(a.lifts, b.lifts), quran: u(a.quran, b.quran), library: u(a.library, b.library), biz: u(a.biz, b.biz), bizLog: u(a.bizLog, b.bizLog), movies: mergeById(a.movies, b.movies), research: mergeById(a.research, b.research), hof: mergeById(a.hof, b.hof), runs: mergeById(a.runs, b.runs), karate: mergeById(a.karate, b.karate), karateNotes: mergeById(a.karateNotes, b.karateNotes), hobbyCat: mergeById(a.hobbyCat, b.hobbyCat), hobbySec: mergeById(a.hobbySec, b.hobbySec), hobbyLog: mergeById(a.hobbyLog, b.hobbyLog), dayLog: Object.assign({}, b.dayLog, a.dayLog), dayCfg: Object.assign({}, b.dayCfg, a.dayCfg), gam: mergeGam(a.gam, b.gam), papers: mergeById(a.papers, b.papers), reviews: mergeById(a.reviews, b.reviews), hobbyCfg: Object.assign({}, b.hobbyCfg, a.hobbyCfg), goal10: Object.assign(Object.assign({}, b.goal10), a.goal10), reader: Object.assign(Object.assign({}, b.reader), a.reader), prayers: Object.assign(Object.assign({}, b.prayers), a.prayers), batches: [...new Set([...a.batches, ...b.batches])], lq: (window.LQMerge ? window.LQMerge(a.lq, b.lq) : Object.assign({}, b.lq, a.lq)), settings: Object.assign(Object.assign({}, b.settings), Object.fromEntries(Object.entries(a.settings).filter(([, v]) => v))) };
 }
 function importData(e) {
     var _a;
@@ -5020,7 +5021,7 @@ main{width:auto;max-width:1600px;margin:16px 24px 36px}footer{width:auto;margin-
 }
 setTimeout(navInit, 0);
 /* ===== Version label ===== */
-const APP_VERSION = "v96"; // keep in step with CACHE in sw.js
+const APP_VERSION = "v97"; // keep in step with CACHE in sw.js
 function paintVer() { ["appVer", "appVer2"].forEach(id => { const el = $(id); if (el)
     el.textContent = APP_VERSION + (navigator.onLine ? "" : " · offline"); }); }
 window.addEventListener("online", paintVer);
@@ -5502,6 +5503,15 @@ function aiReveal(){
 const sp=window.showPage;window.showPage=function(id){sp.apply(this,arguments);if(id==="today")aiReveal();if(id==="vlab"&&!(typeof LAB_LOCKED!=="undefined"&&LAB_LOCKED)){const f=$("vlabFrame");if(f&&!f.getAttribute("src")){fetch("chemlab.html",{cache:"no-cache"}).then(r=>{if(!r.ok)throw new Error(r.status);f.src="chemlab.html"}).catch(()=>{const box=f.parentNode;if(box)box.innerHTML='<div style="padding:22px;line-height:1.5"><b>🧪 The Virtual Lab file was not found.</b><br>Upload <code>chemlab.html</code> to the same folder as <code>index.html</code> (the name must be all lowercase), then reload the app.</div>'})}}};
 })();
 </script>
+<!-- LIFEQUEST: parallel-life simulation. Additive only — the tracker remains the single source of truth. -->
+<script src="lq-store.js"></script>
+<script src="lq-adapter.js"></script>
+<script src="lq-mapper.js"></script>
+<script src="lq-character.js"></script>
+<script src="lq-world.js"></script>
+<script src="lq-render.js"></script>
+<script src="lq-ui.js"></script>
+<script src="lifequest.js"></script>
 
 </body>
 </html>

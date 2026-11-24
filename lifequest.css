@@ -1,0 +1,430 @@
+/* ============================================================================
+   LIFEQUEST · lifequest.css
+   Minimalist, atmospheric, muted. Every colour derives from the tracker's own
+   theme tokens so light and dark both work with no extra code.
+   All character motion lives here (CSS keyframes) — JS only sets data-anim.
+   ========================================================================== */
+
+/* ---------------------------------------------------------------- layout */
+#lq .lq-page{display:flex;flex-direction:column;gap:10px;min-height:60vh}
+#lq .lq-tabs{display:flex;gap:4px;overflow-x:auto;scrollbar-width:none;padding:2px 0}
+#lq .lq-tabs::-webkit-scrollbar{display:none}
+#lq .lq-tab{flex:none;display:flex;align-items:center;gap:7px;border:1px solid var(--border);background:var(--card);color:var(--muted);
+  font:700 13.5px/1 Inter,Segoe UI,Arial,sans-serif;padding:9px 13px;border-radius:11px;cursor:pointer;white-space:nowrap;transition:background .15s,color .15s,border-color .15s}
+#lq .lq-tab span{font-weight:700}
+#lq .lq-tab:hover{border-color:var(--accent);color:var(--text)}
+#lq .lq-tab[aria-selected="true"]{background:var(--accent);border-color:var(--accent);color:#fff}
+#lq .lq-soon{font-style:normal;font-size:10px;opacity:.65;border:1px solid currentColor;border-radius:6px;padding:1px 4px;margin-left:2px}
+#lq .lq-body{min-height:0}
+#lq .lq-panel{animation:none}
+#lq .lq-small{font-size:12.5px;text-transform:none;line-height:1.55}
+#lq .lq-hint{font-size:12.5px;text-transform:none;margin:8px 2px 0}
+#lq .lq-list{list-style:none;margin:8px 0 0;padding:0;display:flex;flex-direction:column;gap:6px}
+#lq .lq-list li{display:flex;justify-content:space-between;gap:10px;border:1px solid var(--border);border-radius:10px;padding:8px 10px;background:var(--card);font-size:13.5px}
+
+/* ------------------------------------------------------------- world bar */
+#lq .lq-worldbar{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;justify-content:space-between;
+  background:var(--card);border:1px solid var(--border);border-radius:14px;padding:9px 12px;margin-bottom:10px}
+#lq .lq-now{display:flex;flex-wrap:wrap;align-items:center;gap:8px;font-size:14px;min-width:0}
+#lq .lq-now b{font-weight:800}
+#lq .lq-now .muted{font-size:12.5px}
+#lq .lq-now-dot{width:9px;height:9px;border-radius:50%;background:var(--muted);opacity:.45;flex:none}
+#lq .lq-now-dot[data-on="1"]{background:var(--green);opacity:1;animation:lqPulse 2.4s ease-in-out infinite}
+#lq .lq-ctrls{display:flex;gap:6px;flex-wrap:wrap}
+#lq .lq-ctrls button{font-size:12.5px;padding:7px 10px;min-height:34px}
+
+/* ---------------------------------------------------------------- stage */
+#lq .lq-stagewrap{position:relative;width:100%;border-radius:18px;overflow:hidden;border:1px solid var(--border);
+  background:#0d1220;box-shadow:var(--shadow);aspect-ratio:16/9}
+#lq .lq-stage{display:block;width:100%;height:100%}
+@supports not (aspect-ratio:16/9){#lq .lq-stagewrap{height:min(62vh,620px)}}
+#lq .lq-hud{position:absolute;left:12px;bottom:10px;display:flex;flex-wrap:wrap;gap:6px;align-items:center;
+  font:600 12.5px/1.5 Inter,Segoe UI,Arial,sans-serif;color:#eef2fb;pointer-events:none;text-shadow:0 1px 6px #0009}
+#lq .lq-hud span{background:#0d1220a8;border:1px solid #ffffff24;border-radius:999px;padding:4px 9px}
+#lq .lq-hud-anim{background:#ffffffee!important;color:#18202a;border-color:transparent!important;font-weight:800}
+#lq .lq-hud-clock{margin-left:auto;font-variant-numeric:tabular-nums}
+#lq .lq-scenenote{position:absolute;right:12px;top:10px;max-width:60%;background:#0d1220cc;color:#e8ecf5;border:1px solid #ffffff2e;
+  border-radius:10px;padding:7px 10px;font-size:12px;line-height:1.45}
+
+/* ------------------------------------------- scene palette (light theme) */
+#lq .lq-stage{--wall:#e7e2d8;--wall2:#f2eee6;--floor:#c8b79c;--floor2:#b3a085;--skirt:#8d7c66;
+  --wood:#9a7b56;--wood2:#86694a;--wood3:#7a5e42;--metal:#6d7480;--shade:#d8cbb4;
+  --rug:#b9a88f;--rug2:#a89880;--chairc:#6d7f96;--chairc2:#5c6d84;--blanket:#7d8ca6;--pillow:#e8e4dc;
+  --pot:#a8735a;--leaf:#5d8a5a;--hill1:#3f4a63;--hill2:#4c5876;--hill3:#5b6a8c;--cloud:#ffffff;
+  --frame:#8a7a63;--muntin:#8a7a63;--art:#9fb4cc;--art2:#e0c08a;--cup:#dfe4ec;--void:#141a28;
+  --sil:#232c40;--ink:#3a4256;--tx:#3a4256;--shadow:#00000022;--glow:#ffd9a0}
+[data-theme=dark] #lq .lq-stage{--wall:#2b3145;--wall2:#232838;--floor:#3a3226;--floor2:#2e281f;--skirt:#1f1b14;
+  --wood:#5d4835;--wood2:#4c3a2b;--wood3:#41311f;--metal:#8a92a1;--shade:#6d6353;
+  --rug:#3d4154;--rug2:#343849;--chairc:#48566e;--chairc2:#3c4961;--blanket:#4c5a75;--pillow:#b9bcc6;
+  --pot:#7a5240;--leaf:#3f6b41;--hill1:#1d2436;--hill2:#232c42;--hill3:#2b3550;--cloud:#8f9ab5;
+  --frame:#5d5347;--muntin:#5d5347;--art:#54688a;--art2:#a8875a;--cup:#9aa3b5;--void:#0a0e18;
+  --sil:#161d2e;--ink:#c8d0e0;--tx:#c8d0e0;--shadow:#00000055;--glow:#ffcf8a}
+
+/* scene elements */
+#lq .lq-wall{fill:var(--wall)}#lq .lq-wall2{fill:var(--wall2);opacity:.55}
+#lq .lq-floor{fill:var(--floor)}#lq .lq-skirt{stroke:var(--skirt);stroke-width:3;opacity:.5}
+#lq .lq-wood{fill:var(--wood)}#lq .lq-wood2{fill:var(--wood2)}#lq .lq-wood3{fill:var(--wood3)}
+#lq .lq-metal{stroke:var(--metal);stroke-width:2.4;fill:none;stroke-linecap:round}
+#lq .lq-shade{fill:var(--shade)}
+#lq .lq-rug{fill:var(--rug);opacity:.55}
+#lq .lq-frame{fill:none;stroke:var(--frame);stroke-width:5}
+#lq .lq-frame2{fill:var(--wall2);stroke:var(--frame);stroke-width:3}
+#lq .lq-muntin{stroke:var(--muntin);stroke-width:3;opacity:.75;fill:none}
+#lq .lq-art{fill:none;stroke:var(--art);stroke-width:3}#lq .lq-art2{fill:var(--art2);opacity:.85}
+#lq .lq-hill1{fill:var(--hill1)}#lq .lq-hill2{fill:var(--hill2)}#lq .lq-hill3{fill:var(--hill3)}
+#lq .lq-cloud{fill:var(--cloud);opacity:.5}
+#lq .lq-star{fill:#fff}
+#lq .lq-pot{fill:var(--pot)}#lq .lq-leaf{fill:var(--leaf);opacity:.9}
+#lq .lq-chairc{fill:var(--chairc)}#lq .lq-chairc2{fill:var(--chairc2)}
+#lq .lq-blanket{fill:var(--blanket)}#lq .lq-pillow{fill:var(--pillow)}
+#lq .lq-fold{stroke:#00000022;stroke-width:2;fill:none}
+#lq .lq-leg-l{stroke:var(--wood2);stroke-width:7;stroke-linecap:round;fill:none}
+#lq .lq-cup{fill:none;stroke:var(--cup);stroke-width:2.4}
+#lq .lq-lampglow{fill:var(--glow);opacity:.20;animation:lqFlicker 5.5s ease-in-out infinite}
+#lq .lq-lampglow.dim{opacity:.13}
+#lq .lq-nightwash{fill:#0b1020;opacity:.22;pointer-events:none}
+#lq .lq-void{fill:var(--void)}
+#lq .lq-horizon{stroke:var(--sil);stroke-width:2;opacity:.7}
+#lq .lq-silhouette{fill:var(--sil);opacity:.5}
+#lq .lq-unbuilt-note .lq-t1{fill:#e8ecf5;font:800 26px Inter,Segoe UI,Arial,sans-serif}
+#lq .lq-unbuilt-note .lq-t2{fill:#b9c2d6;font:600 15px Inter,Segoe UI,Arial,sans-serif}
+#lq .lq-unbuilt-note .lq-t3{fill:#8f9ab5;font:500 13px Inter,Segoe UI,Arial,sans-serif}
+#lq .lq-bk{opacity:.92}
+#lq .lq-bk.b0{fill:#7d6a52}#lq .lq-bk.b1{fill:#5c6b84}#lq .lq-bk.b2{fill:#6d7f6a}#lq .lq-bk.b3{fill:#8a6a6a}#lq .lq-bk.b4{fill:#a89478}
+#lq .lq-shelf .lq-wood2{opacity:.55}
+
+/* desk materials */
+#lq .lq-deskprops .lq-ink{fill:none;stroke:var(--ink);stroke-width:1.1;stroke-linecap:round;opacity:.85}
+#lq .lq-deskprops .lq-ink-f{fill:var(--ink);opacity:.8}
+#lq .lq-deskprops .lq-tx{fill:var(--tx);font:700 6px ui-monospace,Consolas,monospace}
+#lq .lq-deskprops .lq-code{fill:none;stroke:#7fd1c1;stroke-width:1;opacity:.85}
+#lq .lq-deskprops .lq-mon{fill:#2b3644}#lq .lq-deskprops .lq-key{fill:#9aa3b3;opacity:.7}
+#lq .lq-deskprops .lq-globe{fill:#2f6f8f;opacity:.9}
+#lq .lq-note{filter:drop-shadow(0 2px 3px #00000022)}
+
+/* ---------------------------------------------------------------- ambient */
+#lq .lq-mote{fill:#fff;opacity:.0;animation:lqMote 11s linear infinite;animation-delay:var(--d)}
+#lq .lq-star{opacity:.0;animation:lqTwinkle 4.2s ease-in-out infinite;animation-delay:var(--d)}
+#lq .lq-cloud{animation:lqDrift 58s linear infinite}
+#lq .lq-cloud.c2{animation-duration:82s;animation-delay:-20s}
+#lq .lq-plant .lq-leaf{transform-box:fill-box;transform-origin:50% 100%;animation:lqSway 7.5s ease-in-out infinite}
+#lq .lq-stage.lq-noambient .lq-mote,#lq .lq-stage.lq-noambient .lq-star,
+#lq .lq-stage.lq-noambient .lq-cloud,#lq .lq-stage.lq-noambient .lq-leaf{animation:none}
+#lq .lq-stage.lq-noambient .lq-mote{opacity:.25}
+#lq .lq-stage.lq-noambient .lq-star{opacity:.7}
+
+@keyframes lqMote{0%{opacity:0;transform:translate(0,0)}18%{opacity:.5}70%{opacity:.35}100%{opacity:0;transform:translate(var(--x),-120px)}}
+@keyframes lqTwinkle{0%,100%{opacity:.25}50%{opacity:.95}}
+@keyframes lqDrift{0%{transform:translateX(-40px)}100%{transform:translateX(230px)}}
+@keyframes lqSway{0%,100%{transform:rotate(-1.6deg)}50%{transform:rotate(1.8deg)}}
+@keyframes lqFlicker{0%,100%{opacity:.20}42%{opacity:.26}68%{opacity:.17}}
+@keyframes lqPulse{0%,100%{transform:scale(1);opacity:1}50%{transform:scale(1.35);opacity:.65}}
+
+/* =============================================================== CHARACTER */
+#lq .lq-fig{--skin:#e8c39e;--shirt:#4a6fa5;--trouser:#33405a;--hair:#2f2a26}
+#lq .lq-shadow{fill:var(--shadow)}
+#lq .lq-skin{fill:var(--skin)}
+#lq .lq-hair{fill:var(--hair)}
+#lq .lq-shirt{fill:var(--shirt)}
+#lq .lq-thigh,#lq .lq-shin{fill:var(--trouser)}
+#lq .lq-foot{fill:#2b2f3a}
+#lq .lq-sleeve{fill:var(--shirt)}
+#lq .lq-fore{fill:var(--skin)}
+#lq .lq-hand{fill:var(--skin)}
+#lq .lq-eye{fill:#26221e}
+#lq .lq-mouth{fill:none;stroke:#26221e;stroke-width:.85;stroke-linecap:round;opacity:.75}
+#lq .lq-acc{fill:none;stroke:#4a4f5c;stroke-width:.9}
+#lq .lq-acc-l{fill:none;stroke:#4a4f5c;stroke-width:.9}
+#lq .lq-cap,#lq .lq-hood{fill:var(--shirt);opacity:.95}
+#lq .lq-band{fill:none;stroke:#3c4250;stroke-width:1.6}
+#lq .lq-pad{fill:#3c4250}
+#lq .lq-scarf{fill:#b06a4a;opacity:.95}
+#lq .lq-watch{fill:#3c4250}
+#lq .lq-tuft{fill:var(--hair)}
+#lq .lq-strap{fill:none;stroke:#6a5a4a;stroke-width:1.6;opacity:.9}
+#lq .lq-pin{fill:#e0c08a}
+#lq .lq-book path:first-child,#lq .lq-pen rect,#lq .lq-flask path{stroke:none}
+
+/* skins */
+#lq .lq-fig[data-skin="0"]{--skin:#e8c39e;--hair:#2f2a26}
+#lq .lq-fig[data-skin="1"]{--skin:#d9a878;--hair:#241f1c}
+#lq .lq-fig[data-skin="2"]{--skin:#b9825a;--hair:#1d1916}
+#lq .lq-fig[data-skin="3"]{--skin:#8d5a3b;--hair:#161311}
+#lq .lq-fig[data-skin="4"]{--skin:#f0d5bb;--hair:#4a3a2a}
+#lq .lq-fig[data-skin="5"]{--skin:#6b4227;--hair:#120f0d}
+/* outfits */
+#lq .lq-fig[data-outfit="0"]{--shirt:#4a6fa5;--trouser:#33405a}
+#lq .lq-fig[data-outfit="1"]{--shirt:#3f7d6f;--trouser:#2f3b4a}
+#lq .lq-fig[data-outfit="2"]{--shirt:#8a5a3b;--trouser:#3a3f4a}
+#lq .lq-fig[data-outfit="3"]{--shirt:#6a7a9a;--trouser:#414a5c}
+#lq .lq-fig[data-outfit="4"]{--shirt:#b06a4a;--trouser:#3d4454}
+#lq .lq-fig[data-outfit="5"]{--shirt:#3c4258;--trouser:#2a2f3f}
+#lq .lq-fig[data-outfit="6"]{--shirt:#5a7a5a;--trouser:#3a4038}
+#lq .lq-fig[data-outfit="7"]{--shirt:#f2f4f8;--trouser:#2c3140}
+
+/* --------------------------------------------------------------- joints */
+#lq .lq-leg,#lq .lq-knee,#lq .lq-arm,#lq .lq-elbow,#lq .lq-head,#lq .lq-torso{transform-box:fill-box}
+#lq .lq-leg{transform-origin:50% 2%}
+#lq .lq-knee{transform-origin:50% 2%}
+#lq .lq-arm{transform-origin:50% 3%}
+#lq .lq-elbow{transform-origin:50% 3%}
+#lq .lq-head{transform-origin:50% 98%}
+#lq .lq-torso{transform-origin:50% 100%}
+#lq .lq-body{transform-box:fill-box;transform-origin:50% 100%}
+#lq .lq-leg-b{opacity:.82}
+#lq .lq-arm-b{opacity:.82}
+
+/* ---------------------------------------------------------------- poses */
+#lq .lq-fig[data-pose="sit"] .lq-body{transform:translateY(19px)}
+#lq .lq-fig[data-pose="sit"] .lq-leg{transform:rotate(-78deg)}
+#lq .lq-fig[data-pose="sit"] .lq-knee{transform:rotate(76deg)}
+#lq .lq-fig[data-pose="sit"] .lq-arm{transform:rotate(-52deg)}
+#lq .lq-fig[data-pose="sit"] .lq-elbow{transform:rotate(-38deg)}
+#lq .lq-fig[data-pose="sit"] .lq-shadow{opacity:.5}
+#lq .lq-fig[data-pose="recline"] .lq-body{transform:translateY(26px) rotate(-16deg)}
+#lq .lq-fig[data-pose="recline"] .lq-leg{transform:rotate(-46deg)}
+#lq .lq-fig[data-pose="recline"] .lq-knee{transform:rotate(30deg)}
+#lq .lq-fig[data-pose="recline"] .lq-arm{transform:rotate(-24deg)}
+#lq .lq-fig[data-pose="lie"] .lq-body{transform:translateY(52px) rotate(-88deg)}
+#lq .lq-fig[data-pose="lie"] .lq-leg{transform:rotate(-4deg)}
+#lq .lq-fig[data-pose="lie"] .lq-arm{transform:rotate(-14deg)}
+#lq .lq-fig[data-pose="lie"] .lq-eye{transform:scaleY(.15);transform-box:fill-box;transform-origin:50% 50%}
+#lq .lq-fig[data-pose="lie"] .lq-shadow{opacity:.35}
+
+/* ------------------------------------------------------------ animations */
+/* breathing is always on, very subtle */
+#lq .lq-torso{animation:lqBreathe 4.6s ease-in-out infinite}
+@keyframes lqBreathe{0%,100%{transform:scaleY(1)}50%{transform:scaleY(1.014)}}
+
+/* idle */
+#lq .lq-fig[data-anim="idle"] .lq-head{animation:lqHeadIdle 7.5s ease-in-out infinite}
+#lq .lq-fig[data-anim="idle"] .lq-arm-f{animation:lqArmIdle 6.2s ease-in-out infinite}
+@keyframes lqHeadIdle{0%,100%{transform:rotate(0)}38%{transform:rotate(-3.2deg)}72%{transform:rotate(2.4deg)}}
+@keyframes lqArmIdle{0%,100%{transform:rotate(0)}50%{transform:rotate(2.6deg)}}
+
+/* walk */
+#lq .lq-fig[data-anim="walk"] .lq-leg-f{animation:lqThigh 1.05s ease-in-out infinite}
+#lq .lq-fig[data-anim="walk"] .lq-leg-b{animation:lqThigh 1.05s ease-in-out infinite reverse}
+#lq .lq-fig[data-anim="walk"] .lq-knee{animation:lqKnee 1.05s ease-in-out infinite}
+#lq .lq-fig[data-anim="walk"] .lq-arm-f{animation:lqSwing 1.05s ease-in-out infinite reverse}
+#lq .lq-fig[data-anim="walk"] .lq-arm-b{animation:lqSwing 1.05s ease-in-out infinite}
+#lq .lq-fig[data-anim="walk"] .lq-body{animation:lqBob 1.05s ease-in-out infinite}
+/* run */
+#lq .lq-fig[data-anim="run"] .lq-body{transform:rotate(7deg);animation:lqBob .52s ease-in-out infinite}
+#lq .lq-fig[data-anim="run"] .lq-leg-f{animation:lqThighRun .52s ease-in-out infinite}
+#lq .lq-fig[data-anim="run"] .lq-leg-b{animation:lqThighRun .52s ease-in-out infinite reverse}
+#lq .lq-fig[data-anim="run"] .lq-knee{animation:lqKneeRun .52s ease-in-out infinite}
+#lq .lq-fig[data-anim="run"] .lq-arm-f{animation:lqSwingRun .52s ease-in-out infinite reverse}
+#lq .lq-fig[data-anim="run"] .lq-arm-b{animation:lqSwingRun .52s ease-in-out infinite}
+/* explore = walk + looking around */
+#lq .lq-fig[data-anim="explore"] .lq-leg-f{animation:lqThigh 1.05s ease-in-out infinite}
+#lq .lq-fig[data-anim="explore"] .lq-leg-b{animation:lqThigh 1.05s ease-in-out infinite reverse}
+#lq .lq-fig[data-anim="explore"] .lq-knee{animation:lqKnee 1.05s ease-in-out infinite}
+#lq .lq-fig[data-anim="explore"] .lq-arm-f{animation:lqSwing 1.05s ease-in-out infinite reverse}
+#lq .lq-fig[data-anim="explore"] .lq-arm-b{animation:lqSwing 1.05s ease-in-out infinite}
+#lq .lq-fig[data-anim="explore"] .lq-body{animation:lqBob 1.05s ease-in-out infinite}
+#lq .lq-fig[data-anim="explore"] .lq-head{animation:lqLook 5.4s ease-in-out infinite}
+@keyframes lqThigh{0%,100%{transform:rotate(-21deg)}50%{transform:rotate(23deg)}}
+@keyframes lqThighRun{0%,100%{transform:rotate(-40deg)}50%{transform:rotate(38deg)}}
+@keyframes lqKnee{0%,100%{transform:rotate(6deg)}30%{transform:rotate(34deg)}65%{transform:rotate(4deg)}}
+@keyframes lqKneeRun{0%,100%{transform:rotate(12deg)}32%{transform:rotate(66deg)}68%{transform:rotate(8deg)}}
+@keyframes lqSwing{0%,100%{transform:rotate(16deg)}50%{transform:rotate(-18deg)}}
+@keyframes lqSwingRun{0%,100%{transform:rotate(34deg)}50%{transform:rotate(-40deg)}}
+@keyframes lqBob{0%,100%{transform:translateY(0)}50%{transform:translateY(-2.2px)}}
+@keyframes lqLook{0%,100%{transform:rotate(-6deg)}50%{transform:rotate(7deg)}}
+
+/* -------- seated academic work: the same desk, the same body, subtle hands */
+#lq .lq-fig[data-anim="study"] .lq-elbow,#lq .lq-fig[data-anim="write"] .lq-elbow,
+#lq .lq-fig[data-anim="exam"] .lq-elbow,#lq .lq-fig[data-anim="revise"] .lq-elbow{animation:lqWrite 1.5s ease-in-out infinite}
+#lq .lq-fig[data-anim="exam"] .lq-elbow{animation-duration:.95s}
+#lq .lq-fig[data-anim="study"] .lq-head,#lq .lq-fig[data-anim="write"] .lq-head,
+#lq .lq-fig[data-anim="exam"] .lq-head,#lq .lq-fig[data-anim="revise"] .lq-head{transform:rotate(7deg);animation:lqNod 5.2s ease-in-out infinite}
+#lq .lq-fig[data-anim="study"] .lq-arm-b,#lq .lq-fig[data-anim="write"] .lq-arm-b,
+#lq .lq-fig[data-anim="exam"] .lq-arm-b,#lq .lq-fig[data-anim="revise"] .lq-arm-b{transform:rotate(-58deg)}
+#lq .lq-fig[data-anim="revise"] .lq-arm-b .lq-elbow{animation:lqPage 3.4s ease-in-out infinite}
+@keyframes lqWrite{0%,100%{transform:rotate(-38deg)}28%{transform:rotate(-30deg)}56%{transform:rotate(-43deg)}}
+@keyframes lqNod{0%,100%{transform:rotate(7deg)}45%{transform:rotate(9.4deg)}}
+@keyframes lqPage{0%,72%,100%{transform:rotate(-38deg)}82%{transform:rotate(-58deg)}92%{transform:rotate(-34deg)}}
+
+/* read */
+#lq .lq-fig[data-anim="read"] .lq-arm-f,#lq .lq-fig[data-anim="read"] .lq-arm-b{transform:rotate(-64deg)}
+#lq .lq-fig[data-anim="read"] .lq-elbow{transform:rotate(-46deg)}
+#lq .lq-fig[data-anim="read"] .lq-head{transform:rotate(11deg);animation:lqReadScan 8.5s ease-in-out infinite}
+@keyframes lqReadScan{0%,100%{transform:rotate(11deg)}50%{transform:rotate(13.4deg)}}
+
+/* think */
+#lq .lq-fig[data-anim="think"] .lq-arm-f{transform:rotate(-104deg)}
+#lq .lq-fig[data-anim="think"] .lq-elbow{transform:rotate(-58deg)}
+#lq .lq-fig[data-anim="think"] .lq-arm-b{transform:rotate(-46deg)}
+#lq .lq-fig[data-anim="think"] .lq-head{transform:rotate(-6deg);animation:lqThink 6.4s ease-in-out infinite}
+@keyframes lqThink{0%,100%{transform:rotate(-6deg)}50%{transform:rotate(-1.5deg)}}
+
+/* flashcards */
+#lq .lq-fig[data-anim="flash"] .lq-arm-f{transform:rotate(-70deg)}
+#lq .lq-fig[data-anim="flash"] .lq-elbow{animation:lqFlip 2.6s ease-in-out infinite}
+#lq .lq-fig[data-anim="flash"] .lq-head{transform:rotate(6deg)}
+@keyframes lqFlip{0%,70%,100%{transform:rotate(-44deg)}80%{transform:rotate(-72deg)}90%{transform:rotate(-40deg)}}
+
+/* type */
+#lq .lq-fig[data-anim="type"] .lq-arm-f,#lq .lq-fig[data-anim="type"] .lq-arm-b{transform:rotate(-58deg)}
+#lq .lq-fig[data-anim="type"] .lq-arm-f .lq-elbow{animation:lqType .34s ease-in-out infinite}
+#lq .lq-fig[data-anim="type"] .lq-arm-b .lq-elbow{animation:lqType .34s ease-in-out infinite reverse}
+#lq .lq-fig[data-anim="type"] .lq-head{transform:rotate(4deg)}
+@keyframes lqType{0%,100%{transform:rotate(-40deg)}50%{transform:rotate(-30deg)}}
+
+/* draw */
+#lq .lq-fig[data-anim="draw"] .lq-arm-f{transform:rotate(-62deg)}
+#lq .lq-fig[data-anim="draw"] .lq-elbow{animation:lqDraw 2.9s ease-in-out infinite}
+#lq .lq-fig[data-anim="draw"] .lq-head{transform:rotate(9deg)}
+@keyframes lqDraw{0%,100%{transform:rotate(-34deg)}30%{transform:rotate(-58deg)}62%{transform:rotate(-26deg)}}
+
+/* attend class */
+#lq .lq-fig[data-anim="attend"] .lq-arm-f,#lq .lq-fig[data-anim="attend"] .lq-arm-b{transform:rotate(-50deg)}
+#lq .lq-fig[data-anim="attend"] .lq-head{animation:lqAttend 6.8s ease-in-out infinite}
+@keyframes lqAttend{0%,100%{transform:rotate(2deg)}42%{transform:rotate(6deg)}70%{transform:rotate(0)}}
+
+/* experiment — the ONLY practical animation, and only from the Virtual Lab */
+#lq .lq-fig[data-anim="experiment"] .lq-arm-f{animation:lqStir 2.2s ease-in-out infinite}
+#lq .lq-fig[data-anim="experiment"] .lq-elbow{animation:lqStirE 2.2s ease-in-out infinite}
+#lq .lq-fig[data-anim="experiment"] .lq-arm-b{transform:rotate(-24deg)}
+#lq .lq-fig[data-anim="experiment"] .lq-head{animation:lqPeer 4.6s ease-in-out infinite}
+@keyframes lqStir{0%,100%{transform:rotate(-28deg)}50%{transform:rotate(-44deg)}}
+@keyframes lqStirE{0%,100%{transform:rotate(-24deg)}50%{transform:rotate(-46deg)}}
+@keyframes lqPeer{0%,100%{transform:rotate(4deg)}50%{transform:rotate(9deg)}}
+
+/* build / project */
+#lq .lq-fig[data-anim="build"] .lq-arm-f{animation:lqBuild 1.9s ease-in-out infinite}
+#lq .lq-fig[data-anim="build"] .lq-arm-b{transform:rotate(-34deg)}
+#lq .lq-fig[data-anim="build"] .lq-head{transform:rotate(5deg)}
+@keyframes lqBuild{0%,100%{transform:rotate(-22deg)}48%{transform:rotate(-58deg)}}
+
+/* exercise */
+#lq .lq-fig[data-anim="exercise"] .lq-arm-f,#lq .lq-fig[data-anim="exercise"] .lq-arm-b{animation:lqJack 1.5s ease-in-out infinite}
+#lq .lq-fig[data-anim="exercise"] .lq-body{animation:lqSquat 1.5s ease-in-out infinite}
+#lq .lq-fig[data-anim="exercise"] .lq-knee{animation:lqSquatK 1.5s ease-in-out infinite}
+@keyframes lqJack{0%,100%{transform:rotate(6deg)}50%{transform:rotate(-142deg)}}
+@keyframes lqSquat{0%,100%{transform:translateY(0)}50%{transform:translateY(7px)}}
+@keyframes lqSquatK{0%,100%{transform:rotate(2deg)}50%{transform:rotate(26deg)}}
+
+/* karate: punch, then kick */
+#lq .lq-fig[data-anim="karate"] .lq-arm-f{animation:lqPunch 2.6s cubic-bezier(.2,.8,.2,1) infinite}
+#lq .lq-fig[data-anim="karate"] .lq-elbow{animation:lqPunchE 2.6s ease-in-out infinite}
+#lq .lq-fig[data-anim="karate"] .lq-arm-b{animation:lqGuard 2.6s ease-in-out infinite}
+#lq .lq-fig[data-anim="karate"] .lq-leg-f{animation:lqKick 2.6s cubic-bezier(.2,.8,.2,1) infinite}
+#lq .lq-fig[data-anim="karate"] .lq-knee{animation:lqKickK 2.6s ease-in-out infinite}
+#lq .lq-fig[data-anim="karate"] .lq-body{animation:lqBob 2.6s ease-in-out infinite}
+@keyframes lqPunch{0%,52%,100%{transform:rotate(-24deg)}62%{transform:rotate(-96deg)}74%{transform:rotate(-30deg)}}
+@keyframes lqPunchE{0%,52%,100%{transform:rotate(-30deg)}62%{transform:rotate(-4deg)}74%{transform:rotate(-34deg)}}
+@keyframes lqGuard{0%,100%{transform:rotate(-40deg)}50%{transform:rotate(-52deg)}}
+@keyframes lqKick{0%,18%,86%,100%{transform:rotate(-6deg)}32%{transform:rotate(-74deg)}50%{transform:rotate(-10deg)}}
+@keyframes lqKickK{0%,18%,86%,100%{transform:rotate(4deg)}32%{transform:rotate(38deg)}50%{transform:rotate(6deg)}}
+
+/* eat */
+#lq .lq-fig[data-anim="eat"] .lq-arm-f{animation:lqEat 3.1s ease-in-out infinite}
+#lq .lq-fig[data-anim="eat"] .lq-elbow{transform:rotate(-72deg)}
+#lq .lq-fig[data-anim="eat"] .lq-head{animation:lqChew 3.1s ease-in-out infinite}
+@keyframes lqEat{0%,64%,100%{transform:rotate(-52deg)}76%{transform:rotate(-112deg)}}
+@keyframes lqChew{0%,64%,100%{transform:rotate(4deg)}72%,84%{transform:rotate(9deg)}}
+
+/* rest / watch / perform */
+#lq .lq-fig[data-anim="rest"] .lq-head{transform:rotate(12deg);animation:lqRestB 7.2s ease-in-out infinite}
+#lq .lq-fig[data-anim="rest"] .lq-arm-f{transform:rotate(-18deg)}
+#lq .lq-fig[data-anim="rest"] .lq-torso{animation:lqBreathe 6.4s ease-in-out infinite}
+@keyframes lqRestB{0%,100%{transform:rotate(12deg)}50%{transform:rotate(9deg)}}
+#lq .lq-fig[data-anim="watch"] .lq-arm-f,#lq .lq-fig[data-anim="watch"] .lq-arm-b{transform:rotate(-44deg)}
+#lq .lq-fig[data-anim="watch"] .lq-head{transform:rotate(-4deg);animation:lqWatch 9s ease-in-out infinite}
+@keyframes lqWatch{0%,100%{transform:rotate(-4deg)}50%{transform:rotate(-1.5deg)}}
+#lq .lq-fig[data-anim="perform"] .lq-arm-f{animation:lqGesture 3.4s ease-in-out infinite}
+#lq .lq-fig[data-anim="perform"] .lq-arm-b{animation:lqGesture 3.4s ease-in-out infinite reverse}
+#lq .lq-fig[data-anim="perform"] .lq-head{animation:lqHeadIdle 3.4s ease-in-out infinite}
+@keyframes lqGesture{0%,100%{transform:rotate(-18deg)}50%{transform:rotate(-88deg)}}
+
+/* sleep + wake */
+#lq .lq-fig[data-anim="sleep"] .lq-torso{animation:lqSleepB 5.6s ease-in-out infinite}
+#lq .lq-fig[data-anim="sleep"] .lq-mouth{opacity:.35}
+@keyframes lqSleepB{0%,100%{transform:scaleY(1)}50%{transform:scaleY(1.03)}}
+#lq .lq-fig[data-anim="wake"] .lq-body{animation:lqWakeUp 2.4s ease-out 1 both}
+#lq .lq-fig[data-anim="wake"] .lq-head{animation:lqWakeHead 2.4s ease-out 1 both}
+@keyframes lqWakeUp{0%{transform:translateY(52px) rotate(-84deg)}100%{transform:translateY(19px) rotate(0)}}
+@keyframes lqWakeHead{0%{transform:rotate(-14deg)}100%{transform:rotate(2deg)}}
+
+/* ------------------------------------------- reduced motion / paused live */
+#lq .lq-stage.lq-reduced .lq-fig *,#lq .lq-stage.lq-reduced .lq-mote,
+#lq .lq-stage.lq-reduced .lq-star,#lq .lq-stage.lq-reduced .lq-cloud,
+#lq .lq-stage.lq-reduced .lq-leaf,#lq .lq-stage.lq-reduced .lq-lampglow,
+#lq .lq-now-dot[data-on="1"]{animation:none!important}
+@media(prefers-reduced-motion:reduce){
+  #lq .lq-fig *,#lq .lq-mote,#lq .lq-star,#lq .lq-cloud,#lq .lq-leaf,#lq .lq-lampglow,#lq .lq-now-dot{animation:none!important}
+  #lq .lq-mote{opacity:.22}#lq .lq-star{opacity:.7}
+}
+
+/* ------------------------------------------------------------- panels UI */
+#lq .lq-chargrid,#lq .lq-daygrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:12px;align-items:start}
+#lq .lq-prev{background:var(--bg);border:1px solid var(--border);border-radius:14px;overflow:hidden;margin-bottom:10px}
+#lq .lq-prevsvg{display:block;width:100%;height:auto;max-height:320px}
+#lq .lq-prevbg{fill:var(--card)}
+#lq .lq-mini{margin-top:8px;border:1px solid var(--border);border-radius:12px;overflow:hidden;background:var(--bg)}
+#lq .lq-mini .lq-prevsvg{max-height:190px}
+#lq .lq-field{display:flex;align-items:center;gap:10px;margin:8px 0}
+#lq .lq-field label{font-size:13px;font-weight:700;color:var(--muted);min-width:78px}
+#lq .lq-field select{flex:1;min-width:0}
+#lq .lq-sw{display:flex;gap:6px;flex-wrap:wrap}
+#lq .lq-swbtn{width:30px;height:30px;border-radius:50%;border:2px solid var(--border);cursor:pointer;padding:0}
+#lq .lq-swbtn.on{border-color:var(--accent);box-shadow:0 0 0 2px var(--accent)}
+#lq .lq-anims{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0}
+#lq .lq-an{border:1px solid var(--border);background:var(--card);color:var(--muted);border-radius:9px;padding:6px 9px;font-size:12.5px;font-weight:700;cursor:pointer}
+#lq .lq-an.on{background:var(--accent);border-color:var(--accent);color:#fff}
+
+/* daily life */
+#lq .lq-tl{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--border)}
+#lq .lq-tl:last-child{border-bottom:0}
+#lq .lq-tl-t{font:800 13px/1 ui-monospace,Consolas,monospace;color:var(--text);min-width:46px;font-variant-numeric:tabular-nums}
+#lq .lq-tl-b{flex:1;min-width:0;display:flex;flex-wrap:wrap;gap:3px 8px;align-items:baseline}
+#lq .lq-tl-b b{font-size:13.5px}
+#lq .lq-tl-b i{font-style:normal;font-size:12px;color:var(--muted)}
+#lq .lq-tl-b u{text-decoration:none;font-size:12px;color:var(--muted);font-variant-numeric:tabular-nums}
+#lq .lq-tl-b em{font-style:normal;font-size:10.5px;border:1px solid var(--border);border-radius:6px;padding:1px 4px;color:var(--muted)}
+#lq .lq-tl-b small{flex-basis:100%;font-size:11.5px;color:var(--muted)}
+#lq .lq-tl-go{font-size:12px;padding:5px 9px;min-height:30px}
+#lq .lq-tl[data-exact="hour"] .lq-tl-t{opacity:.72}
+#lq .lq-recs{display:flex;flex-direction:column;gap:6px}
+#lq .lq-rec{display:flex;align-items:baseline;gap:8px;border:1px dashed var(--border);border-radius:10px;padding:7px 10px;font-size:13px}
+#lq .lq-rec b{flex:1;min-width:0;font-weight:700}
+#lq .lq-rec small{font-size:11.5px;color:var(--muted)}
+#lq .lq-replayrow{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin:8px 0}
+#lq .lq-replayrow select{min-width:130px}
+#lq .lq-daylist{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+#lq .lq-daybtn{border:1px solid var(--border);background:var(--card);border-radius:10px;padding:7px 10px;font:700 12.5px/1.3 ui-monospace,Consolas,monospace;cursor:pointer;display:flex;flex-direction:column;gap:3px;align-items:flex-start}
+#lq .lq-daybtn span{font:600 11px/1 Inter,Segoe UI,Arial,sans-serif;color:var(--muted)}
+#lq .lq-daybtn:hover{border-color:var(--accent)}
+
+/* map */
+#lq .lq-map{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:10px;margin:10px 0}
+#lq .lq-area{border:1px solid var(--border);border-radius:13px;padding:10px 12px;background:var(--card);opacity:.72}
+#lq .lq-area[data-built="1"]{opacity:1;border-color:var(--accent)}
+#lq .lq-area b{display:block;font-size:14px;margin-bottom:2px}
+#lq .lq-area>span{display:block;font-size:11.5px;margin-bottom:7px;text-transform:none}
+#lq .lq-rooms{display:flex;flex-wrap:wrap;gap:5px}
+#lq .lq-room{font-size:11.5px;font-weight:700;border:1px solid var(--border);border-radius:8px;padding:3px 7px;color:var(--muted);display:flex;gap:5px;align-items:center}
+#lq .lq-room.on{background:var(--accent);border-color:var(--accent);color:#fff}
+#lq .lq-room i{font-style:normal;font-size:9.5px;opacity:.75;border:1px solid currentColor;border-radius:5px;padding:0 3px}
+
+/* skills */
+#lq .lq-sk{display:flex;flex-wrap:wrap;align-items:center;gap:8px;padding:7px 0;border-bottom:1px solid var(--border);font-size:13px}
+#lq .lq-sk:last-child{border-bottom:0}
+#lq .lq-sk b{min-width:150px}
+#lq .lq-sk .progress{flex:1;min-width:90px;margin:0}
+#lq .lq-sk span{font-size:11.5px;text-transform:none}
+
+/* boot + print */
+#lq .lq-boot{padding:40px 20px;text-align:center}
+@media print{#lq .lq-ctrls,#lq .lq-tabs,#lq .lq-replayrow{display:none!important}}
+@media(max-width:760px){
+  #lq .lq-stagewrap{aspect-ratio:4/3;border-radius:14px}
+  #lq .lq-hud{left:8px;bottom:6px;gap:4px;font-size:11.5px}
+  #lq .lq-hud span{padding:3px 7px}
+  #lq .lq-scenenote{max-width:78%;right:8px;top:8px;font-size:11px}
+  #lq .lq-worldbar{padding:8px 10px;border-radius:12px}
+  #lq .lq-ctrls button{padding:6px 8px;font-size:12px}
+  #lq .lq-sk b{min-width:100%}
+}
