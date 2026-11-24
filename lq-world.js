@@ -224,8 +224,10 @@
   var SPOTS = {
     "study|desk":     { x: 600, y: FLOOR, sit: true,  scale: 1.00, cam: { x: 380, y: 120, w: 520 } },
     "bedroom|bed":    { x: 520, y: FLOOR - 62, sit: false, scale: 0.98, cam: { x: 300, y: 120, w: 620 } },
-    "rest|chair":     { x: 400, y: FLOOR - 8, sit: true, scale: 1.00, cam: { x: 180, y: 130, w: 620 } },
-    "rest|open":      { x: 620, y: FLOOR, sit: false, scale: 1.00, cam: { x: 320, y: 120, w: 620 } }
+    "rest|chair":     { x: 400, y: FLOOR - 8, sit: true,  scale: 1.00, cam: { x: 180, y: 130, w: 620 } },
+    "rest|open":      { x: 620, y: FLOOR, sit: false, scale: 1.00, cam: { x: 320, y: 120, w: 620 } },
+    /* in the armchair, at the side table: meals, chess, a quiet think */
+    "rest|table":     { x: 470, y: FLOOR - 8, sit: true,  scale: 1.00, cam: { x: 240, y: 130, w: 600 } }
   };
   function spot(room, sp) {
     return SPOTS[room + "|" + sp] || SPOTS["study|desk"];

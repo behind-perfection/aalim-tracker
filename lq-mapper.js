@@ -143,6 +143,48 @@
 
   var ACADEMIC = { study: 1, revision: 1, exam: 1, homework: 1, flash: 1, feynman: 1, questions: 1 };
 
+  /* ------------------------------------------------------------------------
+     byKeywords(txt) — classify a NON-academic activity from the tracker's own
+     words (its activity kind, its category, the focus the user typed). Used for
+     extra-curricular logs and for the user's own hobby sections.
+
+     Deliberate omissions:
+       · nothing here ever returns the laboratory — only a real Virtual Lab
+         experiment (source "lab") does;
+       · nothing here ever returns the observatory — astronomy stays at the desk.
+     Returns null when nothing matches, so the caller can stay honest.
+     ------------------------------------------------------------------------ */
+  /* Word-bounded on purpose: a loose /art/ would match "Smart revision" and a
+     loose /run/ would match "Pruning". These words classify only NON-academic
+     activities, and only after the binding academic-desk rule has been checked. */
+  var KEYWORDS = [
+    [/\b(karate|kickboxing|boxing|martial arts?|taekwondo|judo|self[- ]defen\w*)\b/i, "garden", "mat", "karate", "stand"],
+    [/\b(run|runs|running|jog\w*|sprint\w*|cardio|cycling|swim\w*|cricket|football|badminton|basketball|volleyball|skipping|sports?)\b/i, "garden", "track", "exercise", "stand"],
+    [/\b(yoga|stretch\w*|gym|lifting|strength|push[- ]?ups?|squats?|planks?|workouts?|fitness)\b/i, "garden", "mat", "exercise", "stand"],
+    [/\b(qur'?an|deen|prayers?|salah|namaz|islam\w*|hifz|surah\w*|ayah\w*|mosque)\b/i, "sanctuary", "mat", "read", "sit"],
+    [/\b(draw\w*|sketch\w*|paint\w*|art|arts|artwork|colour\w*|color\w*|portrait\w*|doodle\w*)\b/i, "workshop", "easel", "draw", "sit"],
+    [/\b(writ\w*|essay\w*|poems?|poetry|stor(y|ies)|journal\w*|calligraphy)\b/i, "workshop", "desk", "write", "sit"],
+    [/\b(code|coding|program\w*|software|web ?dev\w*|python|javascript|html|css|app dev\w*)\b/i, "workshop", "computer", "type", "sit"],
+    [/\b(robot\w*|electron\w*|engineer\w*|invent\w*|makers?|build\w*|circuits?|arduino|3d print\w*|prototype\w*)\b/i, "workshop", "bench", "build", "stand"],
+    [/\b(music|guitar|sing\w*|instrument\w*|piano|tabla|flute|vocals?)\b/i, "rest", "open", "perform", "stand"],
+    [/\b(act|acting|drama|theatre|theater|debate\w*|speech\w*|recit\w*)\b/i, "rest", "open", "perform", "stand"],
+    [/\b(cook\w*|bak\w*|kitchen|recipes?)\b/i, "rest", "table", "eat", "sit"],
+    [/\b(garden|gardening|plants?|grow\w*|nature walk|birdwatch\w*)\b/i, "garden", "open", "explore", "stand"],
+    [/\b(read|reading|books?|literature|novels?)\b/i, "library", "chair", "read", "sit"],
+    [/\b(chess|puzzles?|sudoku|rubik'?s?|games?)\b/i, "rest", "table", "think", "sit"],
+    [/\b(clean\w*|tidy\w*|organis\w*|organiz\w*|chores?)\b/i, "rest", "open", "explore", "stand"]
+  ];
+  function byKeywords(txt) {
+    var s = String(txt || "");
+    if (!s.trim()) return null;
+    for (var i = 0; i < KEYWORDS.length; i++) {
+      if (KEYWORDS[i][0].test(s)) {
+        return { room: KEYWORDS[i][1], spot: KEYWORDS[i][2], anim: KEYWORDS[i][3], pose: KEYWORDS[i][4], matched: KEYWORDS[i][0].source };
+      }
+    }
+    return null;
+  }
+
   /* ------------------------------------------------------------------- map
      ev = one event from LQAdapter (anchored, record, or live signal). */
   function map(ev) {
@@ -195,16 +237,68 @@
     }
     if (kind === "hobby") {
       var sec = String(ev.sec || "").toLowerCase(), nm = String(ev.secName || subject || "").toLowerCase();
-      if (ev.sec === "draw" || /draw|sketch|paint|art/i.test(nm)) { out.room = "workshop"; out.spot = "easel"; out.anim = "draw"; out.pose = "sit"; }
-      else if (ev.sec === "lang" || /language|vocab|arabic|urdu|french/i.test(nm)) { out.room = "study"; out.spot = "desk"; out.anim = "read"; out.pose = "sit"; out.academic = false; }
-      else if (ev.sec === "act" || /act|drama|theatre/i.test(nm)) { out.room = "rest"; out.spot = "open"; out.anim = "perform"; out.pose = "stand"; }
-      else { out.room = "workshop"; out.spot = "bench"; out.anim = "build"; out.pose = "sit"; }
+      var focus = String(ev.focus || "").toLowerCase();
       out.subject = ev.secName || subject || "Hobby"; out.label = label || out.subject;
+      if (sec === "draw" || /draw|sketch|paint|art/i.test(nm)) { out.room = "workshop"; out.spot = "easel"; out.anim = "draw"; out.pose = "sit"; }
+      else if (sec === "lang" || /language|vocab|arabic|urdu|french/i.test(nm)) { out.room = "study"; out.spot = "desk"; out.anim = "read"; out.pose = "sit"; out.academic = false; }
+      else if (sec === "act" || /act|drama|theatre/i.test(nm)) { out.room = "rest"; out.spot = "open"; out.anim = "perform"; out.pose = "stand"; }
+      else if (sec === "chem" || /chemistry/i.test(nm)) {
+        /* The binding rule: chemistry THEORY is desk work, and nothing here ever
+           claims the laboratory. A home-safe experiment is practical work at the
+           workshop bench — not the school laboratory, and not desk theory. */
+        if (/experiment|demo|practical|home-safe/i.test(focus)) { out.room = "workshop"; out.spot = "bench"; out.anim = "build"; out.pose = "stand"; }
+        else {
+          out.room = "study"; out.spot = "desk"; out.anim = "study"; out.pose = "sit";
+          out.academic = true; out.subjectKey = "chemistry"; out.props = props("chemistry");
+          out.subject = "Chemistry";
+        }
+      }
+      else {
+        var hh = byKeywords(nm + " " + focus + " " + label);
+        if (hh) { out.room = hh.room; out.spot = hh.spot; out.anim = hh.anim; out.pose = hh.pose; }
+        else { out.room = "workshop"; out.spot = "bench"; out.anim = "build"; out.pose = "sit"; }
+      }
       return finish(out);
     }
 
     /* 7 ── Business: city. */
-    if (kind === "biz" || src === "biz") { out.room = "city"; out.spot = "stall"; out.anim = "write"; out.pose = "stand"; out.subject = "Business"; out.label = label || "Business work"; return finish(out); }
+    if (kind === "biz" || src === "biz" || src === "bizLog") { out.room = "city"; out.spot = "stall"; out.anim = "write"; out.pose = "stand"; out.subject = subject || "Business"; out.label = label || "Business work"; return finish(out); }
+
+    /* 7b ── Life at home: meals, a claimed rest day, weekly reflection.
+             None of these is academic, and none is ever dressed up as study. */
+    if (kind === "meal") { out.room = "rest"; out.spot = "table"; out.anim = "eat"; out.pose = "sit"; out.label = label || "Meal"; return finish(out); }
+    if (kind === "restday" || kind === "rest") { out.room = "rest"; out.spot = "chair"; out.anim = "rest"; out.pose = "recline"; out.label = label || "Rest day"; return finish(out); }
+    if (kind === "reflection" || src === "reviews") { out.room = "rest"; out.spot = "chair"; out.anim = "think"; out.pose = "sit"; out.label = label || "Reflection"; return finish(out); }
+
+    /* 7c ── Extra-curricular activity, classified from the tracker's OWN
+             definition of that activity (state.extra: name → kind/category),
+             never guessed from the label alone. */
+    if (kind === "extra" || src === "extraLog") {
+      var ek = String(ev.extraKind || "").toLowerCase(), ecat = String(ev.cat || "").toLowerCase();
+      var txt = (ek + " " + ecat + " " + subject + " " + label).toLowerCase();
+      out.subject = subject || label || "Activity";
+      out.label = label || subject || "Activity";
+      /* BINDING RULE FIRST: if the logged activity is literally one of the
+         tracked school subjects, it is academic work and belongs at the desk,
+         whatever else the label says. */
+      var akey = exactSubject(subject, label);
+      if (akey) {
+        out.room = "study"; out.spot = "desk"; out.pose = "sit"; out.anim = "study";
+        out.academic = true; out.subjectKey = akey; out.props = props(akey);
+        out.subject = props(akey).label;
+        return finish(out);
+      }
+      var hit = byKeywords(txt);
+      if (hit) {
+        out.room = hit.room; out.spot = hit.spot; out.anim = hit.anim; out.pose = hit.pose;
+        if (out.room === "sanctuary") out.subject = "Deen";
+      } else {
+        /* Unrecognised: honest generic movement, never an invented activity. */
+        out.room = "rest"; out.spot = "open"; out.anim = "explore"; out.pose = "stand";
+        out.note = "Unmapped activity — shown generically";
+      }
+      return finish(out);
+    }
 
     /* 8 ── Scheduled attendance (school / tuition) — formal education. */
     if (src === "dayCfg") {
@@ -232,10 +326,32 @@
       return finish(out);
     }
 
+    /* 9b ── A day-plan item the user ticked off. When the tracker could resolve
+             it to a syllabus chapter it already arrives as "revision" (desk,
+             that subject). What is left is an intention with no subject we can
+             prove, so it is shown as desk work and labelled with the user's own
+             words — never as a subject we guessed. */
+    if (kind === "plan") {          /* NOT src==="plan": a plan item that the
+                                       tracker resolved to a real syllabus
+                                       chapter arrives as kind "revision" and
+                                       must keep its subject (rule 4). */
+      var ph = byKeywords(label + " " + subject);
+      if (ph) { out.room = ph.room; out.spot = ph.spot; out.anim = ph.anim; out.pose = ph.pose; }
+      else {
+        out.room = "study"; out.spot = "desk"; out.pose = "sit"; out.anim = "study";
+        out.subjectKey = "generic"; out.props = props("generic");
+        out.note = "Planned item — no subject recorded, so none is claimed";
+      }
+      out.subject = subject || ""; out.label = label || "Planned work";
+      return finish(out);
+    }
+
     /* 10 ── ACADEMIC STUDY: always the same desk, exact subject. */
     if (ACADEMIC[kind] || kind === "exam" || src === "study" || src === "papers" || src === "homework") {
       out.room = "study"; out.spot = "desk"; out.pose = "sit"; out.academic = true;
-      out.subjectKey = subjectKey(subject, label);
+      /* the recorded chapter names the topic, so it decides the materials:
+         "Science" + "Acids, Bases and Salts" is chemistry, not physics. */
+      out.subjectKey = subjectKey(subject, String(ev.chapter || "") + " " + label);
       out.props = props(out.subjectKey);
       out.subject = out.props.label !== "Study" ? out.props.label : (subject || "Study");
       if (kind === "exam" || src === "papers") { out.anim = "exam"; out.label = label || "Mock test"; }
@@ -243,6 +359,7 @@
       else if (kind === "flash") { out.anim = "flash"; out.label = label || "Flashcards"; }
       else if (kind === "feynman") { out.anim = "think"; out.label = label || "Feynman explanation"; }
       else if (kind === "homework") { out.anim = "write"; out.label = label || "Homework"; }
+      else if (kind === "questions") { out.anim = "write"; out.label = label || "Question bank practice"; }
       else { out.anim = "study"; out.label = label || ("Studying " + out.subject); }
       return finish(out);
     }

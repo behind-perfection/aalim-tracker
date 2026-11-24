@@ -221,12 +221,20 @@
         '<button type="button" class="secondary lq-tl-go" data-at="' + esc(A.t2m(e.at)) + '" data-k="' + esc(e.id) + '">Show</button>' +
         '</div>';
     }).join("");
-    var recs = snap.records.map(function (e) {
+    /* Two honest groups: what has a real duration, and what the tracker records
+       as having happened without storing how long it took. Markers never add
+       minutes anywhere — the tracker's own activityMins() stays authoritative. */
+    var timed = snap.records.filter(function (e) { return Number(e.mins) > 0; });
+    var marks = snap.records.filter(function (e) { return !(Number(e.mins) > 0); });
+    var recRow = function (e) {
       var m = W.LQMapper.map(e);
-      return '<div class="lq-rec"><b>' + esc(e.label) + '</b>' +
-        (e.mins ? '<span>' + esc(A.hm(e.mins)) + '</span>' : '<span class="muted">logged</span>') +
-        '<small>' + esc(m.roomName) + '</small></div>';
-    }).join("");
+      return '<div class="lq-rec" data-kind="' + esc(e.kind) + '"><b>' + esc(e.label) + '</b>' +
+        (e.mins ? '<span>' + esc(A.hm(e.mins)) + '</span>' : '<span class="muted">recorded</span>') +
+        '<small>' + esc(m.roomName) + ' · ' + esc(W.LQRender.animLabel(m.anim)) +
+        (m.built === false ? ' · not built yet' : '') + '</small></div>';
+    };
+    var recs = timed.map(recRow).join("");
+    var markRows = marks.map(recRow).join("");
     el.innerHTML =
       '<div class="lq-daygrid">' +
         '<div class="card"><h2>Right now</h2>' +
@@ -245,6 +253,11 @@
         '<div class="card"><h2>Recorded today, time not specified</h2>' +
           '<p class="muted lq-small">These have a date and a duration only. They are real, but their clock time is unknown — so they are listed, not placed.</p>' +
           (recs ? '<div class="lq-recs">' + recs + '</div>' : '<p class="muted">Nothing else logged today.</p>') +
+        '</div>' +
+        '<div class="card"><h2>Recorded today, no duration stored</h2>' +
+          '<p class="muted lq-small">Markers of what happened — a homework item ticked, a prayer, a meal, a project note, an exam sat, a plan item. ' +
+          'The tracker stores the fact but not the minutes, so none are invented here and none are added to any total.</p>' +
+          (markRows ? '<div class="lq-recs">' + markRows + '</div>' : '<p class="muted">Nothing of this kind today.</p>') +
         '</div>' +
         '<div class="card"><h2>Replay a previous day</h2>' +
           '<div class="lq-replayrow"><select id="lqDay"></select>' +

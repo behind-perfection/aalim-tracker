@@ -31,6 +31,76 @@
      Reads the two persisted live timers. `pomo` and `rt` are top-level `let`
      bindings in the tracker script, so they are visible to this classic script
      by bare name — we read the live objects, never a stale copy. */
+  /* ── Phase 3: what the running focus block is actually FOR ───────────────
+     `pomo.target.v` is one of  "hw:<id>" | "plan:<text>" | "res:<id>" |
+     "learn:<pid>|<lid>" | "chap:<Subject>|<Chapter>" | "" (free focus).
+     We resolve it with the TRACKER'S OWN resolveTarget() — never a copy of its
+     rules — then classify it, so the character does the right kind of work:
+
+       homework / plan / chapter  → the study desk, that exact subject
+       a project ("res:")         → project work
+       a project learning item    → the desk IF its subject is literally one of
+                                    the tracked school subjects, otherwise
+                                    project work (binding academic-desk rule)
+       free focus                 → the desk, typed subject or generic study
+
+     Returns null when there is nothing to resolve. */
+  function intent(t) {
+    if (!t) return null;
+    var r = null;
+    try { var f = g("resolveTarget"); if (typeof f === "function" && t.v) r = f(t.v); } catch (e) { }
+    r = r || t;
+    var out = {
+      kind: "study", subject: String(r.subject || t.subject || "").trim(),
+      label: String(r.label || t.label || "Focus session"), chapter: "",
+      target: t, v: String(r.v || t.v || "")
+    };
+    var key = String(r.k || "");
+    if (r.hw) {                                   /* homework */
+      var h = homeworkOf(r.hw);
+      out.kind = "homework";
+      out.subject = String((h && h.subject) || out.subject);
+      out.label = "Homework · " + String((h && h.title) || out.label);
+      out.homeworkId = r.hw;
+    } else if (r.learn && r.res) {                /* a project's learning item */
+      var pr = projectOf(r.res), ls = String(out.subject || "");
+      var academic = ls && subjects().some(function (s) { return s.toLowerCase() === ls.toLowerCase(); });
+      if (academic) { out.kind = "study"; out.label = "Learning · " + ls; }
+      else {
+        out.kind = "project";
+        out.cat = String((pr && pr.cat) || "");
+        out.projectId = r.res; out.learnId = r.learn;
+        out.subject = String((pr && pr.subject) || out.cat || "Project");
+      }
+    } else if (r.res) {                           /* project work */
+      var p2 = projectOf(r.res);
+      out.kind = "project";
+      out.cat = String((p2 && p2.cat) || "");
+      out.projectId = r.res;
+      out.subject = String((p2 && p2.subject) || out.cat || "Project");
+      out.label = String((p2 && p2.title) ? out.cat + ": " + p2.title : out.label);
+    } else if (key.indexOf("|") > 0) {            /* a syllabus chapter: revision */
+      out.kind = "revision";
+      out.subject = key.split("|")[0];
+      out.chapter = key.split("|")[1];
+      out.label = out.subject + ": " + out.chapter;
+    } else if (r.plan) {                          /* a free-text plan item */
+      out.kind = "plan";
+      out.label = String(r.plan);
+    }
+    return out;
+  }
+
+  /* A free-focus block has no target object, but the user typed a subject into
+     the focus field — that is an explicit declaration, not an inference. */
+  function freeSubject() {
+    try {
+      var el = document.getElementById("pomoSubject");
+      if (el && typeof el.value === "string") return el.value.trim();
+    } catch (e) { }
+    return "";
+  }
+
   function livePomo() {
     var p = g("pomo");
     if (!p || !p.running) return null;
@@ -39,11 +109,19 @@
     var startMs = endMs ? endMs - totalS * 1000 : Date.now();
     var t = p.target || null;
     var isFocus = p.mode === "focus";
+    var it = isFocus ? intent(t) : null;
+    /* free focus: the subject the user typed is what the tracker itself will
+       log when the block finishes (logFocus uses exactly this fallback) */
+    var free = isFocus && !it ? freeSubject() : "";
     return {
-      source: "pomo", kind: isFocus ? "study" : "break",
-      subject: isFocus ? String((t && t.subject) || "").trim() : "",
-      label: isFocus ? String((t && t.label) || "Focus session") : "Break",
-      target: t, startedAt: startMs, elapsedMs: Math.max(0, Date.now() - startMs),
+      source: "pomo", kind: isFocus ? (it ? it.kind : "study") : "break",
+      subject: isFocus ? (it ? it.subject : free) : "",
+      chapter: isFocus && it ? it.chapter : "",
+      cat: isFocus && it ? it.cat : "",
+      projectId: isFocus && it ? it.projectId : "",
+      homeworkId: isFocus && it ? it.homeworkId : "",
+      label: isFocus ? (it ? it.label : "Focus session") : "Break",
+      target: t, intent: it, startedAt: startMs, elapsedMs: Math.max(0, Date.now() - startMs),
       endsAt: endMs, mode: p.mode, cycle: num(p.cycle, 0),
       at: m2t(new Date(startMs).getHours() * 60 + new Date(startMs).getMinutes()),
       exact: true
@@ -172,15 +250,27 @@
       push({
         id: "hb:" + k + ":" + i, kind: "hobby", subject: (sec && sec.n) || "Hobby",
         label: ((sec && sec.ic) || "⭐") + " " + String(x.title || (sec && sec.n) || "Practice") + (x.focus ? " · " + x.focus : ""),
-        mins: num(x.mins, 0), exact: false, source: "hobbyLog", sec: x.sec, secName: (sec && sec.n) || "", icon: (sec && sec.ic) || "⭐"
+        mins: num(x.mins, 0), exact: false, source: "hobbyLog", sec: x.sec, secName: (sec && sec.n) || "", icon: (sec && sec.ic) || "⭐",
+        focus: String(x.focus || ""), title: String(x.title || ""), amount: x.val === "" ? null : num(x.val, 0)
       });
     });
     /* extraLog: skip the kinds already counted by their own arrays (tracker's own de-dup rule) */
     var skip = {};
     try { var kn = g("kindNames"); if (typeof kn === "function") { ["karate", "run"].forEach(function (kk) { arr(kn(kk)).forEach(function (n) { skip[n] = 1; }); }); } } catch (e) { }
+    /* the tracker's own definition of each activity: name → {kind, cat, measure}.
+       We classify from THAT, never by guessing at the label. */
+    var defs = {};
+    arr(st.extra).forEach(function (e) { if (e && e.name) defs[e.name] = e; });
     arr(st.extraLog).forEach(function (x, i) {
       if (!x || x.date !== k || skip[x.activity]) return;
-      push({ id: "ex:" + k + ":" + i, kind: "extra", subject: String(x.activity || "Activity"), label: String(x.activity || "Activity"), mins: num(x.mins, 0), exact: false, source: "extraLog" });
+      var def = defs[x.activity] || null;
+      push({
+        id: "ex:" + k + ":" + i, kind: "extra", subject: String(x.activity || "Activity"),
+        label: String(x.activity || "Activity") + (x.note ? " · " + x.note : ""),
+        mins: num(x.mins, 0), exact: false, source: "extraLog",
+        extraKind: String((def && def.kind) || ""), cat: String((def && def.cat) || ""),
+        measure: String((def && def.measure) || "minutes"), amount: x.val === "" ? null : num(x.val, 0)
+      });
     });
     arr(st.quran).forEach(function (x, i) { if (x && x.date === k) push({ id: "quran:" + k + ":" + i, kind: "deen", subject: "Deen", label: "Qur'an · " + (x.p || "") + (x.n ? " · " + x.n : ""), mins: 0, exact: false, source: "quran", amount: x.p }, true); });
     arr(st.movies).forEach(function (x, i) { if (x && (x.d === k || x.date === k)) push({ id: "movie:" + k + ":" + i, kind: "watch", subject: "Rest", label: String(x.t || "Movie"), mins: num(x.m, 0), exact: false, source: "movies", rating: num(x.r, 0) }); });
@@ -188,6 +278,101 @@
     arr(st.lifts).forEach(function (x, i) { if (x && x.date === k) push({ id: "lift:" + k + ":" + i, kind: "strength", subject: "Physical", label: String(x.ex || "Strength") + " · " + num(x.sets, 0) + "×" + num(x.reps, 0), mins: 0, exact: false, source: "lifts" }, true); });
     var dl = (st.dayLog || {})[k] || {};
     arr(dl.idle).forEach(function (x, i) { push({ id: "idle:" + k + ":" + i, kind: "idle", subject: "", label: "Untracked / idle" + (x.n ? " · " + x.n : ""), mins: num(x.m, 0), exact: false, source: "dayLog" }); });
+
+    /* ── Phase 3: the rest of the real, dated evidence ─────────────────────
+       Every event below carries mins:0 ON PURPOSE. Their minutes already live
+       in `state.study` (a finished focus block writes a study record AND adds
+       to homework.spent / plan.mins), so counting them again would double-count
+       the same work. They are markers of what really happened, never of time. */
+
+    /* homework completed that day */
+    arr(st.homework).forEach(function (h, i) {
+      if (!h || h.done !== k) return;
+      push({
+        id: "hw:" + k + ":" + (h.id || i), kind: "homework", subject: String(h.subject || ""),
+        label: String(h.title || "Homework"), mins: 0, exact: false, source: "homework",
+        derived: true, spent: num(h.spent, 0), onTime: !!(h.due && h.done && h.done <= h.due)
+      }, true);
+    });
+    /* day-plan items ticked off (skipping ones that are just a homework alias) */
+    arr((st.plan || {})[k]).forEach(function (p, i) {
+      if (!p || !p.done || p.hw) return;
+      var pk = "";
+      try { var f = g("planKey"); if (typeof f === "function") pk = String(f(p.t) || ""); } catch (e) { }
+      push({
+        id: "plan:" + k + ":" + i, kind: pk ? "revision" : "plan", subject: pk ? pk.split("|")[0] : "",
+        chapter: pk ? pk.split("|")[1] : "", label: String(p.t || "Planned work"), mins: 0,
+        exact: false, source: "plan", derived: true, loggedMins: num(p.mins, 0)
+      }, true);
+    });
+    /* a mistake analysed that day is real revision work */
+    arr(st.mistakes).forEach(function (m, i) {
+      if (!m || m.date !== k) return;
+      push({
+        id: "mistake:" + k + ":" + (m.id || i), kind: "revision", subject: String(m.subject || ""),
+        chapter: String(m.chapter || ""), label: "Mistake analysis" + (m.reason ? " · " + m.reason : ""),
+        mins: 0, exact: false, source: "mistakes", marksLost: num(m.lost, 0), fixed: !!m.fixed
+      }, true);
+    });
+    /* a topic explained in your own words (Feynman) */
+    arr(st.feynman).forEach(function (f, i) {
+      if (!f || f.date !== k) return;
+      push({ id: "feynman:" + k + ":" + i, kind: "feynman", subject: String(f.topic || ""), label: "Explained: " + String(f.topic || "a topic"), mins: 0, exact: false, source: "feynman", status: String(f.status || "") }, true);
+    });
+    /* question-bank practice (the tracker stamps `last` on the day you practise) */
+    arr(st.questions).forEach(function (q, i) {
+      if (!q || q.last !== k) return;
+      push({ id: "q:" + k + ":" + i, kind: "questions", subject: String(q.subject || ""), chapter: String(q.chapter || ""), label: "Question bank · " + String(q.type || "practice"), mins: 0, exact: false, source: "questions", right: num(q.right, 0), wrong: num(q.wrong, 0) }, true);
+    });
+    /* a test result recorded for that day */
+    arr(st.marks).forEach(function (m, i) {
+      if (!m || m.date !== k) return;
+      push({ id: "mark:" + k + ":" + i, kind: "exam", subject: String(m.subject || ""), label: String(m.test || "Test") + " · " + num(m.score, 0) + "/" + num(m.max, 0), mins: 0, exact: false, source: "marks", result: true, score: num(m.score, 0), max: num(m.max, 0) }, true);
+    });
+    /* a scheduled exam actually completed that day */
+    arr(st.exams).forEach(function (e, i) {
+      if (!e || e.done !== k) return;
+      push({ id: "exam:" + k + ":" + (e.id || i), kind: "exam", subject: String(e.name || ""), label: String(e.name || "Exam") + (e.type ? " · " + e.type : ""), mins: 0, exact: false, source: "exams", result: true }, true);
+    });
+    /* project work: a research note written or a test recorded that day */
+    arr(st.research).forEach(function (r) {
+      if (!r || !r.id) return;
+      arr(r.notes).forEach(function (n, i) {
+        if (!n || n.d !== k) return;
+        push({ id: "resnote:" + k + ":" + r.id + ":" + i, kind: "project", subject: String(r.subject || r.cat || "Project"), label: String(r.cat || "Project") + " note · " + String(r.title || ""), mins: 0, exact: false, source: "research", cat: String(r.cat || ""), projectId: r.id, noteKind: String(n.k || "") }, true);
+      });
+      arr(r.tests).forEach(function (t, i) {
+        if (!t || t.d !== k) return;
+        push({ id: "restest:" + k + ":" + r.id + ":" + i, kind: "project", subject: String(r.subject || r.cat || "Project"), label: "Test · " + String(t.t || r.title || ""), mins: 0, exact: false, source: "research", cat: String(r.cat || ""), projectId: r.id, test: true }, true);
+      });
+    });
+    /* business / money logged that day */
+    arr(st.bizLog).forEach(function (b, i) {
+      if (!b || b.date !== k) return;
+      push({ id: "biz:" + k + ":" + i, kind: "biz", subject: String(b.v || "Business"), label: String(b.v || "Business") + (b.t ? " · " + b.t : "") + (b.n ? " · " + b.n : ""), mins: 0, exact: false, source: "bizLog", amount: num(b.a, 0) }, true);
+    });
+    /* a weekly review written that day = reflection */
+    arr(st.reviews).forEach(function (r, i) {
+      if (!r || r.date !== k) return;
+      push({ id: "review:" + k + ":" + (r.id || i), kind: "reflection", subject: "", label: "Weekly review" + (r.wk ? " · " + r.wk : ""), mins: 0, exact: false, source: "reviews", goals: arr(r.goals).length }, true);
+    });
+    /* prayers actually marked that day (the tracker stores no clock time) */
+    var pr = (st.prayers || {})[k] || {};
+    var NAMES = g("PRAYERS") || ["Fajr", "Dhuhr", "Asr", "Maghrib", "Isha"];
+    arr(NAMES).forEach(function (n, i) {
+      if (!pr[n]) return;
+      push({ id: "prayer:" + k + ":" + n, kind: "prayer", subject: "Deen", label: "Prayer · " + n, mins: 0, exact: false, source: "prayers", order: i }, true);
+    });
+    /* meals logged that day */
+    var MEALS = [["b", "Breakfast"], ["l", "Lunch"], ["d", "Dinner"]];
+    MEALS.forEach(function (m) {
+      if (!(dl.meals || {})[m[0]]) return;
+      push({ id: "meal:" + k + ":" + m[0], kind: "meal", subject: "", label: m[1], mins: 0, exact: false, source: "dayLog" }, true);
+    });
+    /* a rest day claimed that week — rest is part of life, and it is recorded */
+    if (arr(st.gam && st.gam.rest).indexOf(k) >= 0) {
+      push({ id: "restday:" + k, kind: "restday", subject: "", label: "Rest day", mins: 0, exact: false, source: "gam" }, true);
+    }
     return out;
   }
 
@@ -251,13 +436,27 @@
   function dates() {
     var st = S(); if (!st) return [];
     var set = {};
-    ["study", "runs", "karate", "hobbyLog", "extraLog", "workouts", "quran", "movies", "papers"].forEach(function (k) {
-      arr(st[k]).forEach(function (x) {
-        var d = x && (x.date || x.d);
-        if (okDate(d)) set[d] = 1;
+    var add = function (d) { if (okDate(d)) set[d] = 1; };
+    /* every array whose records carry their own date */
+    ["study", "runs", "karate", "hobbyLog", "extraLog", "workouts", "quran", "movies",
+      "papers", "mistakes", "feynman", "marks", "bizLog", "lifts"].forEach(function (k) {
+        arr(st[k]).forEach(function (x) { if (x) add(x.date || x.d); });
       });
+    /* records whose date field means "the day this happened" */
+    arr(st.homework).forEach(function (h) { if (h) add(h.done); });
+    arr(st.exams).forEach(function (e) { if (e) add(e.done); });
+    arr(st.reviews).forEach(function (r) { if (r) add(r.date); });
+    arr(st.questions).forEach(function (q) { if (q) add(q.last); });
+    arr(st.research).forEach(function (r) {
+      if (!r) return;
+      arr(r.notes).forEach(function (n) { if (n) add(n.d); });
+      arr(r.tests).forEach(function (t) { if (t) add(t.d); });
     });
-    Object.keys(st.dayLog || {}).forEach(function (d) { if (okDate(d)) set[d] = 1; });
+    /* day-keyed maps */
+    Object.keys(st.dayLog || {}).forEach(add);
+    Object.keys(st.plan || {}).forEach(add);
+    Object.keys(st.prayers || {}).forEach(add);
+    arr(st.gam && st.gam.rest).forEach(add);
     return Object.keys(set).sort();
   }
   function totals(k) {

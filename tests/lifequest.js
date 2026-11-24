@@ -1,4 +1,4 @@
-/* LIFEQUEST (v97) integration tests — jsdom, no browser, no network.
+/* LIFEQUEST (v98) integration tests — jsdom, no browser, no network.
    Usage:  npm i --no-save jsdom  &&  node tests/lifequest.js
 
    Covers, in order:
@@ -284,12 +284,14 @@ vc.on("error", (...a) => problems.push("console.error: " + a.join(" ")));
     E(`pomo.running=true;pomo.mode='focus';pomo.day=today();pomo.total=1500;pomo.left=1200;pomo.end=Date.now()+1200000;
        pomo.cycle=1;pomo.target={v:"hw:1",label:"Mathematics: Polynomials",subject:"Mathematics",hw:"1"};`);
     const liveP = w.LQAdapter.live();
-    ok("7.2 focus timer running → live study signal with the exact subject",
-        !!liveP && liveP.kind === "study" && liveP.subject === "Mathematics", liveP && JSON.stringify({ k: liveP.kind, s: liveP.subject, at: liveP.at }));
+    ok("7.2 focus timer running → live signal with the exact subject and resolved intent",
+        !!liveP && liveP.subject === "Mathematics" && liveP.kind === "homework" && !!liveP.intent && liveP.intent.homeworkId === "1",
+        liveP && JSON.stringify({ k: liveP.kind, s: liveP.subject, at: liveP.at }));
     ok("7.3 live signal has a real clock time (exact:true)", !!liveP && liveP.exact === true && /^\d{2}:\d{2}$/.test(liveP.at));
-    ok("7.4 character mirrors it: seated at the desk studying mathematics", (() => {
+    ok("7.4 character mirrors it: seated at the desk doing that subject's academic work", (() => {
         const m = w.LQMapper.current();
-        return m.room === "study" && m.spot === "desk" && m.subjectKey === "maths" && m.anim === "study" && m.academic === true;
+        return m.room === "study" && m.spot === "desk" && m.pose === "sit" && m.academic === true
+            && m.subjectKey === "maths" && ["study", "write"].indexOf(m.anim) >= 0;
     })());
     ok("7.5 a physics target switches only the desk materials, not the room", (() => {
         E(`pomo.target={v:"hw:2",label:"Science: Light – Reflection and Refraction",subject:"Science",hw:"2"};`);
@@ -538,8 +540,8 @@ vc.on("error", (...a) => problems.push("console.error: " + a.join(" ")));
     /* ================= 12. version & service worker ======================= */
     const idx = fs.readFileSync(path.join(ROOT, "index.html"), "utf8");
     const swf = fs.readFileSync(path.join(ROOT, "sw.js"), "utf8");
-    ok("12.1 APP_VERSION bumped to v97", /const APP_VERSION = "v97"/.test(idx));
-    ok("12.2 sw.js CACHE matches v97", /const CACHE = "aalim-tracker-v97"/.test(swf));
+    ok("12.1 APP_VERSION bumped to v98", /const APP_VERSION = "v98"/.test(idx));
+    ok("12.2 sw.js CACHE matches v98", /const CACHE = "aalim-tracker-v98"/.test(swf));
     ok("12.3 every LIFEQUEST asset is cached for offline use",
         ["lifequest.css", "lq-store.js", "lq-adapter.js", "lq-mapper.js", "lq-character.js", "lq-world.js", "lq-render.js", "lq-ui.js", "lifequest.js"]
             .every(a => swf.includes('"' + a + '"')));
@@ -575,6 +577,209 @@ vc.on("error", (...a) => problems.push("console.error: " + a.join(" ")));
               && LQStore.norm(n.lq).v===1 && LQStore.norm(n.lq).prefs.replaySpeed===1
               && LQStore.norm(n.lq).char.skin===0})()`) === true);
     ok("13.4 the Virtual Lab hub still opens chemlab", E("HUBS.some(h=>h.id==='lab')") === true && !!d.getElementById("vlab"));
+
+    /* ============ 14. Phase 3 — every real record type is mapped =========== */
+    E(`state.homework.unshift({id:"hw1",subject:"Mathematics",title:"Polynomials Ex 2.1",due:today(),pri:"High",est:30,note:"",status:"Done",done:today(),spent:25,created:today()})`);
+    E(`state.plan[today()]=[{t:"Mathematics: Polynomials",done:true},{t:"Help at home",done:true}]`);
+    E(`state.mistakes.unshift({id:"mk1",date:today(),subject:"Science",chapter:"Acids, Bases and Salts",reason:"Misread the question",lost:2,q:"pH of 0.1 M HCl",fix:"Use -log[H+]",fixed:false})`);
+    E(`state.feynman.unshift({topic:"Refraction",explain:"Light bends because its speed changes.",gaps:"",status:"Confident",date:today()})`);
+    E(`state.questions.push({subject:"Mathematics",chapter:"Quadratic Equations",type:"Long answer",marks:3,q:"Solve",a:"x=2,3",right:2,wrong:1,last:today()})`);
+    E(`state.marks.push({date:today(),subject:"Science",test:"Unit test 2",score:18,max:20})`);
+    E(`state.exams.push({id:9001,name:"Half-yearly Science",date:today(),topics:[],link:"",type:"School",done:today()})`);
+    E(`state.research.unshift({id:"p1",title:"Solar tracker",q:"How to follow the sun?",subject:"Engineering",due:"",g:10,cat:"Engineering",wt:0,status:"Building",kind:"Engineering",
+        learn:[{id:"l1",t:"Motor driver",s:"Electronics",st:"Learning"},{id:"l2",t:"Trigonometry basics",s:"Mathematics",st:"To learn"}],
+        parts:[],tests:[{d:today(),t:"Motor load",r:"Pass",x:""}],chap:[],chars:[],hyp:"",plan:"",concl:"",sources:[],
+        notes:[{d:today(),k:"Finding",x:"Gear ratio matters"}],created:today(),tasks:[]})`);
+    E(`state.bizLog.unshift({date:today(),v:"Notes",t:"Sale",a:120,n:"4 sets"})`);
+    E(`state.reviews.push({id:"rv1",wk:"2026-W47",win:"Finished two chapters",hard:"Sleep",goals:[{t:"Revise daily",done:false}],target:today(),date:today()})`);
+    E(`state.prayers[today()]={Fajr:true,Dhuhr:true,Asr:false,Maghrib:true,Isha:false}`);
+    E(`state.dayLog[today()]=Object.assign(state.dayLog[today()]||{},{meals:{b:true,l:true,d:false}})`);
+    E(`state.gam=Object.assign(state.gam||{},{rest:[today()]})`);
+    E(`state.hobbySec=[{id:"chem",n:"Real Chemistry",ic:"🧪",foc:[],ms:[]},{id:"draw",n:"Drawing & Sketching",ic:"🎨",foc:[],ms:[]},{id:"chess",n:"Chess Club",ic:"♟",foc:[],ms:[]}]`);
+    E(`state.hobbyLog.push({id:"hbc",sec:"chem",date:today(),mins:25,focus:"Reading theory",title:"Acids",val:"",note:""})`);
+    E(`state.hobbyLog.push({id:"hbx",sec:"chem",date:today(),mins:20,focus:"Home-safe experiment (adult present)",title:"Indicator",val:"",note:""})`);
+    E(`state.hobbyLog.push({id:"hbs",sec:"chess",date:today(),mins:15,focus:"Endgames",title:"",val:"",note:""})`);
+    E(`state.extra.push({name:"Cricket practice",project:"",goal:"",hours:0,status:"Active",cat:"Sport",measure:"minutes",kind:"",catId:"",ms:[]})`);
+    E(`state.extra.push({name:"Community service",project:"",goal:"",hours:0,status:"Active",cat:"",measure:"minutes",kind:"",catId:"",ms:[]})`);
+    E(`state.extraLog.push({date:today(),activity:"Cricket practice",mins:30,note:"",val:""})`);
+    E(`state.extraLog.push({date:today(),activity:"Community service",mins:45,note:"",val:""})`);
+    E("save()");
+    const p3 = snapNoLQ();          /* captured AFTER the fixtures: from here on,
+                                       Phase 3 must only ever READ the tracker */
+    const rec = id => E(`(function(){var r=LQAdapter.dayRecords(today()).filter(function(x){return x.id.indexOf(${JSON.stringify(id)})===0});return r.length?JSON.stringify(r[0]):"MISSING"})()`);
+    const mapOf = id => E(`(function(){var r=LQAdapter.dayRecords(today()).filter(function(x){return x.id.indexOf(${JSON.stringify(id)})===0})[0];return r?JSON.stringify(LQMapper.map(r)):"MISSING"})()`);
+    const J = s => { try { return JSON.parse(s); } catch (e) { return null; } };
+
+    ok("14.1 completed homework is real evidence — at the desk, that subject, zero minutes (already in study)", (() => {
+        const e = J(rec("hw:")), m = J(mapOf("hw:"));
+        return !!e && e.kind === "homework" && e.mins === 0 && !!m && m.room === "study" && m.spot === "desk"
+            && m.pose === "sit" && m.academic === true && m.subjectKey === "maths" && m.anim === "write";
+    })(), rec("hw:"));
+    ok("14.2 a ticked plan item that names a real chapter → revising that chapter at the desk", (() => {
+        const rs = E(`LQAdapter.dayRecords(today()).filter(x=>x.source==="plan")`);
+        const rev = rs.filter(x => x.kind === "revision");
+        const m = rev.length ? w.LQMapper.map(rev[0]) : null;
+        return rev.length === 1 && rev[0].subject === "Mathematics" && rev[0].chapter === "Polynomials"
+            && !!m && m.room === "study" && m.spot === "desk" && m.anim === "revise" && m.subjectKey === "maths";
+    })(), JSON.stringify({ n: E(`LQAdapter.dayRecords(today()).filter(function(x){return x.source==="plan"}).length`), rs: E(`JSON.stringify(LQAdapter.dayRecords(today()).filter(function(x){return x.source==="plan"}))`) }));
+    ok("14.3 a ticked plan item with no provable subject claims no subject", (() => {
+        const rs = E(`LQAdapter.dayRecords(today()).filter(x=>x.source==="plan"&&x.kind==="plan")`);
+        const m = rs.length ? w.LQMapper.map(rs[0]) : null;
+        return rs.length === 1 && !!m && m.room === "study" && m.subjectKey === "generic" && m.academic !== true
+            && /no subject recorded/i.test(m.note || "");
+    })());
+    ok("14.4 a mistake analysed that day is revision at the desk, that subject", (() => {
+        const e = J(rec("mistake:")), m = J(mapOf("mistake:"));
+        return !!e && e.kind === "revision" && !!m && m.room === "study" && m.spot === "desk" && m.anim === "revise"
+            && m.subjectKey === "chemistry" && m.academic === true;
+    })(), rec("mistake:"));
+    ok("14.5 a Feynman explanation is thinking at the desk", (() => {
+        const m = J(mapOf("feynman:"));
+        return !!m && m.room === "study" && m.spot === "desk" && m.anim === "think" && m.academic === true;
+    })());
+    ok("14.6 question-bank practice is writing at the desk, that subject", (() => {
+        const m = J(mapOf("q:"));
+        return !!m && m.room === "study" && m.anim === "write" && m.subjectKey === "maths";
+    })());
+    ok("14.7 a recorded test result is an examination at the desk — never the laboratory", (() => {
+        const m = J(mapOf("mark:"));
+        return !!m && m.room === "study" && m.spot === "desk" && m.anim === "exam" && m.academic === true && !m.practical;
+    })());
+    ok("14.8 a completed scheduled exam is an examination at the desk", (() => {
+        const m = J(mapOf("exam:"));
+        return !!m && m.room === "study" && m.anim === "exam" && m.academic === true;
+    })());
+    ok("14.9 project notes and tests are project work in the workshop — never the laboratory", (() => {
+        const n = J(mapOf("resnote:")), t = J(mapOf("restest:"));
+        return !!n && !!t && n.room === "workshop" && t.room === "workshop"
+            && n.built === false && /not built yet/i.test(n.note || "") && n.fallbackRoom === "study"
+            && n.room !== "lab" && t.room !== "lab";
+    })(), mapOf("resnote:"));
+    ok("14.10 a money-log entry is business in the city", (() => {
+        const m = J(mapOf("biz:"));
+        return !!m && m.room === "city" && m.academic !== true;
+    })());
+    ok("14.11 a weekly review is reflection, not study", (() => {
+        const m = J(mapOf("review:"));
+        return !!m && m.kind === "reflection" && m.room === "rest" && m.anim === "think" && m.academic !== true;
+    })());
+    ok("14.12 each prayer actually marked appears once, in the sanctuary", (() => {
+        const ps = E(`LQAdapter.dayRecords(today()).filter(x=>x.source==="prayers")`);
+        const m = ps.length ? w.LQMapper.map(ps[0]) : null;
+        return ps.length === 3 && ps.map(x => x.label).join("|") === "Prayer · Fajr|Prayer · Dhuhr|Prayer · Maghrib"
+            && !!m && m.room === "sanctuary" && m.subject === "Deen";
+    })(), String(E(`LQAdapter.dayRecords(today()).filter(x=>x.source==="prayers").length`)));
+    ok("14.13 logged meals are meals (home table), not study", (() => {
+        const ms = E(`LQAdapter.dayRecords(today()).filter(x=>x.kind==="meal")`);
+        const m = ms.length ? w.LQMapper.map(ms[0]) : null;
+        return ms.length === 2 && !!m && m.room === "rest" && m.spot === "table" && m.anim === "eat" && m.academic !== true;
+    })());
+    ok("14.14 a claimed rest day is rest — never punished, never invented work", (() => {
+        const m = J(mapOf("restday:"));
+        return !!m && m.room === "rest" && m.anim === "rest" && m.pose === "recline" && m.academic !== true;
+    })());
+    ok("14.15 extra-curricular work is classified from the tracker's OWN activity definition", (() => {
+        const all = E(`LQAdapter.dayRecords(today()).filter(function(x){return x.source==="extraLog"}).map(function(x){var m=LQMapper.map(x);return x.subject+"→"+m.room+"/"+m.anim}).join(" | ")`);
+        return /Cricket practice→garden\/exercise/.test(all) && /Community service→rest\/explore/.test(all);
+    })(), String(E(`LQAdapter.dayRecords(today()).filter(function(x){return x.source==="extraLog"}).map(function(x){return x.subject+"→"+LQMapper.map(x).room}).join("|")`)));
+    ok("14.16 an unmapped activity stays generic and says so — nothing is invented", (() => {
+        const e = E(`LQAdapter.dayRecords(today()).filter(x=>x.subject==="Community service")[0]`);
+        const m = e ? w.LQMapper.map(e) : null;
+        return !!m && m.anim === "explore" && m.room === "rest" && /unmapped/i.test(m.note || "") && m.label === e.label;
+    })());
+    ok("14.17 the Real Chemistry hobby section: theory at the desk, home-safe practical at the bench, NEVER the laboratory", (() => {
+        const pick = focus => E(`JSON.parse(JSON.stringify(LQAdapter.dayRecords(today()).filter(function(x){return x.sec==="chem"&&x.focus===${JSON.stringify(focus)}})[0]||"null"))`);
+        const mt = w.LQMapper.map(pick("Reading theory")), mp = w.LQMapper.map(pick("Home-safe experiment (adult present)"));
+        return pick("Reading theory") !== null && pick("Home-safe experiment (adult present)") !== null
+            && mt.room === "study" && mt.spot === "desk" && mt.subjectKey === "chemistry" && mt.academic === true && mt.anim === "study"
+            && mp.room === "workshop" && mp.spot === "bench" && mp.academic !== true
+            && mt.room !== "lab" && mp.room !== "lab";
+    })());
+    ok("14.18 a custom hobby section is classified honestly (chess → a quiet think)", (() => {
+        const e = E(`JSON.parse(JSON.stringify(LQAdapter.dayRecords(today()).filter(x=>x.sec==="chess")[0]||"null"))`);
+        const m = e ? w.LQMapper.map(e) : null;
+        return !!m && m.room === "rest" && m.spot === "table" && m.anim === "think";
+    })());
+    ok("14.19 live intent: a project focus block is project work, not desk study", (() => {
+        E(`pomo.running=true;pomo.mode="focus";pomo.day=today();pomo.total=1500;pomo.left=1200;pomo.end=Date.now()+1200000;pomo.target=resolveTarget("res:p1");`);
+        const lv = w.LQAdapter.live(), m = lv ? w.LQMapper.map(lv) : null;
+        E(`pomo.running=false;pomo.target=null;`);
+        return !!lv && lv.kind === "project" && lv.intent.projectId === "p1" && !!m && m.room === "workshop" && m.room !== "study";
+    })());
+    ok("14.20 live intent: a project learning item with a school subject stays at the desk (binding rule)", (() => {
+        E(`pomo.running=true;pomo.mode="focus";pomo.day=today();pomo.total=1500;pomo.left=1200;pomo.end=Date.now()+1200000;pomo.target=resolveTarget("learn:p1|l2");`);
+        const lv = w.LQAdapter.live(), m = lv ? w.LQMapper.map(lv) : null;
+        E(`pomo.target=resolveTarget("learn:p1|l1");`);
+        const lv2 = w.LQAdapter.live(), m2 = lv2 ? w.LQMapper.map(lv2) : null;
+        E(`pomo.running=false;pomo.target=null;`);
+        return !!m && m.room === "study" && m.spot === "desk" && m.academic === true && m.subjectKey === "maths"
+            && !!m2 && m2.room === "workshop";          /* Electronics is not a school subject here */
+    })());
+    ok("14.21 live intent: a syllabus chapter target is revision of that exact chapter at the desk", (() => {
+        E(`pomo.running=true;pomo.mode="focus";pomo.day=today();pomo.total=1500;pomo.left=1200;pomo.end=Date.now()+1200000;pomo.target=resolveTarget("chap:Mathematics|Quadratic Equations");`);
+        const lv = w.LQAdapter.live(), m = lv ? w.LQMapper.map(lv) : null;
+        E(`pomo.running=false;pomo.target=null;`);
+        return !!lv && lv.kind === "revision" && lv.subject === "Mathematics" && lv.chapter === "Quadratic Equations"
+            && !!m && m.room === "study" && m.anim === "revise" && m.subjectKey === "maths";
+    })());
+    ok("14.22 live intent: a homework target is homework at the desk", (() => {
+        E(`pomo.running=true;pomo.mode="focus";pomo.day=today();pomo.total=1500;pomo.left=1200;pomo.end=Date.now()+1200000;pomo.target=resolveTarget("hw:hw1");`);
+        const lv = w.LQAdapter.live(), m = lv ? w.LQMapper.map(lv) : null;
+        E(`pomo.running=false;pomo.target=null;`);
+        return !!lv && lv.kind === "homework" && lv.subject === "Mathematics" && !!m && m.room === "study" && m.anim === "write";
+    })());
+    ok("14.23 free focus uses the subject the user typed (what the tracker itself will log)", (() => {
+        E(`document.getElementById("pomoSubject").value="Geography";`);
+        E(`pomo.running=true;pomo.mode="focus";pomo.day=today();pomo.total=1500;pomo.left=1200;pomo.end=Date.now()+1200000;pomo.target=null;`);
+        const lv = w.LQAdapter.live(), m = lv ? w.LQMapper.map(lv) : null;
+        E(`pomo.running=false;document.getElementById("pomoSubject").value="";`);
+        return !!lv && lv.subject === "Geography" && !!m && m.room === "study" && m.subjectKey === "geography";
+    })());
+    ok("14.24 no new evidence source can ever reach the laboratory or the observatory", (() => {
+        const rs = E(`LQAdapter.dayRecords(today()).map(function(x){return LQMapper.map(x).room})`);
+        const labs = rs.filter(r => r === "lab").length, obs = rs.filter(r => r === "observatory").length;
+        return labs === 0 && obs === 0;
+    })(), String(E(`LQAdapter.dayRecords(today()).map(function(x){return LQMapper.map(x).room}).join(",")`)));
+    ok("14.25 evidence markers add no minutes — the tracker's own total is unchanged", (() => {
+        const t = E(`LQAdapter.totals(today()).all`), am = E(`activityMins(today())`);
+        const zeros = E(`LQAdapter.dayRecords(today()).filter(function(x){return x.mins===0}).length`);
+        return t === am && zeros >= 14;
+    })(), String(E(`LQAdapter.totals(today()).all`) + " vs " + E(`activityMins(today())`)));
+    ok("14.26 days that only hold markers are still real days in the journey list", (() => {
+        const ds = E(`LQAdapter.dates()`);
+        return ds.indexOf(TODAY) >= 0 && ds.length === new Set(ds).size;
+    })());
+    ok("14.27 Phase 3 reads everything and writes nothing", snapNoLQ() === p3);
+
+    /* One tracker mutation IS reachable while browsing LIFEQUEST — but it is the
+       host's own, not the game's. renderHof() (index.html:5133) stamps
+       state.meta._hof for any badge that has just become true, on every page
+       change. Prove the writer is the host by producing the identical stamp from
+       tracker-only navigation with LIFEQUEST never opened. */
+    ok("14.28 the only tracker write reachable from LIFEQUEST is the host's own Hall-of-Fame stamp, reproduced by tracker-only navigation", (() => {
+        const T = E("today()");
+        E(`state.reviews.length=0;`);
+        E(`state.reviews.push({id:"hofrv",wk:"W-hof",win:"Good week",hard:"",goals:[{t:"Revise",done:true}],target:30,date:"${T}"});`);
+        const stamp = () => E("JSON.stringify(state.meta._hof||{})");
+        E(`state.meta._hof={};save();`);
+        E("showPage('stats')");                       /* tracker page only */
+        const hostStamp = stamp();
+        E(`state.meta._hof={};save();`);
+        E("showPage('lq')"); E("LQUI.show('day')");    /* via LIFEQUEST */
+        const lqStamp = stamp();
+        return hostStamp !== "{}" && hostStamp === lqStamp
+            && /First Weekly Review/.test(hostStamp);
+    })(), String(E("JSON.stringify(state.meta._hof||{})")));
+    ok("14.29 no LIFEQUEST module ever writes a tracker record", (() => {
+        const src = ["lq-adapter.js", "lq-mapper.js", "lq-world.js", "lq-ui.js", "lq-render.js",
+            "lq-character.js", "lq-store.js", "lifequest.js"]
+            .map(f => String(fs.readFileSync(path.join(__dirname, "..", f), "utf8")));
+        /* the game reads the tracker; only lq-store.js may write, and only state.lq */
+        return src.every((s, i) => {
+            if (i === 6) return true;                                  /* lq-store.js */
+            return !/state\.(study|homework|plan|mistakes|feynman|questions|marks|papers|exams|research|bizLog|reviews|prayers|dayLog|gam|hobbyLog|extraLog|extra|runs|karate|workouts|lifts|quran|movies|hof|tasks|meta)\s*(=|\.push|\.unshift|\[)/.test(s);
+        });
+    })());
 
     ok("boot: no page errors", problems.length === 0, problems.slice(0, 4).join(" || "));
 
