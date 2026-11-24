@@ -22,6 +22,7 @@ const ASSETS = [
   "chemcore.js",
   "physcore.js",
   "biocore.js",
+  "lq-boot.js",
   "lifequest.css",
   "lq-store.js",
   "lq-adapter.js",

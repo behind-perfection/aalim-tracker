@@ -7,7 +7,7 @@ They load the real files from this repository — nothing is mocked except the D
 npm i --no-save jsdom      # once
 node tests/smoke.js        # 43 checks — tracker boot, navigation, forms, animations
 node tests/lab.js          # 55 checks — Virtual Lab shell + experiment engines
-node tests/lifequest.js    # 124 checks — LIFEQUEST integration (v97+)
+node tests/lifequest.js    # 165 checks — LIFEQUEST integration (v98+)
 ```
 
 Each script exits `0` when every check passes and `1` on the first failing run, and
@@ -33,6 +33,11 @@ compute the values their UIs display.
 
 **`lifequest.js`** — LIFEQUEST is additive and honest:
 
+0. **lazy loading** — a tracker-only session downloads `lq-boot.js` and nothing else:
+   no game module global exists, `lifequest.css` is not linked, yet the hub, its `9`
+   shortcut, the search-palette entry and the placeholder page are all already there.
+   Opening the page fetches the stylesheet and the 8 modules in dependency order,
+   exactly once, and replaces the placeholder with the real UI;
 1. the original eight hubs, their `1`–`8` shortcuts and all 26 pre-existing pages are
    untouched, and LifeQuest appears as hub 9 (sidebar, bottom bar, search palette);
 2. the tracker's `state` stays **byte-identical** (minus `lq`) while every panel,
@@ -52,6 +57,13 @@ compute the values their UIs display.
 11. accessibility and performance gating (reduced motion, ambient, pause, visibility),
     idempotent milestone awards, no `alert()`, game-only reset;
 12. `APP_VERSION` and `sw.js` agree, and every new asset is precached;
-13. every existing page still renders afterwards.
+13. every existing page still renders afterwards;
+14. **Phase 3 evidence depth** — homework, ticked plan items, mistake analyses,
+    Feynman explanations, question-bank practice, test marks, completed exams,
+    project notes and tests, business log, weekly reviews, prayers, meals and
+    claimed rest days all surface as records; the live pomodoro is classified
+    through the tracker's own `resolveTarget()`; zero-duration markers never add
+    minutes to any total; and the only tracker write reachable from the game is
+    the host's own `renderHof()` badge stamp, reproduced by tracker-only navigation.
 
 Add a check the same way in any suite: `ok("name", condition, optionalDetail)`.

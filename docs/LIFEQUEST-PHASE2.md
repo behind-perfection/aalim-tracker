@@ -89,6 +89,9 @@ no build step, no external asset, no network request — `fetch`, `XMLHttpReques
    the default merge JSON-dedupes arrays and `Object.assign`s objects, which would
    duplicate milestones and lose counters.
 5. Eight `<script src>` tags before `</body>` (after every existing inline script).
+   *Superseded in Phase 3: those eight tags — and the `lifequest.css` `<link>` in
+   `<head>` — were replaced by a single `lq-boot.js` stub that injects them on the
+   first visit to the LifeQuest page. See `docs/LIFEQUEST-PHASE3.md` §5.*
 6. `APP_VERSION` `v96` → `v97`.
 
 `sw.js` — 11 insertions, 2 deletions: `CACHE` → `aalim-tracker-v97`, and all 9 new files added to `ASSETS`.
@@ -233,7 +236,14 @@ all 26 existing tabs still render; no page errors.
 
 ## 8. Next phase
 
-Phase 3 — tracker integration and activity mapping depth: homework/plan intent,
-project and research work, exam and paper sessions, hobby blocks, and the workshop /
-city / garden routing that depends on them. Phase 2's mapper is the extension point;
-no existing behaviour needs to change.
+**Done — see `docs/LIFEQUEST-PHASE3.md` (v98).** Phase 3 delivered tracker
+integration and activity-mapping depth: homework/plan intent resolved through the
+tracker's own `resolveTarget()`, project and research work, exam and paper results,
+hobby blocks classified from the tracker's own definitions, plus fifteen further
+dated evidence sources (prayers, meals, mistakes, Feynman, question practice,
+business log, weekly reviews, rest days).
+
+It also changed how the game is delivered: the eight `<script src>` tags described
+in §2 and the `<link>` to `lifequest.css` are gone from the eager path, replaced by
+one `lq-boot.js` stub that loads them on the first visit to the LifeQuest page.
+Everything else in this document still describes the code as it stands.

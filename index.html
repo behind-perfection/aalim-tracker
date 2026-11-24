@@ -120,7 +120,7 @@ body.fs-open{overflow:hidden}
 [data-theme=dark] .frame{background:linear-gradient(#2c2711,#211d0b);color:#f5e6a8;border-color:#a8861f;box-shadow:inset 0 0 0 3px #17140a,0 2px 8px rgba(0,0,0,.4)}[data-theme=dark] .frame .muted{color:#cdb96a}
 .hofToast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);z-index:1200;background:#1f2937;color:#fff;padding:10px 16px;border-radius:12px;box-shadow:0 6px 24px rgba(0,0,0,.3);max-width:90vw;font-size:14px}
 </style>
-<link rel="stylesheet" href="lifequest.css">
+<!-- lifequest.css is injected by lq-boot.js only when the game is first opened -->
 </head>
 <body>
 <header><div class="header">
@@ -5503,15 +5503,13 @@ function aiReveal(){
 const sp=window.showPage;window.showPage=function(id){sp.apply(this,arguments);if(id==="today")aiReveal();if(id==="vlab"&&!(typeof LAB_LOCKED!=="undefined"&&LAB_LOCKED)){const f=$("vlabFrame");if(f&&!f.getAttribute("src")){fetch("chemlab.html",{cache:"no-cache"}).then(r=>{if(!r.ok)throw new Error(r.status);f.src="chemlab.html"}).catch(()=>{const box=f.parentNode;if(box)box.innerHTML='<div style="padding:22px;line-height:1.5"><b>🧪 The Virtual Lab file was not found.</b><br>Upload <code>chemlab.html</code> to the same folder as <code>index.html</code> (the name must be all lowercase), then reload the app.</div>'})}}};
 })();
 </script>
-<!-- LIFEQUEST: parallel-life simulation. Additive only — the tracker remains the single source of truth. -->
-<script src="lq-store.js"></script>
-<script src="lq-adapter.js"></script>
-<script src="lq-mapper.js"></script>
-<script src="lq-character.js"></script>
-<script src="lq-world.js"></script>
-<script src="lq-render.js"></script>
-<script src="lq-ui.js"></script>
-<script src="lifequest.js"></script>
+<!-- LIFEQUEST: parallel-life simulation. Additive only — the tracker remains the
+     single source of truth. `lq-boot.js` is the eager stub (8,948 B raw / 3.4 KB gz):
+     it injects the hub and the placeholder page, then downloads lifequest.css and
+     the 8 game modules (171,224 B) the first time the LifeQuest page is opened.
+     A tracker-only session never pays for them. All 10 files stay precached in
+     sw.js, so the lazy load is served from cache when offline. -->
+<script src="lq-boot.js"></script>
 
 </body>
 </html>

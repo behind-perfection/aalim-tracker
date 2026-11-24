@@ -65,6 +65,69 @@ vc.on("error", (...a) => problems.push("console.error: " + a.join(" ")));
     const E = s => { try { return w.eval(s); } catch (e) { return "EVAL-ERR: " + e.message; } };
     const TODAY = E("today()");
 
+    /* ============ 0. lazy loading — a tracker-only session pays nothing ====
+       The 8 game modules and the stylesheet are fetched by lq-boot.js only when
+       the LifeQuest page is first opened. Until then the tracker must carry no
+       game code at all, while the hub stays fully reachable. */
+    const idx0 = fs.readFileSync(path.join(ROOT, "index.html"), "utf8");
+    const GAME_FILES = ["lq-store.js", "lq-adapter.js", "lq-mapper.js", "lq-character.js",
+        "lq-world.js", "lq-render.js", "lq-ui.js", "lifequest.js"];
+    const scriptSrcs = () => [...d.querySelectorAll("script[src]")].map(s => s.getAttribute("src"));
+    ok("0.1 no game module global exists before the page is opened",
+        !w.LQStore && !w.LQAdapter && !w.LQMapper && !w.LQCharacter && !w.LQWorld
+        && !w.LQRender && !w.LQUI && !w.LQ,
+        ["LQStore", "LQAdapter", "LQMapper", "LQCharacter", "LQWorld", "LQRender", "LQUI", "LQ"]
+            .filter(n => w[n]).join(",") || "none loaded — correct");
+    ok("0.2 index.html ships exactly one eager LIFEQUEST file: lq-boot.js", (() => {
+        const srcs = scriptSrcs();
+        return srcs.includes("lq-boot.js") && !srcs.some(s => GAME_FILES.includes(s));
+    })(), scriptSrcs().filter(s => /^lq|^lifequest/.test(s)).join(",") || "none");
+    ok("0.3 lifequest.css is not linked until the game is opened",
+        ![...d.querySelectorAll('link[rel="stylesheet"]')].some(l => /lifequest\.css/.test(l.href))
+        && !/href="lifequest\.css"/.test(idx0));
+    ok("0.4 the hub, its shortcut and the placeholder page exist with no game code loaded", (() => {
+        return E("HUBS.some(h=>h.id==='quest')") === true
+            && E("HUBS.find(h=>h.id==='quest').k") === "9"
+            && E("NAVF.some(n=>n.id==='lq')") === true
+            && !!d.querySelector("#side button[data-h='quest']")
+            && !!d.querySelector("main > section#lq.page")
+            && /Preparing the world/.test(d.querySelector("main > section#lq.page").textContent);
+    })(), d.querySelector("main > section#lq.page") ? d.querySelector("main > section#lq.page").textContent.trim().slice(0, 60) : "no #lq section");
+    ok("0.5 the hub is reachable before loading, and opening it starts the fetch", (() => {
+        E("openHub('quest')");                     /* nav → showPage('lq') → LQBoot.ensure() */
+        return E("curPage") === "lq" && ["loading", "ready"].indexOf(w.LQBoot.status()) >= 0;
+    })(), String(E("curPage")) + "/" + String(w.LQBoot && w.LQBoot.status()));
+    ok("0.6 LQBoot is present and idle until the page is really shown",
+        !!w.LQBoot && ["idle", "loading", "ready"].indexOf(w.LQBoot.status()) >= 0, String(w.LQBoot && w.LQBoot.status()));
+
+    /* Opening the page must fetch the stylesheet + all 8 modules in dependency
+       order and then boot the game. */
+    const waitForGame = async ms => {
+        const t0 = Date.now();
+        while (Date.now() - t0 < ms) {
+            if (w.LQ && w.LQ.ready()) return true;
+            await new Promise(r => setTimeout(r, 50));
+        }
+        return false;
+    };
+    const booted = await waitForGame(20000);
+    ok("0.7 opening LifeQuest loads lifequest.css and every module, then boots", booted,
+        "LQBoot.status=" + String(w.LQBoot && w.LQBoot.status()) + " failedOn=" + String(w.LQBoot && w.LQBoot.failedOn()));
+    ok("0.8 all 8 modules were injected exactly once, in dependency order", (() => {
+        const srcs = scriptSrcs().filter(s => GAME_FILES.includes(s));
+        return srcs.length === 8 && srcs.join(",") === GAME_FILES.join(",");
+    })(), scriptSrcs().filter(s => GAME_FILES.includes(s)).join(","));
+    ok("0.9 the stylesheet is injected on demand, not shipped in <head>",
+        [...d.querySelectorAll('link[rel="stylesheet"]')].filter(l => /lifequest\.css/.test(l.href)).length === 1);
+    ok("0.10 the placeholder is replaced by the real game UI", (() => {
+        const sec = d.querySelector("main > section#lq.page");
+        return !!sec && !/Preparing the world/.test(sec.textContent) && !!sec.querySelector(".lq-grid,.lq-stage,svg");
+    })(), (d.querySelector("main > section#lq.page") || {}).textContent ? d.querySelector("main > section#lq.page").textContent.trim().slice(0, 60) : "none");
+    ok("0.11 re-opening the page never re-downloads the modules", (() => {
+        E("showPage('dashboard')"); E("showPage('lq')"); E("showPage('lq')");
+        const srcs = scriptSrcs().filter(s => GAME_FILES.includes(s));
+        return srcs.length === 8 && w.LQBoot.status() === "ready";
+    })(), String(scriptSrcs().filter(s => GAME_FILES.includes(s)).length));
     /* ============================ 1. boot & navigation ==================== */
     ok("1.1 LIFEQUEST modules all loaded",
         !!(w.LQ && w.LQStore && w.LQAdapter && w.LQMapper && w.LQCharacter && w.LQWorld && w.LQRender && w.LQUI));
@@ -517,7 +580,7 @@ vc.on("error", (...a) => problems.push("console.error: " + a.join(" ")));
         return a === true && b === false && n === 1;
     })());
     ok("11.11 no alert() is used by the game layer", (() => {
-        const files = ["lifequest.js", "lq-store.js", "lq-adapter.js", "lq-mapper.js", "lq-character.js", "lq-world.js", "lq-render.js", "lq-ui.js"];
+        const files = ["lq-boot.js", "lifequest.js", "lq-store.js", "lq-adapter.js", "lq-mapper.js", "lq-character.js", "lq-world.js", "lq-render.js", "lq-ui.js"];
         return files.every(f => !/\balert\s*\(/.test(fs.readFileSync(path.join(ROOT, f), "utf8")));
     })());
     /* The reset control must be game-only: cosmetics + preferences disappear,
@@ -543,11 +606,27 @@ vc.on("error", (...a) => problems.push("console.error: " + a.join(" ")));
     ok("12.1 APP_VERSION bumped to v98", /const APP_VERSION = "v98"/.test(idx));
     ok("12.2 sw.js CACHE matches v98", /const CACHE = "aalim-tracker-v98"/.test(swf));
     ok("12.3 every LIFEQUEST asset is cached for offline use",
-        ["lifequest.css", "lq-store.js", "lq-adapter.js", "lq-mapper.js", "lq-character.js", "lq-world.js", "lq-render.js", "lq-ui.js", "lifequest.js"]
+        ["lq-boot.js", "lifequest.css", "lq-store.js", "lq-adapter.js", "lq-mapper.js", "lq-character.js", "lq-world.js", "lq-render.js", "lq-ui.js", "lifequest.js"]
             .every(a => swf.includes('"' + a + '"')));
-    ok("12.4 the stylesheet is linked once, in <head>", (idx.match(/lifequest\.css/g) || []).length === 1 && idx.indexOf("lifequest.css") < idx.indexOf("<body"));
+    /* The stylesheet is deliberately NOT in <head> any more: lq-boot.js injects
+       it the first time the game is opened, so a tracker-only session never
+       downloads 29 KB of game CSS. Offline still works because sw.js precaches
+       the file (12.3) — the lazy <link> is served straight from the cache. */
+    ok("12.4 index.html ships no eager game CSS or module scripts — only lq-boot.js", (() => {
+        return !/href="lifequest\.css"/.test(idx)
+            && (idx.match(/<script src="lq-|<script src="lifequest\.js"/g) || []).length === 1
+            && /<script src="lq-boot\.js"><\/script>/.test(idx);
+    })(), (idx.match(/<script src="(lq-[^"]+|lifequest\.js)"/g) || []).join(","));
+    ok("12.4b lq-boot.js knows every file it must fetch, in dependency order", (() => {
+        const boot = fs.readFileSync(path.join(ROOT, "lq-boot.js"), "utf8");
+        const list = boot.slice(boot.indexOf("var FILES"), boot.indexOf("var status"));
+        return ["lq-store.js", "lq-adapter.js", "lq-mapper.js", "lq-character.js", "lq-world.js",
+            "lq-render.js", "lq-ui.js", "lifequest.js"].every((f, i, a) =>
+            list.indexOf('"' + f + '"') > (i ? list.indexOf('"' + a[i - 1] + '"') : -1))
+            && /lifequest\.css/.test(boot);
+    })());
     ok("12.5 the game makes no network requests", (() => {
-        const files = ["lifequest.js", "lq-store.js", "lq-adapter.js", "lq-mapper.js", "lq-character.js", "lq-world.js", "lq-render.js", "lq-ui.js"];
+        const files = ["lq-boot.js", "lifequest.js", "lq-store.js", "lq-adapter.js", "lq-mapper.js", "lq-character.js", "lq-world.js", "lq-render.js", "lq-ui.js"];
         return files.every(f => !/fetch\s*\(|XMLHttpRequest|https?:\/\//.test(fs.readFileSync(path.join(ROOT, f), "utf8")));
     })());
     ok("12.6 all existing lab assets are still cached", ["chemlab.html", "labui.js", "chemcore.js", "physcore.js", "biocore.js"].every(a => swf.includes('"' + a + '"')));
@@ -772,7 +851,7 @@ vc.on("error", (...a) => problems.push("console.error: " + a.join(" ")));
     })(), String(E("JSON.stringify(state.meta._hof||{})")));
     ok("14.29 no LIFEQUEST module ever writes a tracker record", (() => {
         const src = ["lq-adapter.js", "lq-mapper.js", "lq-world.js", "lq-ui.js", "lq-render.js",
-            "lq-character.js", "lq-store.js", "lifequest.js"]
+            "lq-character.js", "lq-store.js", "lifequest.js", "lq-boot.js"]
             .map(f => String(fs.readFileSync(path.join(__dirname, "..", f), "utf8")));
         /* the game reads the tracker; only lq-store.js may write, and only state.lq */
         return src.every((s, i) => {
