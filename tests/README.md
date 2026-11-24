@@ -20,6 +20,15 @@ If jsdom lives somewhere unusual, point `NODE_PATH` at it:
 NODE_PATH=/tmp/smoke/node_modules node tests/lifequest.js
 ```
 
+## Art contract
+
+`node tools/pixel-preview.js <room> <anim> <minute> <theme> [scale]` rasterises
+the shipped scene with the real stylesheet as palette and fails loud (via its
+report) on any non-grey pixel or any element that is not an axis-aligned rect.
+Suite checks `9.14`–`9.16` enforce the same contract headlessly: no curves,
+circles, gradients or rounded corners; every scene coordinate on the 4-unit
+grid; every stylesheet colour a true grey. See `docs/LIFEQUEST-PIXEL-ART.md`.
+
 ## What each suite guards
 
 **`smoke.js`** — the app boots without the on-screen error bar; the vendored Supabase

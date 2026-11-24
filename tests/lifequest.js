@@ -1,4 +1,4 @@
-/* LIFEQUEST (v98) integration tests — jsdom, no browser, no network.
+/* LIFEQUEST (v99) integration tests — jsdom, no browser, no network.
    Usage:  npm i --no-save jsdom  &&  node tests/lifequest.js
 
    Covers, in order:
@@ -437,11 +437,21 @@ vc.on("error", (...a) => problems.push("console.error: " + a.join(" ")));
     ok("9.1 the world stage is an SVG with all five layers",
         !!$("#lqStageHost svg.lq-stage") && ["back", "props", "char", "front", "ambient"].every(l => !!$(".lq-layer-" + l)));
     ok("9.2 the character rig exists exactly once in the world", d.querySelectorAll(".lq-layer-char .lq-fig").length === 1);
-    ok("9.3 the rig has head, torso, two arms and two legs", (() => {
+    ok("9.3 every pose of the rig has head, torso, two arms and two legs", (() => {
         const f = $(".lq-layer-char .lq-fig");
-        return !!f && f.querySelectorAll(".lq-head").length === 1 && f.querySelectorAll(".lq-torso").length === 1
-            && f.querySelectorAll(".lq-arm").length === 2 && f.querySelectorAll(".lq-leg").length === 2
-            && f.querySelectorAll(".lq-knee").length === 2 && f.querySelectorAll(".lq-elbow").length === 2;
+        if (!f) return false;
+        const frame = g => g.querySelector(".lq-legs .fa") || g.querySelector(".lq-legs") || g;
+        const armFrame = a => a.querySelector(".fa") || a;
+        return ["stand", "sit", "recline"].every(pose => {
+            const g = f.querySelector(".lq-p-" + pose);
+            if (!g) return false;
+            const lf = frame(g);
+            const af = armFrame(g.querySelector(".lq-arm-f")), ab = armFrame(g.querySelector(".lq-arm-b"));
+            return g.querySelectorAll(".lq-head").length === 1 && g.querySelectorAll(".lq-torso").length === 1
+                && g.querySelectorAll(".lq-arm").length === 2
+                && lf.querySelectorAll(".lq-leg").length === 2 && lf.querySelectorAll(".lq-knee").length === 2
+                && af.querySelectorAll(".lq-elbow").length === 1 && ab.querySelectorAll(".lq-elbow").length === 1;
+        }) && !!f.querySelector(".lq-p-lie .lq-head") && !!f.querySelector(".lq-p-lie .lq-torso");
     })());
     /* Put him at the desk first: with no live signal the world correctly shows
        the rest area, so the study-room assertions need an explicit activity. */
@@ -449,7 +459,7 @@ vc.on("error", (...a) => problems.push("console.error: " + a.join(" ")));
     await new Promise(r => setTimeout(r, 80));
     ok("9.4 the study room renders desk, chair, bookshelf, window and lamp", (() => {
         const b = $(".lq-layer-back").innerHTML;
-        return ["lq-desk", "lq-chair", "lq-shelf", "lqWinClip", "lq-lamp"].every(c => b.includes(c));
+        return ["lq-desk", "lq-chair", "lq-shelf", "lq-win", "lq-lamp"].every(c => b.includes(c));
     })());
     ok("9.5 the desk front panel is drawn after the character (seated occlusion)",
         $(".lq-layer-front").innerHTML.includes("lq-deskfront"));
@@ -482,6 +492,37 @@ vc.on("error", (...a) => problems.push("console.error: " + a.join(" ")));
     })());
     ok("9.13 the sun/moon arc stays inside the window", (() => {
         return [0, 300, 600, 900, 1200, 1439].every(m => { const o = w.LQWorld.orbPos(m); return o.x >= 20 && o.x <= 180 && o.y >= 30 && o.y <= 125; });
+    })());
+
+    /* ---- 9b. the pixel-art contract: the style is a rule, not a mood ----- */
+    const P = E("LQWorld.P");
+    const artMarkup = E(`(function(){
+      var sc = LQWorld.scene(LQMapper.map({kind:"study",source:"study",subject:"Mathematics"}), {minute:600});
+      return sc.back + sc.front + sc.ambient + LQCharacter.rig() +
+        LQCharacter.deskProps("maths", {w:24,h:10});
+    })()`);
+    ok("9.14 no curves, circles, ellipses, rounded corners, gradients or filters anywhere in the art",
+        P === 4 && !/<path|<circle|<ellipse|rx=|ry=|Gradient|filter|blur|rotate\(/i.test(artMarkup));
+    ok("9.15 every scene coordinate sits on the 4-unit pixel grid", (() => {
+      const sceneOnly = E(`(function(){
+        var sc = LQWorld.scene(LQMapper.map({kind:"study",source:"study",subject:"Mathematics"}), {minute:600});
+        return sc.back + sc.front + sc.ambient;
+      })()`);
+      const bad = [];
+      sceneOnly.replace(/\b[x_y]|width|height="( -?[\d.]+)"/g, (mm, v) => { if (v !== undefined && Math.abs(parseFloat(v) % P) > 1e-9) bad.push(v); return mm; });
+      const attrs = sceneOnly.match(/\b(?:x|y|width|height)="(-?[\d.]+)"/g) || [];
+      attrs.forEach(a => { const v = parseFloat(a.split("=")[1]); if (Math.abs(v % P) > 1e-9) bad.push(a); });
+      return bad.length === 0;
+    })());
+    ok("9.16 the whole stylesheet is hue-free: every colour is black, white or a true grey", (() => {
+      const css = require("fs").readFileSync(require("path").join(__dirname, "..", "lifequest.css"), "utf8");
+      const bad = [];
+      css.replace(/#([0-9a-fA-F]{6})([0-9a-fA-F]{2})?/g, (mm, h) => {
+        const r = parseInt(h.slice(0, 2), 16), g = parseInt(h.slice(2, 4), 16), b = parseInt(h.slice(4, 6), 16);
+        if (r !== g || g !== b) bad.push(mm);
+        return mm;
+      });
+      return bad.length === 0;
     })());
 
     /* ============== 10. unbuilt environments stay honest ================== */
@@ -558,7 +599,16 @@ vc.on("error", (...a) => problems.push("console.error: " + a.join(" ")));
     ok("11.8 customisation never changes his proportions (same core rig)", (() => {
         const parts = () => {
             const f = $("#lqp-char .lq-fig");
-            return [".lq-head", ".lq-torso", ".lq-arm", ".lq-leg", ".lq-knee", ".lq-elbow"].map(s => f.querySelectorAll(s).length).join(",");
+            const g = f.querySelector(".lq-p-" + (f.getAttribute("data-pose") || "stand"));
+            const lf = g.querySelector(".lq-legs .fa") || g.querySelector(".lq-legs") || g;
+            const af = a => (a.querySelector(".fa") || a);
+            return [
+                g.querySelectorAll(".lq-head").length, g.querySelectorAll(".lq-torso").length,
+                g.querySelectorAll(".lq-arm").length, lf.querySelectorAll(".lq-leg").length,
+                lf.querySelectorAll(".lq-knee").length,
+                af(g.querySelector(".lq-arm-f")).querySelectorAll(".lq-elbow").length +
+                af(g.querySelector(".lq-arm-b")).querySelectorAll(".lq-elbow").length
+            ].join(",");
         };
         E("LQStore.mutate(s=>{s.char.skin=5;s.char.outfit=7;s.char.accessory=4})"); E("LQUI.show('char')");
         const a = parts();
@@ -603,8 +653,8 @@ vc.on("error", (...a) => problems.push("console.error: " + a.join(" ")));
     /* ================= 12. version & service worker ======================= */
     const idx = fs.readFileSync(path.join(ROOT, "index.html"), "utf8");
     const swf = fs.readFileSync(path.join(ROOT, "sw.js"), "utf8");
-    ok("12.1 APP_VERSION bumped to v98", /const APP_VERSION = "v98"/.test(idx));
-    ok("12.2 sw.js CACHE matches v98", /const CACHE = "aalim-tracker-v98"/.test(swf));
+    ok("12.1 APP_VERSION bumped to v99", /const APP_VERSION = "v99"/.test(idx));
+    ok("12.2 sw.js CACHE matches v99", /const CACHE = "aalim-tracker-v99"/.test(swf));
     ok("12.3 every LIFEQUEST asset is cached for offline use",
         ["lq-boot.js", "lifequest.css", "lq-store.js", "lq-adapter.js", "lq-mapper.js", "lq-character.js", "lq-world.js", "lq-render.js", "lq-ui.js", "lifequest.js"]
             .every(a => swf.includes('"' + a + '"')));

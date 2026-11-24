@@ -10,7 +10,7 @@
 (function () {
   "use strict";
   var W = window;
-  var VERSION = "0.3.0-phase3";
+  var VERSION = "0.4.0-pixel";
   var HUB_ID = "quest", PAGE_ID = "lq", HUB_KEY = "9";
   var uiReady = false, pollT = 0, refreshT = 0, lastSig = "";
 

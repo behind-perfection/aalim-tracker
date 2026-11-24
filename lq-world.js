@@ -1,95 +1,160 @@
 /* ============================================================================
-   LIFEQUEST · lq-world.js
-   Layered SVG environments + day/night + ambient life.
+   LIFEQUEST · lq-world.js — monochrome pixel-art environments.
 
-   Phase 2 builds the environments the character actually needs today:
-   the study desk (all academic work), the bedroom (sleep/wake) and the rest
-   area (breaks, untracked time). Every other area is declared in LQMapper.ROOMS
-   with `built:false` and renders as an honest, minimal "not built yet" scene —
-   the character is never shown doing something the room cannot yet depict.
+   Style contract (see docs/LIFEQUEST-PHASE-ART.md):
+     · ONE pixel size everywhere: P = 4 scene units. The 960×540 stage is a
+       240×135 pixel grid and every rectangle is drawn on it, whole pixels only.
+     · Black, white and greys only. No hue anywhere, no gradients, no curves,
+       no rounded corners, no blur. Tonal transitions use 2×2 checker dither —
+       the oldest trick in handheld art.
+     · Lighting is grayscale and quiet: a dithered lamp cone, a flat shadow
+       row under furniture, a night wash. Nothing glows in colour.
+     · Nothing here touches tracker data.
+
+   Phase 2 builds the environments the character actually needs today: the
+   study desk, the bedroom and the rest area. Every other area is declared in
+   LQMapper.ROOMS with `built:false` and renders as an honest pixel silhouette
+   with its name and its phase — the character is never shown doing something
+   the room cannot yet depict.
    ========================================================================== */
 (function () {
   "use strict";
 
   var W = 960, H = 540, FLOOR = 432;
+  var P = 4;                                    /* one pixel, in scene units */
 
-  /* ------------------------------------------------------------ sky palettes
-     Muted, atmospheric stops. Interpolated by minute-of-day so the light
-     follows the real clock (or the replay clock). */
-  var SKY = [
-    { m: 0,    top: "#0b1020", bot: "#161c30", sun: "#dfe6f5", glow: 0.00, stars: 1 },
-    { m: 270,  top: "#101a33", bot: "#2a2c46", sun: "#e6dcf0", glow: 0.05, stars: 1 },
-    { m: 360,  top: "#3a4468", bot: "#c98a6a", sun: "#ffd9a8", glow: 0.45, stars: 0.35 },
-    { m: 450,  top: "#6d8fc0", bot: "#e8c9a0", sun: "#fff0cf", glow: 0.85, stars: 0 },
-    { m: 720,  top: "#7fa6d6", bot: "#dfe8f2", sun: "#fffbe8", glow: 1.00, stars: 0 },
-    { m: 1020, top: "#6f92c4", bot: "#e6d7c0", sun: "#fff3d6", glow: 0.90, stars: 0 },
-    { m: 1140, top: "#4a5580", bot: "#d99a72", sun: "#ffd0a0", glow: 0.45, stars: 0.15 },
-    { m: 1230, top: "#232a48", bot: "#5a4a63", sun: "#e8d6ea", glow: 0.10, stars: 0.7 },
-    { m: 1440, top: "#0b1020", bot: "#161c30", sun: "#dfe6f5", glow: 0.00, stars: 1 }
-  ];
-
-  function lerp(a, b, t) { return a + (b - a) * t; }
-  function hex2rgb(h) { return [parseInt(h.slice(1, 3), 16), parseInt(h.slice(3, 5), 16), parseInt(h.slice(5, 7), 16)]; }
-  function mix(c1, c2, t) {
-    var a = hex2rgb(c1), b = hex2rgb(c2);
-    return "rgb(" + Math.round(lerp(a[0], b[0], t)) + "," + Math.round(lerp(a[1], b[1], t)) + "," + Math.round(lerp(a[2], b[2], t)) + ")";
+  /* ------------------------------------------------------------ pixel tools
+     Everything is emitted through these so the grid cannot drift. x/y/w/h are
+     PIXELS; the helpers multiply by P. Nothing else in this file may write a
+     coordinate. */
+  function px(x, y, w, h, cls, extra) {
+    return '<rect x="' + (x * P) + '" y="' + (y * P) + '" width="' + (w * P) + '" height="' + (h * P) + '"' +
+      (cls ? ' class="' + cls + '"' : "") + (extra || "") + "/>";
   }
-  function skyAt(min) {
-    min = ((Math.round(min) % 1440) + 1440) % 1440;
-    for (var i = 0; i < SKY.length - 1; i++) {
-      if (min >= SKY[i].m && min <= SKY[i + 1].m) {
-        var t = (min - SKY[i].m) / Math.max(1, SKY[i + 1].m - SKY[i].m), a = SKY[i], b = SKY[i + 1];
-        return {
-          top: mix(a.top, b.top, t), bot: mix(a.bot, b.bot, t), sun: mix(a.sun, b.sun, t),
-          glow: lerp(a.glow, b.glow, t), stars: lerp(a.stars, b.stars, t), min: min,
-          night: lerp(a.stars, b.stars, t) > 0.5
-        };
-      }
-    }
-    return { top: SKY[0].top, bot: SKY[0].bot, sun: SKY[0].sun, glow: 0, stars: 1, min: min, night: true };
+  /* a checker-dithered block: one rect filled from a 2×2 pattern tile */
+  function dith(x, y, w, h, id, cls) {
+    return '<rect x="' + (x * P) + '" y="' + (y * P) + '" width="' + (w * P) + '" height="' + (h * P) + '"' +
+      ' fill="url(#' + id + ')"' + (cls ? ' class="' + cls + '"' : "") + "/>";
   }
-  /* Sun/moon travel an arc across the window. */
-  function orbPos(min) {
-    var day = (min - 330) / 780;                       // ~05:30 → 18:30
-    var t = day < 0 || day > 1 ? null : day;
-    if (t === null) { var nt = ((min < 330 ? min + 1440 : min) - 1110) / 780; t = nt; }
-    t = Math.max(0, Math.min(1, t));
-    return { x: 26 + t * 148, y: 118 - Math.sin(t * Math.PI) * 74, isMoon: min < 330 || min > 1110 };
-  }
-
-  /* ------------------------------------------------------------- shared bits */
-  function stars(seed) {
-    var s = "", r = seed || 7;
-    for (var i = 0; i < 22; i++) {
-      r = (r * 9301 + 49297) % 233280; var f = r / 233280;
-      r = (r * 9301 + 49297) % 233280; var g = r / 233280;
-      s += '<circle cx="' + (20 + f * 160).toFixed(1) + '" cy="' + (28 + g * 82).toFixed(1) + '" r="' + (0.5 + g * 0.8).toFixed(2) + '" class="lq-star" style="--d:' + (i * 0.31).toFixed(2) + 's"/>';
+  /* a filled pixel disc (sun, moon, clock face) — rows of whole pixels */
+  function disc(cx, cy, r, cls) {
+    var s = "";
+    for (var dy = -r; dy < r; dy++) {
+      var hw = Math.max(1, Math.round(Math.sqrt(r * r - (dy + 0.5) * (dy + 0.5))));
+      s += px(cx - hw, cy + dy, hw * 2, 1, cls);
     }
     return s;
   }
+  /* a small pixel blob (cloud, cushion, leaf mass) from a row table */
+  function blob(cx, cy, rows, cls) {
+    var s = "";
+    for (var i = 0; i < rows.length; i++) s += px(cx - (rows[i] >> 1), cy + i, rows[i], 1, cls);
+    return s;
+  }
+
+  /* ------------------------------------------------------------- sky tones
+     The sky is four flat bands whose greys follow the real clock, stitched
+     with dither rows. `tone` is 0 (deep night) … 1 (bright noon). */
+  function bands(tone) {
+    /* index into the grey ramp: base band + three above it */
+    var b = Math.round(tone * 6);
+    return [b, b + 1, b + 2, b + 3];
+  }
+  function skyAt(min) {
+    min = ((Math.round(min) % 1440) + 1440) % 1440;
+    /* piecewise light curve: night → dawn → noon → dusk → night */
+    var t;
+    if (min < 300) t = 0;
+    else if (min < 420) t = (min - 300) / 120 * 0.45;
+    else if (min < 660) t = 0.45 + (min - 420) / 240 * 0.55;
+    else if (min < 1020) t = 1;
+    else if (min < 1140) t = 1 - (min - 1020) / 120 * 0.55;
+    else if (min < 1290) t = 0.45 - (min - 1140) / 150 * 0.45;
+    else t = 0;
+    var stars = t < 0.18 ? 1 - t / 0.18 : 0;
+    return {
+      min: min, tone: t, bands: bands(t), night: t < 0.22, stars: stars,
+      glow: Math.max(0.12, t),
+      /* kept for the HUD + tests: flat greys, never a hue */
+      top: "grey", bot: "grey", sun: "grey"
+    };
+  }
+  /* Sun/moon travel an arc across the window, snapped to whole pixels.
+     Returns WINDOW-LOCAL scene units (the window is 200×130) so callers and
+     tests can bounds-check it; windowView divides by P for the pixel grid. */
+  function orbPos(min) {
+    var day = (min - 330) / 780;                       /* ~05:30 → 18:30 */
+    var t = day < 0 || day > 1 ? null : day;
+    if (t === null) { var nt = ((min < 330 ? min + 1440 : min) - 1110) / 780; t = nt; }
+    t = Math.max(0, Math.min(1, t));
+    var x = Math.round((40 + t * 120) / P) * P;        /* whole pixels */
+    var y = Math.round((110 - Math.sin(t * Math.PI) * 68) / P) * P;
+    return { x: x, y: y, isMoon: min < 330 || min > 1110 };
+  }
+
+  /* ------------------------------------------------------------- star field
+     Deterministic 1-pixel stars; CSS twinkles them in discrete steps. */
+  function stars(seed) {
+    var s = "", r = seed || 7;
+    for (var i = 0; i < 18; i++) {
+      r = (r * 9301 + 49297) % 233280; var f = r / 233280;
+      r = (r * 9301 + 49297) % 233280; var g = r / 233280;
+      s += px(Math.round(2 + f * 44), Math.round(2 + g * 14), 1, 1, "lq-star",
+        ' style="--d:' + (i * 0.31).toFixed(2) + 's"');
+    }
+    return s;
+  }
+
+  /* -------------------------------------------------------------- the window
+     48×32 pixel pane: four sky bands, dither seams, a pixel sun or moon,
+     stepped hills, blocky clouds. The frame and muntins are 1-pixel lines. */
   function windowView(sky, opts) {
     var o = orbPos(sky.min);
-    return '' +
+    var b = sky.bands;
+    var defs =
       '<defs>' +
-        '<linearGradient id="lqSky" x1="0" y1="0" x2="0" y2="1">' +
-          '<stop offset="0" stop-color="' + sky.top + '"/><stop offset="1" stop-color="' + sky.bot + '"/>' +
-        '</linearGradient>' +
-        '<clipPath id="lqWinClip"><rect x="0" y="0" width="200" height="130" rx="4"/></clipPath>' +
-        '<radialGradient id="lqOrb"><stop offset="0" stop-color="' + sky.sun + '" stop-opacity=".95"/><stop offset="1" stop-color="' + sky.sun + '" stop-opacity="0"/></radialGradient>' +
-      '</defs>' +
-      '<g clip-path="url(#lqWinClip)">' +
-        '<rect width="200" height="130" fill="url(#lqSky)"/>' +
+        '<pattern id="lqDithA" width="' + (2 * P) + '" height="' + (2 * P) + '" patternUnits="userSpaceOnUse">' +
+          px(0, 0, 1, 1, "lq-d1") + px(1, 1, 1, 1, "lq-d1") +
+        '</pattern>' +
+        '<pattern id="lqDithB" width="' + (2 * P) + '" height="' + (2 * P) + '" patternUnits="userSpaceOnUse">' +
+          px(0, 0, 2, 1, "lq-d2") + px(0, 1, 1, 1, "lq-d2") + px(1, 1, 1, 1, "lq-d3") +
+        '</pattern>' +
+        '<pattern id="lqGlow" width="' + (2 * P) + '" height="' + (2 * P) + '" patternUnits="userSpaceOnUse">' +
+          px(0, 0, 1, 1, "lq-glowpx") + px(1, 1, 1, 1, "lq-glowpx") +
+        '</pattern>' +
+      '</defs>';
+    return defs +
+      '<g class="lq-win">' +
+        /* sky bands, top to bottom, each 8 px with a 1 px dither seam */
+        px(0, 0, 48, 8, "lq-sky g" + b[0]) +
+        dith(0, 8, 48, 1, "lqDithA") +
+        px(0, 9, 48, 7, "lq-sky g" + b[1]) +
+        dith(0, 16, 48, 1, "lqDithA") +
+        px(0, 17, 48, 7, "lq-sky g" + b[2]) +
+        dith(0, 24, 48, 1, "lqDithB") +
+        px(0, 25, 48, 7, "lq-sky g" + b[3]) +
+        /* stars over the night bands */
         '<g class="lq-stars" opacity="' + sky.stars.toFixed(2) + '">' + stars(opts && opts.seed) + '</g>' +
-        '<circle class="lq-orb" cx="' + o.x.toFixed(1) + '" cy="' + o.y.toFixed(1) + '" r="' + (o.isMoon ? 9 : 13) + '" fill="' + sky.sun + '" opacity="' + (0.35 + sky.glow * 0.6).toFixed(2) + '"/>' +
-        '<circle cx="' + o.x.toFixed(1) + '" cy="' + o.y.toFixed(1) + '" r="' + (o.isMoon ? 22 : 34) + '" fill="url(#lqOrb)" opacity="' + (sky.glow * 0.5).toFixed(2) + '"/>' +
-        /* distant hills — layered, muted, the Alto's-Adventure horizon */
-        '<path d="M0 104q34-26 70-8t64-10 66 18v26H0z" class="lq-hill3" opacity=".55"/>' +
-        '<path d="M0 114q46-20 92-4t108-8v32H0z" class="lq-hill2" opacity=".7"/>' +
-        '<path d="M0 124q60-12 120 0t80-4v14H0z" class="lq-hill1"/>' +
-        '<g class="lq-clouds"><ellipse cx="40" cy="34" rx="20" ry="6" class="lq-cloud"/><ellipse cx="132" cy="52" rx="26" ry="7" class="lq-cloud c2"/></g>' +
+        /* sun or moon, a pixel disc with a 1 px crescent cut for the moon */
+        (function (ox, oy) {
+          return o.isMoon
+            ? dith(ox - 4, oy - 4, 8, 8, "lqDithB", "lq-orbhalo") + disc(ox, oy, 3, "lq-orb") + px(ox - 1, oy - 2, 2, 2, "lq-sky g" + b[0])
+            : dith(ox - 5, oy - 5, 10, 10, "lqDithB", "lq-orbhalo") + disc(ox, oy, 4, "lq-orb");
+        })(Math.round(o.x / P), Math.round(o.y / P)) +
+        /* clouds: three blocky rows each, drifting in whole pixels */
+        '<g class="lq-clouds">' +
+          '<g class="lq-cloud">' + blob(10, 6, [4, 8, 10], "lq-cloud") + '</g>' +
+          '<g class="lq-cloud c2">' + blob(32, 12, [6, 12, 14, 10], "lq-cloud") + '</g>' +
+        '</g>' +
+        /* hills: stepped silhouettes, three depths */
+        px(0, 24, 48, 8, "lq-hill3") + px(4, 22, 10, 2, "lq-hill3") + px(28, 21, 12, 3, "lq-hill3") +
+        px(0, 27, 48, 5, "lq-hill2") + px(12, 25, 14, 2, "lq-hill2") + px(36, 26, 8, 1, "lq-hill2") +
+        px(0, 30, 48, 2, "lq-hill1") + px(6, 29, 8, 1, "lq-hill1") + px(24, 29, 10, 1, "lq-hill1") +
       '</g>' +
-      '<rect width="200" height="130" rx="4" class="lq-frame"/>' +
-      '<path d="M100 0v130M0 65h200" class="lq-muntin"/>';
+      /* frame + muntins: 1-pixel lines, drawn last so they stay crisp */
+      px(0, 0, 48, 1, "lq-frame") + px(0, 31, 48, 1, "lq-frame") +
+      px(0, 0, 1, 32, "lq-frame") + px(47, 0, 1, 32, "lq-frame") +
+      px(24, 1, 1, 30, "lq-muntin") + px(1, 16, 46, 1, "lq-muntin");
   }
 
   /* ------------------------------------------------------------------ study
@@ -98,136 +163,173 @@
   function study(sky, opts) {
     opts = opts || {};
     var lampOn = sky.night || opts.lamp;
+    var fy = FLOOR / P;                                   /* floor line, px */
     return '' +
-      '<rect class="lq-wall" x="0" y="0" width="' + W + '" height="' + FLOOR + '"/>' +
-      '<rect class="lq-wall2" x="0" y="0" width="' + W + '" height="' + (FLOOR * 0.62) + '"/>' +
-      '<rect class="lq-floor" x="0" y="' + FLOOR + '" width="' + W + '" height="' + (H - FLOOR) + '"/>' +
-      '<path class="lq-skirt" d="M0 ' + FLOOR + 'h' + W + '"/>' +
+      px(0, 0, W / P, fy, "lq-wall") +
+      dith(0, Math.round(fy * 0.58), W / P, 2, "lqDithB", "lq-wallseam") +
+      px(0, fy, W / P, H / P - fy, "lq-floor") +
+      px(0, fy, W / P, 1, "lq-skirt") +
+      /* floorboard seams every 12 px */
+      px(20, fy + 6, 26, 1, "lq-floor2") + px(70, fy + 12, 30, 1, "lq-floor2") +
+      px(130, fy + 6, 24, 1, "lq-floor2") + px(180, fy + 14, 26, 1, "lq-floor2") +
       /* window */
-      '<g transform="translate(700,120)">' + windowView(sky, opts) + '</g>' +
-      /* bookshelf */
-      '<g class="lq-shelf" transform="translate(70,150)">' +
-        '<rect x="0" y="0" width="230" height="282" rx="4" class="lq-wood"/>' +
-        '<rect x="8" y="8" width="214" height="266" class="lq-wood2"/>' +
+      '<g transform="translate(' + (176 * P) + ',' + (30 * P) + ')">' + windowView(sky, opts) + '</g>' +
+      /* bookshelf: 4 shelves of spines in four greys */
+      '<g class="lq-shelf" transform="translate(' + (18 * P) + ',' + (38 * P) + ')">' +
+        px(0, 0, 58, 71, "lq-wood") + px(2, 2, 54, 67, "lq-wood2") +
         [0, 1, 2, 3].map(function (r) {
-          var y = 18 + r * 64, s = "";
+          var y = 4 + r * 17, s = "";
           for (var i = 0; i < 12; i++) {
-            var bw = 9 + ((i * 7 + r * 5) % 8), bh = 40 + ((i * 11 + r * 3) % 14);
-            s += '<rect x="' + (14 + i * 17) + '" y="' + (y + (54 - bh)) + '" width="' + bw + '" height="' + bh + '" rx="1.4" class="lq-bk b' + ((i + r) % 5) + '"/>';
+            var bw = 2 + ((i * 7 + r * 5) % 3), bh = 10 + ((i * 11 + r * 3) % 4);
+            s += px(3 + i * 4.4 | 0, y + (13 - bh), bw, bh, "lq-bk b" + ((i + r) % 4));
           }
-          return '<g>' + s + '<rect x="8" y="' + (y + 54) + '" width="214" height="6" class="lq-wood"/></g>';
+          return s + px(2, y + 13, 54, 2, "lq-wood");
         }).join("") +
       '</g>' +
-      /* framed picture + small plant */
-      '<g transform="translate(360,168)"><rect width="86" height="62" rx="3" class="lq-frame2"/><path d="M8 50q20-26 38-8t32-14" class="lq-art"/><circle cx="26" cy="20" r="7" class="lq-art2"/></g>' +
-      '<g class="lq-plant" transform="translate(330,' + (FLOOR - 62) + ')"><path d="M14 62h26l-4-22H18z" class="lq-pot"/><path d="M27 40c0-14-8-22-18-24 2 14 8 22 18 24zM27 40c0-16 8-24 20-26-2 16-9 24-20 26z" class="lq-leaf"/></g>' +
-      /* rug */
-      '<ellipse class="lq-rug" cx="590" cy="' + (FLOOR + 46) + '" rx="250" ry="34"/>' +
-      /* desk (back part) + chair */
-      '<g class="lq-chair" transform="translate(566,' + (FLOOR - 118) + ')">' +
-        '<rect x="-4" y="-58" width="72" height="10" rx="5" class="lq-wood"/>' +
-        '<rect x="52" y="-58" width="10" height="86" rx="5" class="lq-wood"/>' +
-        '<rect x="0" y="24" width="64" height="9" rx="4" class="lq-wood"/>' +
-        '<path d="M6 33v84M58 33v84" class="lq-leg-l"/>' +
+      /* framed pixel picture: a tiny mountain and sun */
+      '<g transform="translate(' + (90 * P) + ',' + (42 * P) + ')">' +
+        px(0, 0, 22, 16, "lq-frame2") + px(1, 1, 20, 14, "lq-art") +
+        px(4, 9, 3, 4, "lq-art2") + px(7, 7, 3, 6, "lq-art2") + px(10, 10, 3, 3, "lq-art2") +
+        px(15, 3, 3, 3, "lq-art2") +
       '</g>' +
+      /* plant: pot + three blocky fronds */
+      '<g class="lq-plant" transform="translate(' + (82 * P) + ',' + (fy - 16) * P + ')">' +
+        px(2, 10, 8, 6, "lq-pot") + px(3, 9, 6, 1, "lq-pot") +
+        px(5, 4, 2, 6, "lq-leaf") + px(2, 2, 3, 3, "lq-leaf") + px(7, 1, 3, 4, "lq-leaf") +
+      '</g>' +
+      /* rug: a stepped pixel oval with a dithered border */
+      '<g class="lq-rugwrap">' +
+        px(116, fy + 4, 68, 12, "lq-rug") + px(122, fy + 2, 56, 2, "lq-rug") + px(122, fy + 16, 56, 2, "lq-rug") +
+        dith(116, fy + 4, 68, 1, "lqDithB", "lq-rug2") + dith(116, fy + 15, 68, 1, "lqDithB", "lq-rug2") +
+      '</g>' +
+      /* chair behind the desk: seat at fy-8, exactly where the rig sits */
+      '<g class="lq-chair" transform="translate(' + (142 * P) + ',' + (fy - 6) * P + ')">' +
+        px(13, -16, 3, 16, "lq-wood2") + px(11, -18, 7, 2, "lq-wood2") +
+        px(1, 0, 16, 2, "lq-wood") + px(2, 2, 2, 4, "lq-wood2") + px(14, 2, 2, 4, "lq-wood2") +
+      '</g>' +
+      /* desk: top at fy-12, front panel down to the floor; lamp on the left */
       '<g class="lq-desk">' +
-        '<rect x="430" y="' + (FLOOR - 132) + '" width="380" height="14" rx="4" class="lq-wood"/>' +
-        '<rect x="442" y="' + (FLOOR - 118) + '" width="12" height="118" class="lq-wood2"/>' +
-        '<rect x="786" y="' + (FLOOR - 118) + '" width="12" height="118" class="lq-wood2"/>' +
-        /* lamp */
-        '<g class="lq-lamp" transform="translate(466,' + (FLOOR - 176) + ')">' +
-          '<path d="M0 44h26" class="lq-metal"/><path d="M13 44V16" class="lq-metal"/><path d="M13 16q14-8 22 4l-10 12z" class="lq-shade"/>' +
-          (lampOn ? '<ellipse class="lq-lampglow" cx="30" cy="34" rx="34" ry="26"/>' : '') +
+        px(108, fy - 12, 95, 2, "lq-wood") +
+        '<g class="lq-lamp" transform="translate(' + (190 * P) + ',' + (fy - 23) * P + ')">' +
+          px(0, 10, 7, 1, "lq-metal") + px(3, 4, 1, 6, "lq-metal") +
+          px(1, 1, 8, 3, "lq-shade") + px(2, 0, 6, 1, "lq-shade") +
+          (lampOn ? dith(-3, 4, 13, 8, "lqGlow", "lq-lampglow") : "") +
         '</g>' +
-        /* small stack holder on the left of the desk */
-        '<rect x="742" y="' + (FLOOR - 150) + '" width="52" height="18" rx="3" class="lq-wood2"/>' +
+        px(176, fy - 17, 12, 5, "lq-wood2") +
       '</g>';
   }
   /* The desk front panel is drawn after the character so a seated figure is
      correctly occluded — this is what keeps one desk for every subject. */
   function studyFront() {
+    var fy = FLOOR / P;
     return '<g class="lq-deskfront">' +
-      '<rect x="430" y="' + (FLOOR - 122) + '" width="380" height="72" rx="4" class="lq-wood3"/>' +
-      '<rect x="430" y="' + (FLOOR - 132) + '" width="380" height="14" rx="4" class="lq-wood"/>' +
+      px(108, fy - 10, 95, 10, "lq-wood3") +
+      px(108, fy - 12, 95, 2, "lq-wood") +
+      dith(108, fy - 10, 95, 1, "lqDithB", "lq-woodseam") +
       '</g>';
   }
 
   /* ---------------------------------------------------------------- bedroom */
   function bedroom(sky, opts) {
     opts = opts || {};
+    var fy = FLOOR / P;
     return '' +
-      '<rect class="lq-wall" x="0" y="0" width="' + W + '" height="' + FLOOR + '"/>' +
-      '<rect class="lq-wall2" x="0" y="0" width="' + W + '" height="' + (FLOOR * 0.62) + '"/>' +
-      '<rect class="lq-floor" x="0" y="' + FLOOR + '" width="' + W + '" height="' + (H - FLOOR) + '"/>' +
-      '<g transform="translate(110,140) scale(0.82)">' + windowView(sky, opts) + '</g>' +
-      '<ellipse class="lq-rug" cx="560" cy="' + (FLOOR + 44) + '" rx="230" ry="30"/>' +
-      /* bed */
-      '<g class="lq-bed" transform="translate(430,' + (FLOOR - 96) + ')">' +
-        '<rect x="0" y="20" width="330" height="26" rx="6" class="lq-wood"/>' +
-        '<rect x="-6" y="-46" width="18" height="92" rx="6" class="lq-wood2"/>' +
-        '<rect x="318" y="-16" width="16" height="62" rx="6" class="lq-wood2"/>' +
-        '<rect x="14" y="-8" width="300" height="34" rx="8" class="lq-blanket"/>' +
-        '<rect x="26" y="-16" width="72" height="22" rx="9" class="lq-pillow"/>' +
-        '<path d="M14 10h300" class="lq-fold"/>' +
+      px(0, 0, W / P, fy, "lq-wall") +
+      dith(0, Math.round(fy * 0.58), W / P, 2, "lqDithB", "lq-wallseam") +
+      px(0, fy, W / P, H / P - fy, "lq-floor") +
+      px(0, fy, W / P, 1, "lq-skirt") +
+      '<g transform="translate(' + (120 * P) + ',' + (30 * P) + ')">' + windowView(sky, opts) + '</g>' +
+      /* rug */
+      px(108, fy + 4, 62, 11, "lq-rug") + px(114, fy + 2, 50, 2, "lq-rug") + px(114, fy + 15, 50, 2, "lq-rug") +
+      /* bed: headboard, frame, blanket whose top is where the rig lies */
+      '<g class="lq-bed" transform="translate(' + (108 * P) + ',' + (fy - 18) * P + ')">' +
+        px(-2, -12, 5, 20, "lq-wood2") + px(80, -4, 4, 12, "lq-wood2") +
+        px(4, 0, 75, 8, "lq-blanket") +
+        px(4, 3, 75, 1, "lq-fold") +
+        px(7, -3, 18, 4, "lq-pillow") +
+        px(4, 8, 75, 2, "lq-wood2") +
+        px(5, 10, 3, 8, "lq-wood2") + px(76, 10, 3, 8, "lq-wood2") +
       '</g>' +
-      /* bedside table + lamp */
-      '<g transform="translate(790,' + (FLOOR - 74) + ')"><rect width="70" height="52" rx="4" class="lq-wood2"/><rect x="6" y="14" width="58" height="6" rx="3" class="lq-wood"/>' +
-      '<g class="lq-lamp" transform="translate(24,-30)"><path d="M0 30h22" class="lq-metal"/><path d="M11 30V10" class="lq-metal"/><path d="M11 10q12-7 19 3l-9 10z" class="lq-shade"/>' +
-      (sky.night ? '<ellipse class="lq-lampglow dim" cx="26" cy="24" rx="30" ry="22"/>' : '') + '</g></g>' +
-      '<g class="lq-plant" transform="translate(330,' + (FLOOR - 56) + ')"><path d="M12 56h24l-4-20H16z" class="lq-pot"/><path d="M24 36c0-12-7-19-16-21 2 12 7 19 16 21zM24 36c0-14 7-21 18-23-2 14-8 21-18 23z" class="lq-leaf"/></g>';
+      /* bedside table + lamp, head side of the bed */
+      '<g transform="translate(' + (88 * P) + ',' + (fy - 12) * P + ')">' +
+        px(0, 0, 18, 10, "lq-wood2") + px(1, 3, 16, 2, "lq-wood") + px(2, 10, 2, 2, "lq-wood2") + px(14, 10, 2, 2, "lq-wood2") +
+        '<g class="lq-lamp" transform="translate(' + 6 * P + ',' + -9 * P + ')">' +
+          px(0, 8, 6, 1, "lq-metal") + px(2, 4, 1, 4, "lq-metal") + px(1, 1, 5, 3, "lq-shade") + px(2, 0, 3, 1, "lq-shade") +
+          (sky.night ? dith(0, 3, 8, 6, "lqGlow", "lq-lampglow dim") : "") +
+        '</g>' +
+      '</g>' +
+      /* plant */
+      '<g class="lq-plant" transform="translate(' + (204 * P) + ',' + (fy - 14) * P + ')">' +
+        px(2, 8, 7, 6, "lq-pot") + px(4, 3, 2, 5, "lq-leaf") + px(1, 1, 3, 3, "lq-leaf") + px(6, 0, 3, 4, "lq-leaf") +
+      '</g>';
   }
 
   /* -------------------------------------------------------------- rest area */
   function rest(sky, opts) {
     opts = opts || {};
+    var fy = FLOOR / P;
     return '' +
-      '<rect class="lq-wall" x="0" y="0" width="' + W + '" height="' + FLOOR + '"/>' +
-      '<rect class="lq-wall2" x="0" y="0" width="' + W + '" height="' + (FLOOR * 0.62) + '"/>' +
-      '<rect class="lq-floor" x="0" y="' + FLOOR + '" width="' + W + '" height="' + (H - FLOOR) + '"/>' +
-      '<g transform="translate(660,130) scale(0.9)">' + windowView(sky, opts) + '</g>' +
-      '<ellipse class="lq-rug" cx="430" cy="' + (FLOOR + 44) + '" rx="240" ry="32"/>' +
-      /* armchair */
-      '<g class="lq-armchair" transform="translate(330,' + (FLOOR - 104) + ')">' +
-        '<rect x="-30" y="10" width="30" height="72" rx="12" class="lq-chairc"/>' +
-        '<rect x="150" y="10" width="30" height="72" rx="12" class="lq-chairc"/>' +
-        '<rect x="-14" y="-40" width="178" height="60" rx="16" class="lq-chairc"/>' +
-        '<rect x="-14" y="14" width="178" height="34" rx="12" class="lq-chairc2"/>' +
-        '<path d="M0 82v20M150 82v20" class="lq-leg-l"/>' +
+      px(0, 0, W / P, fy, "lq-wall") +
+      dith(0, Math.round(fy * 0.58), W / P, 2, "lqDithB", "lq-wallseam") +
+      px(0, fy, W / P, H / P - fy, "lq-floor") +
+      px(0, fy, W / P, 1, "lq-skirt") +
+      '<g transform="translate(' + (166 * P) + ',' + (33 * P) + ')">' + windowView(sky, opts) + '</g>' +
+      px(82, fy + 4, 64, 11, "lq-rug") + px(88, fy + 2, 52, 2, "lq-rug") + px(88, fy + 15, 52, 2, "lq-rug") +
+      /* armchair: seat cushion top at fy-8, exactly where the rig reclines */
+      '<g class="lq-armchair" transform="translate(' + (82 * P) + ',' + fy * P + ')">' +
+        px(4, -22, 38, 14, "lq-chairc") +
+        px(0, -12, 8, 14, "lq-chairc") + px(38, -12, 8, 14, "lq-chairc") +
+        px(4, -6, 38, 4, "lq-chairc2") + px(4, -5, 38, 1, "lq-fold") +
+        px(6, 2, 3, 2, "lq-wood2") + px(37, 2, 3, 2, "lq-wood2") +
       '</g>' +
-      /* side table with a cup */
-      '<g transform="translate(560,' + (FLOOR - 62) + ')"><rect width="66" height="44" rx="4" class="lq-wood2"/><rect x="4" y="12" width="58" height="5" rx="2" class="lq-wood"/>' +
-      '<path d="M22 -12h20v14a10 10 0 0 1-20 0z" class="lq-cup"/><path d="M42 -8h6a4 4 0 0 1 0 8h-6" class="lq-cup"/></g>' +
-      '<g class="lq-plant big" transform="translate(150,' + (FLOOR - 96) + ')"><path d="M18 96h40l-6-34H24z" class="lq-pot"/><path d="M38 62c0-22-13-35-30-38 4 22 14 35 30 38zM38 62c0-26 13-39 34-42-4 26-15 39-34 42z" class="lq-leaf"/></g>';
+      /* side table with a pixel cup */
+      '<g transform="translate(' + (124 * P) + ',' + (fy - 12) * P + ')">' +
+        px(0, 0, 17, 2, "lq-wood") + px(1, 2, 15, 8, "lq-wood2") + px(2, 10, 2, 2, "lq-wood2") + px(13, 10, 2, 2, "lq-wood2") +
+        px(6, -4, 5, 4, "lq-cup") + px(11, -3, 2, 2, "lq-cup") +
+      '</g>' +
+      /* big plant */
+      '<g class="lq-plant big" transform="translate(' + (38 * P) + ',' + (fy - 24) * P + ')">' +
+        px(4, 16, 10, 8, "lq-pot") + px(8, 8, 2, 8, "lq-leaf") +
+        px(3, 4, 5, 5, "lq-leaf") + px(10, 2, 5, 6, "lq-leaf") + px(6, 0, 4, 4, "lq-leaf") +
+      '</g>';
   }
 
-  /* ------------------------------------------- honest placeholder for later */
+  /* ------------------------------------------- honest placeholder for later
+     The note promises he is shown at the study desk, so that is exactly what
+     renders: the real desk, dimmed behind a night wash, with the silhouette of
+     the place he cannot enter yet and the phase it arrives in. Nothing faked. */
   function unbuilt(name, phase, sky) {
-    return '' +
-      '<rect class="lq-void" x="0" y="0" width="' + W + '" height="' + H + '"/>' +
+    var fy = FLOOR / P;
+    return study(sky, { lamp: true }) +
+      px(0, 0, W / P, H / P, "lq-voidwash") +
       '<g opacity=".5">' +
-        '<path d="M0 ' + (FLOOR + 20) + 'h' + W + '" class="lq-horizon"/>' +
-        '<path d="M120 ' + (FLOOR + 20) + 'V300l90-56 90 56v132z" class="lq-silhouette"/>' +
-        '<path d="M470 ' + (FLOOR + 20) + 'V330h150v102z" class="lq-silhouette"/>' +
-        '<path d="M720 ' + (FLOOR + 20) + 'V280q70-40 140 0v152z" class="lq-silhouette"/>' +
+        px(0, fy + 5, W / P, 1, "lq-horizon") +
+        /* three stepped silhouettes: a hall, a block, a dome — nothing more */
+        px(30, fy - 28, 22, 33, "lq-silhouette") + px(34, fy - 42, 14, 14, "lq-silhouette") +
+        px(118, fy - 20, 36, 25, "lq-silhouette") +
+        px(180, fy - 34, 30, 39, "lq-silhouette") + px(186, fy - 40, 18, 6, "lq-silhouette") +
       '</g>' +
-      '<g class="lq-unbuilt-note" transform="translate(' + (W / 2) + ',150)">' +
+      dith(0, fy + 6, W / P, 3, "lqDithB", "lq-voidfade") +
+      '<g class="lq-unbuilt-note" transform="translate(' + (W / 2) + ',120)">' +
         '<text class="lq-t1" text-anchor="middle">' + esc(name) + '</text>' +
         '<text class="lq-t2" text-anchor="middle" y="30">This environment arrives in Phase ' + phase + '.</text>' +
         '<text class="lq-t3" text-anchor="middle" y="56">Nothing is invented: the character is shown at the study desk instead.</text>' +
       '</g>';
   }
-  function esc(s) { return String(s == null ? "" : s).replace(/[&<>"]/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]; }); }
+  function esc(s) { return String(s == null ? "" : s).replace(/[&<>\"]/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]; }); }
 
   var BUILDERS = { study: study, bedroom: bedroom, rest: rest };
 
   /* Character anchor per room + spot (feet position in scene units). */
   var SPOTS = {
-    "study|desk":     { x: 600, y: FLOOR, sit: true,  scale: 1.00, cam: { x: 380, y: 120, w: 520 } },
-    "bedroom|bed":    { x: 520, y: FLOOR - 62, sit: false, scale: 0.98, cam: { x: 300, y: 120, w: 620 } },
-    "rest|chair":     { x: 400, y: FLOOR - 8, sit: true,  scale: 1.00, cam: { x: 180, y: 130, w: 620 } },
-    "rest|open":      { x: 620, y: FLOOR, sit: false, scale: 1.00, cam: { x: 320, y: 120, w: 620 } },
+    "study|desk":     { x: 600, y: FLOOR, sit: true,  scale: 1.00, cam: { x: 360, y: 170, w: 480 } },
+    /* head of the lying rig rests on the bed's pillow */
+    "bedroom|bed":    { x: 540, y: FLOOR - 62, sit: false, scale: 0.98, cam: { x: 300, y: 160, w: 480 } },
+    /* feet on the floor, hips on the cushion top (fy-8) */
+    "rest|chair":     { x: 400, y: FLOOR, sit: true,  scale: 1.00, cam: { x: 160, y: 168, w: 480 } },
+    "rest|open":      { x: 620, y: FLOOR, sit: false, scale: 1.00, cam: { x: 380, y: 160, w: 480 } },
     /* in the armchair, at the side table: meals, chess, a quiet think */
-    "rest|table":     { x: 470, y: FLOOR - 8, sit: true,  scale: 1.00, cam: { x: 240, y: 130, w: 600 } }
+    "rest|table":     { x: 470, y: FLOOR, sit: true,  scale: 1.00, cam: { x: 230, y: 168, w: 480 } }
   };
   function spot(room, sp) {
     return SPOTS[room + "|" + sp] || SPOTS["study|desk"];
@@ -253,11 +355,13 @@
     /* character is drawn at the fallback spot when the room is not built yet */
     var place = built ? spot(room, m.spot) : spot("study", "desk");
 
+    /* ambient life: five drifting dust pixels, and a flat night wash */
     var ambient = opt.ambient === false ? "" :
       '<g class="lq-motes">' + [0, 1, 2, 3, 4].map(function (i) {
-        return '<circle class="lq-mote" cx="' + (160 + i * 165) + '" cy="' + (180 + (i % 3) * 60) + '" r="' + (1.1 + (i % 3) * 0.5) + '" style="--d:' + (i * 1.7).toFixed(1) + 's;--x:' + (18 + i * 7) + 'px"/>';
+        return px(40 + i * 41, 45 + (i % 3) * 15, 1, 1, "lq-mote",
+          ' style="--d:' + (i * 1.7).toFixed(1) + 's;--x:' + (18 + i * 7) + 'px"');
       }).join("") + '</g>' +
-      (sky.night ? '<rect class="lq-nightwash" x="0" y="0" width="' + W + '" height="' + H + '"/>' : '');
+      (sky.night ? px(0, 0, W / P, H / P, "lq-nightwash") : "");
 
     return {
       room: room, useRoom: useRoom, built: built, def: def, sky: sky,
@@ -270,8 +374,9 @@
   function currentMinute() { var d = new Date(); return d.getHours() * 60 + d.getMinutes(); }
 
   window.LQWorld = {
-    W: W, H: H, FLOOR: FLOOR, skyAt: skyAt, orbPos: orbPos, scene: scene,
+    W: W, H: H, FLOOR: FLOOR, P: P, skyAt: skyAt, orbPos: orbPos, scene: scene,
     spot: spot, SPOTS: SPOTS, currentMinute: currentMinute, esc: esc,
+    px: px, dith: dith, disc: disc,
     rooms: function () { return Object.keys(BUILDERS); }
   };
 })();

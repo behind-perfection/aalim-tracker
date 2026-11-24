@@ -185,7 +185,7 @@
   }
 
   W.LQBoot = {
-    version: "1.0.0",
+    version: "1.1.0",
     PAGE_ID: PAGE_ID, HUB_ID: HUB_ID, FILES: FILES, CSS: CSS,
     status: function () { return status; },
     failedOn: function () { return failedOn; },

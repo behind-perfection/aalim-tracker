@@ -84,10 +84,11 @@
     /* desk materials change with the subject — the desk itself never does */
     if (state.subjectKey !== subj || state.spotKey !== spotKey || opt.force) {
       var place = sc.place;
-      var deskTopY = Wo.FLOOR - 132;
+      var P = Wo.P || 4;
+      var deskTopY = Wo.FLOOR - 48;                    /* desk top, scene units */
       propsG.innerHTML = room === "study" || !sc.built
-        ? '<g transform="translate(' + (place.x - 120) + ',' + (deskTopY - 30) + ')">' +
-            (W.LQCharacter ? W.LQCharacter.deskProps(subj, { w: 92, h: 34 }) : "") + '</g>'
+        ? '<g transform="translate(' + (place.x - 132) + ',' + (deskTopY - 10 * P) + ') scale(' + P + ')">' +
+            (W.LQCharacter ? W.LQCharacter.deskProps(subj, { w: 24, h: 10 }) : "") + '</g>'
         : "";
       state.subjectKey = subj;
       state.spotKey = spotKey;
@@ -209,10 +210,16 @@
     if (stage) stage.classList.toggle("lq-reduced", state.reduced);
     if (state.reduced && state.camTarget) applyCam(state.camTarget);
   }
+  /* Zoom snaps to whole pixel multiples (960/480/320/240) so a pixel on the
+     grid is always a square block of screen pixels — never a fraction. */
   function zoom(f) {
     var t = state.camTarget || { x: 0, y: 0, w: 960 };
-    var w = Math.max(260, Math.min(960, t.w * (1 / (Number(f) || 1))));
-    state.camTarget = { x: t.x + (t.w - w) / 2, y: t.y + (t.w - w) * (540 / 960) / 2, w: w };
+    var want = Math.max(240, Math.min(960, t.w * (1 / (Number(f) || 1))));
+    var n = Math.max(1, Math.min(4, Math.round(960 / want)));
+    var w = 960 / n;
+    var x = Math.max(0, Math.min(960 - w, Math.round((t.x + (t.w - w) / 2) / 4) * 4));
+    var y = Math.max(0, Math.min(540 - w * (540 / 960), Math.round((t.y + (t.w - w) * (540 / 960) / 2) / 4) * 4));
+    state.camTarget = { x: x, y: y, w: w };
     if (state.reduced) applyCam(state.camTarget);
   }
 

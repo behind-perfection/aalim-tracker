@@ -162,6 +162,10 @@ comments, and a dead-code scan found nothing unreferenced. It brought the nine
 game files to **171,224 B (167.2 KiB) — 17,624 B over the ceiling**, for
 +6.4 KB gzipped.
 
+> **v99 art pass:** the pixel-art rebuild (`docs/LIFEQUEST-PIXEL-ART.md`)
+> re-measured the deferred set at **170,674 B raw / 50,554 B gzipped** —
+> still far inside the ceiling, with every gradient and curve removed.
+
 Rather than cut working evidence sources or quietly exceed the budget, the game
 was made **lazy**. `lq-boot.js` is now the only LIFEQUEST file `index.html`
 loads, and `lifequest.css` is no longer linked in `<head>`.

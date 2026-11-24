@@ -152,9 +152,9 @@
         '</div>';
       /* a second, independent rig for previews */
       var host = $("lqPrev");
-      host.innerHTML = '<svg viewBox="280 90 400 380" preserveAspectRatio="xMidYMid meet" class="lq-prevsvg">' +
-        '<rect x="280" y="90" width="400" height="380" class="lq-prevbg"/>' +
-        '<g transform="translate(480,430) scale(2.6)">' + C.rig() + '</g></svg>';
+      host.innerHTML = '<svg viewBox="410 318 124 124" preserveAspectRatio="xMidYMid meet" class="lq-prevsvg">' +
+        '<rect x="410" y="318" width="124" height="124" class="lq-prevbg"/>' +
+        '<g transform="translate(480,430) scale(4)">' + C.rig() + '</g></svg>';
       previewFig = host.querySelector(".lq-fig");
       previewStage = host.querySelector("svg");
 
@@ -277,7 +277,7 @@
     /* mini stage for "right now" */
     var mini = $("lqMini");
     if (mini && W.LQCharacter) {
-      mini.innerHTML = '<svg viewBox="420 200 320 260" class="lq-prevsvg"><g transform="translate(580,430) scale(1.7)">' + W.LQCharacter.rig() + '</g></svg>';
+      mini.innerHTML = '<svg viewBox="500 318 164 124" class="lq-prevsvg"><g transform="translate(580,430) scale(4)">' + W.LQCharacter.rig() + '</g></svg>';
       var f = mini.querySelector(".lq-fig");
       W.LQCharacter.apply(f, live ? W.LQMapper.map(live) : W.LQMapper.current());
     }

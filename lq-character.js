@@ -1,13 +1,19 @@
 /* ============================================================================
-   LIFEQUEST · lq-character.js
-   One anonymous character, one reusable SVG rig, consistent proportions.
+   LIFEQUEST · lq-character.js — one anonymous character, in pixels.
 
-   Motion is CSS-driven: JavaScript only sets `data-anim` / `data-pose` /
-   `data-skin` / `data-outfit` on the root <g>. That keeps the frame cost near
-   zero (the compositor runs the keyframes) and makes every state reusable.
+   The rig is drawn on the same 4-unit pixel grid as the environments
+   (LQWorld.P): every rect is a whole pixel, so the character never blurs and
+   never breaks scale when a room changes. Nothing is curved or rounded.
 
-   Seated academic work is drawn at the SAME desk; only `deskProps(subjectKey)`
-   changes the books, notebooks and diagrams on it.
+   Motion is frame-swapping, the handheld way: each pose carries two
+   hand-drawn frames (.fa / .fb) inside `.alt` groups and CSS flips between
+   them with steps(1). No rotation, no easing, no sub-pixel travel — the
+   silhouette stays pixel-perfect in every frame. Poses themselves
+   (stand / sit / recline / lie) are pre-drawn groups toggled by data-pose.
+
+   JavaScript only sets data-anim / data-pose / data-skin / data-outfit /
+   data-acc on the root <g>; the desk materials (deskProps) are the one thing
+   that varies between academic subjects, drawn on the same desk.
    ========================================================================== */
 (function () {
   "use strict";
@@ -43,150 +49,219 @@
     wake:      { pose: "sit",   label: "Waking up" }
   };
 
-  var SKINS = ["#e8c39e", "#d9a878", "#b9825a", "#8d5a3b", "#f0d5bb", "#6b4227"];
+  /* Appearance is grayscale only: skin and outfit pick TONES, not hues.
+     Six skin tones from pale to deep, eight outfits from light to dark —
+     the same choice the player always had, now on the monochrome ramp. */
+  var SKINS = ["#e8e8e8", "#d2d2d2", "#b4b4b4", "#8f8f8f", "#f4f4f4", "#6b6b6b"];
   var OUTFITS = [
-    { name: "Everyday",  shirt: "#4a6fa5", trouser: "#33405a" },
-    { name: "Focus",     shirt: "#3f7d6f", trouser: "#2f3b4a" },
-    { name: "Warm",      shirt: "#8a5a3b", trouser: "#3a3f4a" },
-    { name: "Calm",      shirt: "#6a7a9a", trouser: "#414a5c" },
-    { name: "Bright",    shirt: "#b06a4a", trouser: "#3d4454" },
-    { name: "Night",     shirt: "#3c4258", trouser: "#2a2f3f" },
-    { name: "Studio",    shirt: "#5a7a5a", trouser: "#3a4038" },
-    { name: "Formal",    shirt: "#f2f4f8", trouser: "#2c3140" }
+    { name: "Everyday", shirt: "#a8a8a8", trouser: "#4c4c4c" },
+    { name: "Focus",    shirt: "#8f8f8f", trouser: "#3d3d3d" },
+    { name: "Warm",     shirt: "#7a7a7a", trouser: "#454545" },
+    { name: "Calm",     shirt: "#b4b4b4", trouser: "#565656" },
+    { name: "Bright",   shirt: "#c9c9c9", trouser: "#4a4a4a" },
+    { name: "Night",    shirt: "#5c5c5c", trouser: "#333333" },
+    { name: "Studio",   shirt: "#969696", trouser: "#424242" },
+    { name: "Formal",   shirt: "#f2f2f2", trouser: "#2e2e2e" }
   ];
   var ACCESSORIES = [
     null,
-    { name: "Round glasses", draw: '<circle cx="-3.4" cy="-1.2" r="2.6" class="lq-acc"/><circle cx="3.4" cy="-1.2" r="2.6" class="lq-acc"/><path d="M-0.8-1.2h1.6" class="lq-acc-l"/>' },
-    { name: "Cap", draw: '<path d="M-7-4.6a7 7 0 0 1 14 0z" class="lq-cap"/><path d="M6.6-4.6h5.4a1.4 1.4 0 0 1 0 2.8H6.6z" class="lq-cap"/>' },
-    { name: "Hood", draw: '<path d="M-8.6-1a8.6 8.6 0 0 1 17.2 0z" class="lq-hood"/>' },
-    { name: "Headphones", draw: '<path d="M-7.6-2.4a7.6 7.6 0 0 1 15.2 0" class="lq-band"/><rect x="-9.4" y="-3.4" width="3.4" height="5.6" rx="1.6" class="lq-pad"/><rect x="6" y="-3.4" width="3.4" height="5.6" rx="1.6" class="lq-pad"/>' },
-    { name: "Scarf", draw: '<path d="M-6.4 8.4q6.4 3.4 12.8 0l-1 4.2q-5.4 2.4-10.8 0z" class="lq-scarf"/>' },
-    { name: "Watch", draw: '<rect x="8.4" y="14" width="3" height="4" rx="1" class="lq-watch"/>' },
-    { name: "Hair tuft", draw: '<path d="M-1-9.4q3-4.6 6.6-2.2q-2.6 0.2-3.4 2.6z" class="lq-tuft"/>' },
-    { name: "Backpack strap", draw: '<path d="M-4.6-6.4 2.6 8.2" class="lq-strap"/><path d="M4.6-6.4-2.6 8.2" class="lq-strap"/>' },
-    { name: "Desk lamp pin", draw: '<circle cx="0" cy="-9.6" r="1.5" class="lq-pin"/>' }
+    { name: "Round glasses", draw: '<g class="lq-acc"><rect x="-4" y="-22" width="3" height="3" class="lq-accl"/><rect x="1" y="-22" width="3" height="3" class="lq-accl"/><rect x="-1" y="-21" width="2" height="1" class="lq-accb"/></g>' },
+    { name: "Cap", draw: '<g class="lq-cap"><rect x="-4" y="-25" width="8" height="2"/><rect x="-3" y="-26" width="6" height="1"/><rect x="4" y="-24" width="4" height="1"/></g>' },
+    { name: "Hood", draw: '<g class="lq-hood"><rect x="-5" y="-25" width="9" height="3"/><rect x="-5" y="-22" width="2" height="4"/><rect x="3" y="-22" width="2" height="4"/></g>' },
+    { name: "Headphones", draw: '<g class="lq-band"><rect x="-4" y="-26" width="9" height="1"/><rect x="-5" y="-23" width="2" height="4" class="lq-pad"/><rect x="4" y="-23" width="2" height="4" class="lq-pad"/></g>' },
+    { name: "Scarf", draw: '<g class="lq-scarf"><rect x="-4" y="-17" width="8" height="2"/><rect x="-2" y="-15" width="2" height="4"/></g>' },
+    { name: "Watch", draw: '<rect x="5" y="-14" width="2" height="2" class="lq-watch"/>' },
+    { name: "Hair tuft", draw: '<g class="lq-hair"><rect x="0" y="-27" width="2" height="2"/><rect x="2" y="-26" width="2" height="1"/></g>' },
+    { name: "Backpack strap", draw: '<g class="lq-strap"><rect x="-3" y="-17" width="1" height="6"/><rect x="-2" y="-15" width="1" height="4"/><rect x="1" y="-17" width="1" height="6"/><rect x="0" y="-15" width="1" height="4"/></g>' },
+    { name: "Desk lamp pin", draw: '<rect x="-1" y="-27" width="2" height="2" class="lq-pin"/>' }
   ];
 
+  /* one pixel = LQWorld.P scene units; local helper so this file stands alone */
+  function px(x, y, w, h, cls, extra) {
+    return '<rect x="' + x + '" y="' + y + '" width="' + w + '" height="' + h + '"' +
+      (cls ? ' class="' + cls + '"' : "") + (extra || "") + "/>";
+  }
+
   /* ---------------------------------------------------------------- the rig
-     Local units: feet at y=0, head top near y=-72. Drawn facing right. */
+     Local pixel units: feet at y=0, head top near y=-23. Drawn facing right.
+     Every pose is pre-drawn; `.alt` groups carry the two motion frames. */
+  function headBlock() {
+    return '<g class="lq-head">' +
+        px(-3, -23, 7, 6, "lq-skin") +
+        px(-4, -24, 8, 2, "lq-hair") + px(-4, -22, 1, 4, "lq-hair") + px(3, -22, 1, 2, "lq-hair") + px(-2, -22, 3, 1, "lq-hair") +
+        '<g class="lq-face">' + px(2, -21, 1, 1, "lq-eye") + px(2, -19, 1, 1, "lq-mouth") + '</g>' +
+        '<g class="lq-acc-g"></g>' +
+      '</g>';
+  }
+
   function rig() {
     return '' +
       '<g class="lq-fig" data-anim="idle" data-pose="stand" data-skin="0" data-outfit="0" data-acc="-1">' +
-        '<ellipse class="lq-shadow" cx="0" cy="1" rx="15" ry="3.4"/>' +
         '<g class="lq-body">' +
-          /* legs: thigh + shin, nested so both joints can bend */
-          '<g class="lq-legs">' +
-            '<g class="lq-leg lq-leg-b"><rect class="lq-thigh" x="-3.1" y="-30" width="6.2" height="17" rx="3.1"/>' +
-              '<g class="lq-knee"><rect class="lq-shin" x="-2.7" y="-14.6" width="5.4" height="15" rx="2.7"/><rect class="lq-foot" x="-2.7" y="-1.6" width="8.4" height="3.2" rx="1.6"/></g></g>' +
-            '<g class="lq-leg lq-leg-f"><rect class="lq-thigh" x="-3.1" y="-30" width="6.2" height="17" rx="3.1"/>' +
-              '<g class="lq-knee"><rect class="lq-shin" x="-2.7" y="-14.6" width="5.4" height="15" rx="2.7"/><rect class="lq-foot" x="-2.7" y="-1.6" width="8.4" height="3.2" rx="1.6"/></g></g>' +
+
+          /* ------------------------------------ standing pose (24 px tall) */
+          '<g class="lq-p-stand">' +
+            px(-4, 0, 9, 1, "lq-shadow") +
+            '<g class="lq-legs lq-alt">' +
+              '<g class="fa">' +
+                '<g class="lq-leg lq-leg-b">' + px(-2, -11, 3, 6, "lq-thigh") + '<g class="lq-knee">' + px(-2, -5, 2, 4, "lq-shin") + px(-2, -1, 4, 1, "lq-foot") + '</g></g>' +
+                '<g class="lq-leg lq-leg-f">' + px(0, -11, 3, 6, "lq-thigh lq-thigh-f") + '<g class="lq-knee">' + px(1, -5, 2, 4, "lq-shin lq-shin-f") + px(0, -1, 4, 1, "lq-foot lq-foot-f") + '</g></g>' +
+              '</g>' +
+              '<g class="fb">' +
+                '<g class="lq-leg lq-leg-b">' + px(-3, -11, 3, 6, "lq-thigh") + '<g class="lq-knee">' + px(-3, -5, 2, 4, "lq-shin") + px(-4, -1, 4, 1, "lq-foot") + '</g></g>' +
+                '<g class="lq-leg lq-leg-f">' + px(1, -11, 3, 6, "lq-thigh lq-thigh-f") + '<g class="lq-knee">' + px(2, -5, 2, 4, "lq-shin lq-shin-f") + px(2, -1, 4, 1, "lq-foot lq-foot-f") + '</g></g>' +
+              '</g>' +
+            '</g>' +
+            '<g class="lq-breathe">' +
+              '<g class="lq-torso">' + px(-3, -17, 7, 6, "lq-shirt") + px(-3, -11, 7, 1, "lq-shirt2") + '</g>' +
+              '<g class="lq-arm lq-arm-b lq-alt">' +
+                '<g class="fa">' + px(-4, -17, 2, 5, "lq-sleeve") + '<g class="lq-elbow">' + px(-4, -12, 2, 3, "lq-fore") + px(-4, -10, 2, 2, "lq-hand lq-hand-b") + '</g></g>' +
+                '<g class="fb">' + px(-5, -17, 2, 5, "lq-sleeve") + '<g class="lq-elbow">' + px(-5, -12, 2, 3, "lq-fore") + px(-5, -10, 2, 2, "lq-hand lq-hand-b") + '</g></g>' +
+              '</g>' +
+              headBlock() +
+              '<g class="lq-arm lq-arm-f lq-alt">' +
+                '<g class="fa">' + px(2, -17, 2, 5, "lq-sleeve lq-sleeve-f") + '<g class="lq-elbow">' + px(2, -12, 2, 3, "lq-fore lq-fore-f") + px(2, -10, 2, 2, "lq-hand") + '<g class="lq-held"></g>' + '</g></g>' +
+                '<g class="fb">' + px(3, -17, 2, 5, "lq-sleeve lq-sleeve-f") + '<g class="lq-elbow">' + px(3, -12, 2, 3, "lq-fore lq-fore-f") + px(3, -10, 2, 2, "lq-hand") + '<g class="lq-held"></g>' + '</g></g>' +
+              '</g>' +
+            '</g>' +
           '</g>' +
-          /* torso */
-          '<g class="lq-torso"><path class="lq-shirt" d="M-7.4-52.5q7.4-3.6 14.8 0l1.8 22.6q-9.2 3.4-18.4 0z"/></g>' +
-          /* back arm */
-          '<g class="lq-arm lq-arm-b"><rect class="lq-sleeve" x="-2.6" y="-51" width="5.2" height="14" rx="2.6"/>' +
-            '<g class="lq-elbow"><rect class="lq-fore" x="-2.2" y="-38" width="4.4" height="13" rx="2.2"/><circle class="lq-hand" cx="0" cy="-24.6" r="2.5"/></g></g>' +
-          /* head */
-          '<g class="lq-head"><circle class="lq-skin" cx="0" cy="-58.6" r="9.2"/>' +
-            '<path class="lq-hair" d="M-9.2-60.4a9.2 9.2 0 0 1 18.4 0q-2.6-3.4-9.2-3.2q-6.6-0.2-9.2 3.2z"/>' +
-            '<g class="lq-face"><circle class="lq-eye" cx="-3.4" cy="-57.6" r="0.95"/><circle class="lq-eye" cx="3.4" cy="-57.6" r="0.95"/>' +
-            '<path class="lq-mouth" d="M-2-53.8q2 1.5 4 0"/></g>' +
-            '<g class="lq-acc-g"></g>' +
+
+          /* ------------------------- sitting pose: hips on a 6 px seat */
+          '<g class="lq-p-sit">' +
+            px(-3, 0, 8, 1, "lq-shadow") +
+            '<g class="lq-legs">' +
+              '<g class="lq-leg lq-leg-b">' + px(-2, -6, 5, 2, "lq-thigh") + '<g class="lq-knee">' + px(1, -4, 2, 3, "lq-shin") + px(0, -1, 4, 1, "lq-foot") + '</g></g>' +
+              '<g class="lq-leg lq-leg-f">' + px(-1, -6, 5, 2, "lq-thigh lq-thigh-f") + '<g class="lq-knee">' + px(2, -4, 2, 3, "lq-shin lq-shin-f") + px(2, -1, 4, 1, "lq-foot lq-foot-f") + '</g></g>' +
+            '</g>' +
+            '<g class="lq-breathe">' +
+              '<g class="lq-torso">' + px(-3, -12, 7, 6, "lq-shirt") + px(-3, -6, 7, 1, "lq-shirt2") + '</g>' +
+              '<g class="lq-arm lq-arm-b">' + px(-4, -12, 2, 3, "lq-sleeve") + '<g class="lq-elbow">' + px(-4, -13, 4, 2, "lq-fore") + px(-1, -13, 2, 2, "lq-hand lq-hand-b") + '</g></g>' +
+              headBlock() +
+              '<g class="lq-arm lq-arm-f lq-alt">' +
+                '<g class="fa">' + px(1, -12, 2, 3, "lq-sleeve lq-sleeve-f") + '<g class="lq-elbow">' + px(2, -13, 4, 2, "lq-fore lq-fore-f") + px(5, -13, 2, 2, "lq-hand") + '<g class="lq-held"></g>' + '</g></g>' +
+                '<g class="fb">' + px(1, -12, 2, 3, "lq-sleeve lq-sleeve-f") + '<g class="lq-elbow">' + px(2, -14, 4, 2, "lq-fore lq-fore-f") + px(5, -14, 2, 2, "lq-hand") + '<g class="lq-held"></g>' + '</g></g>' +
+              '</g>' +
+            '</g>' +
           '</g>' +
-          /* front arm */
-          '<g class="lq-arm lq-arm-f"><rect class="lq-sleeve" x="-2.6" y="-51" width="5.2" height="14" rx="2.6"/>' +
-            '<g class="lq-elbow"><rect class="lq-fore" x="-2.2" y="-38" width="4.4" height="13" rx="2.2"/><circle class="lq-hand" cx="0" cy="-24.6" r="2.5"/>' +
-            '<g class="lq-held"></g></g></g>' +
+
+          /* --------------------------------------- recline pose (armchair) */
+          '<g class="lq-p-recline">' +
+            px(-3, 0, 9, 1, "lq-shadow") +
+            '<g class="lq-legs">' +
+              '<g class="lq-leg lq-leg-b">' + px(-1, -6, 6, 2, "lq-thigh") + '<g class="lq-knee">' + px(4, -5, 2, 4, "lq-shin") + px(4, -1, 4, 1, "lq-foot") + '</g></g>' +
+              '<g class="lq-leg lq-leg-f">' + px(0, -6, 6, 2, "lq-thigh lq-thigh-f") + '<g class="lq-knee">' + px(5, -5, 2, 4, "lq-shin lq-shin-f") + px(5, -1, 4, 1, "lq-foot lq-foot-f") + '</g></g>' +
+            '</g>' +
+            '<g class="lq-breathe">' +
+              '<g class="lq-torso">' + px(-4, -12, 7, 6, "lq-shirt") + px(-4, -6, 7, 1, "lq-shirt2") + '</g>' +
+              '<g class="lq-arm lq-arm-b">' + px(-5, -11, 2, 3, "lq-sleeve") + '<g class="lq-elbow">' + px(-5, -9, 3, 2, "lq-fore") + '</g></g>' +
+              headBlock() +
+              '<g class="lq-arm lq-arm-f">' + px(1, -11, 4, 2, "lq-sleeve lq-sleeve-f") + '<g class="lq-elbow">' + px(4, -11, 2, 2, "lq-hand") + '<g class="lq-held"></g>' + '</g></g>' +
+            '</g>' +
+          '</g>' +
+
+          /* --------------------------------------------- lying pose (bed) */
+          '<g class="lq-p-lie">' +
+            '<g class="lq-legs"></g>' +
+            '<g class="lq-breathe">' +
+              '<g class="lq-head">' +
+                px(-15, -6, 6, 5, "lq-skin") +
+                px(-16, -7, 7, 2, "lq-hair") + px(-16, -5, 1, 3, "lq-hair") +
+                '<g class="lq-face">' + px(-11, -4, 1, 1, "lq-eye") + '</g>' +
+                '<g class="lq-acc-g"></g>' +
+              '</g>' +
+              px(-12, -4, 3, 2, "lq-pillow") + px(-12, -6, 3, 2, "lq-pillow") +
+              '<g class="lq-torso">' + px(-9, -5, 14, 3, "lq-shirt") + '</g>' +
+              '<g class="lq-arm lq-arm-f">' + px(-6, -6, 5, 2, "lq-sleeve lq-sleeve-f") + '<g class="lq-elbow">' + px(-2, -6, 2, 2, "lq-hand") + '<g class="lq-held"></g>' + '</g></g>' +
+              '<g class="lq-arm lq-arm-b"></g>' +
+              px(-9, -3, 24, 3, "lq-blanket2") +
+            '</g>' +
+          '</g>' +
+
         '</g>' +
       '</g>';
   }
 
   /* ------------------------------------------------------- desk materials
-     Drawn ON the desk surface. The desk, chair and room never change — this is
-     the only thing that varies between academic subjects. */
+     Drawn ON the desk surface in the same pixel grid (1 unit = 1 px of the
+     240×135 grid). The desk, chair and room never change — this is the only
+     thing that varies between academic subjects. */
   var GLYPH = {
-    maths: '<path class="lq-ink" d="M2 4v14h18"/><path class="lq-ink" d="M4 16q5-1 8-6t8-4"/><text class="lq-tx" x="13" y="11">x²</text>',
-    physics: '<path class="lq-ink" d="M2 18 14 5h6"/><circle class="lq-ink-f" cx="11" cy="9" r="1.8"/><path class="lq-ink" d="M11 9 18 13"/><path class="lq-ink" d="M18 13l-2.6-0.4M18 13l-0.5-2.5"/>' +
-             '<path class="lq-ink" d="M3 3q4 4 8 0" opacity=".7"/>',
-    chemistry: '<path class="lq-ink" d="M9 5l4.4 2.5v5L9 15l-4.4-2.5v-5z"/><path class="lq-ink" d="M13.4 7.5l3.6-2M13.4 12.5l3.6 2M4.6 12.5 1 14.6"/>' +
-               '<text class="lq-tx" x="16" y="17">→</text>',
-    biology: '<ellipse class="lq-ink" cx="10" cy="10" rx="8" ry="6"/><circle class="lq-ink-f" cx="9" cy="10" r="2.2"/><path class="lq-ink" d="M2 10q3-3 6 0t6 0"/>' +
-             '<path class="lq-ink" d="M17 15q3 1 4 4" opacity=".7"/>',
-    history: '<path class="lq-ink" d="M2 16h18"/><circle class="lq-ink-f" cx="5" cy="16" r="1.3"/><circle class="lq-ink-f" cx="11" cy="16" r="1.3"/><circle class="lq-ink-f" cx="17" cy="16" r="1.3"/>' +
-             '<path class="lq-ink" d="M6 12V6h3v6M13 12V4h3v8"/>',
-    geography: '<path class="lq-ink" d="M2 4h18v13H2z"/><path class="lq-ink" d="M2 8.4h18M2 12.6h18M8 4v13M14 4v13" opacity=".55"/>' +
-               '<path class="lq-ink" d="M4 14q3-4 6-1t6-3" /><circle class="lq-globe" cx="24" cy="9" r="4"/><path class="lq-ink" d="M20 9h8M24 5v8" opacity=".6"/>',
-    astronomy: '<path class="lq-ink" d="M2 3h18v15H2z"/><circle class="lq-ink-f" cx="6" cy="7" r="1"/><circle class="lq-ink-f" cx="12" cy="5.5" r="1.2"/><circle class="lq-ink-f" cx="17" cy="9" r="1"/>' +
-               '<circle class="lq-ink-f" cx="9" cy="13" r="1"/><path class="lq-ink" d="M6 7l6-1.5 5 3.5-8 4z" opacity=".7"/><text class="lq-tx" x="14" y="17">♄</text>',
-    economics: '<path class="lq-ink" d="M2 17h18M3 17V9M8 17V5M13 17v-6M18 17v-9"/><path class="lq-ink" d="M2 12q6 3 10-2t8 1" opacity=".7"/>',
-    political: '<path class="lq-ink" d="M4 17V8M9 17V8M14 17V8M19 17V8M2 8h19L11.5 3z"/><path class="lq-ink" d="M2 17h19"/>',
-    english: '<path class="lq-ink" d="M3 5h16M3 8.4h16M3 11.8h12M3 15.2h14" opacity=".85"/><path class="lq-ink" d="M17 17l4-6" /><path class="lq-ink-f" d="M21 11l1.6-1.2-0.6 2z"/>',
-    hindi: '<path class="lq-ink" d="M3 6h16"/><path class="lq-ink" d="M5 6v8M9 6v6q0 3 3 3M14 6v8M18 6v5" /><path class="lq-ink" d="M3 17h16" opacity=".5"/>',
-    it: '<rect class="lq-mon" x="1" y="2" width="22" height="15" rx="1.6"/><path class="lq-code" d="M4 6h9M4 9h14M4 12h6"/><rect class="lq-key" x="6" y="18" width="14" height="2.4" rx="1"/>',
-    book: '<path class="lq-ink" d="M3 4h8v14H3zM11 4h8v14h-8z"/><path class="lq-ink" d="M5 8h4M5 11h4M13 8h4M13 11h4" opacity=".6"/>',
-    notes: '<path class="lq-ink" d="M3 3h16v15H3z"/><path class="lq-ink" d="M6 7h10M6 10h10M6 13h7" opacity=".6"/><path class="lq-ink" d="M17 19l4-5" />'
+    maths:      px(2, 10, 14, 1, "lq-ink") + px(2, 2, 1, 9, "lq-ink") + px(4, 8, 2, 2, "lq-ink") + px(6, 6, 2, 2, "lq-ink") + px(8, 4, 2, 2, "lq-ink") + px(11, 3, 3, 1, "lq-ink") + px(13, 1, 2, 2, "lq-ink2"),
+    physics:    px(3, 11, 10, 1, "lq-ink") + px(13, 10, 2, 1, "lq-ink") + px(14, 9, 1, 1, "lq-ink") + px(6, 8, 1, 3, "lq-ink") + px(5, 4, 3, 1, "lq-ink2") + px(4, 5, 1, 1, "lq-ink2") + px(8, 5, 1, 1, "lq-ink2"),
+    chemistry:  px(6, 2, 4, 1, "lq-ink") + px(5, 3, 1, 6, "lq-ink") + px(10, 3, 1, 6, "lq-ink") + px(6, 9, 4, 1, "lq-ink") + px(7, 5, 2, 2, "lq-ink2") + px(11, 4, 3, 1, "lq-ink") + px(11, 7, 3, 1, "lq-ink"),
+    biology:    px(4, 2, 8, 1, "lq-ink") + px(3, 3, 1, 6, "lq-ink") + px(12, 3, 1, 6, "lq-ink") + px(4, 9, 8, 1, "lq-ink") + px(7, 5, 3, 3, "lq-ink2") + px(5, 4, 1, 1, "lq-ink") + px(10, 7, 1, 1, "lq-ink"),
+    history:    px(2, 10, 16, 1, "lq-ink") + px(4, 6, 1, 4, "lq-ink") + px(9, 4, 1, 6, "lq-ink") + px(14, 7, 1, 3, "lq-ink") + px(3, 5, 2, 1, "lq-ink2") + px(8, 3, 2, 1, "lq-ink2") + px(13, 6, 2, 1, "lq-ink2"),
+    geography:  px(2, 2, 14, 1, "lq-ink") + px(2, 11, 14, 1, "lq-ink") + px(2, 2, 1, 10, "lq-ink") + px(15, 2, 1, 10, "lq-ink") + px(8, 3, 1, 8, "lq-ink2") + px(3, 6, 12, 1, "lq-ink2") + px(4, 4, 3, 1, "lq-ink") + px(10, 8, 3, 1, "lq-ink") + px(17, 4, 4, 4, "lq-globe") + px(18, 3, 2, 1, "lq-globe") + px(18, 8, 2, 1, "lq-globe"),
+    astronomy:  px(3, 3, 1, 1, "lq-ink2") + px(8, 2, 1, 1, "lq-ink2") + px(13, 5, 1, 1, "lq-ink2") + px(6, 8, 1, 1, "lq-ink2") + px(11, 9, 1, 1, "lq-ink2") + px(4, 3, 4, 1, "lq-ink") + px(9, 3, 1, 2, "lq-ink") + px(9, 5, 4, 1, "lq-ink") + px(7, 6, 1, 2, "lq-ink") + px(7, 8, 4, 1, "lq-ink"),
+    economics:  px(2, 11, 15, 1, "lq-ink") + px(4, 7, 2, 4, "lq-ink2") + px(8, 4, 2, 7, "lq-ink2") + px(12, 8, 2, 3, "lq-ink2") + px(3, 5, 1, 1, "lq-ink") + px(6, 3, 1, 1, "lq-ink") + px(7, 4, 1, 1, "lq-ink") + px(10, 6, 1, 1, "lq-ink"),
+    political:  px(2, 4, 15, 1, "lq-ink") + px(8, 1, 3, 1, "lq-ink") + px(6, 2, 7, 1, "lq-ink") + px(4, 5, 1, 6, "lq-ink") + px(8, 5, 1, 6, "lq-ink") + px(12, 5, 1, 6, "lq-ink") + px(2, 11, 15, 1, "lq-ink"),
+    english:    px(3, 3, 12, 1, "lq-ink") + px(3, 5, 12, 1, "lq-ink") + px(3, 7, 9, 1, "lq-ink") + px(3, 9, 11, 1, "lq-ink") + px(12, 10, 1, 1, "lq-ink2") + px(13, 9, 1, 1, "lq-ink2") + px(14, 8, 1, 1, "lq-ink2") + px(15, 7, 2, 1, "lq-ink2"),
+    hindi:      px(3, 3, 13, 1, "lq-ink") + px(4, 4, 1, 6, "lq-ink") + px(8, 4, 1, 4, "lq-ink") + px(8, 8, 3, 1, "lq-ink") + px(12, 4, 1, 6, "lq-ink") + px(14, 4, 1, 4, "lq-ink") + px(3, 11, 13, 1, "lq-ink2"),
+    it:         px(2, 2, 16, 8, "lq-mon") + px(3, 3, 14, 6, "lq-mon2") + px(4, 4, 6, 1, "lq-code") + px(4, 6, 9, 1, "lq-code") + px(4, 8, 4, 1, "lq-code") + px(8, 10, 2, 1, "lq-mon") + px(5, 11, 8, 1, "lq-key"),
+    book:       px(2, 3, 7, 9, "lq-page") + px(10, 3, 7, 9, "lq-page") + px(9, 3, 1, 9, "lq-ink2") + px(4, 5, 3, 1, "lq-ink2") + px(4, 7, 3, 1, "lq-ink2") + px(12, 5, 3, 1, "lq-ink2") + px(12, 7, 3, 1, "lq-ink2"),
+    notes:      px(3, 2, 14, 11, "lq-page") + px(5, 4, 10, 1, "lq-ink2") + px(5, 6, 10, 1, "lq-ink2") + px(5, 8, 7, 1, "lq-ink2") + px(13, 11, 1, 1, "lq-ink") + px(14, 10, 1, 1, "lq-ink") + px(15, 9, 2, 1, "lq-ink")
+  };
+
+  /* Small study objects — desk-sized only. A theoretical subject never gets
+     laboratory apparatus: chemistry gets a molecular model card, not glassware. */
+  var OBJECT = {
+    maths:      px(0, 6, 12, 1, "lq-obj") + px(1, 5, 10, 1, "lq-obj2") + px(2, 2, 6, 1, "lq-obj") + px(3, 3, 1, 2, "lq-obj"),
+    physics:    px(6, 1, 1, 5, "lq-obj") + px(5, 6, 3, 3, "lq-obj2") + px(2, 10, 9, 1, "lq-obj"),
+    chemistry:  px(2, 3, 2, 2, "lq-obj2") + px(7, 1, 2, 2, "lq-obj2") + px(7, 6, 2, 2, "lq-obj2") + px(4, 4, 3, 1, "lq-obj") + px(4, 5, 3, 1, "lq-obj") + px(6, 3, 1, 3, "lq-obj"),
+    biology:    px(6, 2, 1, 8, "lq-obj") + px(4, 3, 2, 3, "lq-obj2") + px(7, 1, 2, 4, "lq-obj2") + px(5, 6, 2, 2, "lq-obj2"),
+    history:    px(1, 3, 3, 7, "lq-obj2") + px(5, 5, 3, 5, "lq-obj") + px(2, 2, 1, 1, "lq-obj"),
+    geography:  px(2, 2, 8, 8, "lq-globe") + px(3, 1, 6, 1, "lq-globe") + px(3, 10, 6, 1, "lq-globe") + px(5, 2, 1, 8, "lq-obj") + px(2, 5, 8, 1, "lq-obj") + px(4, 11, 4, 1, "lq-obj2"),
+    astronomy:  px(6, 3, 3, 3, "lq-obj2") + px(5, 4, 1, 1, "lq-obj2") + px(9, 4, 1, 1, "lq-obj2") + px(2, 9, 11, 1, "lq-obj") + px(7, 6, 1, 3, "lq-obj"),
+    economics:  px(1, 8, 12, 1, "lq-obj") + px(2, 5, 2, 3, "lq-obj2") + px(6, 3, 2, 5, "lq-obj2") + px(10, 6, 2, 2, "lq-obj2"),
+    political:  px(1, 8, 12, 1, "lq-obj") + px(3, 4, 1, 4, "lq-obj2") + px(6, 4, 1, 4, "lq-obj2") + px(9, 4, 1, 4, "lq-obj2") + px(2, 3, 9, 1, "lq-obj2") + px(6, 1, 1, 2, "lq-obj"),
+    english:    px(3, 2, 8, 6, "lq-page") + px(4, 3, 6, 1, "lq-ink2") + px(4, 5, 6, 1, "lq-ink2") + px(9, 8, 1, 1, "lq-obj") + px(10, 7, 1, 1, "lq-obj") + px(11, 6, 2, 1, "lq-obj"),
+    hindi:      px(2, 2, 10, 1, "lq-obj") + px(3, 3, 1, 5, "lq-obj2") + px(6, 3, 1, 4, "lq-obj2") + px(9, 3, 1, 5, "lq-obj2") + px(4, 9, 6, 1, "lq-obj"),
+    it:         px(1, 1, 11, 7, "lq-mon") + px(2, 2, 9, 5, "lq-mon2") + px(3, 3, 5, 1, "lq-code") + px(3, 5, 7, 1, "lq-code") + px(4, 9, 6, 1, "lq-key"),
+    book:       px(1, 2, 6, 8, "lq-obj2") + px(7, 2, 6, 8, "lq-obj") + px(6, 2, 1, 8, "lq-ink2"),
+    notes:      px(2, 2, 10, 8, "lq-page") + px(4, 4, 6, 1, "lq-ink2") + px(4, 6, 6, 1, "lq-ink2") + px(10, 8, 1, 1, "lq-obj") + px(11, 7, 2, 1, "lq-obj")
   };
 
   /* A subject's desk set: a closed stack, an open notebook with the subject's
      own diagram, and one small study object. Nothing else changes. */
   function deskProps(key, opt) {
     var M = (window.LQMapper && window.LQMapper.PROPS) || {};
-    var p = M[key] || M.generic || { cover: "#5a6472", accent: "#e3e8ef", prop: "notes", label: "Study" };
+    var p = M[key] || M.generic || { cover: "g3", accent: "g6", prop: "notes", label: "Study" };
     opt = opt || {};
     var g = GLYPH[p.prop] || GLYPH.notes;
-    var w = opt.w || 92, h = opt.h || 34;
+    var w = opt.w || 24, h = opt.h || 10;
     return '' +
       '<g class="lq-deskprops" data-subject="' + key + '">' +
-        /* closed stack of books, spine colours follow the subject */
+        /* closed stack of books, tones follow the subject */
         '<g class="lq-stack">' +
-          '<rect x="2" y="' + (h - 12) + '" width="34" height="5" rx="1.4" fill="' + p.cover + '" opacity=".95"/>' +
-          '<rect x="4" y="' + (h - 17) + '" width="30" height="5" rx="1.4" fill="' + p.cover + '" opacity=".72"/>' +
-          '<rect x="6" y="' + (h - 21.5) + '" width="26" height="4.5" rx="1.4" fill="' + p.accent + '" opacity=".8"/>' +
+          px(0, h - 3, 9, 1, "lq-cov c0") +
+          px(1, h - 4, 8, 1, "lq-cov c1") +
+          px(1, h - 5, 7, 1, "lq-cov c2") +
         '</g>' +
         /* open notebook with the subject diagram */
-        '<g class="lq-note" transform="translate(' + (w * 0.30) + ',' + (h - 27) + ')">' +
-          '<path d="M0 2h44v25H0z" fill="' + p.accent + '" opacity=".95"/>' +
-          '<path d="M22 2v25" stroke="' + p.cover + '" stroke-opacity=".35" stroke-width="1"/>' +
-          '<g transform="translate(3,4) scale(0.82)">' + g + '</g>' +
-          '<path class="lq-lines" d="M26 8h14M26 12h14M26 16h10" stroke="' + p.cover + '" stroke-opacity=".4" stroke-width="1" fill="none"/>' +
+        '<g class="lq-note" transform="translate(' + Math.round(w * 0.30) + ',' + (h - 9) + ')">' +
+          px(0, 1, 13, 8, "lq-page") + px(6, 1, 1, 8, "lq-pagefold") +
+          '<g transform="translate(1,1)">' + g + '</g>' +
         '</g>' +
         /* pencil + the one subject-specific object */
-        '<g class="lq-pencil" transform="translate(' + (w * 0.78) + ',' + (h - 9) + ') rotate(-14)">' +
-          '<rect x="0" y="0" width="20" height="2.6" rx="1.2" fill="' + p.cover + '"/>' +
-          '<path d="M20 0l4 1.3-4 1.3z" fill="#e8d9b8"/></g>' +
-        '<g class="lq-obj" transform="translate(' + (w * 0.80) + ',' + (h - 30) + ')">' + (OBJECT[p.prop] || "") + '</g>' +
+        '<g class="lq-pencil">' + px(Math.round(w * 0.80), h - 2, 5, 1, "lq-penbody") + px(Math.round(w * 0.80) + 5, h - 2, 1, 1, "lq-pentip") + '</g>' +
+        '<g class="lq-obj" transform="translate(' + Math.round(w * 0.82) + ',' + (h - 12) + ')">' + (OBJECT[p.prop] || "") + '</g>' +
       '</g>';
   }
-  /* Small study objects — desk-sized only. A theoretical subject never gets
-     laboratory apparatus: chemistry gets a molecular model card, not glassware. */
-  var OBJECT = {
-    maths: '<rect x="0" y="6" width="18" height="2.4" rx="1" fill="#c9b48a"/><path d="M2 6l14-4" stroke="#c9b48a" stroke-width="2" fill="none"/>',
-    physics: '<circle cx="8" cy="2" r="1.6" fill="#8f9bb3"/><path d="M8 3.6v7" stroke="#8f9bb3" stroke-width="1"/><path d="M2 12h12" stroke="#8f9bb3" stroke-width="1.4"/>',
-    chemistry: '<g opacity=".95"><circle cx="5" cy="6" r="2.6" fill="#2f7d6f"/><circle cx="12" cy="3" r="2.2" fill="#4aa392"/><circle cx="12" cy="10" r="2.2" fill="#4aa392"/><path d="M5 6l7-3M5 6l7 4" stroke="#2f7d6f" stroke-width="1"/></g>',
-    biology: '<path d="M8 12c0-5 3-8 7-9-1 5-3 8-7 9z" fill="#4f9a4a"/><path d="M8 12l6-8" stroke="#2f6b2c" stroke-width=".8"/>',
-    history: '<path d="M2 12V2h4v10z" fill="#b39a6a"/><path d="M8 12V4h4v8z" fill="#c9b48a"/>',
-    geography: '<circle cx="8" cy="6" r="6" fill="#2f6f8f"/><path d="M2 6h12M8 0v12M3.6 2.2q4.4 3.8 0 7.6M12.4 2.2q-4.4 3.8 0 7.6" stroke="#d6ecf5" stroke-width=".7" fill="none"/><path d="M8 12v3M5 15h6" stroke="#7a8a9a" stroke-width="1"/>',
-    astronomy: '<path d="M2 13h12M8 13V6" stroke="#9aa3c0" stroke-width="1"/><circle cx="8" cy="4" r="2.4" fill="#3c3f7a"/><circle cx="8" cy="4" r="4.4" fill="none" stroke="#9aa3c0" stroke-width=".6" opacity=".7"/>',
-    economics: '<path d="M2 13h13" stroke="#8a7a3a" stroke-width="1"/><path d="M3 13V8M7 13V4M11 13V9" stroke="#b39a4a" stroke-width="2"/>',
-    political: '<path d="M1 13h14M3 13V6M7 13V6M11 13V6M1 6h14L8 1z" fill="#8a6a9a" opacity=".85"/>',
-    english: '<path d="M2 2q6-2 12 0v11q-6-2-12 0z" fill="#c9a2ab"/><path d="M8 2v11" stroke="#8a4a5a" stroke-width=".7"/>',
-    hindi: '<path d="M2 3h12M4 3v9M8 3v7M12 3v9" stroke="#c07a3a" stroke-width="1.2" fill="none"/>',
-    it: '<rect x="1" y="1" width="14" height="10" rx="1.2" fill="#2b3644"/><path d="M3 4h6M3 6.6h9M3 9h4" stroke="#7fd1c1" stroke-width=".9"/>',
-    book: '<path d="M2 2h12v11H2z" fill="#8a7a6a"/><path d="M8 2v11" stroke="#5a4a3a" stroke-width=".8"/>',
-    notes: '<rect x="2" y="2" width="12" height="11" rx="1" fill="#dfe4ec"/><path d="M4 5h8M4 8h8M4 11h5" stroke="#9aa3b3" stroke-width=".8"/>'
-  };
 
-  /* Object the character holds while reading (a book), scaled to the hand. */
+  /* Object the character holds, in pixels, sized to the hand. */
   function held(kind, key) {
-    var M = (window.LQMapper && window.LQMapper.PROPS) || {};
-    var p = M[key] || M.generic || { cover: "#5a6472" };
-    if (kind === "read") return '<g class="lq-book" transform="translate(-6,-26)"><path d="M0 0h13v9H0z" fill="' + p.cover + '"/><path d="M6.5 0v9" stroke="#fff" stroke-opacity=".35"/></g>';
-    if (kind === "write" || kind === "exam" || kind === "study" || kind === "revise") return '<g class="lq-pen" transform="translate(-1.4,-27) rotate(18)"><rect width="9" height="1.5" rx=".7" fill="#d8c39a"/><path d="M9 0l2 .75L9 1.5z" fill="#4a4a55"/></g>';
-    if (kind === "draw") return '<g class="lq-pen" transform="translate(-1.4,-27) rotate(28)"><rect width="8" height="1.6" rx=".8" fill="#b06a4a"/></g>';
-    if (kind === "eat") return '<g transform="translate(-2,-27)"><rect width="6" height="4" rx="1.4" fill="#c9a06a"/></g>';
-    if (kind === "experiment") return '<g class="lq-flask" transform="translate(-3,-28)"><path d="M2 0h4v3l3 6H-1l3-6z" fill="#bcd9e8" opacity=".9"/><path d="M2 0h4" stroke="#7a8a9a" stroke-width="1"/></g>';
-    if (kind === "flash") return '<g transform="translate(-5,-28)"><rect width="10" height="7" rx="1" fill="#f0f2f6"/><path d="M2 2.4h6M2 4.6h4" stroke="#9aa3b3" stroke-width=".7"/></g>';
-    if (kind === "deen" || kind === "quran") return '<g transform="translate(-6,-26)"><path d="M0 0h13v9H0z" fill="#2f6b4f"/><path d="M6.5 0v9" stroke="#fff" stroke-opacity=".3"/></g>';
+    if (kind === "read" || kind === "deen" || kind === "quran")
+      return '<g class="lq-book">' + px(-3, -3, 7, 4, "lq-page") + px(0, -3, 1, 4, "lq-pagefold") + '</g>';
+    if (kind === "write" || kind === "exam" || kind === "study" || kind === "revise" || kind === "draw")
+      return '<g class="lq-pen">' + px(0, -1, 4, 1, "lq-penbody") + px(4, -1, 1, 1, "lq-pentip") + '</g>';
+    if (kind === "type")
+      return '<g class="lq-keys">' + px(-1, 0, 3, 1, "lq-key") + '</g>';
+    if (kind === "eat")
+      return '<g>' + px(-1, -2, 3, 3, "lq-cupheld") + '</g>';
+    if (kind === "experiment")
+      return '<g class="lq-flask">' + px(0, -3, 2, 2, "lq-glass") + px(-1, -1, 4, 3, "lq-glass") + px(0, 0, 2, 1, "lq-liquid") + '</g>';
+    if (kind === "flash")
+      return '<g>' + px(-3, -3, 6, 4, "lq-page") + px(-2, -2, 4, 1, "lq-ink2") + '</g>';
     return "";
   }
 
@@ -209,13 +284,15 @@
     fig.setAttribute("data-outfit", String(c.outfit | 0));
     fig.setAttribute("data-acc", String(c.accessory === undefined ? -1 : c.accessory));
 
-    var accG = fig.querySelector(".lq-acc-g");
-    if (accG) {
-      var ai = Number(c.accessory);
-      accG.innerHTML = (ai >= 0 && ACCESSORIES[ai]) ? ACCESSORIES[ai].draw : "";
-    }
-    var heldG = fig.querySelector(".lq-held");
-    if (heldG) heldG.innerHTML = opt.noProp ? "" : held(anim, m.subjectKey);
+    /* every pose group carries its own accessory + held slots */
+    var ai = Number(c.accessory);
+    var accHtml = (ai >= 0 && ACCESSORIES[ai]) ? ACCESSORIES[ai].draw : "";
+    var accGs = fig.querySelectorAll(".lq-acc-g");
+    for (var i = 0; i < accGs.length; i++) accGs[i].innerHTML = accHtml;
+
+    var heldHtml = opt.noProp ? "" : held(anim, m.subjectKey);
+    var heldGs = fig.querySelectorAll(".lq-held");
+    for (var j = 0; j < heldGs.length; j++) heldGs[j].innerHTML = heldHtml;
     return fig;
   }
 
