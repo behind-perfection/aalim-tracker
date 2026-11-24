@@ -20,6 +20,10 @@ cannot quietly drift back to vectors.
 * The character rig is drawn in **pixel units** (1 unit = 1 art pixel) and the
   renderer multiplies the place scale by `P`, so the rig and the rooms share
   one grid exactly. He is 24 pixels tall standing.
+* Furniture is sized in **person-modules** (the 24-px figure is the measure):
+  desk 34×10 px, chair 10 px wide with a 6-px seat, bed 34 px long, armchair
+  16 px across, window 30×22 px, bookshelf 46 px tall. Nothing is scaled from
+  the old vector scene; every room was re-laid-out around him.
 * Camera zooms snap to whole multiples: 960, 480, 320 or 240 units wide
   (`LQRender.zoom`). A art pixel is therefore always a square block of screen
   pixels — 1×, 2×, 3× or 4× — never a fraction.

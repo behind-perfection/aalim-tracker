@@ -85,9 +85,9 @@
     if (state.subjectKey !== subj || state.spotKey !== spotKey || opt.force) {
       var place = sc.place;
       var P = Wo.P || 4;
-      var deskTopY = Wo.FLOOR - 48;                    /* desk top, scene units */
+      var deskTopY = Wo.FLOOR - 40;                    /* desk top, scene units */
       propsG.innerHTML = room === "study" || !sc.built
-        ? '<g transform="translate(' + (place.x - 132) + ',' + (deskTopY - 10 * P) + ') scale(' + P + ')">' +
+        ? '<g transform="translate(' + (place.x - 60) + ',' + (deskTopY - 10 * P) + ') scale(' + P + ')">' +
             (W.LQCharacter ? W.LQCharacter.deskProps(subj, { w: 24, h: 10 }) : "") + '</g>'
         : "";
       state.subjectKey = subj;

@@ -138,8 +138,8 @@
               '<g class="lq-arm lq-arm-b">' + px(-4, -12, 2, 3, "lq-sleeve") + '<g class="lq-elbow">' + px(-4, -13, 4, 2, "lq-fore") + px(-1, -13, 2, 2, "lq-hand lq-hand-b") + '</g></g>' +
               headBlock() +
               '<g class="lq-arm lq-arm-f lq-alt">' +
-                '<g class="fa">' + px(1, -12, 2, 3, "lq-sleeve lq-sleeve-f") + '<g class="lq-elbow">' + px(2, -13, 4, 2, "lq-fore lq-fore-f") + px(5, -13, 2, 2, "lq-hand") + '<g class="lq-held"></g>' + '</g></g>' +
-                '<g class="fb">' + px(1, -12, 2, 3, "lq-sleeve lq-sleeve-f") + '<g class="lq-elbow">' + px(2, -14, 4, 2, "lq-fore lq-fore-f") + px(5, -14, 2, 2, "lq-hand") + '<g class="lq-held"></g>' + '</g></g>' +
+                '<g class="fa">' + px(1, -12, 2, 3, "lq-sleeve lq-sleeve-f") + '<g class="lq-elbow">' + px(2, -11, 4, 2, "lq-fore lq-fore-f") + px(5, -11, 2, 2, "lq-hand") + '<g class="lq-held"></g>' + '</g></g>' +
+                '<g class="fb">' + px(1, -12, 2, 3, "lq-sleeve lq-sleeve-f") + '<g class="lq-elbow">' + px(2, -12, 4, 2, "lq-fore lq-fore-f") + px(5, -12, 2, 2, "lq-hand") + '<g class="lq-held"></g>' + '</g></g>' +
               '</g>' +
             '</g>' +
           '</g>' +

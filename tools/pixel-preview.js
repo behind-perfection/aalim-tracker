@@ -334,7 +334,7 @@ function rasterize(svgMarkup, pal, opts, charPal) {
 
   const P = w.LQWorld.P || 4;
   const props = !process.env.LQ_NOPROPS && (room === "study" || !sc.built)
-    ? `<g transform="translate(${place.x - 132},${w.LQWorld.FLOOR - 48 - 10 * P}) scale(${P})">` +
+    ? `<g transform="translate(${place.x - 60},${w.LQWorld.FLOOR - 40 - 10 * P}) scale(${P})">` +
       w.eval(`LQCharacter.deskProps(${JSON.stringify(mapped.subjectKey || "generic")}, {w:24,h:10})`) + `</g>`
     : "";
   const svg =

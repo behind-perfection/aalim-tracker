@@ -491,7 +491,7 @@ vc.on("error", (...a) => problems.push("console.error: " + a.join(" ")));
         return night.night === true && night.stars > 0.9 && noon.night === false && noon.glow > 0.9;
     })());
     ok("9.13 the sun/moon arc stays inside the window", (() => {
-        return [0, 300, 600, 900, 1200, 1439].every(m => { const o = w.LQWorld.orbPos(m); return o.x >= 20 && o.x <= 180 && o.y >= 30 && o.y <= 125; });
+        return [0, 300, 600, 900, 1200, 1439].every(m => { const o = w.LQWorld.orbPos(m); return o.x >= 2 && o.x <= 28 && o.y >= 2 && o.y <= 20; });
     })());
 
     /* ---- 9b. the pixel-art contract: the style is a rule, not a mood ----- */
